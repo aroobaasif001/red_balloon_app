@@ -10,4 +10,6 @@ const Color greyLiteColor = Color(0xffcdcdcd);
 const Color blueBlackColor = Color(0xff263238);
 const Color grey50Color = Color(0x80242424);
 const Color grey1Color = Color(0xff676767);
+const Color grey2Color = Color(0xff8e8e93);
+const Color grey3Color = Color(0xff9db2ce);
 const Color purpleColor = Color(0xff9508b6);

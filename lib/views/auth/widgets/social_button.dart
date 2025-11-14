@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
+import '../../../utils/colors.dart' as AppColors;
+
 class SocialButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
@@ -31,7 +33,7 @@ class SocialButton extends StatelessWidget {
     this.emphasize,
     this.icon,
     this.leftSlotWidth = 48,
-    this.height = 56,
+    this.height = 60,
     this.width,
     this.fullWidth = false, // 👈 default: not full width
     this.radius = 16,
@@ -47,7 +49,7 @@ class SocialButton extends StatelessWidget {
   factory SocialButton.google({
     Key? key,
     required VoidCallback? onPressed,
-    double height = 50,
+    double height = 60,
     bool fullWidth = false,
     double? width,
   }) {
@@ -59,7 +61,7 @@ class SocialButton extends StatelessWidget {
       height: height,
       fullWidth: fullWidth,
       width: width,
-      bgColor: const Color(0xFFF5F6FA),
+      bgColor: AppColors.textColor, // jo bhi aapka surface color hai
       textColor: blackColor,
       icon: Image.asset('assets/icons/Google.png', width: 30, height: 30),
     );
@@ -68,7 +70,7 @@ class SocialButton extends StatelessWidget {
   factory SocialButton.apple({
     Key? key,
     required VoidCallback? onPressed,
-    double height = 50,
+    double height = 60,
     bool fullWidth = false,
     double? width,
   }) {
