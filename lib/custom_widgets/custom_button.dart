@@ -90,12 +90,16 @@ class CustomButton extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (leading != null) ...[leading!, const SizedBox(width: 8)],
-                        CustomText(
-                          label,
-                          color: enabled ? textColor : (disabledTextColor ?? Colors.white70),
-                          fontWeight: FontVariant.semiBold,
-                          fontSize: fontSize ?? 18, // 👈 applies size
-                          style: textStyle,
+                        Flexible(
+                          child: CustomText(
+                            label,
+                            color: enabled ? textColor : (disabledTextColor ?? Colors.white70),
+                            fontWeight: FontVariant.semiBold,
+                            fontSize: fontSize ?? 18, // 👈 applies size
+                            style: textStyle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         if (trailing != null) ...[const SizedBox(width: 8), trailing!],
                       ],
