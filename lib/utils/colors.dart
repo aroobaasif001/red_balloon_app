@@ -13,3 +13,6 @@ const Color grey1Color = Color(0xff676767);
 const Color grey2Color = Color(0xff8e8e93);
 const Color grey3Color = Color(0xff9db2ce);
 const Color purpleColor = Color(0xff9508b6);
+const Color balanceconbgColor = Color(0xffFEF2F2);
+const Color txColor = Color(0xff6B7280);
+const Color rbtxColor = Color(0xff374151);

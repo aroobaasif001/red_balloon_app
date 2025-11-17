@@ -19,19 +19,22 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
     currentIndex = widget.initialIndex;
   }
 
-  List<Widget> screens = [HomeScreen(), Text("data"), Text("data"), Text("data")];
+  List<Widget> screens = [Text("data"), Text("data"),
+    ValidationHubScreen(), Text("data")];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: screens.elementAt(currentIndex),
-      bottomNavigationBar: CustomCurvedNav(
-        currentIndex: currentIndex,
-        onTap: (value) {
-          setState(() {
-            currentIndex = value;
-          });
-        },
+    return SafeArea(
+      child: Scaffold(
+        body: screens.elementAt(currentIndex),
+        bottomNavigationBar: CustomCurvedNav(
+          currentIndex: currentIndex,
+          onTap: (value) {
+            setState(() {
+              currentIndex = value;
+            });
+          },
+        ),
       ),
     );
   }
