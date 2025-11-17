@@ -1,151 +1,125 @@
 import 'package:flutter/material.dart';
-import 'package:red_balloon_app/custom_widgets/custom_button.dart';
-import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
-import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_bonus_slider.dart';
 
-class HomeScreen extends StatelessWidget {
+import 'widgets/quick_action.dart';
+import 'widgets/task_card.dart';
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CustomText('RED BALLOON', fontSize: 16, fontWeight: FontVariant.bold, color: redColor),
-            Icon(Icons.account_circle, color: redColor, size: 28),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Bonus Card
-              CustomContainer(
-                width: double.infinity,
-                height: 140,
-                conColor: redColor,
-                borderRadius: BorderRadius.circular(12),
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Row(
+                children: [
+                  Image(image: AssetImage('assets/images/splash_logo.png'), height: 84),
+                  Spacer(),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Image(image: AssetImage('assets/icons/notification.png'), height: 24),
+                  ),
+                  InkWell(
+                    onTap: () {},
+                    child: Image(image: AssetImage('assets/icons/profile.png'), height: 50),
+                    customBorder: CircleBorder(),
+                  ),
+                ],
+              ),
+              SizedBox(height: 14.99),
+              CustomBonusSlider(),
+              // Tab Views
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
                   children: [
-                    CustomText(
-                      'Earn 10 SAR Bonus',
-                      fontSize: 18,
-                      fontWeight: FontVariant.bold,
-                      color: Colors.white,
+                    // Offline Task Tab
+                    SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText('Requests Near You', fontSize: 14, fontWeight: FontVariant.bold),
+                            SizedBox(height: 12),
+                            TaskCard(title: 'Help move furniture', price: 'SAR 500', btnText: 'View Details'),
+                            TaskCard(title: 'Help move furniture', price: 'SAR 500', btnText: 'View Details'),
+                            TaskCard(title: 'Help move furniture', price: 'SAR 500', btnText: 'View Details'),
+                            SizedBox(height: 24),
+                            CustomText('Quick Actions', fontSize: 14, fontWeight: FontVariant.bold),
+                            SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                QuickAction(icon: Icons.person, label: 'Profile'),
+                                QuickAction(icon: Icons.history, label: 'History'),
+                                QuickAction(icon: Icons.wallet, label: 'Wallet'),
+                                QuickAction(icon: Icons.settings, label: 'Settings'),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    CustomText('Complete your first task', fontSize: 12, color: Colors.white70),
-                    LinearProgressIndicator(value: 0.5, backgroundColor: Colors.white24, minHeight: 4),
+                    // Online Task Tab
+                    SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText('Requests Near You', fontSize: 14, fontWeight: FontVariant.bold),
+                            SizedBox(height: 12),
+                            TaskCard(title: 'Online Task 1', price: 'SAR 300', btnText: 'View Details'),
+                            TaskCard(title: 'Online Task 2', price: 'SAR 400', btnText: 'View Details'),
+                            TaskCard(title: 'Online Task 3', price: 'SAR 350', btnText: 'View Details'),
+                            SizedBox(height: 24),
+                            CustomText('Quick Actions', fontSize: 14, fontWeight: FontVariant.bold),
+                            SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                QuickAction(icon: Icons.person, label: 'Profile'),
+                                QuickAction(icon: Icons.history, label: 'History'),
+                                QuickAction(icon: Icons.wallet, label: 'Wallet'),
+                                QuickAction(icon: Icons.settings, label: 'Settings'),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              SizedBox(height: 20),
-              // Balance Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText('YOUR BALANCE', fontSize: 11, color: grey2Color),
-                      CustomText('SAR 250.00', fontSize: 20, fontWeight: FontVariant.bold, color: redColor),
-                    ],
-                  ),
-                  CustomButton(label: '+ Add Funds', onPressed: () {}, width: 120, height: 40),
-                ],
-              ),
-              SizedBox(height: 16),
-              // Task Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomButton(label: 'Offline Task', onPressed: () {}, bgColor: redColor),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: CustomButton(
-                      label: 'Online Task',
-                      onPressed: () {},
-                      bgColor: Colors.white,
-                      textColor: redColor,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 24),
-              // Requests Near You
-              CustomText('Requests Near You', fontSize: 14, fontWeight: FontVariant.bold),
-              SizedBox(height: 12),
-              _taskCard('Help move furniture', 'SAR 500', 'View Details'),
-              _taskCard('Help move furniture', 'SAR 500', 'View Details'),
-              _taskCard('Help move furniture', 'SAR 500', 'View Details'),
-              SizedBox(height: 24),
-              // Quick Actions
-              CustomText('Quick Actions', fontSize: 14, fontWeight: FontVariant.bold),
-              SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _quickAction(Icons.person, 'Profile'),
-                  _quickAction(Icons.history, 'History'),
-                  _quickAction(Icons.wallet, 'Wallet'),
-                  _quickAction(Icons.settings, 'Settings'),
-                ],
-              ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _taskCard(String title, String price, String btnText) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border.all(color: greyLiteColor),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomText(title, fontSize: 13, fontWeight: FontVariant.semiBold),
-              CustomText(price, fontSize: 12, color: redColor, fontWeight: FontVariant.bold),
-            ],
-          ),
-          CustomButton(label: btnText, onPressed: () {}, width: 90, height: 32, bgColor: redColor),
-        ],
-      ),
-    );
-  }
-
-  Widget _quickAction(IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(color: redColor.withOpacity(0.1), shape: BoxShape.circle),
-          child: Icon(icon, color: redColor, size: 24),
-        ),
-        SizedBox(height: 8),
-        CustomText(label, fontSize: 11, color: grey1Color),
-      ],
     );
   }
 }

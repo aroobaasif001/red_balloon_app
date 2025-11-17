@@ -38,7 +38,8 @@ dependencies:
   get: ^4.7.2
   animate_do: ^4.2.0
   flutter_launcher_icons: ^0.14.4
-  
+  smooth_page_indicator: ^1.2.1
+
   # Firebase & Authentication
   firebase_core: ^3.10.0
   firebase_auth: ^5.4.3
