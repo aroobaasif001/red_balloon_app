@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_curved_nav.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/home_screen.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/validations_tab/validation_hub_screen/validation_hub_screen.dart';
 
 class BottomNaviScreen extends StatefulWidget {
   final int initialIndex;

@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,15 +44,17 @@ class OnboardingScreen extends StatelessWidget {
                     delay: const Duration(milliseconds: 1600),
                     child: Column(
                       children: [
-                        SocialButton.apple(
-                          onPressed: () async {
-                            final user = await authController.signInWithApple();
-                            if (user != null) {
-                              Get.off(() => BottomNaviScreen());
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 12),
+                        if (Platform.isIOS) ...[
+                          SocialButton.apple(
+                            onPressed: () async {
+                              final user = await authController.signInWithApple();
+                              if (user != null) {
+                                Get.off(() => BottomNaviScreen());
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                        ],
                         SocialButton.google(
                           onPressed: () async {
                             final user = await authController.signInWithGoogle();
