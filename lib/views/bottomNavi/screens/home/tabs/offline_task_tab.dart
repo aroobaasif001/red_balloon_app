@@ -1,11 +1,11 @@
-// lib/screens/validation/online_task_empty_state.dart
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/views/bottomNavi/bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/offline_and_online_card.dart';
 
-class OnlineTaskTab extends StatelessWidget {
-  const OnlineTaskTab({super.key});
+class OfflineTaskTab extends StatelessWidget {
+  const OfflineTaskTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +19,15 @@ class OnlineTaskTab extends StatelessWidget {
             children: [
               CustomText('Requests Near You', fontSize: 18, fontWeight: FontVariant.bold),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Get.offAll(() => BottomNaviScreen(initialIndex: 1));
+                },
                 child: CustomText('View All', fontSize: 14, fontWeight: FontVariant.medium),
               ),
             ],
           ),
         ),
-        SizedBox(height: 12),
+        SizedBox(height: 22),
         ListView.builder(
           padding: EdgeInsets.symmetric(horizontal: 15),
           itemCount: 3,
@@ -37,8 +39,9 @@ class OnlineTaskTab extends StatelessWidget {
               child: OfflineAndOnlineCard(
                 title: "Help move furniture",
                 subtitle: "Need help loading boxes into truck.",
+                distance: "3.2 km away",
+                taskType: 'Offline Task',
                 timeAgo: "15 mins ago",
-                taskType: 'Online Task',
                 price: "SAR 500",
                 image: "assets/icons/chair.png",
                 onViewDetails: () {

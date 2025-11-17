@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class ActiveTaskController extends GetxController with GetTickerProviderStateMixin {
+  late TabController tabController;
+
+  RxInt selectedTabIndex = 0.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    tabController = TabController(length: 2, vsync: this);
+
+    tabController.addListener(() {
+      selectedTabIndex.value = tabController.index;
+    });
+  }
+
+  void switchTab(int index) {
+    tabController.animateTo(index);
+  }
+
+  @override
+  void onClose() {
+    tabController.dispose();
+    super.onClose();
+  }
+}

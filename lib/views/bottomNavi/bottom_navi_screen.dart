@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_curved_nav.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/home_screen.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/my_task_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/validations_tab/validation_hub_screen/validation_hub_screen.dart';
 
 class BottomNaviScreen extends StatefulWidget {
@@ -20,8 +21,7 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
     currentIndex = widget.initialIndex;
   }
 
-  List<Widget> screens = [Text("data"), Text("data"),
-    ValidationHubScreen(), Text("data")];
+  List<Widget> screens = [HomeScreen(), MyTaskScreen(), ValidationHubScreen(), Text("data")];
 
   @override
   Widget build(BuildContext context) {
