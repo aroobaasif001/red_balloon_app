@@ -2,10 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:red_balloon_app/model/auth_model.dart';
+import 'package:red_balloon_app/services/firestore_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirestoreService _firestoreService = FirestoreService();
 
   // Get current user
   User? get currentUser => _auth.currentUser;
@@ -37,7 +39,12 @@ class AuthService {
       final UserCredential userCredential = await _auth.signInWithCredential(credential);
 
       if (userCredential.user != null) {
-        return AuthModel.fromFirebaseUser(userCredential.user!, 'google');
+        final authModel = AuthModel.fromFirebaseUser(userCredential.user!, 'google');
+        
+        // Save user data to Firestore
+        await _firestoreService.saveUserFromModel(authModel);
+        
+        return authModel;
       }
 
       return null;
@@ -79,7 +86,12 @@ class AuthService {
       }
 
       if (userCredential.user != null) {
-        return AuthModel.fromFirebaseUser(userCredential.user!, 'apple');
+        final authModel = AuthModel.fromFirebaseUser(userCredential.user!, 'apple');
+        
+        // Save user data to Firestore
+        await _firestoreService.saveUserFromModel(authModel);
+        
+        return authModel;
       }
 
       return null;
@@ -105,6 +117,12 @@ class AuthService {
   // Delete account
   Future<void> deleteAccount() async {
     try {
+      final uid = currentUser?.uid;
+      if (uid != null) {
+        // Delete user data from Firestore first
+        await _firestoreService.deleteUserData(uid);
+      }
+      // Then delete the auth account
       await currentUser?.delete();
     } catch (e) {
       print('Error deleting account: $e');
