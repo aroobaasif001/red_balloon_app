@@ -32,3 +32,29 @@ const LinearGradient redOrangeGradientColor = LinearGradient(
     0.98, // 98%
   ],
 );
+
+// Wallet Colors
+const Color walletPrimaryColor = Color(0xFFE53935);
+const Color walletCardBgColor = Color(0xffF8F8F8);
+const Color walletCardBorderColor = Color(0xffF0F0F0);
+const Color fundCardBorderColor = Color(0xffE0E0E0);
+
+const Color walletInfoBgColor = Color(0xFFFFFBF0);
+const Color walletInfoBorderColor = Color(0xFFFFE0B2);
+const Color walletTextGreyColor = Color(0xff9CA3AF);
+const Color walletGrey600Color = Color(0xff4B5563);
+const Color walletGrey500Color = Color(0xff6B7280);
+const Color walletGrey700Color = Color(0xff374151);
+const Color walletSuccessColor = Color(0xFF4CAF50);
+const Color walletErrorColor = Color(0xFFE53935);
+const Color walletTransactionBgColor = Color(0xFFF9FAFB);
+const Color walletTransactionDescColor = Color(0xff999999);
+const Color walletTransactionDateColor = Color(0xff6B7280);
+const Color walletInfoTextColor = Color(0xff4B5563);
+const Color walletLabelTextColor = Color(0xff4B5563);
+const Color walletProgressBgColor = Color(0xffE0E0E0);
+const Color walletBlackColor = Color(0xff000000);
+const Color walletBalanceTextColor = Color(0xff1F2937);
+
+const Color escrowAmountCardWaitingBackground = Color(0xFFFFEBEE);
+const Color success = Color(0xFFFFA500);
