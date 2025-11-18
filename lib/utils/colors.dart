@@ -13,6 +13,7 @@ const Color grey5Color = Color(0xff666666);
 const Color whiteLiteColor = Color(0xfffff5f5);
 const Color white1Color = Color(0xfff8f8f8);
 const Color white2Color = Color(0xfff5f5f5);
+const Color white3Color = Color(0xffe8f5e9);
 const Color greyLiteColor = Color(0xffcdcdcd);
 const Color blueBlackColor = Color(0xff263238);
 const Color grey50Color = Color(0x80242424);
@@ -23,6 +24,7 @@ const Color purpleColor = Color(0xff9508b6);
 const Color balanceconbgColor = Color(0xffFEF2F2);
 const Color txColor = Color(0xff6B7280);
 const Color rbtxColor = Color(0xff374151);
+const Color greenColor = Color(0xff43a047);
 
 const LinearGradient redOrangeGradientColor = LinearGradient(
   begin: Alignment.centerLeft,

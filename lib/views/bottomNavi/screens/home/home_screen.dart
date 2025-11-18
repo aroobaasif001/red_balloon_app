@@ -8,6 +8,7 @@ import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/online_task_t
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_bonus_slider.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_quick_actions.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_wallet_card.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/notification/notification_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -33,7 +34,9 @@ class HomeScreen extends StatelessWidget {
                             Image(image: AssetImage('assets/images/splash_logo.png'), height: 84),
                             Spacer(),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Get.to(() => NotificationScreen());
+                              },
                               icon: Image(image: AssetImage('assets/icons/notification.png'), height: 24),
                             ),
                             InkWell(
