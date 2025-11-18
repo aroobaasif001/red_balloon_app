@@ -5,8 +5,9 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 class CustomTextField extends StatefulWidget {
+  final Widget? hintWidget;
   final TextEditingController? controller;
-  final String hintText;
+  final String? hintText;
   final String? iconPath; // optional
   final bool isPassword;
   final Function(String)? onChanged;
@@ -24,14 +25,16 @@ class CustomTextField extends StatefulWidget {
 
   // 🏷️ Optional label
   final String? label; // 👈 NEW (null => no label)
+  final String? labelIcon; // 👈 NEW (null => no label)
   final bool isRequired; // 👈 NEW (adds asterisk)
   final EdgeInsetsGeometry labelMargin; // 👈 NEW
   final TextStyle? labelTextStyle; // 👈 NEW
+  final int? maxLines; // 👈 NEW
 
   const CustomTextField({
     super.key,
     this.controller,
-    required this.hintText,
+    this.hintText,
     this.iconPath,
     this.isPassword = false,
     this.onChanged,
@@ -48,10 +51,13 @@ class CustomTextField extends StatefulWidget {
     this.keyboardAppearance,
 
     // label defaults
+    this.labelIcon,
     this.label,
     this.isRequired = false,
     this.labelMargin = const EdgeInsets.only(left: 8, bottom: 10),
     this.labelTextStyle,
+    this.maxLines,
+    this.hintWidget,
   });
 
   @override
@@ -77,11 +83,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (widget.labelIcon != null) ...[
+                  Image(image: AssetImage(widget.labelIcon!), height: 20),
+                  SizedBox(width: 10),
+                ],
                 CustomText(
                   widget.label!,
                   fontWeight: FontVariant.semiBold,
-                  fontSize: 12,
-                  color: widget.labelTextStyle?.color ?? greyColor,
+                  fontSize: 20,
+                  color: widget.labelTextStyle?.color ?? blackColor,
                   style: widget.labelTextStyle, // allows full override
                 ),
                 if (widget.isRequired) ...[
@@ -93,14 +103,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
 
         CustomContainer(
-          height: 55,
-          conColor: textColor,
-          borderRadius: BorderRadius.circular(10),
+          conColor: white2Color,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(color: blackColor.withOpacity(0.25), offset: const Offset(0, 4), blurRadius: 4),
+          ],
+
           child: TextField(
             controller: widget.controller,
             obscureText: widget.isPassword ? _obscure : false,
             onChanged: widget.onChanged,
             onSubmitted: widget.onSubmitted,
+            maxLines: widget.maxLines, // 👈 Now it works!
             keyboardType: widget.keyboardType,
             textInputAction: widget.textInputAction,
             textCapitalization: widget.textCapitalization,
@@ -112,10 +126,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
             style: const TextStyle(color: blackColor, fontSize: 13, fontWeight: FontWeight.w500),
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(
+              hint: widget.hintWidget,
               hintText: widget.hintText,
-              hintStyle: const TextStyle(color: greyColor, fontSize: 13),
+              hintStyle: TextStyle(
+                color: blackColor.withOpacity(0.50),
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+              ),
               border: InputBorder.none,
-
+              counterText: '',
               // 🔴 Left circular icon (only if iconPath provided)
               prefixIcon: (widget.iconPath != null)
                   ? CustomContainer(

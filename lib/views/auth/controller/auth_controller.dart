@@ -26,31 +26,31 @@ class AuthController extends GetxController {
   }
 
   // Sign in with Google
-  Future<AuthModel?> signInWithGoogle() async {
-    try {
-      isLoading.value = true;
-      errorMessage.value = '';
-
-      final user = await _authService.signInWithGoogle();
-
-      if (user != null) {
-        currentUser.value = user;
-        return user;
-      }
-
-      return null;
-    } catch (e) {
-      errorMessage.value = 'Failed to sign in with Google: ${e.toString()}';
-      Get.snackbar(
-        'Error',
-        errorMessage.value,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return null;
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  // Future<AuthModel?> signInWithGoogle() async {
+  //   try {
+  //     isLoading.value = true;
+  //     errorMessage.value = '';
+  //
+  //     final user = await _authService.signInWithGoogle();
+  //
+  //     if (user != null) {
+  //       currentUser.value = user;
+  //       return user;
+  //     }
+  //
+  //     return null;
+  //   } catch (e) {
+  //     errorMessage.value = 'Failed to sign in with Google: ${e.toString()}';
+  //     Get.snackbar(
+  //       'Error',
+  //       errorMessage.value,
+  //       snackPosition: SnackPosition.BOTTOM,
+  //     );
+  //     return null;
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   // Sign in with Apple
   Future<AuthModel?> signInWithApple() async {
@@ -68,11 +68,7 @@ class AuthController extends GetxController {
       return null;
     } catch (e) {
       errorMessage.value = 'Failed to sign in with Apple: ${e.toString()}';
-      Get.snackbar(
-        'Error',
-        errorMessage.value,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', errorMessage.value, snackPosition: SnackPosition.BOTTOM);
       return null;
     } finally {
       isLoading.value = false;
@@ -87,11 +83,7 @@ class AuthController extends GetxController {
       currentUser.value = null;
     } catch (e) {
       errorMessage.value = 'Failed to sign out: ${e.toString()}';
-      Get.snackbar(
-        'Error',
-        errorMessage.value,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', errorMessage.value, snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading.value = false;
     }
@@ -105,11 +97,7 @@ class AuthController extends GetxController {
       currentUser.value = null;
     } catch (e) {
       errorMessage.value = 'Failed to delete account: ${e.toString()}';
-      Get.snackbar(
-        'Error',
-        errorMessage.value,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', errorMessage.value, snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading.value = false;
     }

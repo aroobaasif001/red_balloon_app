@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -13,6 +15,7 @@ class CustomBonusSlider extends StatefulWidget {
 class _CustomBonusSliderState extends State<CustomBonusSlider> {
   final PageController _pageController = PageController();
   int currentIndex = 0;
+  Timer? _autoSlideTimer;
 
   final List<Map<String, String>> bonusCards = [
     {"title": "Earn 15 SAR Bonus!", "subtitle": "Complete your first task today"},
@@ -21,9 +24,44 @@ class _CustomBonusSliderState extends State<CustomBonusSlider> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _startAutoSlide();
+  }
+
+  void _startAutoSlide() {
+    _autoSlideTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_pageController.hasClients) {
+        int nextPage = currentIndex + 1;
+
+        if (nextPage == bonusCards.length) {
+          nextPage = 0; // restart from first slide
+        }
+
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeInOut,
+        );
+
+        setState(() {
+          currentIndex = nextPage;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoSlideTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
-      alignment: Alignment.bottomCenter, // 🔥 now works!
+      alignment: Alignment.bottomCenter,
       children: [
         // PAGEVIEW
         SizedBox(
@@ -38,35 +76,33 @@ class _CustomBonusSliderState extends State<CustomBonusSlider> {
               return CustomContainer(
                 width: double.infinity,
                 conColor: redColor,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(15),
                 padding: const EdgeInsets.all(16),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomText(
-                        bonusCards[index]["title"]!,
-                        fontSize: 20,
-                        fontWeight: FontVariant.bold,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 10),
-                      CustomText(
-                        bonusCards[index]["subtitle"]!,
-                        fontSize: 14,
-                        color: Colors.white.withOpacity(0.9),
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CustomText(
+                      bonusCards[index]["title"]!,
+                      fontSize: 20,
+                      fontWeight: FontVariant.bold,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(height: 10),
+                    CustomText(
+                      bonusCards[index]["subtitle"]!,
+                      fontSize: 14,
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                  ],
                 ),
               );
             },
           ),
         ),
 
-        /// --- CUSTOM INDICATOR ---
+        // CUSTOM INDICATOR
         Padding(
-          padding: const EdgeInsets.only(bottom: 10), // 🔥 same as screenshot spacing
+          padding: const EdgeInsets.only(bottom: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(bonusCards.length, (index) {
