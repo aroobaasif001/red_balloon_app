@@ -12,7 +12,7 @@ class PostNewTaskScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: whiteColor,
         centerTitle: true,
-        title: CustomText('Post New Task'),
+        title: CustomText('Post New Task', fontSize: 24, fontWeight: FontVariant.bold),
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
@@ -20,24 +20,25 @@ class PostNewTaskScreen extends StatelessWidget {
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 15),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Row(
-              //   mainAxisSize: MainAxisSize.min,
-              //   children: [
-              //     if (widget.labelIcon != null) Image(image: AssetImage(widget.labelIcon!), height: 20),
-              //     CustomText(
-              //       widget.label!,
-              //       fontWeight: FontVariant.semiBold,
-              //       fontSize: 20,
-              //       color: widget.labelTextStyle?.color ?? blackColor,
-              //       style: widget.labelTextStyle, // allows full override
-              //     ),
-              //     if (widget.isRequired) ...[
-              //       const SizedBox(width: 4),
-              //       const CustomText('*', fontSize: 12, color: Colors.red),
-              //     ],
-              //   ],
-              // )
+              Padding(
+                padding: const EdgeInsets.only(left: 8, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image(image: AssetImage('assets/icons/category-solid.png'), height: 20),
+                    SizedBox(width: 10),
+                    CustomText(
+                      'Task Type',
+                      fontWeight: FontVariant.semiBold,
+                      fontSize: 20,
+                      color: blackColor,
+                    ),
+                  ],
+                ),
+              ),
               CustomTextField(
                 labelIcon: 'assets/icons/pen-line.png',
                 label: 'Task Title',
