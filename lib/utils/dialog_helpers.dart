@@ -10,10 +10,7 @@ class DialogHelpers {
   }
 
   static void showAddFundsSuccess(String amount, String paymentMethod) {
-    Get.snackbar(
-      'Success',
-      'Processing payment of SAR $amount via $paymentMethod',
-    );
+    Get.snackbar('Success', 'Processing payment of SAR $amount via $paymentMethod');
   }
 
   // Escrow Detail Dialog Methods
@@ -25,6 +22,7 @@ class DialogHelpers {
   static void showFundReleaseInfo() {
     Get.snackbar('Info', 'Funds are auto-released after successful validation');
   }
+
   static void showPriceInfoDialog(BuildContext context) {
     showDialog(
       context: context,
