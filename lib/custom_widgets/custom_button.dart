@@ -30,6 +30,8 @@ class CustomButton extends StatelessWidget {
 
   final FontVariant? fontWeight;
 
+  final Border? border;
+
   const CustomButton({
     super.key,
     required this.label,
@@ -51,6 +53,7 @@ class CustomButton extends StatelessWidget {
     this.trailing,
     this.fontSize,
     this.fontWeight,
+    this.border,
   });
 
   FontWeight _getFontWeight(FontVariant? variant) {
@@ -76,9 +79,12 @@ class CustomButton extends StatelessWidget {
     final enabled = onPressed != null && !isLoading;
 
     return CustomContainer(
+      border: border,
       height: height,
       width: width ?? double.maxFinite,
-      conColor: gradient == null ? (enabled ? bgColor : (disabledBgColor ?? bgColor.withOpacity(0.5))) : null,
+      conColor: gradient == null
+          ? (enabled ? bgColor : (disabledBgColor ?? bgColor.withOpacity(0.5)))
+          : null,
       gradient: gradient,
       borderRadius: borderRadius,
       boxShadow: boxShadow,
@@ -92,11 +98,18 @@ class CustomButton extends StatelessWidget {
             padding: padding ?? const EdgeInsets.symmetric(horizontal: 16),
             child: Center(
               child: isLoading
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (leading != null) ...[leading!, const SizedBox(width: 8)],
+                        if (leading != null) ...[
+                          leading!,
+                          const SizedBox(width: 8),
+                        ],
                         Expanded(
                           child: Text(
                             label,
@@ -116,7 +129,10 @@ class CustomButton extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+                        if (trailing != null) ...[
+                          const SizedBox(width: 8),
+                          trailing!,
+                        ],
                       ],
                     ),
             ),

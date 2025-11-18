@@ -4,6 +4,27 @@ import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
 class DialogHelpers {
+  // Add Funds Dialog Methods
+  static void showAddFundsError(String message) {
+    Get.snackbar('Error', message);
+  }
+
+  static void showAddFundsSuccess(String amount, String paymentMethod) {
+    Get.snackbar(
+      'Success',
+      'Processing payment of SAR $amount via $paymentMethod',
+    );
+  }
+
+  // Escrow Detail Dialog Methods
+  static void showTaskDetailsInfo() {
+    Get.snackbar('Task Details', 'Navigating to task details...');
+  }
+
+  // Wallet Controller Dialog Methods
+  static void showFundReleaseInfo() {
+    Get.snackbar('Info', 'Funds are auto-released after successful validation');
+  }
   static void showPriceInfoDialog(BuildContext context) {
     showDialog(
       context: context,
