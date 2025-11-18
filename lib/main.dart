@@ -28,7 +28,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: Colors.white),
       debugShowCheckedModeBanner: false,
-      home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
+      // home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
+      home: const BottomNaviScreen(),
     );
   }
 }
