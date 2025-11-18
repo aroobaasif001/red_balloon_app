@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/post_new_task/post_new_task_screen.dart';
 
 class DraftTab extends StatelessWidget {
   const DraftTab({super.key});
@@ -24,7 +26,7 @@ class DraftTab extends StatelessWidget {
                   postedTime: "Edited 3 hours ago",
                   image: "assets/images/sofa.png",
                   onEdit: () {
-                    print("Edit tapped");
+                    Get.to(() => PostNewTaskScreen());
                   },
                   showButton: true,
                   btnText: 'Continue Editing',

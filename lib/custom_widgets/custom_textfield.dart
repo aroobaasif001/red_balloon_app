@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
-import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'customtext.dart';
 
 class CustomTextField extends StatefulWidget {
   final Widget? hintWidget;
   final TextEditingController? controller;
   final String? hintText;
-  final String? iconPath; // optional
+  final String? iconPath; // left circular icon (optional)
   final bool isPassword;
   final Function(String)? onChanged;
 
-  // 🔤 Keyboard / input options
+  // 🔤 Keyboard
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final ValueChanged<String>? onSubmitted;
@@ -23,13 +23,18 @@ class CustomTextField extends StatefulWidget {
   final bool? enableSuggestions;
   final Brightness? keyboardAppearance;
 
-  // 🏷️ Optional label
-  final String? label; // 👈 NEW (null => no label)
-  final String? labelIcon; // 👈 NEW (null => no label)
-  final bool isRequired; // 👈 NEW (adds asterisk)
-  final EdgeInsetsGeometry labelMargin; // 👈 NEW
-  final TextStyle? labelTextStyle; // 👈 NEW
-  final int? maxLines; // 👈 NEW
+  // 🏷️ Label
+  final String? label;
+  final String? labelIcon;
+  final bool isRequired;
+  final EdgeInsetsGeometry labelMargin;
+  final TextStyle? labelTextStyle;
+
+  final int? maxLines;
+
+  // ⭐ Optional Suffix / Prefix Widgets
+  final Widget? suffixWidget;
+  final Widget? prefixWidget;
 
   const CustomTextField({
     super.key,
@@ -38,8 +43,6 @@ class CustomTextField extends StatefulWidget {
     this.iconPath,
     this.isPassword = false,
     this.onChanged,
-
-    // keyboard defaults
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
     this.onSubmitted,
@@ -49,8 +52,6 @@ class CustomTextField extends StatefulWidget {
     this.autocorrect,
     this.enableSuggestions,
     this.keyboardAppearance,
-
-    // label defaults
     this.labelIcon,
     this.label,
     this.isRequired = false,
@@ -58,6 +59,8 @@ class CustomTextField extends StatefulWidget {
     this.labelTextStyle,
     this.maxLines,
     this.hintWidget,
+    this.suffixWidget,
+    this.prefixWidget,
   });
 
   @override
@@ -69,65 +72,71 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final bool effectiveAutocorrect = widget.autocorrect ?? !widget.isPassword;
-    final bool effectiveSuggestions = widget.enableSuggestions ?? !widget.isPassword;
-
-    final bool showLabel = (widget.label != null && widget.label!.trim().isNotEmpty);
+    final bool showLabel = widget.label != null && widget.label!.trim().isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ---------- LABEL ----------
         if (showLabel)
           Padding(
             padding: widget.labelMargin,
             child: Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 if (widget.labelIcon != null) ...[
                   Image(image: AssetImage(widget.labelIcon!), height: 20),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                 ],
                 CustomText(
                   widget.label!,
                   fontWeight: FontVariant.semiBold,
                   fontSize: 20,
                   color: widget.labelTextStyle?.color ?? blackColor,
-                  style: widget.labelTextStyle, // allows full override
+                  style: widget.labelTextStyle,
                 ),
                 if (widget.isRequired) ...[
                   const SizedBox(width: 4),
-                  const CustomText('*', fontSize: 12, color: Colors.red),
+                  const CustomText("*", fontSize: 12, color: Colors.red),
                 ],
               ],
             ),
           ),
 
+        // ---------- FIELD ----------
         CustomContainer(
           conColor: white2Color,
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
-            BoxShadow(color: blackColor.withOpacity(0.25), offset: const Offset(0, 4), blurRadius: 4),
+            BoxShadow(
+              color: blackColor.withOpacity(0.25),
+              offset: const Offset(0, 4),
+              blurRadius: 4,
+            ),
           ],
-
           child: TextField(
             controller: widget.controller,
             obscureText: widget.isPassword ? _obscure : false,
+            maxLines: widget.maxLines,
             onChanged: widget.onChanged,
             onSubmitted: widget.onSubmitted,
-            maxLines: widget.maxLines, // 👈 Now it works!
             keyboardType: widget.keyboardType,
             textInputAction: widget.textInputAction,
             textCapitalization: widget.textCapitalization,
             autofillHints: widget.autofillHints,
             inputFormatters: widget.inputFormatters,
-            autocorrect: effectiveAutocorrect,
-            enableSuggestions: effectiveSuggestions,
+            autocorrect: widget.autocorrect ?? !widget.isPassword,
+            enableSuggestions: widget.enableSuggestions ?? !widget.isPassword,
             keyboardAppearance: widget.keyboardAppearance,
-            style: const TextStyle(color: blackColor, fontSize: 13, fontWeight: FontWeight.w500),
+            style: const TextStyle(
+              color: blackColor,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
+
             decoration: InputDecoration(
-              hint: widget.hintWidget,
               hintText: widget.hintText,
+              hint: widget.hintWidget,
               hintStyle: TextStyle(
                 color: blackColor.withOpacity(0.50),
                 fontSize: 16,
@@ -135,30 +144,67 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ),
               border: InputBorder.none,
               counterText: '',
-              // 🔴 Left circular icon (only if iconPath provided)
-              prefixIcon: (widget.iconPath != null)
-                  ? CustomContainer(
-                      margin: const EdgeInsets.only(left: 5, top: 5, bottom: 5, right: 10),
-                      width: 45,
-                      height: 45,
-                      conColor: redColor,
-                      shape: BoxShape.circle,
-                      image: DecorationImage(image: AssetImage(widget.iconPath!), scale: 4),
-                    )
+
+              // ⭐ PREFIX (text like "SAR" OR circular icon)
+              prefixIcon: widget.prefixWidget != null
+                  ? Padding(
+                padding: const EdgeInsets.only(left: 16, right: 8),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: 1,
+                  child: widget.prefixWidget,
+                ),
+              )
+                  : widget.iconPath != null
+                  ? Padding(
+                padding: const EdgeInsets.only(left: 10, right: 8),
+                child: CustomContainer(
+                  width: 45,
+                  height: 45,
+                  conColor: redColor,
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: AssetImage(widget.iconPath!),
+                    scale: 4,
+                  ),
+                ),
+              )
                   : null,
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 0,
+                minHeight: 0,
+              ),
 
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-
-              // 👁 Password toggle
-              suffixIcon: widget.isPassword
+              // ⭐ SUFFIX (info icon OR password eye)
+              suffixIcon: widget.suffixWidget != null
+                  ? Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: Align(
+                  alignment: Alignment.center,
+                  widthFactor: 1,
+                  child: widget.suffixWidget,
+                ),
+              )
+                  : widget.isPassword
                   ? IconButton(
-                      icon: Icon(
-                        _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                        color: Colors.grey.shade700,
-                      ),
-                      onPressed: () => setState(() => _obscure = !_obscure),
-                    )
+                icon: Icon(
+                  _obscure
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                  color: Colors.grey.shade700,
+                ),
+                onPressed: () => setState(() => _obscure = !_obscure),
+              )
                   : null,
+              suffixIconConstraints: const BoxConstraints(
+                minWidth: 0,
+                minHeight: 0,
+              ),
+
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 20,
+              ),
             ),
           ),
         ),

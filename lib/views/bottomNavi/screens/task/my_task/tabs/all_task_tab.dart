@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/post_new_task/post_new_task_screen.dart';
 
 class AllTaskTab extends StatelessWidget {
   const AllTaskTab({super.key});
@@ -21,7 +23,7 @@ class AllTaskTab extends StatelessWidget {
             postedTime: "Posted 2 hours ago",
             image: "assets/images/sofa.png",
             onEdit: () {
-              print("Edit tapped");
+              Get.to(() => PostNewTaskScreen());
             },
           ),
           SizedBox(height: 26),
@@ -34,7 +36,7 @@ class AllTaskTab extends StatelessWidget {
             postedTime: "Posted 2 hours ago",
             image: "assets/images/sofa.png",
             onEdit: () {
-              print("Edit tapped");
+              Get.to(() => PostNewTaskScreen());
             },
             showButton: true,
             onViewDetails: () {},

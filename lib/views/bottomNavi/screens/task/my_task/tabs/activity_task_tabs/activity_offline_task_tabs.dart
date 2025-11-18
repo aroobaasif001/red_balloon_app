@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/post_new_task/post_new_task_screen.dart';
 
 class ActivityOfflineTaskTabs extends StatelessWidget {
   const ActivityOfflineTaskTabs({super.key});
@@ -24,7 +26,7 @@ class ActivityOfflineTaskTabs extends StatelessWidget {
                   postedTime: "Posted 2 hours ago",
                   image: "assets/images/sofa.png",
                   onEdit: () {
-                    print("Edit tapped");
+                    Get.to(() => PostNewTaskScreen());
                   },
                 ),
               );
