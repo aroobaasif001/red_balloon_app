@@ -6,8 +6,12 @@ class CustomBalanceColumn extends StatelessWidget {
   final String amount;
   final Color amountColor;
 
-  const CustomBalanceColumn({Key? key, required this.title, required this.amount, required this.amountColor})
-    : super(key: key);
+  const CustomBalanceColumn({
+    Key? key,
+    required this.title,
+    required this.amount,
+    required this.amountColor,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +21,12 @@ class CustomBalanceColumn extends StatelessWidget {
       children: [
         CustomText(title, fontSize: 12, fontWeight: FontVariant.regular),
         const SizedBox(height: 13.68),
-        CustomText(amount, fontSize: 24, fontWeight: FontVariant.bold, color: amountColor),
+        CustomText(
+          amount,
+          fontSize: 22,
+          fontWeight: FontVariant.bold,
+          color: amountColor,
+        ),
       ],
     );
   }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+
+import '../tabs/terms_and_policy_screen.dart';
 import 'menu_item.dart';
 
 class MenuSection extends StatelessWidget {
@@ -40,6 +43,9 @@ class MenuSection extends StatelessWidget {
       icon: 'assets/icons/terms.png',
       label: 'Terms & Privacy',
       hasArrow: true,
+      onTap: () {
+        Get.to(() => TermsAndPolicyScreen());
+      },
     ),
     MenuItemData(
       icon: 'assets/icons/feedback.png',
@@ -68,7 +74,9 @@ class MenuSection extends StatelessWidget {
       borderRadius: borderRadius ?? BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: (shadowColor ?? walletBlackColor).withOpacity(shadowOpacity ?? 0.25),
+          color: (shadowColor ?? walletBlackColor).withOpacity(
+            shadowOpacity ?? 0.25,
+          ),
           blurRadius: shadowBlur ?? 4,
           offset: const Offset(0, 4),
         ),
