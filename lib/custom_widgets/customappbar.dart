@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'customtext.dart';  // <-- Correct import (important!)
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
 
   final String? leftImagePath;
@@ -33,7 +33,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showRightImage;   // ✅ NEW — Same as showLeftImage
   final Widget? leading;
 
-  const CustomAppBar({
+  const CustomAppBar1({
     super.key,
     this.title,
     this.leftImagePath,

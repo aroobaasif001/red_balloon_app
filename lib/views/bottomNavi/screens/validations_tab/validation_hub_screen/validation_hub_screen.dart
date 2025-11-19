@@ -23,7 +23,7 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
     return Scaffold(
       body: Column(
         children: [
-          const CustomAppBar(
+          const CustomAppBar1(
             title: 'Validation Hub',
             showLeftImage: false,
           ),

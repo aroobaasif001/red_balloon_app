@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 const Color blackColor = Color(0xff000000);
 const Color whiteColor = Color(0xffffffff);
 const Color redColor = Color(0xffda3331);
+const Color lastTextColor = Color(0xff666666);
 const Color red1Color = Color(0xffe63737);
 const Color red2Color = Color(0xffda3331);
 const Color redLightColor = Color(0xfffe7062);
@@ -61,3 +62,5 @@ const Color walletBalanceTextColor = Color(0xff1F2937);
 
 const Color escrowAmountCardWaitingBackground = Color(0xFFFFEBEE);
 const Color success = Color(0xFFFFA500);
+const Color totaTextColor = Color(0xFF333333);
+const Color historyGreenColor = Color(0xFF43A047);
