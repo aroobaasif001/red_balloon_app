@@ -33,9 +33,6 @@ class _ValidationScreenState extends State<ValidationScreen> {
             rightImagePath: 'assets/icons/button.png',
             rightImageHeight: 50,
             rightImageWidth: 20,
-            onRightPressed: () {
-              Get.to(()=>ValidationHistoryScreen());
-            },
           ),
 
           const SizedBox(height: 20),
