@@ -1,4 +1,4 @@
-package com.example.red_balloon_app
+package com.redballoon.app
 
 import io.flutter.embedding.android.FlutterActivity
 

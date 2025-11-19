@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1037639327100",
+    "project_id": "red-balloon-app",
+    "storage_bucket": "red-balloon-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037639327100:android:57de098d06f3922d44d8f9",
+        "android_client_info": {
+          "package_name": "com.redballoon.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-8afUTWDCdxYvN8m2IVfI6c-9I75Sxpk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

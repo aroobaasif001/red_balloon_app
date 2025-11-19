@@ -39,7 +39,7 @@ class CustomCurvedNav extends StatelessWidget {
             height: 24,
             color: currentIndex == 1 ? Colors.white : grey3Color,
           ),
-          label: 'Search',
+          label: 'Tasks',
           labelStyle: TextStyle(
             color: currentIndex == 1 ? Colors.white : grey3Color,
             fontSize: 12,
@@ -49,7 +49,9 @@ class CustomCurvedNav extends StatelessWidget {
 
         CurvedNavigationBarItem(
           child: Image.asset(
-            currentIndex == 2 ? 'assets/navi_icons/validations_active.png' : 'assets/navi_icons/validation_inactive.png',
+            currentIndex == 2
+                ? 'assets/navi_icons/validations_active.png'
+                : 'assets/navi_icons/validation_inactive.png',
             height: 24,
             color: currentIndex == 2 ? Colors.white : grey3Color,
           ),
@@ -63,13 +65,15 @@ class CustomCurvedNav extends StatelessWidget {
 
         CurvedNavigationBarItem(
           child: Image.asset(
-            currentIndex == 3 ? 'assets/navi_icons/wallet_active.png' : 'assets/navi_icons/wallet_inactive.png',
+            currentIndex == 3
+                ? 'assets/navi_icons/wallet_active.png'
+                : 'assets/navi_icons/wallet_inactive.png',
             height: 24,
             color: currentIndex == 3 ? Colors.white : grey3Color,
           ),
           label: 'Wallet',
           labelStyle: TextStyle(
-            color: currentIndex == 3 ? Colors.white : Colors.white70,
+            color: currentIndex == 3 ? Colors.white : grey3Color,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
