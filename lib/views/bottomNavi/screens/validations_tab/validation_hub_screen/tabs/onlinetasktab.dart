@@ -17,10 +17,18 @@ class OnlineTaskTab extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomText('Requests Near You', fontSize: 18, fontWeight: FontVariant.bold),
+              CustomText(
+                'Requests Near You',
+                fontSize: 18,
+                fontWeight: FontVariant.bold,
+              ),
               InkWell(
                 onTap: () {},
-                child: CustomText('View All', fontSize: 14, fontWeight: FontVariant.medium),
+                child: CustomText(
+                  'View All',
+                  fontSize: 14,
+                  fontWeight: FontVariant.medium,
+                ),
               ),
             ],
           ),
@@ -41,6 +49,8 @@ class OnlineTaskTab extends StatelessWidget {
                 taskType: 'Online Task',
                 price: "SAR 500",
                 image: "assets/icons/chair.png",
+                type: 'Location-based Task',
+
                 onViewDetails: () {
                   print("Details tapped");
                 },

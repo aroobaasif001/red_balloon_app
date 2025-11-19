@@ -34,8 +34,10 @@ class CustomAmountInput extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: TextField(
+                cursorColor: blackColor,
                 controller: customAmountController,
                 keyboardType: TextInputType.number,
+                style: TextStyle(color: blackColor),
                 decoration: InputDecoration(
                   hintText: 'Enter Custom Amount',
                   hintStyle: TextStyle(

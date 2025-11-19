@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/bottomNavi/bottom_navi_screen.dart';
+
+import '../../task/post_new_task/post_new_task_screen.dart';
 
 class CustomQuickActions extends StatelessWidget {
   const CustomQuickActions({super.key});
@@ -19,7 +23,7 @@ class CustomQuickActions extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15),
                   onTap: () {
-                    debugPrint("Create Task tapped");
+                    Get.to(() => PostNewTaskScreen());
                   },
                   child: CustomContainer(
                     height: 70,
@@ -34,7 +38,10 @@ class CustomQuickActions extends StatelessWidget {
                       ),
                     ],
                     child: Ink(
-                      decoration: BoxDecoration(color: redColor.withOpacity(0.1), shape: BoxShape.circle),
+                      decoration: BoxDecoration(
+                        color: redColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
                       child: Center(
                         child: Image.asset(
                           "assets/icons/create_task.png",
@@ -62,7 +69,7 @@ class CustomQuickActions extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15),
                   onTap: () {
-                    debugPrint("Wallet tapped");
+                    Get.offAll(() => BottomNaviScreen(initialIndex: 3));
                   },
                   child: CustomContainer(
                     height: 70,
@@ -77,7 +84,10 @@ class CustomQuickActions extends StatelessWidget {
                       ),
                     ],
                     child: Ink(
-                      decoration: BoxDecoration(color: redColor.withOpacity(0.1), shape: BoxShape.circle),
+                      decoration: BoxDecoration(
+                        color: redColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
                       child: Center(
                         child: Image.asset(
                           "assets/icons/Wallet.png",
@@ -105,7 +115,7 @@ class CustomQuickActions extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15),
                   onTap: () {
-                    debugPrint("Validation tapped");
+                    Get.offAll(() => BottomNaviScreen(initialIndex: 2));
                   },
                   child: CustomContainer(
                     height: 70,
@@ -120,7 +130,10 @@ class CustomQuickActions extends StatelessWidget {
                       ),
                     ],
                     child: Ink(
-                      decoration: BoxDecoration(color: redColor.withOpacity(0.1), shape: BoxShape.circle),
+                      decoration: BoxDecoration(
+                        color: redColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
                       child: Center(
                         child: Image.asset(
                           "assets/icons/Validation.png",
@@ -163,7 +176,10 @@ class CustomQuickActions extends StatelessWidget {
                       ),
                     ],
                     child: Ink(
-                      decoration: BoxDecoration(color: redColor.withOpacity(0.1), shape: BoxShape.circle),
+                      decoration: BoxDecoration(
+                        color: redColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
                       child: Center(
                         child: Image.asset(
                           "assets/icons/Redeem.png",

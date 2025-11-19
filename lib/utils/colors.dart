@@ -57,7 +57,10 @@ const Color walletInfoTextColor = Color(0xff4B5563);
 const Color walletLabelTextColor = Color(0xff4B5563);
 const Color walletProgressBgColor = Color(0xffE0E0E0);
 const Color walletBlackColor = Color(0xff000000);
+const Color textColor2 = Color(0xff333333);
 const Color walletBalanceTextColor = Color(0xff1F2937);
 
 const Color escrowAmountCardWaitingBackground = Color(0xFFFFEBEE);
 const Color success = Color(0xFFFFA500);
+const Color blackLightColor = Color(0xff1e1e1e);
+const Color arrowColor = Color(0xffCCCCCC);

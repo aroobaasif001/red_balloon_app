@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/custom_widgets/custom_task_type_tabs.dart';
+import 'package:red_balloon_app/custom_widgets/customHomeTypeTabs.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/controller/home_controller.dart';
-import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/offline_task_tab.dart';
-import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/online_task_tab.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/latest_tab.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/nearby_tab.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/recommended_tab.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/tasks_for_you_tab.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_bonus_slider.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_quick_actions.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_wallet_card.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/notification/notification_screen.dart';
+
+import '../profile/tabs/profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -31,17 +35,32 @@ class HomeScreen extends StatelessWidget {
                         // Header
                         Row(
                           children: [
-                            Image(image: AssetImage('assets/images/splash_logo.png'), height: 84),
+                            Image(
+                              image: AssetImage(
+                                'assets/images/splash_logo.png',
+                              ),
+                              height: 84,
+                            ),
                             Spacer(),
                             IconButton(
                               onPressed: () {
                                 Get.to(() => NotificationScreen());
                               },
-                              icon: Image(image: AssetImage('assets/icons/notification.png'), height: 24),
+                              icon: Image(
+                                image: AssetImage(
+                                  'assets/icons/notification.png',
+                                ),
+                                height: 24,
+                              ),
                             ),
                             InkWell(
-                              onTap: () {},
-                              child: Image(image: AssetImage('assets/icons/profile.png'), height: 50),
+                              onTap: () {
+                                Get.to(() => ProfileScreen());
+                              },
+                              child: Image(
+                                image: AssetImage('assets/icons/profile.png'),
+                                height: 50,
+                              ),
                               customBorder: CircleBorder(),
                             ),
                           ],
@@ -61,10 +80,12 @@ class HomeScreen extends StatelessWidget {
                         SizedBox(height: 20),
                         // Custom Tab Bar
                         Obx(
-                          () => CustomTaskTypeTabs(
+                          () => CustomHomeTypeTabs(
                             selectedIndex: controller.selectedTabIndex.value,
                             onOfflineTap: () => controller.switchTab(0),
                             onOnlineTap: () => controller.switchTab(1),
+                            onLatestTap: () => controller.switchTab(2),
+                            onNearbyTap: () => controller.switchTab(3),
                           ),
                         ),
                       ],
@@ -73,11 +94,16 @@ class HomeScreen extends StatelessWidget {
                   SizedBox(height: 22),
                   // Tab Views
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.78,
+                    height: MediaQuery.of(context).size.height * 0.81,
                     child: TabBarView(
                       controller: controller.tabController,
                       physics: const NeverScrollableScrollPhysics(),
-                      children: const [OfflineTaskTab(), OnlineTaskTab()],
+                      children: const [
+                        TasksForYouTab(),
+                        RecommendedTab(),
+                        LatestTab(),
+                        NearByTab(),
+                      ],
                     ),
                   ),
                   Padding(
@@ -85,7 +111,11 @@ class HomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomText('Quick Actions', fontSize: 18, fontWeight: FontVariant.bold),
+                        CustomText(
+                          'Quick Actions',
+                          fontSize: 18,
+                          fontWeight: FontVariant.bold,
+                        ),
                         SizedBox(height: 10),
                         CustomQuickActions(),
                       ],
