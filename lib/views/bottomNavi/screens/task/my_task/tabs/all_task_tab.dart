@@ -4,6 +4,8 @@ import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/post_new_task/post_new_task_screen.dart';
 
+import 'clean_my_solar_panels.dart';
+
 class AllTaskTab extends StatelessWidget {
   const AllTaskTab({super.key});
 
@@ -39,7 +41,9 @@ class AllTaskTab extends StatelessWidget {
               Get.to(() => PostNewTaskScreen());
             },
             showButton: true,
-            onViewDetails: () {},
+            onViewDetails: () {
+              Get.to(() => Cleanmysolarpanels());
+            },
           ),
           SizedBox(height: 30),
         ],

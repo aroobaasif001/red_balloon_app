@@ -25,6 +25,10 @@ const Color balanceconbgColor = Color(0xffFEF2F2);
 const Color txColor = Color(0xff6B7280);
 const Color rbtxColor = Color(0xff374151);
 const Color greenColor = Color(0xff43a047);
+const Color appbard = Color(0xffF3F4F6);
+const Color textcolord = Color(0xff111827);
+
+
 
 const LinearGradient redOrangeGradientColor = LinearGradient(
   begin: Alignment.centerLeft,
@@ -61,3 +65,8 @@ const Color walletBalanceTextColor = Color(0xff1F2937);
 
 const Color escrowAmountCardWaitingBackground = Color(0xFFFFEBEE);
 const Color success = Color(0xFFFFA500);
+const Color yellow = Color(0xffFACC15);
+const Color pricecolor = Color(0xffE63946);
+const Color bordercolor1 = Color(0xffE5E7EB);
+
+

@@ -4,6 +4,8 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/views/bottomNavi/bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/offline_and_online_card.dart';
 
+import '../../task/my_task/tabs/clean_my_solar_panels.dart';
+
 class OnlineTaskTab extends StatelessWidget {
   const OnlineTaskTab({super.key});
 
@@ -44,8 +46,9 @@ class OnlineTaskTab extends StatelessWidget {
                 timeAgo: "15 mins ago",
                 price: "SAR 500",
                 image: "assets/icons/chair.png",
+
                 onViewDetails: () {
-                  print("Details tapped");
+                  Get.to(() => Cleanmysolarpanels());
                 },
               ),
             );
