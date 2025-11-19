@@ -4,6 +4,8 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
+import '../../../../../../utils/dialog_helpers.dart';
+
 class BeforeTab extends StatelessWidget {
   const BeforeTab({super.key});
 
@@ -79,7 +81,9 @@ class BeforeTab extends StatelessWidget {
                   fontWeight: FontVariant.semiBold,
                   bgColor: redColor,
                   borderRadius: BorderRadius.circular(12),
-                  onPressed: () {},
+                  onPressed: () {
+                    DialogHelpers.showPaymentSuccessDialog(context: context);
+                  },
                   leading: const Icon(Icons.close, color: Colors.white, size: 18),
                   padding: const EdgeInsets.symmetric(horizontal: 8), // prevents overflow
                 ),
@@ -96,7 +100,9 @@ class BeforeTab extends StatelessWidget {
                   fontWeight: FontVariant.semiBold,
                   bgColor: redColor,
                   borderRadius: BorderRadius.circular(12),
-                  onPressed: () {},
+                  onPressed: () {
+                    DialogHelpers.showPaymentSuccessDialog(context: context);
+                  },
                   leading: const Icon(Icons.check, color: Colors.white, size: 18),
                   padding: const EdgeInsets.symmetric(horizontal: 8), // prevents overflow
                 ),

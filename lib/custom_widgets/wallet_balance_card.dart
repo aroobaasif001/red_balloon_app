@@ -85,6 +85,8 @@ class WalletBalanceCard extends StatelessWidget {
               ? SizedBox(
                   width: double.infinity,
                   child: CustomButton(
+                    borderRadius: BorderRadius.circular(20),
+
                     label: 'Add Funds',
                     onPressed: onAddFunds,
                     bgColor: whiteColor,

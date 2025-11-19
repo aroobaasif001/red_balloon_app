@@ -3,13 +3,13 @@ import 'package:get/get.dart';
 
 class HomeController extends GetxController with GetTickerProviderStateMixin {
   late TabController tabController;
-  
+
   RxInt selectedTabIndex = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
-    tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 4, vsync: this);
     tabController.addListener(_handleTabChange);
   }
 

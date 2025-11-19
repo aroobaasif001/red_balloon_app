@@ -11,6 +11,10 @@ class InfoCard extends StatelessWidget {
   final Color borderColor;
   final Color iconColor;
   final Color textColor;
+  final double marginHorizontal;
+  final double marginVertical;
+  final String iconPath;
+  final double cardHeight;
 
   InfoCard({
     super.key,
@@ -21,13 +25,21 @@ class InfoCard extends StatelessWidget {
     this.backgroundColor = walletInfoBgColor,
     this.iconColor = grey4Color,
     this.textColor = walletInfoTextColor,
+    this.marginHorizontal = 16,
+    this.marginVertical = 12,
+    this.iconPath = 'assets/icons/help.png',
+    this.cardHeight = 73,
   });
 
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      height: 73,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      // height: cardHeight,
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(
+        horizontal: marginHorizontal,
+        vertical: marginVertical,
+      ),
       padding: const EdgeInsets.all(12),
       conColor: backgroundColor,
       borderRadius: BorderRadius.circular(12),
@@ -38,7 +50,7 @@ class InfoCard extends StatelessWidget {
             height: 24,
             width: 24,
             color: iconColor,
-            image: AssetImage('assets/icons/help.png'), // 👈 important
+            image: AssetImage(iconPath), // 👈 important
           ),
           const SizedBox(width: 12),
           Expanded(

@@ -59,15 +59,9 @@ class DialogHelpers {
     required BuildContext context,
 
     // OPTIONAL CUSTOM MESSAGE
-    String message = "Your Payment has been\nlocked in escrow successfully",
-
+    String message = "Thank you! Your vote has\nbeen submitted",
     // OPTIONAL BUTTON VISIBILITY
     bool showButton = true,
-
-    // OPTIONAL BUTTON TEXT
-    String buttonText = "OK",
-
-    // OPTIONAL BUTTON ACTION
     void Function()? onButtonTap,
     bool barrierDismissible = true,
   }) {
@@ -111,34 +105,6 @@ class DialogHelpers {
                       SizedBox(height: 25),
 
                       // ================= OK BUTTON =================
-                      CustomContainer(
-                        height: 50,
-                        borderRadius: BorderRadius.circular(12),
-                        conColor: Color(0xFFE53935),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
-                            onTap: () {
-                              Navigator.pop(context); // Close dialog first
-
-                              if (onButtonTap != null) {
-                                onButtonTap(); // custom callback
-                              } else {
-                                Get.back(result: true); // default behavior
-                              }
-                            },
-                            child: Center(
-                              child: CustomText(
-                                buttonText,
-                                fontSize: 18,
-                                fontWeight: FontVariant.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                     if (showButton == false) SizedBox(height: 41.5),
                   ],
@@ -153,4 +119,5 @@ class DialogHelpers {
       },
     );
   }
+
 }

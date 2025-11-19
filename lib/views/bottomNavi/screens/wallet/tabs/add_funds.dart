@@ -10,7 +10,6 @@ import 'package:red_balloon_app/views/bottomNavi/screens/wallet/controller/add_f
 import '../../../../../custom_widgets/wallet_balance_card.dart';
 import '../widgets/custom_amount_input.dart';
 import '../widgets/info_card.dart';
-import '../widgets/payment_methods_list.dart';
 import '../widgets/predefined_amount_buttons.dart';
 
 class AddFunds extends StatelessWidget {
@@ -75,23 +74,23 @@ class AddFunds extends StatelessWidget {
                   customAmountController: customAmountController,
                 ),
 
-                const SizedBox(height: 24),
+                // const SizedBox(height: 24),
 
-                // Select Payment Method Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  child: CustomText(
-                    'Select Payment Method',
-                    fontSize: 16,
-                    fontWeight: FontVariant.bold,
-                  ),
-                ),
-
-                // Payment Methods List
-                PaymentMethodsList(controller: controller),
+                // // Select Payment Method Section
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //     horizontal: 16,
+                //     vertical: 12,
+                //   ),
+                //   child: CustomText(
+                //     'Select Payment Method',
+                //     fontSize: 16,
+                //     fontWeight: FontVariant.bold,
+                //   ),
+                // ),
+                //
+                // // Payment Methods List
+                // PaymentMethodsList(controller: controller),
 
                 // Info Card
                 InfoCard(
@@ -105,6 +104,8 @@ class AddFunds extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: CustomButton(
+                    borderRadius: BorderRadius.circular(20),
+
                     label: 'Add Funds',
                     onPressed: () {
                       controller.addFunds();

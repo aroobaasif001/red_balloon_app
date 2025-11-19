@@ -26,7 +26,9 @@ class CustomTaskTypeTabs extends StatelessWidget {
           child: CustomContainer(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16.5),
             conColor: selectedIndex == 0 ? redColor : Colors.transparent,
-            border: selectedIndex == 0 ? null : Border.all(color: Colors.black, width: 1.5),
+            border: selectedIndex == 0
+                ? null
+                : Border.all(color: Colors.black, width: 1.5),
             borderRadius: BorderRadius.circular(12),
             child: Center(
               child: CustomText(
@@ -47,7 +49,9 @@ class CustomTaskTypeTabs extends StatelessWidget {
           child: CustomContainer(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16.5),
             conColor: selectedIndex == 1 ? redColor : Colors.transparent,
-            border: selectedIndex == 1 ? null : Border.all(color: Colors.black, width: 1.5),
+            border: selectedIndex == 1
+                ? null
+                : Border.all(color: Colors.black, width: 1.5),
             borderRadius: BorderRadius.circular(12),
             child: Center(
               child: CustomText(

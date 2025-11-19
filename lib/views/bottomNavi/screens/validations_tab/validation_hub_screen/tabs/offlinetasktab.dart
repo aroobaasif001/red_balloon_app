@@ -46,6 +46,7 @@ class OfflineTaskTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
+
               Expanded(
                 child: CustomContainer(
                   height: 120,

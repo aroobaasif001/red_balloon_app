@@ -1,10 +1,12 @@
 // lib/views/bottomNavi/screens/validations_tab/validation_screen/validation_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/validations_tab/validation_history_screen/validation_history_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/validations_tab/validation_screen/tabs/AfterTab.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/validations_tab/validation_screen/tabs/BeforeTab.dart';
 
@@ -26,7 +28,7 @@ class _ValidationScreenState extends State<ValidationScreen> {
         children: [
 
           /// HEADER
-          CustomAppBar(
+          CustomAppBar1(
             title: 'Validation',
             rightImagePath: 'assets/icons/button.png',
             rightImageHeight: 50,

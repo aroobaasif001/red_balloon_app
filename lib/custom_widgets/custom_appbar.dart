@@ -36,7 +36,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.iconOpacity = 1.0,
     this.iconSize = 24,
     this.leadingIconColor = blackColor,
-    this.leadingIcon = Icons.arrow_back_ios_new_sharp,
+    this.leadingIcon = Icons.arrow_back,
     this.leadingOnPressed,
     this.disableLeading = false,
     this.titleTextColor = blackColor,

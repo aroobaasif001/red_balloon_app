@@ -1,9 +1,11 @@
 // lib/screens/validation/validation_hub_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import '../validation_history_screen/validation_history_screen.dart';
 import 'tabs/offlinetasktab.dart';
 import '../widgets/validationemptywidget.dart';
 
@@ -23,9 +25,12 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
     return Scaffold(
       body: Column(
         children: [
-          const CustomAppBar(
+           CustomAppBar1(
             title: 'Validation Hub',
             showLeftImage: false,
+            onRightPressed: () {
+              Get.to(()=>ValidationHistoryScreen());
+            },
           ),
 
           const SizedBox(height: 25),

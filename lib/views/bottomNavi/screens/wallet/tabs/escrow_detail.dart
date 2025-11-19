@@ -53,6 +53,8 @@ class EscrowDetail extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: CustomButton(
+                    borderRadius: BorderRadius.circular(20),
+
                     label: 'View Task Details',
                     onPressed: () {
                       controller.viewTaskDetails();
