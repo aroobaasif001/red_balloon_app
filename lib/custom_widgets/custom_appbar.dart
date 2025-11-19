@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../utils/colors.dart';
 import 'customtext.dart';
@@ -15,7 +16,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Color iconColor;
   final double iconSize;
   final double iconOpacity;
-  final leading;
+  final Color leadingIconColor;
+  final IconData leadingIcon;
+  final leadingOnPressed;
+  final bool disableLeading;
+  final Color titleTextColor;
 
   const CustomAppBar({
     super.key,
@@ -30,7 +35,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.iconColor = blackColor,
     this.iconOpacity = 1.0,
     this.iconSize = 24,
-    this.leading,
+    this.leadingIconColor = blackColor,
+    this.leadingIcon = Icons.arrow_back_ios_new_sharp,
+    this.leadingOnPressed,
+    this.disableLeading = false,
+    this.titleTextColor = blackColor,
   });
 
   @override
@@ -39,13 +48,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leading: leading,
+      leading: disableLeading == false
+          ? IconButton(
+              onPressed: leadingOnPressed == null
+                  ? () {
+                      Get.back();
+                    }
+                  : leadingOnPressed,
+              icon: Icon(leadingIcon, color: leadingIconColor),
+            )
+          : null,
       backgroundColor: whiteColor,
       centerTitle: centerTitle,
       title: CustomText(
         titleText,
         fontSize: titleFontSize,
         fontWeight: titleFontWeight,
+        color: titleTextColor,
       ),
       elevation: elevation,
       scrolledUnderElevation: scrolledUnderElevation,

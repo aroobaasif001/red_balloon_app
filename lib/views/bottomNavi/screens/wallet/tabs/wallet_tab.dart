@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/wallet/tabs/escrow_detail.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/wallet/tabs/withdraw_funds.dart';
 
 import '../../../../../custom_widgets/custom_appbar.dart';
 import '../../../../../custom_widgets/transaction_item.dart';
@@ -22,12 +23,15 @@ class WalletTab extends StatelessWidget {
       top: false,
       child: Scaffold(
         appBar: CustomAppBar(
+          disableLeading: true,
           titleText: 'Wallet',
           action: [
             Padding(
               padding: const EdgeInsets.only(right: 15.0),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => WithdrawFunds());
+                },
                 child: Center(
                   child: Image.asset(
                     'assets/icons/withdraw.png',
