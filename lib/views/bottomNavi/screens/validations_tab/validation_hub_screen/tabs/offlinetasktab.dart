@@ -20,7 +20,7 @@ class OfflineTaskTab extends StatelessWidget {
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.20),
-          blurRadius: 8,
+          blurRadius: 3,
           offset: const Offset(0, 5),
         )
       ],
@@ -33,7 +33,7 @@ class OfflineTaskTab extends StatelessWidget {
               Expanded(
                 child: CustomContainer(
                   height: 120,
-                  conColor: Colors.red.shade200,
+                  conColor: Colors.red.shade100,
                   borderRadius: BorderRadius.circular(16),
                   alignment: Alignment.bottomCenter,
                   padding: const EdgeInsets.only(bottom: 8),
@@ -50,7 +50,7 @@ class OfflineTaskTab extends StatelessWidget {
               Expanded(
                 child: CustomContainer(
                   height: 120,
-                  conColor: Colors.red.shade200,
+                  conColor: Colors.red.shade100,
                   borderRadius: BorderRadius.circular(16),
                   alignment: Alignment.bottomCenter,
                   padding: const EdgeInsets.only(bottom: 8),
