@@ -26,6 +26,10 @@ const Color balanceconbgColor = Color(0xffFEF2F2);
 const Color txColor = Color(0xff6B7280);
 const Color rbtxColor = Color(0xff374151);
 const Color greenColor = Color(0xff43a047);
+const Color appbard = Color(0xffF3F4F6);
+const Color textcolord = Color(0xff111827);
+
+
 
 const LinearGradient redOrangeGradientColor = LinearGradient(
   begin: Alignment.centerLeft,
@@ -67,3 +71,8 @@ const Color totaTextColor = Color(0xFF333333);
 const Color historyGreenColor = Color(0xFF43A047);
 const Color blackLightColor = Color(0xff1e1e1e);
 const Color arrowColor = Color(0xffCCCCCC);
+const Color yellow = Color(0xffFACC15);
+const Color pricecolor = Color(0xffE63946);
+const Color bordercolor1 = Color(0xffE5E7EB);
+
+

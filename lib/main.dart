@@ -1,8 +1,11 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/bottomNavi/bottom_navi_screen.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/clean_my_solar_panels.dart';
 
 import 'firebase_options.dart';
 
@@ -11,11 +14,8 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
-    // DevicePreview(
-    //   enabled: !kReleaseMode,
-    //   builder: (context) => MyApp(), // Wrap your app
-    // ),
-    const MyApp(),
+    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    // MyApp(),
   );
 }
 
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(scaffoldBackgroundColor: whiteColor),
       debugShowCheckedModeBanner: false,
       // home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
-      home: const BottomNaviScreen(),
+      home: const Cleanmysolarpanels(),
     );
   }
 }

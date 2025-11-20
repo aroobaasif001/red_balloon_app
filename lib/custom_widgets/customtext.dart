@@ -48,6 +48,7 @@ class CustomText extends StatelessWidget {
   final String? title;
   final String? shortDescription;
   final String? detailedText;
+  final alignment;
 
   const CustomText(
     this.text, {
@@ -82,6 +83,7 @@ class CustomText extends StatelessWidget {
     this.shortDescription,
     this.detailedText,
     this.height,
+        this.alignment,
   });
 
   /// 🔹 Map FontVariant → FontWeight
