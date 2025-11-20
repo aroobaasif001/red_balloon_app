@@ -16,26 +16,35 @@ class AllTaskTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomText('My Tasks', fontSize: 24, fontWeight: FontVariant.bold),
+          CustomText(
+            'My Posted Tasks',
+            fontSize: 24,
+            fontWeight: FontVariant.bold,
+          ),
           SizedBox(height: 15),
           CustomMyTaskCard(
             title: "Help needed move furniture",
             amount: "SAR 500",
             status: "Not accepted",
-            postedTime: "Posted 2 hours ago",
+            postedTime: "2 hours ago",
             image: "assets/images/sofa.png",
             onEdit: () {
               Get.to(() => PostNewTaskScreen());
             },
+            showButton: true,
           ),
           SizedBox(height: 26),
-          CustomText('Active Tasks Near Me', fontSize: 24, fontWeight: FontVariant.bold),
+          CustomText(
+            'Tasks Near Me',
+            fontSize: 24,
+            fontWeight: FontVariant.bold,
+          ),
           SizedBox(height: 15),
           CustomMyTaskCard(
             title: "Help needed move furniture",
             amount: "SAR 500",
             status: "Not accepted",
-            postedTime: "Posted 2 hours ago",
+            postedTime: "2 hours ago",
             image: "assets/images/sofa.png",
             onEdit: () {
               Get.to(() => PostNewTaskScreen());

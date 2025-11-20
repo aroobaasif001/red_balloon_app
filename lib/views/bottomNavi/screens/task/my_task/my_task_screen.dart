@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
-import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/active_task_tab.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/all_task_tab.dart';
@@ -18,31 +18,39 @@ class MyTaskScreen extends StatelessWidget {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          elevation: 0,
-          centerTitle: true,
-          title: CustomText('Tasks', fontSize: 24, fontWeight: FontVariant.bold),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Get.to(() => PostNewTaskScreen());
-              },
-              icon: Image(image: AssetImage('assets/icons/plus.png'), height: 38),
+        appBar: CustomAppBar(titleText: 'Tasks', disableLeading: true),
+
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 78.0),
+          child: FloatingActionButton(
+            backgroundColor: redColor,
+            foregroundColor: whiteColor,
+            child: Icon(Icons.add),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40),
             ),
-          ],
+
+            // shape: BoxShape.circle,
+            onPressed: () {
+              Get.to(() => PostNewTaskScreen());
+            },
+          ),
         ),
         body: SafeArea(
           child: Column(
             children: [
               CustomContainer(
+                height: 50,
                 margin: EdgeInsets.symmetric(horizontal: 15),
                 conColor: whiteColor,
                 padding: EdgeInsets.all(7),
-                boxShadow: [
-                  BoxShadow(color: blackColor.withOpacity(0.25), offset: const Offset(0, 4), blurRadius: 4),
-                ],
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: blackColor.withOpacity(0.25),
+                //     offset: const Offset(0, 4),
+                //     blurRadius: 4,
+                //   ),
+                // ],
                 borderRadius: BorderRadius.circular(15),
 
                 child: TabBar(
@@ -52,24 +60,35 @@ class MyTaskScreen extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
-                  unselectedLabelStyle: GoogleFonts.montserrat(fontWeight: FontWeight.bold),
+                  unselectedLabelStyle: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.bold,
+                  ),
                   indicator: BoxDecoration(
-                    gradient: redOrangeGradientColor,
-                    borderRadius: BorderRadius.circular(10),
+                    color: redColor,
+                    borderRadius: BorderRadius.circular(40),
                   ),
                   indicatorSize: TabBarIndicatorSize.tab,
                   isScrollable: true,
                   dividerColor: Colors.transparent,
                   tabs: [
                     Tab(text: 'ALL TASKS'),
-                    Tab(text: 'MY TASKS'),
-                    Tab(text: 'ACTIVE TASKS'),
+                    Tab(text: 'POSTED BY ME'),
+                    Tab(text: 'IN PROGRESS'),
                     Tab(text: 'DRAFTS'),
                   ],
                 ),
               ),
               SizedBox(height: 35),
-              Expanded(child: TabBarView(children: [AllTaskTab(), MyTaskTab(), ActiveTaskTab(), DraftTab()])),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    AllTaskTab(),
+                    MyTaskTab(),
+                    ActiveTaskTab(),
+                    DraftTab(),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
