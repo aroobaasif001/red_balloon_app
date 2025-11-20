@@ -6,7 +6,7 @@ import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import '../validation_history_screen/validation_history_screen.dart';
-import 'tabs/offlinetasktab.dart';
+import 'tabs/location_based_task_tab.dart';
 import '../widgets/validationemptywidget.dart';
 
 // YOUR WIDGETS
@@ -42,7 +42,7 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 35),
+                padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -52,7 +52,7 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
                       child: Column(
                         children: [
                           CustomText(
-                            "Offline Tasks",
+                            "Location-based Task",
                             fontSize: 16,
                             fontWeight: FontVariant.medium,
                             fontType: AppFont.montserrat,
@@ -80,7 +80,7 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
                       child: Column(
                         children: [
                           CustomText(
-                            "Online Task",
+                            "Remote Task",
                             fontSize: 16,
                             fontWeight: FontVariant.medium,
                             fontType: AppFont.montserrat,
@@ -126,7 +126,7 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
               itemCount: 5,
               itemBuilder: (_, index) => const Padding(
                 padding: EdgeInsets.only(bottom: 20),
-                child: OfflineTaskTab(),
+                child: LocationBasedTaskTab(),
               ),
             )
             /// -------------------------

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/offline_and_online_card.dart';
 
-class OnlineTaskTab extends StatelessWidget {
-  const OnlineTaskTab({super.key});
+class RemoteTaskTab extends StatelessWidget {
+  const RemoteTaskTab({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -8,8 +8,8 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/validations_tab/validation_screen/validation_screen.dart';
-class OfflineTaskTab extends StatelessWidget {
-  const OfflineTaskTab({super.key});
+class LocationBasedTaskTab extends StatelessWidget {
+  const LocationBasedTaskTab({super.key});
   @override
   Widget build(BuildContext context) {
     return CustomContainer(

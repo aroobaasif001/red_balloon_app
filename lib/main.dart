@@ -14,8 +14,8 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
-    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
-    // MyApp(),
+    // DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    MyApp(),
   );
 }
 
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(scaffoldBackgroundColor: whiteColor),
       debugShowCheckedModeBanner: false,
       // home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
-      home: const Cleanmysolarpanels(),
+      home: BottomNaviScreen(),
     );
   }
 }
