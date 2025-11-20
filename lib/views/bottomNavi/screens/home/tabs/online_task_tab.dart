@@ -49,7 +49,7 @@ class OnlineTaskTab extends StatelessWidget {
 
                 onViewDetails: () {
                   Get.to(() => Cleanmysolarpanels());
-                },
+                }, type: '',
               ),
             );
           },

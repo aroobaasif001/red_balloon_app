@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 
 import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../utils/colors.dart';
@@ -16,17 +17,16 @@ class Cleanmysolarpanels extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 22),
-
-            /// Header
-            TaskHeaderBar(
-              title: "Clean my Solar Panel",
-              status: "Location-based Task",
+            CustomAppBar(
+              titleText: "Clean my Solar Panels",
+              titleFontSize: 16,
+              titleFontWeight: FontVariant.semiBold,
             ),
+
 
             const SizedBox(height: 20),
 
@@ -126,3 +126,9 @@ class Cleanmysolarpanels extends StatelessWidget {
     );
   }
 }
+// TaskStatusBadge(
+//   status: status,
+//   textColor: greyColor,
+//
+//   bgColor: appbard,
+// ),
