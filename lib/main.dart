@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(scaffoldBackgroundColor: whiteColor),
       debugShowCheckedModeBanner: false,
       // home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
-      home: const BottomNaviScreen(),
+      home: const Cleanmysolarpanels(),
     );
   }
 }

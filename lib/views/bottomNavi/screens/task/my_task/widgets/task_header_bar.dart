@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
-import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/widgets/task_status_badge.dart';
-
 import '../../../../../../utils/colors.dart';
 
 class TaskHeaderBar extends StatelessWidget {
@@ -16,24 +14,28 @@ class TaskHeaderBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Icon(Icons.arrow_back, size: 22),
+    return SizedBox(
+      height: 42,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
 
-        CustomText(
-          title,
-          fontSize: 17.5,
-          fontWeight: FontVariant.semiBold,
-          color: textcolord,
-        ),
-        TaskStatusBadge(
-          status: status,
-          textColor: greyColor,
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: 0),
+              child: Icon(Icons.arrow_back, size: 22),
+            ),
+          ),
 
-          bgColor: appbard,
-        ),
-      ],
+          CustomText(
+            title,
+            fontSize: 18,
+            fontWeight: FontVariant.semiBold,
+            color: textcolord,
+          ),
+        ],
+      ),
     );
-
   }
 }

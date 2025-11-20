@@ -19,20 +19,12 @@ class OnlineTaskTab extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomText(
-                'Online Requests',
-                fontSize: 18,
-                fontWeight: FontVariant.bold,
-              ),
+              CustomText('Online Requests', fontSize: 18, fontWeight: FontVariant.bold),
               InkWell(
                 onTap: () {
                   Get.offAll(() => BottomNaviScreen(initialIndex: 1));
                 },
-                child: CustomText(
-                  'View All',
-                  fontSize: 14,
-                  fontWeight: FontVariant.medium,
-                ),
+                child: CustomText('View All', fontSize: 14, fontWeight: FontVariant.medium),
               ),
             ],
           ),
