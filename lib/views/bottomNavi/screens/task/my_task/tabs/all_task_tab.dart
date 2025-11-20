@@ -26,11 +26,12 @@ class AllTaskTab extends StatelessWidget {
             title: "Help needed move furniture",
             amount: "SAR 500",
             status: "Not accepted",
-            postedTime: "Posted 2 hours ago",
+            postedTime: "2 hours ago",
             image: "assets/images/sofa.png",
             onEdit: () {
               Get.to(() => PostNewTaskScreen());
             },
+            showButton: true,
           ),
           SizedBox(height: 26),
           CustomText(
@@ -43,7 +44,7 @@ class AllTaskTab extends StatelessWidget {
             title: "Help needed move furniture",
             amount: "SAR 500",
             status: "Not accepted",
-            postedTime: "Posted 2 hours ago",
+            postedTime: "2 hours ago",
             image: "assets/images/sofa.png",
             onEdit: () {
               Get.to(() => PostNewTaskScreen());

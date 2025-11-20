@@ -25,6 +25,7 @@ class DraftTab extends StatelessWidget {
                   status: "Not accepted",
                   postedTime: "Edited 3 hours ago",
                   image: "assets/images/sofa.png",
+                  showType: false,
                   onEdit: () {
                     Get.to(() => PostNewTaskScreen());
                   },

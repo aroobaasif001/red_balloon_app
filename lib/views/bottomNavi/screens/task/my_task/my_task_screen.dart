@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -7,6 +8,7 @@ import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/activ
 import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/all_task_tab.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/draft_tab.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/my_task_tab.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/post_new_task/post_new_task_screen.dart';
 
 class MyTaskScreen extends StatelessWidget {
   const MyTaskScreen({super.key});
@@ -17,6 +19,23 @@ class MyTaskScreen extends StatelessWidget {
       length: 4,
       child: Scaffold(
         appBar: CustomAppBar(titleText: 'Tasks', disableLeading: true),
+
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 78.0),
+          child: FloatingActionButton(
+            backgroundColor: redColor,
+            foregroundColor: whiteColor,
+            child: Icon(Icons.add),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40),
+            ),
+
+            // shape: BoxShape.circle,
+            onPressed: () {
+              Get.to(() => PostNewTaskScreen());
+            },
+          ),
+        ),
         body: SafeArea(
           child: Column(
             children: [
@@ -53,8 +72,8 @@ class MyTaskScreen extends StatelessWidget {
                   dividerColor: Colors.transparent,
                   tabs: [
                     Tab(text: 'ALL TASKS'),
-                    Tab(text: 'MY TASKS'),
-                    Tab(text: 'ACTIVE TASKS'),
+                    Tab(text: 'POSTED BY ME'),
+                    Tab(text: 'IN PROGRESS'),
                     Tab(text: 'DRAFTS'),
                   ],
                 ),

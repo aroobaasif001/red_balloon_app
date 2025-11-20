@@ -25,6 +25,10 @@ class ActivityOfflineTaskTabs extends StatelessWidget {
                   status: "Offline task",
                   postedTime: "Posted 2 hours ago",
                   image: "assets/images/sofa.png",
+                  showButton: true,
+                  btnText: 'In Progress',
+                  // onViewDetails: () {},
+                  showType: false,
                   onEdit: () {
                     Get.to(() => PostNewTaskScreen());
                   },
