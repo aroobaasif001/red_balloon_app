@@ -62,6 +62,7 @@ const Color walletInfoTextColor = Color(0xff4B5563);
 const Color walletLabelTextColor = Color(0xff4B5563);
 const Color walletProgressBgColor = Color(0xffE0E0E0);
 const Color walletBlackColor = Color(0xff000000);
+const Color timeColor = Color(0xff6B7280);
 const Color textColor2 = Color(0xff333333);
 const Color walletBalanceTextColor = Color(0xff1F2937);
 

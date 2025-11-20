@@ -16,7 +16,7 @@ class FundDistributionTable extends StatelessWidget {
       case 'pending':
         return success;
       default:
-        return walletTransactionDescColor;
+        return walletBlackColor;
     }
   }
 
@@ -114,7 +114,7 @@ class FundDistributionTable extends StatelessWidget {
                         flex: 2,
                         child: CustomText(
                           item['status'],
-                          color: _getStatusColor(item['statusColor']),
+                          color: blackColor,
                           fontSize: 13,
                           fontWeight: FontVariant.semiBold,
                           textAlign: TextAlign.right,

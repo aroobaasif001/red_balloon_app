@@ -8,7 +8,7 @@ class CustomTextField extends StatefulWidget {
   final Widget? hintWidget;
   final TextEditingController? controller;
   final String? hintText;
-  final String? iconPath; // left circular icon (optional)
+  final String? iconPath;
   final bool isPassword;
   final Function(String)? onChanged;
 
@@ -36,6 +36,9 @@ class CustomTextField extends StatefulWidget {
   final Widget? suffixWidget;
   final Widget? prefixWidget;
 
+  // ⭐ NEW: Optional Radius
+  final double? radius;
+
   const CustomTextField({
     super.key,
     this.controller,
@@ -61,6 +64,9 @@ class CustomTextField extends StatefulWidget {
     this.hintWidget,
     this.suffixWidget,
     this.prefixWidget,
+
+    /// ⭐ New optional radius
+    this.radius,
   });
 
   @override
@@ -105,7 +111,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         // ---------- FIELD ----------
         CustomContainer(
           conColor: white2Color,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(widget.radius ?? 15), // ⭐ Radius here
           boxShadow: [
             BoxShadow(
               color: blackColor.withOpacity(0.25),
@@ -145,14 +151,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
               border: InputBorder.none,
               counterText: '',
 
-              // ⭐ PREFIX (text like "SAR" OR circular icon)
               prefixIcon: widget.prefixWidget != null
                   ? Padding(
                 padding: const EdgeInsets.only(left: 16, right: 8),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   widthFactor: 1,
-                  child: widget.prefixWidget,
+                  child: widget.prefixWidget!,
                 ),
               )
                   : widget.iconPath != null
@@ -170,19 +175,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 ),
               )
                   : null,
+
               prefixIconConstraints: const BoxConstraints(
                 minWidth: 0,
                 minHeight: 0,
               ),
 
-              // ⭐ SUFFIX (info icon OR password eye)
               suffixIcon: widget.suffixWidget != null
                   ? Padding(
                 padding: const EdgeInsets.only(right: 12),
                 child: Align(
                   alignment: Alignment.center,
                   widthFactor: 1,
-                  child: widget.suffixWidget,
+                  child: widget.suffixWidget!,
                 ),
               )
                   : widget.isPassword
@@ -196,6 +201,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 onPressed: () => setState(() => _obscure = !_obscure),
               )
                   : null,
+
               suffixIconConstraints: const BoxConstraints(
                 minWidth: 0,
                 minHeight: 0,
