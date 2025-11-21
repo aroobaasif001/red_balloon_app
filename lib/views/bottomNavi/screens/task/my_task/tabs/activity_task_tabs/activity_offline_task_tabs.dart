@@ -13,7 +13,7 @@ class ActivityOfflineTaskTabs extends StatelessWidget {
         children: [
           ListView.builder(
             physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: EdgeInsets.symmetric(horizontal: 11),
             itemCount: 3,
             shrinkWrap: true,
             itemBuilder: (context, index) {

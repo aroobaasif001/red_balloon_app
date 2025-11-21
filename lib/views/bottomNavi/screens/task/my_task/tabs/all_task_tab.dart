@@ -54,7 +54,7 @@ class AllTaskTab extends StatelessWidget {
               Get.to(() => Cleanmysolarpanels());
             },
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 140),
         ],
       ),
     );

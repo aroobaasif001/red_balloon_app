@@ -96,7 +96,7 @@ class CustomMyTaskCard extends StatelessWidget {
                       color: blackColor,
                     ),
 
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 30),
 
                     Row(
                       children: [
@@ -105,24 +105,27 @@ class CustomMyTaskCard extends StatelessWidget {
                           conColor: whiteColor,
                           borderRadius: BorderRadius.circular(15),
                           child: CustomText(
+                            height: 12,
                             distance,
-                            fontSize: 14,
+
+                            fontSize: 13,
                             fontWeight: FontVariant.regular,
                           ),
                         ),
+
                         CustomContainer(
                           // padding: const EdgeInsets.all(8.5),
                           conColor: whiteColor,
                           borderRadius: BorderRadius.circular(15),
                           child: CustomText(
+                            height: 12,
                             ' • ${postedTime}',
-                            fontSize: 14,
+                            fontSize: 13,
                             fontWeight: FontVariant.regular,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 18),
 
                     showType == false
                         ? CustomContainer(
@@ -189,7 +192,7 @@ class CustomMyTaskCard extends StatelessWidget {
                 showType == true
                     ? CustomContainer(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
+                          horizontal: 1,
                           vertical: 8,
                         ),
 
