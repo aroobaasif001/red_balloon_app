@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/post_new_task/post_new_task_screen.dart';
 
 import 'clean_my_solar_panels.dart';
@@ -30,6 +31,9 @@ class AllTaskTab extends StatelessWidget {
             image: "assets/images/sofa.png",
             onEdit: () {
               Get.to(() => PostNewTaskScreen());
+            },
+            onViewDetails: (){
+              Get.to(()=>TaskDetailsScreen());
             },
             showButton: true,
           ),
