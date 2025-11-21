@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/profile/tabs/help_center_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/profile/tabs/in_app_store_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/profile/tabs/messages_screen.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/profile/tabs/reviews_and_feedback_screen.dart';
 
 import '../tabs/terms_and_policy_screen.dart';
 import 'menu_item.dart';
@@ -40,6 +42,9 @@ class MenuSection extends StatelessWidget {
       icon: 'assets/icons/star.png',
       label: 'Help Center',
       hasArrow: true,
+      onTap: () {
+        Get.to(() => HelpCenterScreen());
+      },
     ),
     MenuItemData(
       icon: 'assets/icons/terms.png',
@@ -53,6 +58,9 @@ class MenuSection extends StatelessWidget {
       icon: 'assets/icons/feedback.png',
       label: 'Feedbacks and Reviews',
       hasArrow: true,
+      onTap: () {
+        Get.to(() => ReviewsAndFeedback());
+      },
     ),
     MenuItemData(
       icon: 'assets/icons/inapp.png',

@@ -65,12 +65,11 @@ class CustomMyTaskCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 4),
 
           // ----------------- AMOUNT + IMAGE -----------------
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-
             children: [
               Expanded(
                 flex: 2,
@@ -95,9 +94,7 @@ class CustomMyTaskCard extends StatelessWidget {
                       fontSize: 18,
                       color: blackColor,
                     ),
-
-                    const SizedBox(height: 18),
-
+                    const SizedBox(height: 30),
                     Row(
                       children: [
                         CustomContainer(
@@ -122,8 +119,6 @@ class CustomMyTaskCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 18),
-
                     showType == false
                         ? CustomContainer(
                             padding: const EdgeInsets.symmetric(
@@ -166,7 +161,7 @@ class CustomMyTaskCard extends StatelessWidget {
               // IMAGE
               Expanded(
                 child: CustomContainer(
-                  height: 105,
+                  height: 100,
                   // width: 101,
                   borderRadius: BorderRadius.circular(15),
                   image: DecorationImage(
@@ -177,60 +172,63 @@ class CustomMyTaskCard extends StatelessWidget {
               ),
             ],
           ),
-
-          const SizedBox(height: 3),
-
           // ----------------- OPTIONAL BUTTON -----------------
           if (showButton) ...[
-            const SizedBox(height: 11),
+            const SizedBox(height: 10),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                showType == true
-                    ? CustomContainer(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
+                if (showType == true)
+                  Flexible(
+                    flex: 0,
+                    child: CustomContainer(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: blackColor.withOpacity(0.25),
+                          offset: const Offset(0, 4),
+                          blurRadius: 4,
                         ),
-
-                        boxShadow: [
-                          BoxShadow(
-                            color: blackColor.withOpacity(0.25),
-                            offset: const Offset(0, 4),
-                            blurRadius: 4,
+                      ],
+                      borderRadius: BorderRadius.circular(45),
+                      conColor: white2Color,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            color: grey5Color,
+                            size: 13,
+                          ),
+                          const SizedBox(width: 7),
+                          CustomText(
+                            type,
+                            fontWeight: FontVariant.regular,
+                            fontSize: 14,
+                            color: walletGrey500Color,
                           ),
                         ],
-                        borderRadius: BorderRadius.circular(45),
-                        conColor: white2Color,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              color: grey5Color,
-                              size: 13,
-                            ),
-                            SizedBox(width: 7),
-                            CustomText(
-                              type,
-                              fontWeight: FontVariant.regular,
-                              fontSize: 14,
-                              color: walletGrey500Color,
-                            ),
-                          ],
-                        ),
-                      )
-                    : SizedBox(),
-                // SizedBox(width: 5),
-                CustomButton(
-                  height: 40,
-                  label: btnText ?? 'View Details',
-                  onPressed: onViewDetails,
-                  width: showType == true ? 140 : Get.width * 0.8523,
-                  fontSize: 16,
-                  fontWeight: FontVariant.semiBold,
+                      ),
+                    ),
+                  ),
+
+                const SizedBox(width: 10),
+
+                /// BUTTON FIX
+                Expanded(
+                  child: CustomButton(
+                    height: 40,
+                    label: btnText ?? 'View Details',
+                    onPressed: onViewDetails,
+                    width: showType == true ? 140 : Get.width * 0.8523,
+                    fontSize: 16,
+                    fontWeight: FontVariant.semiBold,
+                  ),
                 ),
               ],
-            ),
+            )
+
           ],
         ],
       ),

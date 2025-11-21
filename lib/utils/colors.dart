@@ -50,6 +50,7 @@ const Color fundCardBorderColor = Color(0xffE0E0E0);
 const Color walletInfoBgColor = Color(0xFFFFFBF0);
 const Color walletInfoBorderColor = Color(0xFFFFE0B2);
 const Color walletTextGreyColor = Color(0xff9CA3AF);
+const Color mapBgColor = Color(0xffDDF2D2);
 const Color walletGrey600Color = Color(0xff4B5563);
 const Color walletGrey500Color = Color(0xff6B7280);
 const Color walletGrey700Color = Color(0xff374151);
@@ -75,5 +76,6 @@ const Color arrowColor = Color(0xffCCCCCC);
 const Color yellow = Color(0xffFACC15);
 const Color pricecolor = Color(0xffE63946);
 const Color bordercolor1 = Color(0xffE5E7EB);
+const Color greenBg = Color(0xffE8F5E9);
 
 
