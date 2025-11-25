@@ -17,11 +17,7 @@ class MyTaskTab extends StatelessWidget {
             padding: const EdgeInsets.only(left: 15.0),
             child: Align(
               alignment: Alignment.bottomLeft,
-              child: CustomText(
-                'My Posted Tasks',
-                fontSize: 24,
-                fontWeight: FontVariant.bold,
-              ),
+              child: CustomText('My Posted Tasks', fontSize: 24, fontWeight: FontVariant.bold),
             ),
           ),
           SizedBox(height: 15),
@@ -48,7 +44,7 @@ class MyTaskTab extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 140),
         ],
       ),
     );
