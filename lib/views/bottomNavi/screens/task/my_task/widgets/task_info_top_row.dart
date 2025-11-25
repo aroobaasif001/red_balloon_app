@@ -9,14 +9,12 @@ class TaskInfoTopRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         /// ---- Left Side ----
         Row(
           children: [
-            Image.asset(
-              "assets/icons/location2.png",
-              height: 16,
-            ),
+            Image.asset("assets/icons/location2.png", height: 16),
             const SizedBox(width: 6),
 
             const CustomText(
@@ -25,17 +23,11 @@ class TaskInfoTopRow extends StatelessWidget {
               fontWeight: FontVariant.medium,
             ),
 
-            const SizedBox(width: 12),
-
-            Image.asset(
-              "assets/icons/dot.png",
-              height: 16,
-              width: 7,
-            ),
+            // const SizedBox(width: 12),
           ],
         ),
 
-        const Spacer(),
+        Image.asset("assets/icons/dot.png", height: 16, width: 7),
 
         Row(
           children: [
@@ -46,22 +38,15 @@ class TaskInfoTopRow extends StatelessWidget {
               color: pricecolor,
             ),
 
-            const SizedBox(width: 8),
-
-            /// 🔴 Second DOT IMAGE
-            Image.asset(
-              "assets/icons/dot.png",
-              height: 6,
-              width: 6,
-            ),
+            // const SizedBox(width: 8),
           ],
         ),
 
-        const Spacer(),
+        Image.asset("assets/icons/dot.png", height: 6, width: 6),
 
         Row(
           children: [
-            const Icon(Icons.access_time, size: 18, color:walletGrey600Color),
+            const Icon(Icons.access_time, size: 18, color: walletGrey600Color),
             const SizedBox(width: 6),
 
             const CustomText(

@@ -32,8 +32,8 @@ class AllTaskTab extends StatelessWidget {
             onEdit: () {
               Get.to(() => PostNewTaskScreen());
             },
-            onViewDetails: (){
-              Get.to(()=>TaskDetailsScreen());
+            onViewDetails: () {
+              Get.to(() => TaskDetailsScreen());
             },
             showButton: true,
           ),
@@ -55,7 +55,7 @@ class AllTaskTab extends StatelessWidget {
             },
             showButton: true,
             onViewDetails: () {
-              Get.to(() => Cleanmysolarpanels());
+              Get.to(() => Cleanmysolarpanels(taskType: 'Location-based Task'));
             },
           ),
           SizedBox(height: 140),

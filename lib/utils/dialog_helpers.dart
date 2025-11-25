@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/widgets/send_offer_bottom_sheet.dart';
 
 import 'colors.dart';
 
@@ -416,6 +417,20 @@ class DialogHelpers {
           ),
         ],
       ),
+    );
+  }
+
+  /// ===================================================
+  /// SHOW SEND OFFER BOTTOM SHEET
+  /// ===================================================
+  static void showSendOfferBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return const SendOfferBottomSheet();
+      },
     );
   }
 
