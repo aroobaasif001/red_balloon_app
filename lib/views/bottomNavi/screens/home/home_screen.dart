@@ -35,32 +35,19 @@ class HomeScreen extends StatelessWidget {
                         // Header
                         Row(
                           children: [
-                            Image(
-                              image: AssetImage(
-                                'assets/images/splash_logo.png',
-                              ),
-                              height: 84,
-                            ),
+                            Image(image: AssetImage('assets/images/splash_logo.png'), height: 84),
                             Spacer(),
                             IconButton(
                               onPressed: () {
                                 Get.to(() => NotificationScreen());
                               },
-                              icon: Image(
-                                image: AssetImage(
-                                  'assets/icons/notification.png',
-                                ),
-                                height: 24,
-                              ),
+                              icon: Image(image: AssetImage('assets/icons/notification.png'), height: 24),
                             ),
                             InkWell(
                               onTap: () {
                                 Get.to(() => ProfileScreen());
                               },
-                              child: Image(
-                                image: AssetImage('assets/icons/profile.png'),
-                                height: 50,
-                              ),
+                              child: Image(image: AssetImage('assets/icons/profile.png'), height: 50),
                               customBorder: CircleBorder(),
                             ),
                           ],
@@ -94,16 +81,11 @@ class HomeScreen extends StatelessWidget {
                   SizedBox(height: 22),
                   // Tab Views
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.81,
+                    height: MediaQuery.of(context).size.height * 0.77,
                     child: TabBarView(
                       controller: controller.tabController,
                       physics: const NeverScrollableScrollPhysics(),
-                      children: const [
-                        TasksForYouTab(),
-                        RecommendedTab(),
-                        LatestTab(),
-                        NearByTab(),
-                      ],
+                      children: const [TasksForYouTab(), RecommendedTab(), LatestTab(), NearByTab()],
                     ),
                   ),
                   Padding(
@@ -111,17 +93,13 @@ class HomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomText(
-                          'Quick Actions',
-                          fontSize: 18,
-                          fontWeight: FontVariant.bold,
-                        ),
+                        CustomText('Quick Actions', fontSize: 18, fontWeight: FontVariant.bold),
                         SizedBox(height: 10),
                         CustomQuickActions(),
                       ],
                     ),
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 110),
                 ],
               ),
             ),

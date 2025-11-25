@@ -36,7 +36,7 @@ class DraftTab extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 140),
         ],
       ),
     );
