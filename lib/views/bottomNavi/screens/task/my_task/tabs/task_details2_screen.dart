@@ -108,9 +108,15 @@ class TaskDetails2Screen extends StatelessWidget {
                 description: "(25 Tasks Completed)",
                 price: "SAR 650",
                 distance: "34.5 km away",
+
                 onViewProfile: () {
                   DialogHelpers.showHelperProfileDialog(context);
                 },
+
+                onAccept: () {
+                  DialogHelpers.showOfferAcceptedDialog(context: context);
+                },
+
               ),
 
               ProviderCard(

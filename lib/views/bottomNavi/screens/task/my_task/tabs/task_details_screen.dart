@@ -87,9 +87,7 @@ class TaskDetailsScreen extends StatelessWidget {
                         fontSize: 20,
                         fontWeight: FontVariant.bold,
                       ),
-
                       const SizedBox(height: 12),
-
                       /// PRICE + TAG
                       Row(
                         children: [
