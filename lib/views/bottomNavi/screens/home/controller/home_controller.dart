@@ -9,7 +9,7 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
   @override
   void onInit() {
     super.onInit();
-    tabController = TabController(length: 4, vsync: this);
+    tabController = TabController(length: 1, vsync: this);
     tabController.addListener(_handleTabChange);
   }
 

@@ -17,7 +17,11 @@ class AllTaskTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomText('My Posted Tasks', fontSize: 24, fontWeight: FontVariant.bold),
+          CustomText(
+            'My Posted Tasks',
+            fontSize: 24,
+            fontWeight: FontVariant.bold,
+          ),
           SizedBox(height: 15),
           CustomMyTaskCard(
             title: "Help needed move furniture",
@@ -25,6 +29,7 @@ class AllTaskTab extends StatelessWidget {
             status: "Not accepted",
             postedTime: "2 hours ago",
             image: "assets/images/sofa.png",
+            type: 'Offline Task',
             onEdit: () {
               Get.to(() => PostNewTaskScreen());
             },
@@ -34,11 +39,17 @@ class AllTaskTab extends StatelessWidget {
             showButton: true,
           ),
           SizedBox(height: 26),
-          CustomText('Tasks Near Me', fontSize: 24, fontWeight: FontVariant.bold),
+          CustomText(
+            'Tasks Near Me',
+            fontSize: 24,
+            fontWeight: FontVariant.bold,
+          ),
           SizedBox(height: 15),
           CustomMyTaskCard(
             title: "Help needed move furniture",
             amount: "SAR 500",
+            type: 'Offline Task',
+
             status: "Not accepted",
             postedTime: "2 hours ago",
             image: "assets/images/sofa.png",
@@ -47,7 +58,7 @@ class AllTaskTab extends StatelessWidget {
             },
             showButton: true,
             onViewDetails: () {
-              Get.to(() => Cleanmysolarpanels(taskType: 'Location-based Task'));
+              Get.to(() => Cleanmysolarpanels(taskType: 'Offline Task'));
             },
           ),
           SizedBox(height: 140),

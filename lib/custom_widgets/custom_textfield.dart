@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+
 import 'customtext.dart';
 
 class CustomTextField extends StatefulWidget {
@@ -78,7 +79,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showLabel = widget.label != null && widget.label!.trim().isNotEmpty;
+    final bool showLabel =
+        widget.label != null && widget.label!.trim().isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,13 +113,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
         // ---------- FIELD ----------
         CustomContainer(
           conColor: white2Color,
-          borderRadius: BorderRadius.circular(widget.radius ?? 15), // ⭐ Radius here
+          borderRadius: BorderRadius.circular(
+            widget.radius ?? 15,
+          ), // ⭐ Radius here
           boxShadow: [
-            BoxShadow(
-              color: blackColor.withOpacity(0.25),
-              offset: const Offset(0, 4),
-              blurRadius: 4,
-            ),
+            // BoxShadow(
+            //   color: blackColor.withOpacity(0.25),
+            //   offset: const Offset(0, 4),
+            //   blurRadius: 4,
+            // ),
           ],
           child: TextField(
             controller: widget.controller,
@@ -153,27 +157,27 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
               prefixIcon: widget.prefixWidget != null
                   ? Padding(
-                padding: const EdgeInsets.only(left: 16, right: 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  widthFactor: 1,
-                  child: widget.prefixWidget!,
-                ),
-              )
+                      padding: const EdgeInsets.only(left: 16, right: 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: 1,
+                        child: widget.prefixWidget!,
+                      ),
+                    )
                   : widget.iconPath != null
                   ? Padding(
-                padding: const EdgeInsets.only(left: 10, right: 8),
-                child: CustomContainer(
-                  width: 45,
-                  height: 45,
-                  conColor: redColor,
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage(widget.iconPath!),
-                    scale: 4,
-                  ),
-                ),
-              )
+                      padding: const EdgeInsets.only(left: 10, right: 8),
+                      child: CustomContainer(
+                        width: 45,
+                        height: 45,
+                        conColor: redColor,
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: AssetImage(widget.iconPath!),
+                          scale: 4,
+                        ),
+                      ),
+                    )
                   : null,
 
               prefixIconConstraints: const BoxConstraints(
@@ -183,23 +187,23 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
               suffixIcon: widget.suffixWidget != null
                   ? Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Align(
-                  alignment: Alignment.center,
-                  widthFactor: 1,
-                  child: widget.suffixWidget!,
-                ),
-              )
+                      padding: const EdgeInsets.only(right: 12),
+                      child: Align(
+                        alignment: Alignment.center,
+                        widthFactor: 1,
+                        child: widget.suffixWidget!,
+                      ),
+                    )
                   : widget.isPassword
                   ? IconButton(
-                icon: Icon(
-                  _obscure
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                  color: Colors.grey.shade700,
-                ),
-                onPressed: () => setState(() => _obscure = !_obscure),
-              )
+                      icon: Icon(
+                        _obscure
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: Colors.grey.shade700,
+                      ),
+                      onPressed: () => setState(() => _obscure = !_obscure),
+                    )
                   : null,
 
               suffixIconConstraints: const BoxConstraints(

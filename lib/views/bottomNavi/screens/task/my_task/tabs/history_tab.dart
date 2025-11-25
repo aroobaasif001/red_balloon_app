@@ -4,8 +4,8 @@ import 'package:red_balloon_app/views/bottomNavi/screens/task/post_new_task/post
 
 import '../../../../../../custom_widgets/custom_my_task_card.dart';
 
-class InProgressTab extends StatelessWidget {
-  const InProgressTab({super.key});
+class HistoryTab extends StatelessWidget {
+  const HistoryTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +27,8 @@ class InProgressTab extends StatelessWidget {
                   postedTime: "Posted 2 hours ago",
                   image: "assets/images/sofa.png",
                   showButton: true,
-                  btnText: 'In Progress',
-                  // onViewDetails: () {},
+                  type: 'Offline Task',
+                  btnText: 'Completed',
                   showType: false,
                   onEdit: () {
                     Get.to(() => PostNewTaskScreen());
