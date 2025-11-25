@@ -29,8 +29,6 @@ const Color greenColor = Color(0xff43a047);
 const Color appbard = Color(0xffF3F4F6);
 const Color textcolord = Color(0xff111827);
 
-
-
 const LinearGradient redOrangeGradientColor = LinearGradient(
   begin: Alignment.centerLeft,
   end: Alignment.centerRight,
@@ -76,7 +74,6 @@ const Color blackLightColor = Color(0xff1e1e1e);
 const Color arrowColor = Color(0xffCCCCCC);
 const Color yellow = Color(0xffFACC15);
 const Color pricecolor = Color(0xffE63946);
-const Color bordercolor1 = Color(0xffE5E7EB);
+const Color bordercolor1 = Color(0xffF3F4F6);
 const Color greenBg = Color(0xffE8F5E9);
-
-
+const Color grayColor = Color(0xff5D5757);

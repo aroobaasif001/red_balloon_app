@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
-import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/task_in_progress_screen.dart';
 
 import '../custom_widgets/custom_button.dart';
+import '../views/bottomNavi/screens/task/my_task/tabs/task_in_progress_screen.dart';
+import '../views/bottomNavi/screens/task/my_task/widgets/send_offer_bottom_sheet.dart';
 import 'colors.dart';
 
 class DialogHelpers {
@@ -758,10 +759,12 @@ class DialogHelpers {
   static void showTaskDetailsInfo() {
     Get.snackbar('Task Details', 'Navigating to task details...');
   }
+
   // Wallet Controller Dialog Methods
   static void showFundReleaseInfo() {
     Get.snackbar('Info', 'Funds are auto-released after successful validation');
   }
+
   static void showPriceInfoDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -797,6 +800,7 @@ class DialogHelpers {
       },
     );
   }
+
   static void showPaymentSuccessDialog({
     required BuildContext context,
 
@@ -1310,6 +1314,20 @@ class DialogHelpers {
     );
   }
 
+  /// ===================================================
+  /// SHOW SEND OFFER BOTTOM SHEET
+  /// ===================================================
+  static void showSendOfferBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return const SendOfferBottomSheet();
+      },
+    );
+  }
+
 }
 
 /// =================================================================
@@ -1336,5 +1354,3 @@ Widget _statBox(String title, String value, IconData icon) {
     ),
   );
 }
-
-

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/post_new_task/post_new_task_screen.dart';
 
-class ActivityOfflineTaskTabs extends StatelessWidget {
-  const ActivityOfflineTaskTabs({super.key});
+import '../../../../../../custom_widgets/custom_my_task_card.dart';
+
+class InProgressTab extends StatelessWidget {
+  const InProgressTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class ActivityOfflineTaskTabs extends StatelessWidget {
         children: [
           ListView.builder(
             physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: EdgeInsets.symmetric(horizontal: 11),
             itemCount: 3,
             shrinkWrap: true,
             itemBuilder: (context, index) {
@@ -36,7 +37,7 @@ class ActivityOfflineTaskTabs extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 140),
         ],
       ),
     );

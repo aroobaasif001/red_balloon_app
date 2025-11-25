@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
-import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/active_task_tab.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/all_task_tab.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/draft_tab.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/in_progress_tab.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/my_task_tab.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/widgets/custom_tab_bar_task.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/post_new_task/post_new_task_screen.dart';
+
+import 'controller/task_tabs_controller.dart';
 
 class MyTaskScreen extends StatelessWidget {
   const MyTaskScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TaskTabsController controller = Get.put(TaskTabsController());
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -26,9 +28,7 @@ class MyTaskScreen extends StatelessWidget {
             backgroundColor: redColor,
             foregroundColor: whiteColor,
             child: Icon(Icons.add),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(40),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
 
             // shape: BoxShape.circle,
             onPressed: () {
@@ -39,54 +39,20 @@ class MyTaskScreen extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-              CustomContainer(
-                height: 50,
-                margin: EdgeInsets.symmetric(horizontal: 15),
-                conColor: whiteColor,
-                padding: EdgeInsets.all(7),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: blackColor.withOpacity(0.25),
-                //     offset: const Offset(0, 4),
-                //     blurRadius: 4,
-                //   ),
-                // ],
-                borderRadius: BorderRadius.circular(15),
-
-                child: TabBar(
-                  tabAlignment: TabAlignment.start,
-                  labelStyle: GoogleFonts.montserrat(
-                    color: whiteColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  unselectedLabelStyle: GoogleFonts.montserrat(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  indicator: BoxDecoration(
-                    color: redColor,
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  isScrollable: true,
-                  dividerColor: Colors.transparent,
-                  tabs: [
-                    Tab(text: 'ALL TASKS'),
-                    Tab(text: 'POSTED BY ME'),
-                    Tab(text: 'IN PROGRESS'),
-                    Tab(text: 'DRAFTS'),
-                  ],
+              Obx(
+                () => CustomTabBarTask(
+                  selectedIndex: controller.selectedTab.value, // ← your GetX or state variable
+                  onAllTasksTap: () => controller.changeTab(0),
+                  onPostedByMeTap: () => controller.changeTab(1),
+                  onInProgressTap: () => controller.changeTab(2),
+                  onDraftsTap: () => controller.changeTab(3),
                 ),
               ),
               SizedBox(height: 35),
               Expanded(
                 child: TabBarView(
-                  children: [
-                    AllTaskTab(),
-                    MyTaskTab(),
-                    ActiveTaskTab(),
-                    DraftTab(),
-                  ],
+                  controller: controller.tabController,
+                  children: [AllTaskTab(), MyTaskTab(), InProgressTab(), DraftTab()],
                 ),
               ),
             ],

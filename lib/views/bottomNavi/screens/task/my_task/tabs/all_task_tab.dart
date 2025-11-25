@@ -17,11 +17,7 @@ class AllTaskTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomText(
-            'My Posted Tasks',
-            fontSize: 24,
-            fontWeight: FontVariant.bold,
-          ),
+          CustomText('My Posted Tasks', fontSize: 24, fontWeight: FontVariant.bold),
           SizedBox(height: 15),
           CustomMyTaskCard(
             title: "Help needed move furniture",
@@ -32,17 +28,13 @@ class AllTaskTab extends StatelessWidget {
             onEdit: () {
               Get.to(() => PostNewTaskScreen());
             },
-            onViewDetails: (){
-              Get.to(()=>TaskDetailsScreen());
+            onViewDetails: () {
+              Get.to(() => TaskDetailsScreen());
             },
             showButton: true,
           ),
           SizedBox(height: 26),
-          CustomText(
-            'Tasks Near Me',
-            fontSize: 24,
-            fontWeight: FontVariant.bold,
-          ),
+          CustomText('Tasks Near Me', fontSize: 24, fontWeight: FontVariant.bold),
           SizedBox(height: 15),
           CustomMyTaskCard(
             title: "Help needed move furniture",
@@ -55,10 +47,10 @@ class AllTaskTab extends StatelessWidget {
             },
             showButton: true,
             onViewDetails: () {
-              Get.to(() => Cleanmysolarpanels());
+              Get.to(() => Cleanmysolarpanels(taskType: 'Location-based Task'));
             },
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 140),
         ],
       ),
     );

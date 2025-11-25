@@ -13,7 +13,7 @@ class DraftTab extends StatelessWidget {
         children: [
           ListView.builder(
             physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: EdgeInsets.symmetric(horizontal: 12),
             itemCount: 1,
             shrinkWrap: true,
             itemBuilder: (context, index) {
@@ -36,7 +36,7 @@ class DraftTab extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 140),
         ],
       ),
     );

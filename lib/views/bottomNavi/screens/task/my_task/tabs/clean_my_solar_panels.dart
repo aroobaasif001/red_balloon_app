@@ -1,17 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
+import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 
 import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../utils/colors.dart';
 import '../widgets/offer_card.dart';
 import '../widgets/refresh_button.dart';
-import '../widgets/task_header_bar.dart';
 import '../widgets/task_info_top_row.dart';
 import '../widgets/task_owner_tile.dart';
 
 class Cleanmysolarpanels extends StatelessWidget {
-  const Cleanmysolarpanels({super.key});
+  final String? appBarTitle;
+  final String? taskType;
+  const Cleanmysolarpanels({super.key, this.taskType, this.appBarTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -22,36 +23,28 @@ class Cleanmysolarpanels extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomAppBar(
-              titleText: "Clean my Solar Panels",
-              titleFontSize: 16,
-              titleFontWeight: FontVariant.semiBold,
+              titleText: appBarTitle ?? "Clean my Solar Panels",
+              // titleFontSize: 16,
+              // titleFontWeight: FontVariant.semiBold,
             ),
-
 
             const SizedBox(height: 20),
 
-            Divider(
-              color: bordercolor1,
-              thickness: 1.5,
-              height: 1,
-            ),
-
-
+            Divider(color: bordercolor1, thickness: 1.5, height: 1),
 
             const SizedBox(height: 20),
 
-             TaskInfoTopRow(),
+            TaskInfoTopRow(),
             const SizedBox(height: 15),
 
-            Divider(
-              color:bordercolor1,
-              thickness: 1.5,
-              height: 1,
-            ),
+            Divider(color: bordercolor1, thickness: 1.5, height: 1),
             const SizedBox(height: 12),
 
             const TaskOwnerTile(),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 10),
+            Divider(color: bordercolor1, thickness: 1.5, height: 1),
+            const SizedBox(height: 10),
 
             /// Description
             const CustomText(
@@ -59,12 +52,11 @@ class Cleanmysolarpanels extends StatelessWidget {
               fontSize: 14,
               color: textcolord,
               fontWeight: FontVariant.semiBold,
-
             ),
             const SizedBox(height: 8),
             const CustomText(
               "Need help cleaning my solar panels. Roof access available. "
-                  "Should take around 30–40 minutes.",
+              "Should take around 30–40 minutes.",
               fontSize: 14,
               color: rbtxColor,
               fontWeight: FontVariant.regular,
@@ -77,7 +69,10 @@ class Cleanmysolarpanels extends StatelessWidget {
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.asset("assets/images/homedetail.png", height: 160),
+                    child: Image.asset(
+                      "assets/images/homedetail.png",
+                      height: 160,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -92,10 +87,37 @@ class Cleanmysolarpanels extends StatelessWidget {
 
             const SizedBox(height: 28),
 
-            const CustomText(
-              "Offers Received",
-              fontSize: 16,
-              fontWeight: FontVariant.semiBold,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const CustomText(
+                  "Offers Received",
+                  fontSize: 16,
+                  fontWeight: FontVariant.semiBold,
+                ),
+                CustomContainer(
+                  height: 35,
+                  conColor: bordercolor1,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: blackColor.withOpacity(0.25),
+                      offset: Offset(0, 4),
+                      blurRadius: 4,
+                      spreadRadius: 0,
+                    ),
+                  ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: CustomText(
+                        taskType ?? '',
+                        color: walletGrey600Color,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 18),
 
@@ -126,9 +148,3 @@ class Cleanmysolarpanels extends StatelessWidget {
     );
   }
 }
-// TaskStatusBadge(
-//   status: status,
-//   textColor: greyColor,
-//
-//   bgColor: appbard,
-// ),

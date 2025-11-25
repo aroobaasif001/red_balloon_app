@@ -1,140 +1,186 @@
-// lib/screens/validation/validation_hub_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/custom_widgets/custom_button.dart';
+import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/validations_tab/validation_screen/validation_screen.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/validations_tab/widgets/validationemptywidget.dart';
+
 import '../validation_history_screen/validation_history_screen.dart';
-import 'tabs/location_based_task_tab.dart';
-import '../widgets/validationemptywidget.dart';
 
-// YOUR WIDGETS
-
-class ValidationHubScreen extends StatefulWidget {
+class ValidationHubScreen extends StatelessWidget {
   const ValidationHubScreen({super.key});
 
   @override
-  State<ValidationHubScreen> createState() => _ValidationHubScreenState();
-}
-class _ValidationHubScreenState extends State<ValidationHubScreen> {
-  int selectedTab = 0; // 0 = Offline, 1 = Online
-
-  @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      body: Column(
-        children: [
-           CustomAppBar1(
-            title: 'Validation Hub',
-            showLeftImage: false,
-            onRightPressed: () {
-              Get.to(()=>ValidationHistoryScreen());
-            },
-          ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            CustomAppBar1(
+              title: 'Validation Hub',
+              showLeftImage: false,
+              onRightPressed: () {
+                Get.to(() => ValidationHistoryScreen());
+              },
+            ),
 
-          const SizedBox(height: 25),
+            const SizedBox(height: 25),
+            ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 6, // 🔥 Replace with your real count
+              itemBuilder: (_, index) {
+                // ------------------------
+                // SHOW EMPTY WIDGET IF NO DATA
+                // ------------------------
+                if (index == 0 && 5 == 0) {
+                  // itemCount == 0
+                  return const ValidationEmptyWidget();
+                }
 
-          /// -------------------------
-          /// TABS + DIVIDER
-          /// -------------------------
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    /// Offline tab
-                    GestureDetector(
-                      onTap: () => setState(() => selectedTab = 0),
-                      child: Column(
-                        children: [
-                          CustomText(
-                            "Location-based Task",
-                            fontSize: 16,
-                            fontWeight: FontVariant.medium,
-                            fontType: AppFont.montserrat,
-                            color:
-                            selectedTab == 0 ? redColor : Colors.grey.shade600,
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            height: 3,
-                            width: 110,
-                            decoration: BoxDecoration(
-                              color: selectedTab == 0
-                                  ? redColor
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          )
-                        ],
+                // ------------------------
+                // OTHERWISE SHOW YOUR CARD
+                // ------------------------
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: CustomContainer(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    borderRadius: BorderRadius.circular(20),
+                    conColor: Colors.grey.shade200,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.20),
+                        blurRadius: 3,
+                        offset: const Offset(0, 5),
                       ),
-                    ),
-
-                    /// Online tab
-                    GestureDetector(
-                      onTap: () => setState(() => selectedTab = 1),
-                      child: Column(
-                        children: [
-                          CustomText(
-                            "Remote Task",
-                            fontSize: 16,
-                            fontWeight: FontVariant.medium,
-                            fontType: AppFont.montserrat,
-                            color:
-                            selectedTab == 1 ? redColor : Colors.grey.shade600,
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            height: 3,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              color: selectedTab == 1
-                                  ? redColor
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(20),
+                    ],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// BEFORE & AFTER IMAGES
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomContainer(
+                                height: 120,
+                                conColor: Colors.red.shade100,
+                                borderRadius: BorderRadius.circular(16),
+                                alignment: Alignment.bottomCenter,
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: const CustomText(
+                                  "BEFORE",
+                                  fontWeight: FontVariant.semiBold,
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              ),
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                            const SizedBox(width: 10),
 
-              Divider(
-                color: Colors.grey.shade300,
-                thickness: 1,
-                height: 1,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          /// -------------------------
-          /// MAIN CONTENT
-          /// -------------------------
-          Expanded(
-            child: selectedTab == 0
-            /// -------------------------
-            /// OFFLINE TAB - DO NOT TOUCH
-            /// -------------------------
-                ? ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              itemCount: 5,
-              itemBuilder: (_, index) => const Padding(
-                padding: EdgeInsets.only(bottom: 20),
-                child: LocationBasedTaskTab(),
-              ),
-            )
-            /// -------------------------
-            /// ONLINE TAB - NOW SHOWS EMPTY UI
-            /// -------------------------
-                : const ValidationEmptyWidget(),
-          ),
-        ],
+                            Expanded(
+                              child: CustomContainer(
+                                height: 120,
+                                conColor: Colors.red.shade100,
+                                borderRadius: BorderRadius.circular(16),
+                                alignment: Alignment.bottomCenter,
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: const CustomText(
+                                  "AFTER",
+                                  fontWeight: FontVariant.semiBold,
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        /// TITLE + BADGE
+                        Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                CustomText(
+                                  "RB - 402",
+                                  fontSize: 18,
+                                  fontWeight: FontVariant.bold,
+                                  fontType: AppFont.montserrat,
+                                  color: Colors.black87,
+                                ),
+                                CustomText(
+                                  "Help Move Furniture",
+                                  fontSize: 16,
+                                  fontWeight: FontVariant.semiBold,
+                                  fontType: AppFont.montserrat,
+                                  color: Colors.black87,
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            CustomContainer(
+                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              borderRadius: BorderRadius.circular(20),
+                              conColor: Colors.white,
+                              child: const CustomText(
+                                "Offline Task",
+                                fontSize: 12,
+                                fontWeight: FontVariant.medium,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        /// TIMER + BUTTON
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: const [
+                                  Image(image: AssetImage("assets/icons/timer-icon1.png"), height: 20),
+                                  SizedBox(width: 8),
+                                  CustomText(
+                                    "15 min left to validate",
+                                    fontSize: 12,
+                                    fontWeight: FontVariant.medium,
+                                    color: Colors.black87,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            CustomButton(
+                              label: "Review Proof",
+                              onPressed: () {
+                                Get.to(() => ValidationScreen());
+                              },
+                              height: 40,
+                              width: 130,
+                              fontSize: 14,
+                              fontWeight: FontVariant.bold,
+                              borderRadius: BorderRadius.circular(14),
+                              bgColor: redColor,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 140),
+          ],
+        ),
       ),
     );
   }
