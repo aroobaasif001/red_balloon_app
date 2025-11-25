@@ -81,7 +81,7 @@ class HomeScreen extends StatelessWidget {
                   SizedBox(height: 22),
                   // Tab Views
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.81,
+                    height: MediaQuery.of(context).size.height * 0.77,
                     child: TabBarView(
                       controller: controller.tabController,
                       physics: const NeverScrollableScrollPhysics(),
