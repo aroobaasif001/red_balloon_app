@@ -125,11 +125,11 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
               onPressed: () {
                 DialogHelpers.showPaymentSuccessDialog(
                   context: context,
-                  message: 'Your Task was posted\nsuccessfully!',
+                  message: 'Your Offer has been sent\nsuccessfully',
+                  showButton: false,
                 );
               },
             ),
-
             const SizedBox(height: 16),
           ],
         ),

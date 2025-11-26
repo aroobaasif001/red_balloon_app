@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/bottomNavi/bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/offline_and_online_card.dart';
 
@@ -15,8 +16,13 @@ class TasksForYouTab extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              CustomText(
+                'Tasks for you',
+                fontSize: 24,
+                fontWeight: FontVariant.bold,
+              ),
               InkWell(
                 onTap: () {
                   Get.offAll(() => BottomNaviScreen(initialIndex: 1));
@@ -30,7 +36,13 @@ class TasksForYouTab extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 22),
+
+        SizedBox(height: 5),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: Divider(color: blackColor.withOpacity(0.35)),
+        ),
+        SizedBox(height: 17),
         Expanded(
           child: ListView.builder(
             padding: EdgeInsets.symmetric(horizontal: 15),
@@ -48,7 +60,7 @@ class TasksForYouTab extends StatelessWidget {
                   timeAgo: "15 mins ago",
                   price: "SAR 500",
                   image: "assets/icons/chair.png",
-                  type: 'Location-based Task',
+                  type: 'Offline Task',
                   onViewDetails: () {
                     print("Details tapped");
                   },

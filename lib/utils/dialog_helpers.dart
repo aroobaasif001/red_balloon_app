@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
@@ -854,7 +855,7 @@ class DialogHelpers {
                     if (showButton) ...[
                       SizedBox(height: 25),
 
-                      // ================= OK BUTTON =================
+                      CustomButton(label: 'OK', onPressed: onButtonTap),
                     ],
                     if (showButton == false) SizedBox(height: 41.5),
                   ],
@@ -1083,6 +1084,7 @@ class DialogHelpers {
                         ],
                       ),
                       const SizedBox(height: 20),
+
                       /// RED AVATAR
                       Stack(
                         alignment: Alignment.center,
@@ -1108,14 +1110,15 @@ class DialogHelpers {
                             child: CustomContainer(
                               height: 18,
                               width: 18,
-                                conColor: redColor,
-                                shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white,width: 1),
+                              conColor: redColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 1),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 18),
+
                       /// NAME
                       CustomText(
                         "Anton Furnitures",
@@ -1123,6 +1126,7 @@ class DialogHelpers {
                         fontWeight: FontVariant.bold,
                       ),
                       const SizedBox(height: 10),
+
                       /// RB TAG
                       CustomContainer(
                         conColor: Colors.red.shade50,
@@ -1138,6 +1142,7 @@ class DialogHelpers {
                         ),
                       ),
                       const SizedBox(height: 14),
+
                       /// VERIFIED HELPER TAG
                       CustomContainer(
                         conColor: greenBg,
@@ -1149,17 +1154,18 @@ class DialogHelpers {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.verified,color: redColor,),
+                            Icon(Icons.verified, color: redColor),
                             const SizedBox(width: 6),
                             CustomText(
                               "Verified Helper",
                               fontSize: 13,
-                              color:walletSuccessColor,
+                              color: walletSuccessColor,
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 22),
+
                       /// STAR + RATING SECTION
                       CustomContainer(
                         conColor: Colors.grey.shade100,
@@ -1183,7 +1189,7 @@ class DialogHelpers {
                             CustomText(
                               "(25 tasks completed)",
                               fontSize: 13,
-                              color:timeColor,
+                              color: timeColor,
                             ),
                           ],
                         ),
@@ -1198,7 +1204,7 @@ class DialogHelpers {
                             child: _statBox(
                               "Validation Accuracy",
                               "96%",
-                              'assets/icons/streamline-color_target.png'
+                              'assets/icons/streamline-color_target.png',
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -1206,7 +1212,7 @@ class DialogHelpers {
                             child: _statBox(
                               "Response Time",
                               "< 5 min",
-                              'assets/icons/material-symbols_avg-time-outline.png'
+                              'assets/icons/material-symbols_avg-time-outline.png',
                             ),
                           ),
                         ],
@@ -1220,7 +1226,7 @@ class DialogHelpers {
                             child: _statBox(
                               "Distance",
                               "3.2 km",
-                              'assets/icons/duo-icons_location.png'
+                              'assets/icons/duo-icons_location.png',
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -1228,7 +1234,7 @@ class DialogHelpers {
                             child: _statBox(
                               "Completion Rate",
                               "98%",
-                              'assets/icons/charm_circle-tick.png'
+                              'assets/icons/charm_circle-tick.png',
                             ),
                           ),
                         ],
@@ -1248,10 +1254,11 @@ class DialogHelpers {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Image.asset(
-                              "assets/icons/duo-icons_message-3.png",   // 🔥 your image path here
+                              "assets/icons/duo-icons_message-3.png", // 🔥 your image path here
                               height: 24,
                               width: 24,
-                              color: redColor,           // ⭐ keeps the same red tint/color
+                              color:
+                                  redColor, // ⭐ keeps the same red tint/color
                             ),
 
                             const SizedBox(width: 10),
@@ -1277,6 +1284,7 @@ class DialogHelpers {
       },
     );
   }
+
   /// ================================
   /// STAT BOX BUILDER
   /// ================================
@@ -1287,19 +1295,10 @@ class DialogHelpers {
       padding: const EdgeInsets.symmetric(vertical: 18),
       child: Column(
         children: [
-          Image.asset(
-            imagePath,
-            height: 24,
-            width: 24,
-            fit: BoxFit.contain,
-          ),
+          Image.asset(imagePath, height: 24, width: 24, fit: BoxFit.contain),
           const SizedBox(height: 8),
 
-          CustomText(
-            title,
-            fontSize: 13,
-            color: timeColor,
-          ),
+          CustomText(title, fontSize: 13, color: timeColor),
 
           const SizedBox(height: 4),
 
@@ -1327,7 +1326,6 @@ class DialogHelpers {
       },
     );
   }
-
 }
 
 /// =================================================================

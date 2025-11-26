@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/in_progress_view_details.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/post_new_task/post_new_task_screen.dart';
 
 import '../../../../../../custom_widgets/customtext.dart';
 
-class MyTaskTab extends StatelessWidget {
-  const MyTaskTab({super.key});
+class ActiveTasksTab extends StatelessWidget {
+  const ActiveTasksTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,11 @@ class MyTaskTab extends StatelessWidget {
             padding: const EdgeInsets.only(left: 15.0),
             child: Align(
               alignment: Alignment.bottomLeft,
-              child: CustomText('My Posted Tasks', fontSize: 24, fontWeight: FontVariant.bold),
+              child: CustomText(
+                'My Tasks',
+                fontSize: 24,
+                fontWeight: FontVariant.bold,
+              ),
             ),
           ),
           SizedBox(height: 15),
@@ -35,8 +40,14 @@ class MyTaskTab extends StatelessWidget {
                   status: "Not accepted",
                   postedTime: "Posted 2 hours ago",
                   image: "assets/images/sofa.png",
+                  type: 'Offline Task',
+                  showType: false,
                   showButton: true,
-                  onViewDetails: () {},
+                  btnText: 'In Progress',
+
+                  onViewDetails: () {
+                    Get.to(() => InProgressViewDetails());
+                  },
                   onEdit: () {
                     Get.to(() => PostNewTaskScreen());
                   },

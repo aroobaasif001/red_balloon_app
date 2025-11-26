@@ -77,3 +77,4 @@ const Color pricecolor = Color(0xffE63946);
 const Color bordercolor1 = Color(0xffF3F4F6);
 const Color greenBg = Color(0xffE8F5E9);
 const Color grayColor = Color(0xff5D5757);
+const Color borderColor = Color(0xffD1D5DB);

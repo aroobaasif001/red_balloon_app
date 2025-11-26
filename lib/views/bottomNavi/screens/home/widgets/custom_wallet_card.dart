@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
-import 'custom_balance_column.dart'; // your earlier widget
-
 class CustomWalletCard extends StatelessWidget {
   final String availableAmount;
-  final String escrowAmount;
   final VoidCallback? onAddFunds;
 
   const CustomWalletCard({
     Key? key,
     required this.availableAmount,
-    required this.escrowAmount,
     this.onAddFunds,
   }) : super(key: key);
 
@@ -23,27 +20,60 @@ class CustomWalletCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 30.49, vertical: 21.77),
       conColor: whiteLiteColor,
       borderRadius: BorderRadius.circular(15),
-      boxShadow: [BoxShadow(color: blackColor.withOpacity(0.25), offset: const Offset(0, 4), blurRadius: 4)],
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      boxShadow: [
+        BoxShadow(
+          color: blackColor.withOpacity(0.25),
+          offset: const Offset(0, 4),
+          blurRadius: 4,
+        ),
+      ],
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomBalanceColumn(title: 'AVAILABLE', amount: availableAmount, amountColor: red1Color),
-
-              const Expanded(child: SizedBox.shrink()),
-
-              CustomBalanceColumn(title: 'IN ESCROW', amount: escrowAmount, amountColor: grey4Color),
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/icons/wallet_2.png',
+                    color: redColor,
+                    height: 31,
+                    width: 31,
+                  ),
+                  SizedBox(width: 4),
+                  CustomText(
+                    'Wallet Balance',
+                    fontSize: 22,
+                    fontWeight: FontVariant.bold,
+                    color: blackColor,
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+              CustomText(
+                'SAR ${availableAmount}',
+                fontSize: 24,
+                fontWeight: FontVariant.bold,
+                color: redColor,
+              ),
+              SizedBox(height: 16),
+              CustomButton(
+                width: 150,
+                label: 'Add Funds',
+                onPressed: onAddFunds,
+              ),
+              SizedBox(height: 16),
+              CustomText(
+                'Required to post new tasks',
+                fontSize: 16,
+                fontWeight: FontVariant.semiBold,
+              ),
             ],
           ),
-
-          const SizedBox(height: 12.89),
-
-          InkWell(
-            onTap: onAddFunds,
-            child: CustomText('+ Add Funds', fontSize: 13, fontWeight: FontVariant.bold, color: red1Color),
-          ),
+          Image.asset('assets/icons/red_ballon.png', width: 88),
         ],
       ),
     );

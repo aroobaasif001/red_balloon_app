@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/custom_widgets/customHomeTypeTabs.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/controller/home_controller.dart';
-import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/latest_tab.dart';
-import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/nearby_tab.dart';
-import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/recommended_tab.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/tabs/tasks_for_you_tab.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_bonus_slider.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_quick_actions.dart';
@@ -35,19 +31,32 @@ class HomeScreen extends StatelessWidget {
                         // Header
                         Row(
                           children: [
-                            Image(image: AssetImage('assets/images/splash_logo.png'), height: 84),
+                            Image(
+                              image: AssetImage(
+                                'assets/images/splash_logo.png',
+                              ),
+                              height: 84,
+                            ),
                             Spacer(),
                             IconButton(
                               onPressed: () {
                                 Get.to(() => NotificationScreen());
                               },
-                              icon: Image(image: AssetImage('assets/icons/notification.png'), height: 24),
+                              icon: Image(
+                                image: AssetImage(
+                                  'assets/icons/notification.png',
+                                ),
+                                height: 24,
+                              ),
                             ),
                             InkWell(
                               onTap: () {
                                 Get.to(() => ProfileScreen());
                               },
-                              child: Image(image: AssetImage('assets/icons/profile.png'), height: 50),
+                              child: Image(
+                                image: AssetImage('assets/icons/profile.png'),
+                                height: 50,
+                              ),
                               customBorder: CircleBorder(),
                             ),
                           ],
@@ -58,23 +67,12 @@ class HomeScreen extends StatelessWidget {
                         SizedBox(height: 23.99),
                         // Wallet Card
                         CustomWalletCard(
-                          availableAmount: 'SAR 255.00',
-                          escrowAmount: 'SAR 255.00',
+                          availableAmount: '255.00',
                           onAddFunds: () {
                             print("Add funds tapped");
                           },
                         ),
                         SizedBox(height: 20),
-                        // Custom Tab Bar
-                        Obx(
-                          () => CustomHomeTypeTabs(
-                            selectedIndex: controller.selectedTabIndex.value,
-                            onOfflineTap: () => controller.switchTab(0),
-                            onOnlineTap: () => controller.switchTab(1),
-                            onLatestTap: () => controller.switchTab(2),
-                            onNearbyTap: () => controller.switchTab(3),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -85,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                     child: TabBarView(
                       controller: controller.tabController,
                       physics: const NeverScrollableScrollPhysics(),
-                      children: const [TasksForYouTab(), RecommendedTab(), LatestTab(), NearByTab()],
+                      children: const [TasksForYouTab()],
                     ),
                   ),
                   Padding(
@@ -93,7 +91,11 @@ class HomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomText('Quick Actions', fontSize: 18, fontWeight: FontVariant.bold),
+                        CustomText(
+                          'Quick Actions',
+                          fontSize: 18,
+                          fontWeight: FontVariant.bold,
+                        ),
                         SizedBox(height: 10),
                         CustomQuickActions(),
                       ],

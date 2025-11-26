@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class TaskTabsController extends GetxController with GetSingleTickerProviderStateMixin {
+class TaskTabsController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   late TabController tabController;
 
   // Reactive index for your custom tabs
@@ -12,7 +13,7 @@ class TaskTabsController extends GetxController with GetSingleTickerProviderStat
     super.onInit();
 
     // 4 tabs
-    tabController = TabController(length: 4, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
 
     // Sync Flutter TabController → GetX variable
     tabController.addListener(() {

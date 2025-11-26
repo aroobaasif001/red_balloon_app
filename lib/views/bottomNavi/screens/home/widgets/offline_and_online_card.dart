@@ -48,12 +48,10 @@ class OfflineAndOnlineCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Left content
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title + Badge
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -64,22 +62,6 @@ class OfflineAndOnlineCard extends StatelessWidget {
                             fontWeight: FontVariant.bold,
                           ),
                         ),
-
-                        // 🔥 SHOW BADGE ONLY IF NOT NULL
-                        // if (taskType != null)
-                        //   CustomContainer(
-                        //     padding: const EdgeInsets.symmetric(
-                        //       horizontal: 10,
-                        //       vertical: 4,
-                        //     ),
-                        //     conColor: white1Color,
-                        //     borderRadius: BorderRadius.circular(10),
-                        //     child: CustomText(
-                        //       taskType!, // e.g. "Online task"
-                        //       fontSize: 12,
-                        //       color: grey5Color,
-                        //     ),
-                        //   ),
                       ],
                     ),
                     const SizedBox(height: 15.1),
@@ -90,25 +72,12 @@ class OfflineAndOnlineCard extends StatelessWidget {
                       fontWeight: FontVariant.bold,
                       color: blackColor,
                     ),
-
-                    //
-                    // const SizedBox(height: 2.1),
-                    //
-                    // CustomText(subtitle, fontSize: 13, color: grey5Color),
                     const SizedBox(height: 10.1),
 
-                    // Distance + Time Row
                     Row(
                       children: [
-                        // 🔥 Distance only if not null
                         if (distance != null)
                           CustomContainer(
-                            // padding: const EdgeInsets.symmetric(
-                            //   horizontal: 10,
-                            //   vertical: 7,
-                            // ),
-                            // conColor: white1Color,
-                            // borderRadius: BorderRadius.circular(12),
                             child: Row(
                               children: [
                                 CustomText(
@@ -123,20 +92,8 @@ class OfflineAndOnlineCard extends StatelessWidget {
                         if (distance != null) const SizedBox(width: 7),
 
                         CustomContainer(
-                          // padding: const EdgeInsets.symmetric(
-                          //   horizontal: 10,
-                          //   vertical: 7,
-                          // ),
-                          // conColor: white1Color,
-                          // borderRadius: BorderRadius.circular(12),
                           child: Row(
                             children: [
-                              // const Icon(
-                              //   Icons.access_time,
-                              //   size: 14,
-                              //   color: grey5Color,
-                              // ),
-                              // const SizedBox(width: 4),
                               CustomText(
                                 " • ${timeAgo}",
                                 fontSize: 12,
@@ -149,8 +106,6 @@ class OfflineAndOnlineCard extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 15.73),
-
-                    // Price + button
                   ],
                 ),
               ),
@@ -185,12 +140,6 @@ class OfflineAndOnlineCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(
-                      Icons.location_on_rounded,
-                      size: 14,
-                      color: grey5Color,
-                    ),
-                    const SizedBox(width: 4),
                     CustomText(
                       type,
                       fontSize: 14,
@@ -206,7 +155,6 @@ class OfflineAndOnlineCard extends StatelessWidget {
               CustomButton(
                 width: 107,
                 fontSize: 12,
-                // borderRadius: BorderRadius.circular(30),
                 height: 30,
                 label: 'View Details',
                 onPressed: onViewDetails,
