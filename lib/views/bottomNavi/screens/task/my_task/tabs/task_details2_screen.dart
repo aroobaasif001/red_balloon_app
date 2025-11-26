@@ -36,7 +36,7 @@ class TaskDetails2Screen extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.20),
-                      blurRadius: 6,
+                      blurRadius: 4,
                       offset: const Offset(0, 4),
                     ),
                   ],

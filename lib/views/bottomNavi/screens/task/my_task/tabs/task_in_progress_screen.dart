@@ -263,6 +263,8 @@ class TaskInProgressScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+
+                      /// ----------------- TOP ROW -----------------
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -275,20 +277,24 @@ class TaskInProgressScreen extends StatelessWidget {
                                   fontWeight: FontVariant.bold,
                                   color: Colors.black,
                                 ),
-                                SizedBox(width: 3,),
-                                CustomText(
-                                  "Help Move Furniture",
-                                  fontWeight: FontVariant.regular,
-                                  fontSize: 14,
-                                  color: timeColor,
+                                SizedBox(width: 3),
+                                Expanded(
+                                  child: CustomText(
+                                    "Help Move Furniture",
+                                    fontWeight: FontVariant.regular,
+                                    fontSize: 14,
+                                    color: timeColor,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
 
                           CustomContainer(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             conColor: proBgColor,
                             borderRadius: BorderRadius.circular(30),
                             boxShadow: [
@@ -308,12 +314,12 @@ class TaskInProgressScreen extends StatelessWidget {
                         ],
                       ),
 
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
 
+                      /// ----------------- AMOUNT / STARTED -----------------
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          /// LEFT SIDE — AMOUNT
                           Row(
                             children: [
                               CustomText(
@@ -321,29 +327,25 @@ class TaskInProgressScreen extends StatelessWidget {
                                 fontWeight: FontVariant.bold,
                                 fontSize: 14,
                               ),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               CustomText(
                                 "SAR 650",
-                                fontWeight: FontVariant.regular,
                                 fontSize: 14,
                                 color: timeColor,
                               ),
                             ],
                           ),
-
-                          /// RIGHT SIDE — POSTED TIME
                           Row(
                             children: [
                               CustomText(
-                                "Posted:",
+                                "Started:",
                                 fontWeight: FontVariant.bold,
-                                fontSize: 14,
+                                fontSize: 13,
                               ),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               CustomText(
-                                "2 hours ago",
-                                fontWeight: FontVariant.regular,
-                                fontSize: 14,
+                                "15 mins ago",
+                                fontSize: 13,
                                 color: timeColor,
                               ),
                             ],
@@ -351,15 +353,40 @@ class TaskInProgressScreen extends StatelessWidget {
                         ],
                       ),
 
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
 
+                      /// ----------------- LOCATION / POSTED -----------------
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(Icons.location_on_outlined,
-                              size: 20, color: timeColor),
-                          const SizedBox(width: 4),
-                          CustomText("Riyadh",
-                              fontSize: 13, color: timeColor),
+                          Row(
+                            children: [
+                              Icon(Icons.location_on_outlined,
+                                  size: 20, color: timeColor),
+                              SizedBox(width: 4),
+                              CustomText(
+                                "Riyadh",
+                                fontSize: 13,
+                                color: timeColor,
+                              ),
+                            ],
+                          ),
+
+                          Row(
+                            children: [
+                              CustomText(
+                                "Posted:",
+                                fontWeight: FontVariant.bold,
+                                fontSize: 14,
+                              ),
+                              SizedBox(width: 4),
+                              CustomText(
+                                "1 hour ago",
+                                fontSize: 14,
+                                color: timeColor,
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ],

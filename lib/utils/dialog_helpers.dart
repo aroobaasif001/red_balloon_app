@@ -6,6 +6,7 @@ import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
+import '../custom_widgets/custom_button.dart';
 import '../views/bottomNavi/screens/task/my_task/tabs/task_in_progress_screen.dart';
 import '../views/bottomNavi/screens/task/my_task/widgets/send_offer_bottom_sheet.dart';
 import 'colors.dart';
@@ -75,11 +76,11 @@ class DialogHelpers {
               ),
 
               Positioned(
-                top: -80,
+                top: -74,
                 child: Image.asset(
                   "assets/icons/Group 1686555644.png",
-                  width: 150,
-                  height: 150,
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -157,17 +158,22 @@ class DialogHelpers {
                     const SizedBox(height: 10),
 
                     /// GO BACK BUTTON
-                    CustomContainer(
-                      height: 48,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.black87, width: 1.3),
-                      conColor: Colors.white,
-                      child: Center(
-                        child: CustomText(
-                          "Go Back",
-                          fontSize: 15,
-                          fontWeight: FontVariant.medium,
-                          color: Colors.black,
+                    InkWell(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: CustomContainer(
+                        height: 48,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.black87, width: 1.3),
+                        conColor: Colors.white,
+                        child: Center(
+                          child: CustomText(
+                            "Go Back",
+                            fontSize: 15,
+                            fontWeight: FontVariant.medium,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
@@ -176,11 +182,11 @@ class DialogHelpers {
               ),
 
               Positioned(
-                top: -80,
+                top: -75,
                 child: Image.asset(
-                  "assets/icons/check.png",
-                  width: 150,
-                  height: 150,
+                  "assets/icons/Group 1686555649.png",
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -197,113 +203,101 @@ class DialogHelpers {
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            final reasons = [
-              "Work not completed",
-              "Communication issue",
-              "Task was ignored",
-            ];
+        return StatefulBuilder(builder: (context, setState) {
+          final reasons = [
+            "Work not completed",
+            "Communication issue",
+            "Task was ignored",
+          ];
 
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              child: Stack(
-                alignment: Alignment.topCenter,
-                clipBehavior: Clip.none,
-                children: [
-                  CustomContainer(
-                    padding: const EdgeInsets.only(
-                      top: 80,
-                      left: 20,
-                      right: 20,
-                      bottom: 25,
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Stack(
+              alignment: Alignment.topCenter,
+              clipBehavior: Clip.none,
+              children: [
+                CustomContainer(
+                  padding: const EdgeInsets.only(
+                    top: 80,
+                    left: 20,
+                    right: 20,
+                    bottom: 25,
+                  ),
+                  conColor: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 10,
                     ),
-                    conColor: Colors.white,
-                    borderRadius: BorderRadius.circular(22),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.15),
-                        blurRadius: 10,
-                      ),
-                    ],
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ...List.generate(reasons.length, (i) {
-                          bool active = i == selected;
+                  ],
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ...List.generate(reasons.length, (i) {
+                        bool active = i == selected;
 
-                          return GestureDetector(
-                            onTap: () => setState(() => selected = i),
-                            child: CustomContainer(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 14,
-                                horizontal: 12,
-                              ),
-                              margin: const EdgeInsets.only(bottom: 12),
-                              borderRadius: BorderRadius.circular(12),
-                              conColor: active ? redColor : Colors.white,
-                              border: Border.all(
-                                color: active ? redColor : Colors.black26,
-                                width: 1.3,
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    active
-                                        ? Icons.check_circle
-                                        : Icons.circle_outlined,
-                                    color: active ? Colors.white : Colors.black,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  CustomText(
-                                    reasons[i],
-                                    color: active ? Colors.white : Colors.black,
-                                    fontWeight: FontVariant.medium,
-                                    fontSize: 15,
-                                  ),
-                                ],
-                              ),
+                        return GestureDetector(
+                          onTap: () => setState(() => selected = i),
+                          child: CustomContainer(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 14, horizontal: 12),
+                            margin: const EdgeInsets.only(bottom: 12),
+                            borderRadius: BorderRadius.circular(12),
+                            conColor: active ? redColor : Colors.white,
+                            border: Border.all(
+                              color: active ? redColor : Colors.black26,
+                              width: 1.3,
                             ),
-                          );
-                        }),
-
-                        const SizedBox(height: 5),
-
-                        CustomContainer(
-                          height: 48,
-                          width: 150,
-                          borderRadius: BorderRadius.circular(12),
-                          conColor: redColor,
-                          child: Center(
-                            child: CustomText(
-                              "Submit Rejection",
-                              fontSize: 15,
-                              fontWeight: FontVariant.semiBold,
-                              color: Colors.white,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  active ? Icons.check_circle : Icons.circle_outlined,
+                                  color: active ? Colors.white : Colors.black,
+                                ),
+                                const SizedBox(width: 10),
+                                CustomText(
+                                  reasons[i],
+                                  color: active ? Colors.white : Colors.black,
+                                  fontWeight: FontVariant.medium,
+                                  fontSize: 15,
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
+                        );
+                      }),
 
-                  Positioned(
-                    top: -80,
-                    child: Image.asset(
-                      "assets/icons/Group 1686555649.png",
-                      width: 150,
-                      height: 150,
-                    ),
+                      const SizedBox(height: 5),
+
+                      CustomButton(
+                        width: 150,
+                        fontSize: 14,
+                        label: 'Submit Rejection', onPressed: () {
+                          Get.back();
+                        DialogHelpers().showRejectionReasonSheet(context);
+                      },)
+                    ],
                   ),
-                ],
-              ),
-            );
-          },
-        );
+                ),
+
+                Positioned(
+                  top: -74,
+                  child: Image.asset(
+                    "assets/icons/Group 1686555649.png",
+                    width: 135,
+                    height: 135,
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
       },
     );
   }
+
 
   void showTaskCompletedDialog(BuildContext context) {
     showDialog(
@@ -319,11 +313,7 @@ class DialogHelpers {
             children: [
               CustomContainer(
                 padding: const EdgeInsets.only(
-                  top: 80,
-                  left: 25,
-                  right: 25,
-                  bottom: 20,
-                ),
+                    top: 80, left: 25, right: 25, bottom: 20),
                 conColor: const Color(0xFFF7FFF7),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
@@ -337,13 +327,13 @@ class DialogHelpers {
                   children: [
                     CustomText(
                       "Task Completed!",
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontVariant.bold,
                     ),
                     const SizedBox(height: 6),
                     CustomText(
                       "Task is marked as completed. Payment\nwill be released within 48 hours",
-                      fontSize: 14,
+                      fontSize: 12,
                       textAlign: TextAlign.center,
                       color: Colors.black87,
                     ),
@@ -352,11 +342,11 @@ class DialogHelpers {
               ),
 
               Positioned(
-                top: -80,
+                top: -75,
                 child: Image.asset(
                   "assets/icons/check.png",
-                  width: 150,
-                  height: 150,
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -365,7 +355,6 @@ class DialogHelpers {
       },
     );
   }
-
   void showFeedbackSubmittedDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -407,11 +396,11 @@ class DialogHelpers {
               ),
 
               Positioned(
-                top: -80,
+                top: -74,
                 child: Image.asset(
                   "assets/icons/check.png",
-                  width: 150,
-                  height: 150,
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -420,6 +409,8 @@ class DialogHelpers {
       },
     );
   }
+
+
 
   void showApproveCompletionDialog({
     required BuildContext context,
@@ -459,16 +450,15 @@ class DialogHelpers {
                     /// TITLE
                     CustomText(
                       "Approve Completion?",
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: FontVariant.semiBold,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
-
                     /// SUBTEXT
                     CustomText(
                       "By approving this proof, the task will be\nmarked as Completed",
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,
                     ),
@@ -478,8 +468,9 @@ class DialogHelpers {
                     /// ================= CONFIRM BUTTON =================
                     GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
-                        // Your Confirm Action Here
+                        Get.back();
+                      DialogHelpers().showTaskCompletedDialog(context);
+
                       },
                       child: CustomContainer(
                         height: 48,
@@ -501,7 +492,7 @@ class DialogHelpers {
                     /// ================= GO BACK BUTTON =================
                     GestureDetector(
                       onTap: () {
-                        Get.back();
+                       Get.back();
                       },
                       child: CustomContainer(
                         height: 48,
@@ -524,11 +515,11 @@ class DialogHelpers {
 
               /// ================= TOP RED CHECK ICON =================
               Positioned(
-                top: -80,
+                top: -73,
                 child: Image.asset(
                   "assets/icons/check.png",
-                  width: 150,
-                  height: 150,
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -537,7 +528,187 @@ class DialogHelpers {
       },
     );
   }
+  void showReportUserSheet(BuildContext context) {
+    int selectedIndex = 0;
 
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+
+            /// 🔥 UPDATED REASONS EXACTLY LIKE SCREENSHOT
+            final List<String> reasons = [
+              "Fake Profile",
+              "Rude Communication",
+              "Fraudulent Activity",
+              "Suspicious Task Activity",
+              "Other",
+            ];
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+
+                  /// -------- TOP RED QUESTION ICON --------
+                  Image.asset(
+                    "assets/icons/Group 1686555533.png",
+                    height: 100,
+                    width: 100,
+                    fit: BoxFit.contain,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  /// 🔥 UPDATED TITLE (MATCH SCREENSHOT)
+                  CustomText(
+                    "Report User",
+                    fontWeight: FontVariant.semiBold,
+                    fontSize: 20,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  /// 🔥 UPDATED SUBTITLE (MATCH SCREENSHOT)
+                  CustomText(
+                    "Tell us why you want to\nreport this user",
+                    fontSize: 16,
+                    fontWeight: FontVariant.medium,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  /// -------- REASONS LIST --------
+                  Column(
+                    children: List.generate(reasons.length, (index) {
+                      bool selected = selectedIndex == index;
+
+                      return GestureDetector(
+                        onTap: () => setState(() => selectedIndex = index),
+                        child: CustomContainer(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          margin: const EdgeInsets.only(bottom: 12),
+                          borderRadius: BorderRadius.circular(12),
+                          conColor: selected ? redColor : Colors.white,
+                          border: Border.all(
+                            color: selected ? redColor : Colors.black,
+                            width: 1.5,
+                          ),
+
+                          /// SAME SHADOW AS ORIGINAL
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+
+                          child: Row(
+                            children: [
+                              Icon(
+                                selected
+                                    ? Icons.check_circle
+                                    : Icons.circle_outlined,
+                                color: selected ? Colors.white : Colors.black,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: CustomText(
+                                  reasons[index],
+                                  fontSize: 15,
+                                  fontWeight: FontVariant.semiBold,
+                                  color: selected ? Colors.white : Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+
+                  const SizedBox(height: 5),
+
+                  /// -------- ADDITIONAL DETAILS TITLE --------
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: CustomText(
+                      "Add additional details (optional)",
+                      fontWeight: FontVariant.medium,
+                      fontSize: 14,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// 🔥 NEW TEXTFIELD + SHADOW ADDED (MATCHING SCREENSHOT STYLE)
+                  CustomContainer(
+                    borderRadius: BorderRadius.circular(12),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    conColor: const Color(0xFFF5F5F5),
+                    height: 105,
+
+                    /// SHADOW ADDED EXACTLY LIKE YOUR OPTION BOXES
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.20),
+                        blurRadius: 3,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+
+                    child: const TextField(
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                        hintText: "e.g. Provide context",
+                        hintStyle: TextStyle(
+                          color: Color(0xFF9E9E9E),
+                          fontSize: 14,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  /// -------- CONTINUE BUTTON --------
+                  CustomButton(
+                    label: "Continue",
+                    onPressed: () {
+                      Get.back();
+                      DialogHelpers.showReportSubmittedDialog(context: context);
+
+                    },
+                    bgColor: redColor,
+                    textColor: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    height: 51,
+                    fontSize: 17,
+                    width: 233,
+                    fontWeight: FontVariant.semiBold,
+                  ),
+
+                  const SizedBox(height: 25),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
   void showSupportHelpSheet(BuildContext context) {
     int selectedIndex = 0;
 
@@ -567,7 +738,7 @@ class DialogHelpers {
                   Image.asset(
                     "assets/icons/Group 1686555533.png",
                     height: 114,
-                    width: 114,
+                    width:114,
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 18),
@@ -588,7 +759,6 @@ class DialogHelpers {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 22),
-
                   /// -------- REASONS LIST --------
                   Column(
                     children: List.generate(reasons.length, (index) {
@@ -597,9 +767,7 @@ class DialogHelpers {
                         onTap: () => setState(() => selectedIndex = index),
                         child: CustomContainer(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 14,
-                          ),
+                              horizontal: 10, vertical: 14),
                           margin: const EdgeInsets.only(bottom: 12),
                           borderRadius: BorderRadius.circular(12),
                           conColor: selected ? redColor : Colors.white,
@@ -620,7 +788,8 @@ class DialogHelpers {
                                 selected
                                     ? Icons.check_circle
                                     : Icons.circle_outlined,
-                                color: selected ? Colors.white : Colors.black,
+                                color:
+                                selected ? Colors.white : Colors.black,
                               ),
                               const SizedBox(width: 12),
                               Expanded(
@@ -628,7 +797,9 @@ class DialogHelpers {
                                   reasons[index],
                                   fontSize: 15,
                                   fontWeight: FontVariant.semiBold,
-                                  color: selected ? Colors.white : Colors.black,
+                                  color: selected
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                               ),
                             ],
@@ -664,7 +835,6 @@ class DialogHelpers {
       },
     );
   }
-
   void showDescribeProblemSheet(BuildContext context) {
     TextEditingController msgController = TextEditingController();
 
@@ -690,7 +860,7 @@ class DialogHelpers {
               Image.asset(
                 "assets/icons/Group 1686555533.png",
                 height: 114,
-                width: 114,
+                width:114,
                 fit: BoxFit.contain,
               ),
 
@@ -704,7 +874,6 @@ class DialogHelpers {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
-
               /// -------- SUBTITLE --------
               CustomText(
                 "Please, Elaborate your problem, or\nwhat went wrong. Thanks!",
@@ -726,11 +895,17 @@ class DialogHelpers {
                   controller: msgController,
                   maxLines: null,
                   expands: true,
-                  style: const TextStyle(fontSize: 15, color: Colors.black),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                  ),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: "Type your message...",
-                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ),
@@ -744,6 +919,7 @@ class DialogHelpers {
                   Get.back();
                   Get.back();
                   DialogHelpers.showReportSubmittedDialog(context: context);
+
                 },
                 height: 51,
                 width: 233,
@@ -761,7 +937,118 @@ class DialogHelpers {
       },
     );
   }
+  void showRejectionReasonSheet(BuildContext context) {
+    TextEditingController msgController = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.75,
+          minChildSize: 0.50,
+          maxChildSize: 0.95,
+          builder: (_, controller) {
+            return SingleChildScrollView(
+              controller: controller,
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 25,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 25,
+              ),
+              child: Column(
+                children: [
+                  /// -------- TOP ICON --------
+                  Image.asset(
+                    "assets/icons/Group 1686555649.png",
+                    height: 114,
+                    width: 114,
+                    fit: BoxFit.contain,
+                  ),
 
+                  const SizedBox(height: 20),
+
+                  /// -------- TITLE --------
+                  CustomText(
+                    "Rejection Reason",
+                    fontSize: 20,
+                    fontWeight: FontVariant.bold,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// -------- SUBTITLE --------
+                  CustomText(
+                    "Please, Elaborate your problem, or\nwhat went wrong. Thanks!",
+                    fontSize: 16,
+                    fontWeight: FontVariant.medium,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  /// -------- MESSAGE BOX --------
+                  CustomContainer(
+                    conColor: const Color(0xffD9D9D9),
+                    borderRadius: BorderRadius.circular(30),
+                    padding: const EdgeInsets.all(12),
+                    height: 266,
+                    width: double.infinity,
+                    child: TextField(
+                      controller: msgController,
+                      maxLines: null,
+                      expands: true,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Type your message...",
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  /// -------- BUTTON --------
+                  CustomButton(
+                    label: "Continue",
+                    onPressed: () {
+                      Get.back();
+                      Get.back();
+                      DialogHelpers.showReportSubmittedDialog(
+                        context: context,
+                      );
+                    },
+                    height: 51,
+                    width: 233,
+                    bgColor: redColor,
+                    textColor: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    fontSize: 17,
+                    fontWeight: FontVariant.semiBold,
+                  ),
+
+                  const SizedBox(height: 40),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
   // Escrow Detail Dialog Methods
   static void showTaskDetailsInfo() {
     Get.snackbar('Task Details', 'Navigating to task details...');
@@ -922,18 +1209,17 @@ class DialogHelpers {
                     /// MAIN TITLE
                     CustomText(
                       "Report Submitted!",
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontVariant.semiBold,
                       textAlign: TextAlign.center,
                       color: Colors.black,
                     ),
 
                     const SizedBox(height: 3),
-
                     /// SUBTEXT
                     CustomText(
                       "Our Support Team will look into it,\nYou will be notified shortly!",
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,
                     ),
@@ -945,11 +1231,11 @@ class DialogHelpers {
 
               /// ================= RED CHECK ICON =================
               Positioned(
-                top: -80,
+                top: -74,
                 child: Image.asset(
                   'assets/icons/check.png',
-                  width: 150,
-                  height: 150,
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -958,6 +1244,8 @@ class DialogHelpers {
       },
     );
   }
+
+
 
   static void showOfferAcceptedDialog({
     required BuildContext context,
@@ -1012,14 +1300,14 @@ class DialogHelpers {
                     CustomButton(
                       label: buttonText,
                       onPressed: () {
-                        Get.to(() => TaskInProgressScreen());
+                        Get.to(()=>TaskInProgressScreen());
                       },
                       height: 52,
                       width: 190,
                       bgColor: const Color(0xFFE53935),
                       textColor: Colors.white,
                       borderRadius: BorderRadius.circular(14),
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontVariant.semiBold,
                     ),
                   ],
@@ -1028,11 +1316,11 @@ class DialogHelpers {
 
               // ================= RED CHECK ICON =================
               Positioned(
-                top: -80,
+                top: -60,
                 child: Image.asset(
                   'assets/icons/check.png', // SAME AS YOUR CHECK ICON
-                  width: 150,
-                  height: 150,
+                  width: 130,
+                  height: 130,
                 ),
               ),
             ],
@@ -1041,6 +1329,7 @@ class DialogHelpers {
       },
     );
   }
+
 
   /// ===================================================
   /// SHOW HELPER PROFILE DIALOG
@@ -1076,12 +1365,16 @@ class DialogHelpers {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(Icons.flag_outlined, color: redColor, size: 22),
+                          InkWell(
+                              onTap: () {
+                               DialogHelpers().showReportUserSheet(context);
+                              },
+                              child: Icon(Icons.flag_outlined, color: redColor, size: 22)),
                           GestureDetector(
                             onTap: () => Navigator.pop(context),
                             child: Icon(
                               Icons.close,
-                              color: walletTextGreyColor,
+                              color: timeColor,
                               size: 20,
                             ),
                           ),

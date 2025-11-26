@@ -18,7 +18,7 @@ class AllTaskTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomText(
-            'My Posted Tasks',
+            'My Tasks',
             fontSize: 24,
             fontWeight: FontVariant.bold,
           ),
