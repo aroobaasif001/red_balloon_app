@@ -70,11 +70,11 @@ class DialogHelpers {
               ),
 
               Positioned(
-                top: -80,
+                top: -74,
                 child: Image.asset(
                   "assets/icons/Group 1686555644.png",
-                  width: 150,
-                  height: 150,
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -83,7 +83,6 @@ class DialogHelpers {
       },
     );
   }
-
   void showRejectStep1Dialog(BuildContext context) {
     showDialog(
       context: context,
@@ -152,17 +151,22 @@ class DialogHelpers {
                     const SizedBox(height: 10),
 
                     /// GO BACK BUTTON
-                    CustomContainer(
-                      height: 48,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.black87, width: 1.3),
-                      conColor: Colors.white,
-                      child: Center(
-                        child: CustomText(
-                          "Go Back",
-                          fontSize: 15,
-                          fontWeight: FontVariant.medium,
-                          color: Colors.black,
+                    InkWell(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: CustomContainer(
+                        height: 48,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.black87, width: 1.3),
+                        conColor: Colors.white,
+                        child: Center(
+                          child: CustomText(
+                            "Go Back",
+                            fontSize: 15,
+                            fontWeight: FontVariant.medium,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
@@ -171,11 +175,11 @@ class DialogHelpers {
               ),
 
               Positioned(
-                top: -80,
+                top: -75,
                 child: Image.asset(
-                  "assets/icons/check.png",
-                  width: 150,
-                  height: 150,
+                  "assets/icons/Group 1686555649.png",
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -184,7 +188,6 @@ class DialogHelpers {
       },
     );
   }
-
   void showRejectStep2Dialog(BuildContext context) {
     int selected = 0;
 
@@ -260,30 +263,23 @@ class DialogHelpers {
 
                       const SizedBox(height: 5),
 
-                      CustomContainer(
-                        height: 48,
+                      CustomButton(
                         width: 150,
-                        borderRadius: BorderRadius.circular(12),
-                        conColor: redColor,
-                        child: Center(
-                          child: CustomText(
-                            "Submit Rejection",
-                            fontSize: 15,
-                            fontWeight: FontVariant.semiBold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                        fontSize: 14,
+                        label: 'Submit Rejection', onPressed: () {
+                          Get.back();
+                        DialogHelpers().showRejectionReasonSheet(context);
+                      },)
                     ],
                   ),
                 ),
 
                 Positioned(
-                  top: -80,
+                  top: -74,
                   child: Image.asset(
                     "assets/icons/Group 1686555649.png",
-                    width: 150,
-                    height: 150,
+                    width: 135,
+                    height: 135,
                   ),
                 ),
               ],
@@ -293,8 +289,6 @@ class DialogHelpers {
       },
     );
   }
-
-
   void showTaskCompletedDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -323,13 +317,13 @@ class DialogHelpers {
                   children: [
                     CustomText(
                       "Task Completed!",
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontVariant.bold,
                     ),
                     const SizedBox(height: 6),
                     CustomText(
                       "Task is marked as completed. Payment\nwill be released within 48 hours",
-                      fontSize: 14,
+                      fontSize: 12,
                       textAlign: TextAlign.center,
                       color: Colors.black87,
                     ),
@@ -338,11 +332,11 @@ class DialogHelpers {
               ),
 
               Positioned(
-                top: -80,
+                top: -75,
                 child: Image.asset(
                   "assets/icons/check.png",
-                  width: 150,
-                  height: 150,
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -392,11 +386,11 @@ class DialogHelpers {
               ),
 
               Positioned(
-                top: -80,
+                top: -74,
                 child: Image.asset(
                   "assets/icons/check.png",
-                  width: 150,
-                  height: 150,
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -405,9 +399,6 @@ class DialogHelpers {
       },
     );
   }
-
-
-
   void showApproveCompletionDialog({
     required BuildContext context,
     bool barrierDismissible = true,
@@ -446,7 +437,7 @@ class DialogHelpers {
                     /// TITLE
                     CustomText(
                       "Approve Completion?",
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: FontVariant.semiBold,
                       textAlign: TextAlign.center,
                     ),
@@ -454,18 +445,17 @@ class DialogHelpers {
                     /// SUBTEXT
                     CustomText(
                       "By approving this proof, the task will be\nmarked as Completed",
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,
                     ),
-
                     const SizedBox(height: 22),
-
                     /// ================= CONFIRM BUTTON =================
                     GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
-                        // Your Confirm Action Here
+                        Get.back();
+                      DialogHelpers().showTaskCompletedDialog(context);
+
                       },
                       child: CustomContainer(
                         height: 48,
@@ -481,9 +471,7 @@ class DialogHelpers {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 12),
-
                     /// ================= GO BACK BUTTON =================
                     GestureDetector(
                       onTap: () {
@@ -510,11 +498,11 @@ class DialogHelpers {
 
               /// ================= TOP RED CHECK ICON =================
               Positioned(
-                top: -80,
+                top: -73,
                 child: Image.asset(
                   "assets/icons/check.png",
-                  width: 150,
-                  height: 150,
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -523,9 +511,187 @@ class DialogHelpers {
       },
     );
   }
+  void showReportUserSheet(BuildContext context) {
+    int selectedIndex = 0;
 
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
 
+            /// 🔥 UPDATED REASONS EXACTLY LIKE SCREENSHOT
+            final List<String> reasons = [
+              "Fake Profile",
+              "Rude Communication",
+              "Fraudulent Activity",
+              "Suspicious Task Activity",
+              "Other",
+            ];
 
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+
+                  /// -------- TOP RED QUESTION ICON --------
+                  Image.asset(
+                    "assets/icons/Group 1686555533.png",
+                    height: 100,
+                    width: 100,
+                    fit: BoxFit.contain,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  /// 🔥 UPDATED TITLE (MATCH SCREENSHOT)
+                  CustomText(
+                    "Report User",
+                    fontWeight: FontVariant.semiBold,
+                    fontSize: 20,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  /// 🔥 UPDATED SUBTITLE (MATCH SCREENSHOT)
+                  CustomText(
+                    "Tell us why you want to\nreport this user",
+                    fontSize: 16,
+                    fontWeight: FontVariant.medium,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  /// -------- REASONS LIST --------
+                  Column(
+                    children: List.generate(reasons.length, (index) {
+                      bool selected = selectedIndex == index;
+
+                      return GestureDetector(
+                        onTap: () => setState(() => selectedIndex = index),
+                        child: CustomContainer(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          margin: const EdgeInsets.only(bottom: 12),
+                          borderRadius: BorderRadius.circular(12),
+                          conColor: selected ? redColor : Colors.white,
+                          border: Border.all(
+                            color: selected ? redColor : Colors.black,
+                            width: 1.5,
+                          ),
+
+                          /// SAME SHADOW AS ORIGINAL
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+
+                          child: Row(
+                            children: [
+                              Icon(
+                                selected
+                                    ? Icons.check_circle
+                                    : Icons.circle_outlined,
+                                color: selected ? Colors.white : Colors.black,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: CustomText(
+                                  reasons[index],
+                                  fontSize: 15,
+                                  fontWeight: FontVariant.semiBold,
+                                  color: selected ? Colors.white : Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+
+                  const SizedBox(height: 5),
+
+                  /// -------- ADDITIONAL DETAILS TITLE --------
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: CustomText(
+                      "Add additional details (optional)",
+                      fontWeight: FontVariant.medium,
+                      fontSize: 14,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// 🔥 NEW TEXTFIELD + SHADOW ADDED (MATCHING SCREENSHOT STYLE)
+                  CustomContainer(
+                    borderRadius: BorderRadius.circular(12),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    conColor: const Color(0xFFF5F5F5),
+                    height: 105,
+
+                    /// SHADOW ADDED EXACTLY LIKE YOUR OPTION BOXES
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.20),
+                        blurRadius: 3,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+
+                    child: const TextField(
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                        hintText: "e.g. Provide context",
+                        hintStyle: TextStyle(
+                          color: Color(0xFF9E9E9E),
+                          fontSize: 14,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  /// -------- CONTINUE BUTTON --------
+                  CustomButton(
+                    label: "Continue",
+                    onPressed: () {
+                      Get.back();
+                      DialogHelpers.showReportSubmittedDialog(context: context);
+
+                    },
+                    bgColor: redColor,
+                    textColor: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    height: 51,
+                    fontSize: 17,
+                    width: 233,
+                    fontWeight: FontVariant.semiBold,
+                  ),
+
+                  const SizedBox(height: 25),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
   void showSupportHelpSheet(BuildContext context) {
     int selectedIndex = 0;
 
@@ -754,18 +920,126 @@ class DialogHelpers {
       },
     );
   }
+  void showRejectionReasonSheet(BuildContext context) {
+    TextEditingController msgController = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.75,
+          minChildSize: 0.50,
+          maxChildSize: 0.95,
+          builder: (_, controller) {
+            return SingleChildScrollView(
+              controller: controller,
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 25,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 25,
+              ),
+              child: Column(
+                children: [
+                  /// -------- TOP ICON --------
+                  Image.asset(
+                    "assets/icons/Group 1686555649.png",
+                    height: 114,
+                    width: 114,
+                    fit: BoxFit.contain,
+                  ),
 
+                  const SizedBox(height: 20),
 
+                  /// -------- TITLE --------
+                  CustomText(
+                    "Rejection Reason",
+                    fontSize: 20,
+                    fontWeight: FontVariant.bold,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// -------- SUBTITLE --------
+                  CustomText(
+                    "Please, Elaborate your problem, or\nwhat went wrong. Thanks!",
+                    fontSize: 16,
+                    fontWeight: FontVariant.medium,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  /// -------- MESSAGE BOX --------
+                  CustomContainer(
+                    conColor: const Color(0xffD9D9D9),
+                    borderRadius: BorderRadius.circular(30),
+                    padding: const EdgeInsets.all(12),
+                    height: 266,
+                    width: double.infinity,
+                    child: TextField(
+                      controller: msgController,
+                      maxLines: null,
+                      expands: true,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Type your message...",
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  /// -------- BUTTON --------
+                  CustomButton(
+                    label: "Continue",
+                    onPressed: () {
+                      Get.back();
+                      Get.back();
+                      DialogHelpers.showReportSubmittedDialog(
+                        context: context,
+                      );
+                    },
+                    height: 51,
+                    width: 233,
+                    bgColor: redColor,
+                    textColor: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    fontSize: 17,
+                    fontWeight: FontVariant.semiBold,
+                  ),
+
+                  const SizedBox(height: 40),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
   // Escrow Detail Dialog Methods
   static void showTaskDetailsInfo() {
     Get.snackbar('Task Details', 'Navigating to task details...');
   }
-
   // Wallet Controller Dialog Methods
   static void showFundReleaseInfo() {
     Get.snackbar('Info', 'Funds are auto-released after successful validation');
   }
-
   static void showPriceInfoDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -801,7 +1075,6 @@ class DialogHelpers {
       },
     );
   }
-
   static void showPaymentSuccessDialog({
     required BuildContext context,
 
@@ -877,7 +1150,6 @@ class DialogHelpers {
       },
     );
   }
-
   static void showReportSubmittedDialog({
     required BuildContext context,
     bool barrierDismissible = true,
@@ -916,7 +1188,7 @@ class DialogHelpers {
                     /// MAIN TITLE
                     CustomText(
                       "Report Submitted!",
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontVariant.semiBold,
                       textAlign: TextAlign.center,
                       color: Colors.black,
@@ -926,7 +1198,7 @@ class DialogHelpers {
                     /// SUBTEXT
                     CustomText(
                       "Our Support Team will look into it,\nYou will be notified shortly!",
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,
                     ),
@@ -938,11 +1210,11 @@ class DialogHelpers {
 
               /// ================= RED CHECK ICON =================
               Positioned(
-                top: -80,
+                top: -74,
                 child: Image.asset(
                   'assets/icons/check.png',
-                  width: 150,
-                  height: 150,
+                  width: 135,
+                  height: 135,
                 ),
               ),
             ],
@@ -951,9 +1223,6 @@ class DialogHelpers {
       },
     );
   }
-
-
-
   static void showOfferAcceptedDialog({
     required BuildContext context,
     String message = "Offer accepted successfully",
@@ -998,7 +1267,6 @@ class DialogHelpers {
                       fontSize: 16,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,
-                      color: Colors.black87,
                     ),
 
                     const SizedBox(height: 10),
@@ -1014,7 +1282,7 @@ class DialogHelpers {
                       bgColor: const Color(0xFFE53935),
                       textColor: Colors.white,
                       borderRadius: BorderRadius.circular(14),
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontVariant.semiBold,
                     ),
                   ],
@@ -1023,11 +1291,11 @@ class DialogHelpers {
 
               // ================= RED CHECK ICON =================
               Positioned(
-                top: -80,
+                top: -60,
                 child: Image.asset(
                   'assets/icons/check.png', // SAME AS YOUR CHECK ICON
-                  width: 150,
-                  height: 150,
+                  width: 130,
+                  height: 130,
                 ),
               ),
             ],
@@ -1036,8 +1304,6 @@ class DialogHelpers {
       },
     );
   }
-
-
   /// ===================================================
   /// SHOW HELPER PROFILE DIALOG
   /// ===================================================
@@ -1072,12 +1338,16 @@ class DialogHelpers {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(Icons.flag_outlined, color: redColor, size: 22),
+                          InkWell(
+                              onTap: () {
+                               DialogHelpers().showReportUserSheet(context);
+                              },
+                              child: Icon(Icons.flag_outlined, color: redColor, size: 22)),
                           GestureDetector(
                             onTap: () => Navigator.pop(context),
                             child: Icon(
                               Icons.close,
-                              color: walletTextGreyColor,
+                              color: timeColor,
                               size: 20,
                             ),
                           ),
@@ -1284,7 +1554,6 @@ class DialogHelpers {
       },
     );
   }
-
   /// ================================
   /// STAT BOX BUILDER
   /// ================================
@@ -1312,7 +1581,6 @@ class DialogHelpers {
       ),
     );
   }
-
   /// ===================================================
   /// SHOW SEND OFFER BOTTOM SHEET
   /// ===================================================
@@ -1327,7 +1595,6 @@ class DialogHelpers {
     );
   }
 }
-
 /// =================================================================
 /// SMALL STAT BOX WIDGET (Matches Screenshot Perfectly)
 /// =================================================================

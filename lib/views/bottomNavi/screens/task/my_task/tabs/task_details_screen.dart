@@ -47,8 +47,8 @@ class TaskDetailsScreen extends StatelessWidget {
                   width: double.infinity,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.20),
-                      blurRadius: 2,
+                      color: Colors.black.withOpacity(0.40),
+                      blurRadius: 5,
                       offset: const Offset(0, 3),
                     )
                   ],
@@ -97,13 +97,12 @@ class TaskDetailsScreen extends StatelessWidget {
                             fontWeight: FontVariant.bold,
                             color: redColor,
                           ),
-                          const SizedBox(width: 10),
-
+                          Spacer(),
                           CustomContainer(
-                            conColor: Colors.white,
+                            conColor: Colors.grey.shade100,
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 6),
-                            borderRadius: BorderRadius.circular(20),
+                                horizontal: 14, vertical: 7),
+                            borderRadius: BorderRadius.circular(10),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.20),
@@ -113,13 +112,11 @@ class TaskDetailsScreen extends StatelessWidget {
                             ],
                             child: Row(
                               children: [
-                                Icon(Icons.location_on,
-                                    size: 14, color: redColor),
-                                const SizedBox(width: 6),
                                 CustomText(
-                                  "Location-based Task",
+                                  "Offline Task",
                                   fontSize: 13,
-                                  color: Colors.black54,
+                                  color: timeColor,
+                                  fontWeight: FontVariant.regular,
                                 ),
                               ],
                             ),

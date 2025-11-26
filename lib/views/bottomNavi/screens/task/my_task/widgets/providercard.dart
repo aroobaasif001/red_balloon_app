@@ -105,23 +105,23 @@ class ProviderCard extends StatelessWidget {
                         children: [
                           const Icon(Icons.star,
                               size: 20, color: Color(0xfff7d400)),
-                          const SizedBox(width: 5),
+                          const SizedBox(width: 1),
                           CustomText(
                             rating,
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontVariant.semiBold,
                             color: redColor,
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: 3),
                           CustomText(
                             description,
-                            fontSize: 13,
+                            fontSize: 12,
                             color: redColor,
                           ),
                         ],
                       ),
 
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 1),
 
                       /// PRICE + DISTANCE
                       Align(
@@ -131,12 +131,12 @@ class ProviderCard extends StatelessWidget {
                           children: [
                             CustomText(
                               price,
-                              fontSize: 20,
+                              fontSize: 17,
                               fontWeight: FontVariant.bold,
                             ),
                             CustomText(
                               distance,
-                              fontSize: 13,
+                              fontSize: 12,
                               color: redColor,
                             ),
                           ],
@@ -148,7 +148,7 @@ class ProviderCard extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             /// BUTTONS ROW
             Row(
@@ -179,7 +179,7 @@ class ProviderCard extends StatelessWidget {
             child: CustomText(
               label,
               color: Colors.white,
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: FontVariant.regular,
             ),
           ),

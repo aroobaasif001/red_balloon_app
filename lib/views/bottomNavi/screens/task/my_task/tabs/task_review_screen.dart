@@ -24,8 +24,7 @@ class TaskReviewScreen extends StatelessWidget {
             /// ---------------- APP BAR ----------------
             CustomAppBar1(
               title: 'Task Review',
-              rightImagePath:
-              'assets/icons/material-symbols_flag-outline.png',
+              showRightImage: false,
             ),
 
             const SizedBox(height: 15),
