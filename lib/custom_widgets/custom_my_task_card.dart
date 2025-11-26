@@ -130,7 +130,7 @@ class CustomMyTaskCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 8),
                     ],
                   ],
                 ),
@@ -139,7 +139,7 @@ class CustomMyTaskCard extends StatelessWidget {
               Expanded(
                 child: CustomContainer(
                   height: 100,
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
                     image: AssetImage(image),
                     fit: BoxFit.fill,

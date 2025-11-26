@@ -4,13 +4,13 @@ import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/wallet/tabs/escrow_detail.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/wallet/tabs/withdraw_funds.dart';
 
-import '../../../../../custom_widgets/custom_appbar.dart';
-import '../../../../../custom_widgets/transaction_item.dart';
-import '../../../../../custom_widgets/wallet_balance_card.dart';
-import '../controller/wallet_controller.dart';
-import '../widgets/info_card.dart';
-import '../widgets/locked_balance_card.dart';
-import '../widgets/transactions_header.dart';
+import '../../../../custom_widgets/custom_appbar.dart';
+import '../../../../custom_widgets/transaction_item.dart';
+import '../../../../custom_widgets/wallet_balance_card.dart';
+import 'controller/wallet_controller.dart';
+import 'widgets/info_card.dart';
+import 'widgets/locked_balance_card.dart';
+import 'widgets/transactions_header.dart';
 
 class WalletTab extends StatelessWidget {
   WalletTab({super.key});
@@ -46,6 +46,7 @@ class WalletTab extends StatelessWidget {
         body: CustomContainer(
           height: double.infinity,
           width: double.infinity,
+          padding: EdgeInsets.only(bottom: 70),
           child: SingleChildScrollView(
             child: Column(
               children: [

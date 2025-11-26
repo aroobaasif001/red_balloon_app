@@ -4,6 +4,7 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/bottomNavi/bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/offline_and_online_card.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/tabs/clean_my_solar_panels.dart';
 
 class TasksForYouTab extends StatelessWidget {
   const TasksForYouTab({super.key});
@@ -63,6 +64,7 @@ class TasksForYouTab extends StatelessWidget {
                   type: 'Offline Task',
                   onViewDetails: () {
                     print("Details tapped");
+                    Get.to(() => Cleanmysolarpanels());
                   },
                 ),
               );

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/modern_bottom_nav.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/home_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/task/my_task/my_task_screen.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/validations_tab/validation_hub_screen/validation_hub_screen.dart';
-import 'package:red_balloon_app/views/bottomNavi/screens/wallet/tabs/wallet_tab.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/wallet/wallet_tab.dart';
 
 class BottomNaviScreen extends StatefulWidget {
   final int initialIndex;
@@ -31,12 +32,12 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/home_active.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/home_inactive.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
       ),
       ModernBottomNavItem(
@@ -44,12 +45,12 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/task_active.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/search_inactive.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
       ),
       ModernBottomNavItem(
@@ -57,12 +58,12 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/validations_active.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/validation_inactive.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
       ),
       ModernBottomNavItem(
@@ -70,12 +71,12 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/wallet_active.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/wallet_inactive.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
       ),
     ];

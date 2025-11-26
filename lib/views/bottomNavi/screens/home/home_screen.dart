@@ -7,6 +7,7 @@ import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_bon
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_quick_actions.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/home/widgets/custom_wallet_card.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/notification/notification_screen.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/wallet/tabs/add_funds.dart';
 
 import '../profile/tabs/profile_screen.dart';
 
@@ -70,6 +71,7 @@ class HomeScreen extends StatelessWidget {
                           availableAmount: '255.00',
                           onAddFunds: () {
                             print("Add funds tapped");
+                            Get.to(() => AddFunds());
                           },
                         ),
                         SizedBox(height: 20),
@@ -79,10 +81,10 @@ class HomeScreen extends StatelessWidget {
                   SizedBox(height: 22),
                   // Tab Views
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.77,
+                    height: Get.height * 0.53,
                     child: TabBarView(
                       controller: controller.tabController,
-                      physics: const NeverScrollableScrollPhysics(),
+                      // physics: const NeverScrollableScrollPhysics(),
                       children: const [TasksForYouTab()],
                     ),
                   ),

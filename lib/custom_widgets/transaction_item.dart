@@ -26,8 +26,9 @@ class TransactionItem extends StatelessWidget {
     return CustomContainer(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(12),
-      conColor: walletTransactionBgColor,
+      conColor: white1Color,
       borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: white2Color),
       child: Row(
         children: [
           CustomContainer(
@@ -35,6 +36,7 @@ class TransactionItem extends StatelessWidget {
             height: 40,
             conColor: amountColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(25),
+
             child: Center(
               child: Icon(
                 amount.startsWith('+')

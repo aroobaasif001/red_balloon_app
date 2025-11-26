@@ -1,45 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 
+import '../controller/withdraw_funds_controller.dart';
 import '../widgets/custom_wallet_balance_card.dart';
-import '../widgets/withdrawal_details_card.dart';
 import '../widgets/past_withdrawal_requests.dart';
+import '../widgets/withdrawal_details_card.dart';
 
-class WithdrawFunds extends StatefulWidget {
+class WithdrawFunds extends StatelessWidget {
   const WithdrawFunds({super.key});
 
   @override
-  State<WithdrawFunds> createState() => _WithdrawFundsState();
-}
-
-class _WithdrawFundsState extends State<WithdrawFunds> {
-  late TextEditingController _amountController;
-  late TextEditingController _paymentMethodController;
-
-  @override
-  void initState() {
-    super.initState();
-    _amountController = TextEditingController();
-    _paymentMethodController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _amountController.dispose();
-    _paymentMethodController.dispose();
-    super.dispose();
-  }
-
-  void _handleWithdrawalRequest() {
-    // Handle withdrawal request logic here
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Withdrawal request submitted')),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final WithdrawFundsController controller = Get.put(
+      WithdrawFundsController(),
+    );
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -49,15 +25,18 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
           height: double.infinity,
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
+              ),
               child: Column(
                 children: [
                   custom_withdraw_balance_card(),
                   SizedBox(height: 20),
                   WithdrawalDetailsCard(
-                    amountController: _amountController,
-                    paymentMethodController: _paymentMethodController,
-                    onButtonPressed: _handleWithdrawalRequest,
+                    amountController: controller.amountController,
+                    paymentMethodController: controller.paymentMethodController,
+                    onButtonPressed: controller.submitWithdrawal,
                   ),
                   SizedBox(height: 20),
                   PastWithdrawalRequests(

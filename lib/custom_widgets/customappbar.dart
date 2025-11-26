@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'customtext.dart';  // <-- Correct import (important!)
+
+import 'customtext.dart'; // <-- Correct import (important!)
 
 class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
@@ -30,7 +31,7 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
 
   final String? subtitle;
   final bool showLeftImage;
-  final bool showRightImage;   // ✅ NEW — Same as showLeftImage
+  final bool showRightImage; // ✅ NEW — Same as showLeftImage
   final Widget? leading;
 
   const CustomAppBar1({
@@ -56,7 +57,7 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
     this.gradient,
     this.subtitle,
     this.showLeftImage = true,
-    this.showRightImage = true,    // ✅ default true (same behavior as left)
+    this.showRightImage = true, // ✅ default true (same behavior as left)
     this.leading,
   });
 
@@ -69,7 +70,8 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
     final effectiveRight = rightImagePath ?? 'assets/icons/appBarRighticon.png';
 
     return Container(
-      decoration: decoration ??
+      decoration:
+          decoration ??
           BoxDecoration(
             color: backgroundColor ?? Colors.white,
             gradient: gradient,
@@ -84,20 +86,19 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
               /// LEFT ICON
               if (showLeftImage)
                 GestureDetector(
-                  onTap: onLeftPressed ?? () => Navigator.of(context).maybePop(),
+                  onTap:
+                      onLeftPressed ?? () => Navigator.of(context).maybePop(),
                   child: Image.asset(
                     effectiveLeft,
-                    height: leftImageHeight ?? 24,
-                    width: leftImageWidth ?? 24,
+                    height: leftImageHeight ?? 20,
+                    width: leftImageWidth ?? 20,
                   ),
                 )
               else
                 const SizedBox(width: 20),
 
               /// TITLE
-              Expanded(
-                child: Center(child: _buildTitle()),
-              ),
+              Expanded(child: Center(child: _buildTitle())),
 
               /// RIGHT ICON  (same logic as left)
               if (showRightImage)
@@ -123,11 +124,11 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
 
     final widget = CustomText(
       title!,
-      fontSize: titleFontSize ?? 24,
+      fontSize: titleFontSize ?? 20,
       fontWeight: titleFontWeight ?? FontVariant.bold,
       fontType: titleFontType ?? AppFont.montserrat,
       color: titleGradient == null ? titleColor ?? Colors.black : Colors.white,
-      maxLines: 2,
+      maxLines: 1,
       overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.center,
     );
@@ -135,10 +136,9 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
     if (titleGradient == null) return widget;
 
     return ShaderMask(
-      shaderCallback: (bounds) =>
-          titleGradient!.createShader(
-            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-          ),
+      shaderCallback: (bounds) => titleGradient!.createShader(
+        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+      ),
       blendMode: BlendMode.srcIn,
       child: widget,
     );

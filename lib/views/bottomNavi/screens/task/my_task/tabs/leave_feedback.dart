@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/bottomNavi/bottom_navi_screen.dart';
 
 import '../controller/leave_feedback_controller.dart';
 import '../widgets/leave_feedback_rating_row.dart';
@@ -14,8 +15,9 @@ class LeaveFeedback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LeaveFeedbackController controller =
-        Get.put(LeaveFeedbackController());
+    final LeaveFeedbackController controller = Get.put(
+      LeaveFeedbackController(),
+    );
 
     return SafeArea(
       top: false,
@@ -92,32 +94,42 @@ class LeaveFeedback extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: CustomContainer(
-                      height: 48,
-                      borderRadius: BorderRadius.circular(24),
-                      conColor: whiteColor,
-                      border: Border.all(color: bordercolor1),
-                      alignment: Alignment.center,
-                      child: const CustomText(
-                        'Skip',
-                        fontSize: 14,
-                        fontWeight: FontVariant.semiBold,
-                        color: walletGrey700Color,
+                    child: InkWell(
+                      onTap: () {
+                        Get.offAll(() => BottomNaviScreen());
+                      },
+                      child: CustomContainer(
+                        height: 48,
+                        borderRadius: BorderRadius.circular(24),
+                        conColor: whiteColor,
+                        border: Border.all(color: fundCardBorderColor),
+                        alignment: Alignment.center,
+                        child: const CustomText(
+                          'Skip',
+                          fontSize: 14,
+                          fontWeight: FontVariant.semiBold,
+                          color: walletGrey700Color,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: CustomContainer(
-                      height: 48,
-                      borderRadius: BorderRadius.circular(24),
-                      conColor: redColor,
-                      alignment: Alignment.center,
-                      child: const CustomText(
-                        'Submit Feedback',
-                        fontSize: 14,
-                        fontWeight: FontVariant.semiBold,
-                        color: whiteColor,
+                    child: InkWell(
+                      onTap: () {
+                        Get.offAll(() => BottomNaviScreen());
+                      },
+                      child: CustomContainer(
+                        height: 48,
+                        borderRadius: BorderRadius.circular(24),
+                        conColor: redColor,
+                        alignment: Alignment.center,
+                        child: const CustomText(
+                          'Submit Feedback',
+                          fontSize: 14,
+                          fontWeight: FontVariant.semiBold,
+                          color: whiteColor,
+                        ),
                       ),
                     ),
                   ),

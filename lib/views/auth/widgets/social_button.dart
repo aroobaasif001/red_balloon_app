@@ -39,7 +39,7 @@ class SocialButton extends StatelessWidget {
     this.radius = 16,
     this.padding = const EdgeInsets.symmetric(horizontal: 14),
     this.bgColor,
-    this.textColor = Colors.black87,
+    this.textColor = blackColor,
     this.fontSize = 16,
     this.fontWeight = FontWeight.w500,
     this.isLoading = false,
@@ -82,8 +82,8 @@ class SocialButton extends StatelessWidget {
       height: height,
       fullWidth: fullWidth,
       width: width,
-      bgColor: Colors.black,
-      textColor: Colors.white,
+      bgColor: blackColor,
+      textColor: whiteColor,
       icon: Image.asset('assets/icons/apple.png', width: 30, height: 30),
     );
   }
@@ -91,8 +91,10 @@ class SocialButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool enabled = onPressed != null && !isLoading;
-    final Color effectiveText = enabled ? textColor : textColor.withOpacity(0.6);
-    final Color surface = bgColor ?? const Color(0xFFF5F6FA);
+    final Color effectiveText = enabled
+        ? textColor
+        : textColor.withOpacity(0.6);
+    final Color surface = bgColor ?? white4Color;
 
     final button = MaterialButton(
       onPressed: enabled ? onPressed : null,
@@ -103,7 +105,9 @@ class SocialButton extends StatelessWidget {
       minWidth: 0, // 👈 don't force full width
       height: height,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(radius),
+      ),
       child: Container(
         height: height,
         padding: padding,
@@ -123,7 +127,9 @@ class SocialButton extends StatelessWidget {
                       height: 22,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(effectiveText),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          effectiveText,
+                        ),
                       ),
                     )
                   : _buildCenteredLabel(effectiveText),
@@ -149,15 +155,24 @@ class SocialButton extends StatelessWidget {
       );
     }
     // Shrink to content by default
-    return ClipRRect(borderRadius: BorderRadius.circular(radius), child: button);
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: button,
+    );
   }
 
   Widget _buildCenteredLabel(Color color) {
-    if (emphasize == null || emphasize!.isEmpty || !label.contains(emphasize!)) {
+    if (emphasize == null ||
+        emphasize!.isEmpty ||
+        !label.contains(emphasize!)) {
       return Text(
         label,
         textAlign: TextAlign.center,
-        style: TextStyle(color: color, fontSize: fontSize, fontWeight: fontWeight),
+        style: TextStyle(
+          color: color,
+          fontSize: fontSize,
+          fontWeight: fontWeight,
+        ),
       );
     }
 
@@ -167,16 +182,28 @@ class SocialButton extends StatelessWidget {
         children: [
           TextSpan(
             text: parts.first,
-            style: TextStyle(color: color, fontSize: fontSize, fontWeight: fontWeight),
+            style: TextStyle(
+              color: color,
+              fontSize: fontSize,
+              fontWeight: fontWeight,
+            ),
           ),
           TextSpan(
             text: emphasize!,
-            style: TextStyle(color: color, fontSize: fontSize, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              color: color,
+              fontSize: fontSize,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           if (parts.length > 1)
             TextSpan(
               text: parts.sublist(1).join(emphasize!),
-              style: TextStyle(color: color, fontSize: fontSize, fontWeight: fontWeight),
+              style: TextStyle(
+                color: color,
+                fontSize: fontSize,
+                fontWeight: fontWeight,
+              ),
             ),
         ],
       ),

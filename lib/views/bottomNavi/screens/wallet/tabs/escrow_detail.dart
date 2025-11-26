@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
-import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/wallet/controller/escrow_detail_controller.dart';
@@ -48,25 +47,6 @@ class EscrowDetail extends StatelessWidget {
                   linkText: '',
                   onLinkTap: () {},
                 ),
-
-                // View Task Details Button
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: CustomButton(
-                    borderRadius: BorderRadius.circular(20),
-
-                    label: 'View Task Details',
-                    onPressed: () {
-                      controller.viewTaskDetails();
-                    },
-                    bgColor: whiteColor,
-                    textColor: walletErrorColor,
-                    border: Border.all(color: walletPrimaryColor, width: 1),
-                    // borderColor: walletErrorColor,
-                  ),
-                ),
-
-                const SizedBox(height: 20),
               ],
             ),
           ),

@@ -74,24 +74,6 @@ class AddFunds extends StatelessWidget {
                   customAmountController: customAmountController,
                 ),
 
-                // const SizedBox(height: 24),
-
-                // // Select Payment Method Section
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(
-                //     horizontal: 16,
-                //     vertical: 12,
-                //   ),
-                //   child: CustomText(
-                //     'Select Payment Method',
-                //     fontSize: 16,
-                //     fontWeight: FontVariant.bold,
-                //   ),
-                // ),
-                //
-                // // Payment Methods List
-                // PaymentMethodsList(controller: controller),
-
                 // Info Card
                 InfoCard(
                   message:

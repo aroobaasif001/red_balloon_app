@@ -116,7 +116,7 @@ class FundDistributionTable extends StatelessWidget {
                           item['status'],
                           color: blackColor,
                           fontSize: 13,
-                          fontWeight: FontVariant.semiBold,
+                          fontWeight: FontVariant.regular,
                           textAlign: TextAlign.right,
                         ),
                       ),

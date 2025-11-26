@@ -193,7 +193,7 @@ class ConfirmPaymentScreen extends StatelessWidget {
             SizedBox(height: 9),
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.red, width: 1.8),
+                side: const BorderSide(color: redColor, width: 1.8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -208,7 +208,7 @@ class ConfirmPaymentScreen extends StatelessWidget {
                 'Go Back',
                 fontSize: 20,
                 fontWeight: FontVariant.semiBold,
-                color: Colors.red,
+                color: redColor,
               ),
             ),
             SizedBox(height: 38),
