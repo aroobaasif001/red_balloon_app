@@ -6,7 +6,6 @@ import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
-import '../custom_widgets/custom_button.dart';
 import '../views/bottomNavi/screens/task/my_task/tabs/task_in_progress_screen.dart';
 import '../views/bottomNavi/screens/task/my_task/widgets/send_offer_bottom_sheet.dart';
 import 'colors.dart';
@@ -203,101 +202,108 @@ class DialogHelpers {
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        return StatefulBuilder(builder: (context, setState) {
-          final reasons = [
-            "Work not completed",
-            "Communication issue",
-            "Task was ignored",
-          ];
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final reasons = [
+              "Work not completed",
+              "Communication issue",
+              "Task was ignored",
+            ];
 
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            child: Stack(
-              alignment: Alignment.topCenter,
-              clipBehavior: Clip.none,
-              children: [
-                CustomContainer(
-                  padding: const EdgeInsets.only(
-                    top: 80,
-                    left: 20,
-                    right: 20,
-                    bottom: 25,
-                  ),
-                  conColor: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 10,
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Stack(
+                alignment: Alignment.topCenter,
+                clipBehavior: Clip.none,
+                children: [
+                  CustomContainer(
+                    padding: const EdgeInsets.only(
+                      top: 80,
+                      left: 20,
+                      right: 20,
+                      bottom: 25,
                     ),
-                  ],
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ...List.generate(reasons.length, (i) {
-                        bool active = i == selected;
-
-                        return GestureDetector(
-                          onTap: () => setState(() => selected = i),
-                          child: CustomContainer(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14, horizontal: 12),
-                            margin: const EdgeInsets.only(bottom: 12),
-                            borderRadius: BorderRadius.circular(12),
-                            conColor: active ? redColor : Colors.white,
-                            border: Border.all(
-                              color: active ? redColor : Colors.black26,
-                              width: 1.3,
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  active ? Icons.check_circle : Icons.circle_outlined,
-                                  color: active ? Colors.white : Colors.black,
-                                ),
-                                const SizedBox(width: 10),
-                                CustomText(
-                                  reasons[i],
-                                  color: active ? Colors.white : Colors.black,
-                                  fontWeight: FontVariant.medium,
-                                  fontSize: 15,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }),
-
-                      const SizedBox(height: 5),
-
-                      CustomButton(
-                        width: 150,
-                        fontSize: 14,
-                        label: 'Submit Rejection', onPressed: () {
-                          Get.back();
-                        DialogHelpers().showRejectionReasonSheet(context);
-                      },)
+                    conColor: Colors.white,
+                    borderRadius: BorderRadius.circular(22),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 10,
+                      ),
                     ],
-                  ),
-                ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ...List.generate(reasons.length, (i) {
+                          bool active = i == selected;
 
-                Positioned(
-                  top: -74,
-                  child: Image.asset(
-                    "assets/icons/Group 1686555649.png",
-                    width: 135,
-                    height: 135,
+                          return GestureDetector(
+                            onTap: () => setState(() => selected = i),
+                            child: CustomContainer(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 14,
+                                horizontal: 12,
+                              ),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              borderRadius: BorderRadius.circular(12),
+                              conColor: active ? redColor : Colors.white,
+                              border: Border.all(
+                                color: active ? redColor : Colors.black26,
+                                width: 1.3,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    active
+                                        ? Icons.check_circle
+                                        : Icons.circle_outlined,
+                                    color: active ? Colors.white : Colors.black,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  CustomText(
+                                    reasons[i],
+                                    color: active ? Colors.white : Colors.black,
+                                    fontWeight: FontVariant.medium,
+                                    fontSize: 15,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+
+                        const SizedBox(height: 5),
+
+                        CustomButton(
+                          width: 150,
+                          fontSize: 14,
+                          label: 'Submit Rejection',
+                          onPressed: () {
+                            Get.back();
+                            DialogHelpers().showRejectionReasonSheet(context);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        });
+
+                  Positioned(
+                    top: -74,
+                    child: Image.asset(
+                      "assets/icons/Group 1686555649.png",
+                      width: 135,
+                      height: 135,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }
-
 
   void showTaskCompletedDialog(BuildContext context) {
     showDialog(
@@ -313,7 +319,11 @@ class DialogHelpers {
             children: [
               CustomContainer(
                 padding: const EdgeInsets.only(
-                    top: 80, left: 25, right: 25, bottom: 20),
+                  top: 80,
+                  left: 25,
+                  right: 25,
+                  bottom: 20,
+                ),
                 conColor: const Color(0xFFF7FFF7),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
@@ -355,6 +365,7 @@ class DialogHelpers {
       },
     );
   }
+
   void showFeedbackSubmittedDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -410,8 +421,6 @@ class DialogHelpers {
     );
   }
 
-
-
   void showApproveCompletionDialog({
     required BuildContext context,
     bool barrierDismissible = true,
@@ -455,6 +464,7 @@ class DialogHelpers {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
+
                     /// SUBTEXT
                     CustomText(
                       "By approving this proof, the task will be\nmarked as Completed",
@@ -469,8 +479,7 @@ class DialogHelpers {
                     GestureDetector(
                       onTap: () {
                         Get.back();
-                      DialogHelpers().showTaskCompletedDialog(context);
-
+                        DialogHelpers().showTaskCompletedDialog(context);
                       },
                       child: CustomContainer(
                         height: 48,
@@ -492,7 +501,7 @@ class DialogHelpers {
                     /// ================= GO BACK BUTTON =================
                     GestureDetector(
                       onTap: () {
-                       Get.back();
+                        Get.back();
                       },
                       child: CustomContainer(
                         height: 48,
@@ -528,6 +537,7 @@ class DialogHelpers {
       },
     );
   }
+
   void showReportUserSheet(BuildContext context) {
     int selectedIndex = 0;
 
@@ -541,7 +551,6 @@ class DialogHelpers {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-
             /// 🔥 UPDATED REASONS EXACTLY LIKE SCREENSHOT
             final List<String> reasons = [
               "Fake Profile",
@@ -556,7 +565,6 @@ class DialogHelpers {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-
                   /// -------- TOP RED QUESTION ICON --------
                   Image.asset(
                     "assets/icons/Group 1686555533.png",
@@ -596,7 +604,9 @@ class DialogHelpers {
                         onTap: () => setState(() => selectedIndex = index),
                         child: CustomContainer(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
+                            horizontal: 10,
+                            vertical: 10,
+                          ),
                           margin: const EdgeInsets.only(bottom: 12),
                           borderRadius: BorderRadius.circular(12),
                           conColor: selected ? redColor : Colors.white,
@@ -655,7 +665,10 @@ class DialogHelpers {
                   /// 🔥 NEW TEXTFIELD + SHADOW ADDED (MATCHING SCREENSHOT STYLE)
                   CustomContainer(
                     borderRadius: BorderRadius.circular(12),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
                     conColor: const Color(0xFFF5F5F5),
                     height: 105,
 
@@ -689,7 +702,6 @@ class DialogHelpers {
                     onPressed: () {
                       Get.back();
                       DialogHelpers.showReportSubmittedDialog(context: context);
-
                     },
                     bgColor: redColor,
                     textColor: Colors.white,
@@ -709,6 +721,7 @@ class DialogHelpers {
       },
     );
   }
+
   void showSupportHelpSheet(BuildContext context) {
     int selectedIndex = 0;
 
@@ -738,7 +751,7 @@ class DialogHelpers {
                   Image.asset(
                     "assets/icons/Group 1686555533.png",
                     height: 114,
-                    width:114,
+                    width: 114,
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 18),
@@ -759,6 +772,7 @@ class DialogHelpers {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 22),
+
                   /// -------- REASONS LIST --------
                   Column(
                     children: List.generate(reasons.length, (index) {
@@ -767,7 +781,9 @@ class DialogHelpers {
                         onTap: () => setState(() => selectedIndex = index),
                         child: CustomContainer(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 14),
+                            horizontal: 10,
+                            vertical: 14,
+                          ),
                           margin: const EdgeInsets.only(bottom: 12),
                           borderRadius: BorderRadius.circular(12),
                           conColor: selected ? redColor : Colors.white,
@@ -788,8 +804,7 @@ class DialogHelpers {
                                 selected
                                     ? Icons.check_circle
                                     : Icons.circle_outlined,
-                                color:
-                                selected ? Colors.white : Colors.black,
+                                color: selected ? Colors.white : Colors.black,
                               ),
                               const SizedBox(width: 12),
                               Expanded(
@@ -797,9 +812,7 @@ class DialogHelpers {
                                   reasons[index],
                                   fontSize: 15,
                                   fontWeight: FontVariant.semiBold,
-                                  color: selected
-                                      ? Colors.white
-                                      : Colors.black,
+                                  color: selected ? Colors.white : Colors.black,
                                 ),
                               ),
                             ],
@@ -835,6 +848,7 @@ class DialogHelpers {
       },
     );
   }
+
   void showDescribeProblemSheet(BuildContext context) {
     TextEditingController msgController = TextEditingController();
 
@@ -860,7 +874,7 @@ class DialogHelpers {
               Image.asset(
                 "assets/icons/Group 1686555533.png",
                 height: 114,
-                width:114,
+                width: 114,
                 fit: BoxFit.contain,
               ),
 
@@ -874,6 +888,7 @@ class DialogHelpers {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
+
               /// -------- SUBTITLE --------
               CustomText(
                 "Please, Elaborate your problem, or\nwhat went wrong. Thanks!",
@@ -895,17 +910,11 @@ class DialogHelpers {
                   controller: msgController,
                   maxLines: null,
                   expands: true,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.black,
-                  ),
+                  style: const TextStyle(fontSize: 15, color: Colors.black),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: "Type your message...",
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                    ),
+                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
                   ),
                 ),
               ),
@@ -919,7 +928,6 @@ class DialogHelpers {
                   Get.back();
                   Get.back();
                   DialogHelpers.showReportSubmittedDialog(context: context);
-
                 },
                 height: 51,
                 width: 233,
@@ -937,6 +945,7 @@ class DialogHelpers {
       },
     );
   }
+
   void showRejectionReasonSheet(BuildContext context) {
     TextEditingController msgController = TextEditingController();
     showModalBottomSheet(
@@ -1004,17 +1013,11 @@ class DialogHelpers {
                       controller: msgController,
                       maxLines: null,
                       expands: true,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                      ),
+                      style: const TextStyle(fontSize: 15, color: Colors.black),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         hintText: "Type your message...",
-                        hintStyle: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
+                        hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                     ),
                   ),
@@ -1027,9 +1030,7 @@ class DialogHelpers {
                     onPressed: () {
                       Get.back();
                       Get.back();
-                      DialogHelpers.showReportSubmittedDialog(
-                        context: context,
-                      );
+                      DialogHelpers.showReportSubmittedDialog(context: context);
                     },
                     height: 51,
                     width: 233,
@@ -1049,6 +1050,7 @@ class DialogHelpers {
       },
     );
   }
+
   // Escrow Detail Dialog Methods
   static void showTaskDetailsInfo() {
     Get.snackbar('Task Details', 'Navigating to task details...');
@@ -1216,6 +1218,7 @@ class DialogHelpers {
                     ),
 
                     const SizedBox(height: 3),
+
                     /// SUBTEXT
                     CustomText(
                       "Our Support Team will look into it,\nYou will be notified shortly!",
@@ -1244,8 +1247,6 @@ class DialogHelpers {
       },
     );
   }
-
-
 
   static void showOfferAcceptedDialog({
     required BuildContext context,
@@ -1300,7 +1301,7 @@ class DialogHelpers {
                     CustomButton(
                       label: buttonText,
                       onPressed: () {
-                        Get.to(()=>TaskInProgressScreen());
+                        Get.to(() => TaskInProgressScreen());
                       },
                       height: 52,
                       width: 190,
@@ -1329,7 +1330,6 @@ class DialogHelpers {
       },
     );
   }
-
 
   /// ===================================================
   /// SHOW HELPER PROFILE DIALOG
@@ -1366,10 +1366,15 @@ class DialogHelpers {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
-                              onTap: () {
-                               DialogHelpers().showReportUserSheet(context);
-                              },
-                              child: Icon(Icons.flag_outlined, color: redColor, size: 22)),
+                            onTap: () {
+                              DialogHelpers().showReportUserSheet(context);
+                            },
+                            child: Icon(
+                              Icons.flag_outlined,
+                              color: redColor,
+                              size: 22,
+                            ),
+                          ),
                           GestureDetector(
                             onTap: () => Navigator.pop(context),
                             child: Icon(
