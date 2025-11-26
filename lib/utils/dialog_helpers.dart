@@ -1350,6 +1350,7 @@ Widget _statBox(String title, String value, IconData icon) {
           fontWeight: FontVariant.bold,
           color: redColor,
         ),
+
       ],
     ),
   );
