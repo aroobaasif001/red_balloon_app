@@ -24,7 +24,11 @@ class PostNewTaskScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: whiteColor,
         centerTitle: true,
-        title: CustomText('Post New Task', fontSize: 24, fontWeight: FontVariant.bold),
+        title: CustomText(
+          'Post New Task',
+          fontSize: 24,
+          fontWeight: FontVariant.bold,
+        ),
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
@@ -40,9 +44,16 @@ class PostNewTaskScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 8, bottom: 10),
                 child: Row(
                   children: [
-                    Image(image: AssetImage('assets/icons/category-solid.png'), height: 20),
+                    Image(
+                      image: AssetImage('assets/icons/category-solid.png'),
+                      height: 20,
+                    ),
                     SizedBox(width: 10),
-                    CustomText('Task Type', fontSize: 20, fontWeight: FontVariant.semiBold),
+                    CustomText(
+                      'Task Type',
+                      fontSize: 20,
+                      fontWeight: FontVariant.semiBold,
+                    ),
                   ],
                 ),
               ),
@@ -63,7 +74,11 @@ class PostNewTaskScreen extends StatelessWidget {
                     if (controller.taskTypeError.isNotEmpty)
                       Padding(
                         padding: EdgeInsets.only(left: 8, top: 6),
-                        child: CustomText(controller.taskTypeError.value, color: Colors.red, fontSize: 12),
+                        child: CustomText(
+                          controller.taskTypeError.value,
+                          color: redColor,
+                          fontSize: 12,
+                        ),
                       ),
                   ],
                 ),
@@ -82,7 +97,11 @@ class PostNewTaskScreen extends StatelessWidget {
                 () => controller.titleError.isNotEmpty
                     ? Padding(
                         padding: EdgeInsets.only(left: 8, top: 6),
-                        child: CustomText(controller.titleError.value, color: Colors.red, fontSize: 12),
+                        child: CustomText(
+                          controller.titleError.value,
+                          color: redColor,
+                          fontSize: 12,
+                        ),
                       )
                     : SizedBox.shrink(),
               ),
@@ -101,7 +120,11 @@ class PostNewTaskScreen extends StatelessWidget {
                 () => controller.descriptionError.isNotEmpty
                     ? Padding(
                         padding: EdgeInsets.only(left: 8, top: 6),
-                        child: CustomText(controller.descriptionError.value, color: Colors.red, fontSize: 12),
+                        child: CustomText(
+                          controller.descriptionError.value,
+                          color: redColor,
+                          fontSize: 12,
+                        ),
                       )
                     : SizedBox.shrink(),
               ),
@@ -117,13 +140,17 @@ class PostNewTaskScreen extends StatelessWidget {
                   'SAR',
                   fontSize: 13,
                   fontWeight: FontVariant.regular,
-                  color: Colors.black,
+                  color: blackColor,
                 ),
                 suffixWidget: IconButton(
                   onPressed: () {
                     DialogHelpers.showPriceInfoDialog(context);
                   },
-                  icon: Icon(Icons.info_outline, size: 20, color: blackColor.withOpacity(0.25)),
+                  icon: Icon(
+                    Icons.info_outline,
+                    size: 20,
+                    color: blackColor.withOpacity(0.25),
+                  ),
                 ),
                 hintText: '15',
               ),
@@ -131,7 +158,11 @@ class PostNewTaskScreen extends StatelessWidget {
                 () => controller.budgetError.isNotEmpty
                     ? Padding(
                         padding: EdgeInsets.only(left: 8, top: 6),
-                        child: CustomText(controller.budgetError.value, color: Colors.red, fontSize: 12),
+                        child: CustomText(
+                          controller.budgetError.value,
+                          color: redColor,
+                          fontSize: 12,
+                        ),
                       )
                     : SizedBox.shrink(),
               ),
@@ -155,7 +186,7 @@ class PostNewTaskScreen extends StatelessWidget {
                               padding: EdgeInsets.only(left: 8, top: 6),
                               child: CustomText(
                                 controller.locationError.value,
-                                color: Colors.red,
+                                color: redColor,
                                 fontSize: 12,
                               ),
                             ),
@@ -170,9 +201,16 @@ class PostNewTaskScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 8, bottom: 10),
                 child: Row(
                   children: [
-                    Image(image: AssetImage('assets/icons/camera.png'), height: 20),
+                    Image(
+                      image: AssetImage('assets/icons/camera.png'),
+                      height: 20,
+                    ),
                     SizedBox(width: 10),
-                    CustomText('Upload Media ', fontSize: 20, fontWeight: FontVariant.semiBold),
+                    CustomText(
+                      'Upload Media ',
+                      fontSize: 20,
+                      fontWeight: FontVariant.semiBold,
+                    ),
                     CustomText('(Optional)', fontWeight: FontVariant.light),
                   ],
                 ),
@@ -181,7 +219,8 @@ class PostNewTaskScreen extends StatelessWidget {
               Obx(() {
                 final file = controller.pickedFile.value;
                 final hasFile = file != null;
-                final isPdf = hasFile && (file!.extension ?? '').toLowerCase() == 'pdf';
+                final isPdf =
+                    hasFile && (file!.extension ?? '').toLowerCase() == 'pdf';
 
                 Widget buildImagePreview() {
                   if (!hasFile) return SizedBox.shrink();
@@ -195,16 +234,27 @@ class PostNewTaskScreen extends StatelessWidget {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.insert_drive_file_outlined, size: 40, color: Colors.black54),
+                                    Icon(
+                                      Icons.insert_drive_file_outlined,
+                                      size: 40,
+                                      color: blackColor,
+                                    ),
                                     SizedBox(height: 6),
-                                    CustomText("Preview not available", fontSize: 12),
+                                    CustomText(
+                                      "Preview not available",
+                                      fontSize: 12,
+                                    ),
                                   ],
                                 ),
                               ));
 
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: SizedBox(height: 180, width: double.infinity, child: imageWidget),
+                    child: SizedBox(
+                      height: 180,
+                      width: double.infinity,
+                      child: imageWidget,
+                    ),
                   );
                 }
 
@@ -213,11 +263,14 @@ class PostNewTaskScreen extends StatelessWidget {
                   return Container(
                     height: 180,
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(color: whiteColor, borderRadius: BorderRadius.circular(15)),
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.picture_as_pdf, size: 60, color: Colors.red),
+                        Icon(Icons.picture_as_pdf, size: 60, color: redColor),
                         SizedBox(height: 6),
                         CustomText(file!.name, fontSize: 12),
                       ],
@@ -230,7 +283,11 @@ class PostNewTaskScreen extends StatelessWidget {
                     color: white2Color,
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
-                      BoxShadow(color: blackColor.withOpacity(0.25), offset: Offset(0, 4), blurRadius: 4),
+                      BoxShadow(
+                        color: blackColor.withOpacity(0.25),
+                        offset: Offset(0, 4),
+                        blurRadius: 4,
+                      ),
                     ],
                   ),
                   child: InkWell(
@@ -245,13 +302,24 @@ class PostNewTaskScreen extends StatelessWidget {
                       child: hasFile
                           ? Column(
                               mainAxisSize: MainAxisSize.min,
-                              children: [buildImagePreview(), buildPdfPreview()],
+                              children: [
+                                buildImagePreview(),
+                                buildPdfPreview(),
+                              ],
                             )
                           : Column(
                               children: [
-                                Image(image: AssetImage('assets/icons/cloud-plus-Ar.png'), height: 70),
+                                Image(
+                                  image: AssetImage(
+                                    'assets/icons/cloud-plus-Ar.png',
+                                  ),
+                                  height: 70,
+                                ),
                                 SizedBox(height: 6),
-                                CustomText('JPG, PNG, PDF (Max 5MB)', fontSize: 10),
+                                CustomText(
+                                  'JPG, PNG, PDF (Max 5MB)',
+                                  fontSize: 10,
+                                ),
                               ],
                             ),
                     ),
@@ -268,7 +336,11 @@ class PostNewTaskScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline_rounded, size: 25, color: whiteColor),
+                    Icon(
+                      Icons.info_outline_rounded,
+                      size: 25,
+                      color: whiteColor,
+                    ),
                     SizedBox(width: 12),
                     Expanded(
                       child: CustomText(

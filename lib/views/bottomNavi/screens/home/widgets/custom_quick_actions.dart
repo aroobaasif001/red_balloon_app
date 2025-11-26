@@ -4,6 +4,7 @@ import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/bottomNavi/bottom_navi_screen.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/profile/tabs/in_app_store_screen.dart';
 
 import '../../task/post_new_task/post_new_task_screen.dart';
 
@@ -162,6 +163,7 @@ class CustomQuickActions extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                   onTap: () {
                     debugPrint("Redeem tapped");
+                    Get.to(() => InAppStoreScreen());
                   },
                   child: CustomContainer(
                     height: 70,
@@ -182,7 +184,7 @@ class CustomQuickActions extends StatelessWidget {
                       ),
                       child: Center(
                         child: Image.asset(
-                          "assets/icons/Redeem.png",
+                          'assets/icons/inapp.png',
                           width: 26,
                           height: 26,
                           fit: BoxFit.contain,
@@ -194,7 +196,7 @@ class CustomQuickActions extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              const CustomText("Redeem", fontSize: 11, color: grey1Color),
+              const CustomText("In-App Store", fontSize: 11, color: grey1Color),
             ],
           ),
         ),

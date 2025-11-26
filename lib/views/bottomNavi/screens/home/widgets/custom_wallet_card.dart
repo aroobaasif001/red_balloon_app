@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -17,7 +18,7 @@ class CustomWalletCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 30.49, vertical: 21.77),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       conColor: whiteLiteColor,
       borderRadius: BorderRadius.circular(15),
       boxShadow: [
@@ -46,7 +47,7 @@ class CustomWalletCard extends StatelessWidget {
                   SizedBox(width: 4),
                   CustomText(
                     'Wallet Balance',
-                    fontSize: 22,
+                    fontSize: Get.height * 0.022,
                     fontWeight: FontVariant.bold,
                     color: blackColor,
                   ),

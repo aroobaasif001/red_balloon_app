@@ -18,7 +18,7 @@ class OnboardingScreen extends StatelessWidget {
     final AuthController authController = Get.put(AuthController());
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: whiteColor,
       body: Obx(
         () => authController.isLoading.value
             ? const Center(child: CircularProgressIndicator())
@@ -37,7 +37,9 @@ class OnboardingScreen extends StatelessWidget {
                       child: CustomContainer(
                         height: 177,
                         width: 280,
-                        image: const DecorationImage(image: AssetImage('assets/images/splash_logo.png')),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/splash_logo.png'),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 39),
@@ -49,7 +51,8 @@ class OnboardingScreen extends StatelessWidget {
                           if (Platform.isIOS) ...[
                             SocialButton.apple(
                               onPressed: () async {
-                                final user = await authController.signInWithApple();
+                                final user = await authController
+                                    .signInWithApple();
                                 if (user != null) {
                                   Get.off(() => BottomNaviScreen());
                                 }

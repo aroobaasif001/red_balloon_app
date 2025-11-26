@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/dialog_helpers.dart';
+import 'package:red_balloon_app/views/bottomNavi/screens/profile/tabs/chat_screen.dart';
+
 import '../../../../../../utils/colors.dart';
 
 class RefreshButton extends StatelessWidget {
@@ -36,29 +39,29 @@ class RefreshButton extends StatelessWidget {
         const SizedBox(width: 12),
 
         Expanded(
-          child: Container(
-            height: 51,
-            decoration: BoxDecoration(
-              color: pricecolor,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
+          child: InkWell(
+            onTap: () {
+              Get.to(() => ChatScreen());
+            },
+            child: Container(
+              height: 51,
+              decoration: BoxDecoration(
                 color: pricecolor,
-
-                width: 1,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: pricecolor, width: 1),
               ),
-            ),
-            child: const Center(
-              child: CustomText(
-                "Chat",
-                color: whiteColor,
-                fontSize: 18,
-                fontWeight: FontVariant.medium,
+              child: const Center(
+                child: CustomText(
+                  "Chat",
+                  color: whiteColor,
+                  fontSize: 18,
+                  fontWeight: FontVariant.medium,
+                ),
               ),
             ),
           ),
         ),
       ],
     );
-
   }
 }

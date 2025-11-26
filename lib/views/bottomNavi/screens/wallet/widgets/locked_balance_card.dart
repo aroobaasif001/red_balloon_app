@@ -25,13 +25,15 @@ class LockedBalanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomContainer(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
       conColor: walletCardBgColor,
       borderRadius: BorderRadius.circular(12),
       border: Border.all(color: walletCardBorderColor),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 10),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -52,7 +54,7 @@ class LockedBalanceCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 25),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             textBaseline: TextBaseline.alphabetic,
@@ -72,14 +74,14 @@ class LockedBalanceCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           CustomText(
             subtitle,
             color: walletLabelTextColor,
             fontSize: 13,
             fontWeight: FontVariant.regular,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 17),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

@@ -155,7 +155,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
               CustomButton(
                 width: 107,
                 fontSize: 12,
-                height: 30,
+                height: 40,
                 label: 'View Details',
                 onPressed: onViewDetails,
               ),

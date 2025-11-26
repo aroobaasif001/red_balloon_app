@@ -44,13 +44,15 @@ class WalletBalanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomContainer(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
       conColor: backgroundColor,
       borderRadius: BorderRadius.circular(16),
       border: Border.all(color: borderColor, width: 1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 10),
+
           CustomText(
             title,
             color: titleColor,
@@ -58,7 +60,7 @@ class WalletBalanceCard extends StatelessWidget {
             fontWeight: FontVariant.regular,
             letterSpacing: 0.5,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 25),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             textBaseline: TextBaseline.alphabetic,
@@ -78,7 +80,7 @@ class WalletBalanceCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
           CustomText(subtitle, color: subTitleColor, fontSize: 13),
           isButtonAvailable == true ? SizedBox(height: 16) : CustomContainer(),
           isButtonAvailable == true
@@ -98,7 +100,7 @@ class WalletBalanceCard extends StatelessWidget {
                   padding: EdgeInsets.only(left: 15, right: 15),
                   height: 30,
                   borderRadius: BorderRadius.circular(25),
-                  conColor: walletPrimaryColor.withOpacity(0.2),
+                  conColor: escrowAmountCardWaitingBackground,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

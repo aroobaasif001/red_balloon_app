@@ -17,6 +17,8 @@ class WithdrawalDetailsCard extends StatelessWidget {
   final VoidCallback onButtonPressed;
   final TextEditingController? amountController;
   final TextEditingController? paymentMethodController;
+  final TextEditingController? bankController;
+  final TextEditingController? bankAccountController;
   final double cardHorizontalPadding;
   final double cardVerticalPadding;
   final Color cardBackgroundColor;
@@ -81,6 +83,8 @@ class WithdrawalDetailsCard extends StatelessWidget {
     this.buttonTextColor = whiteColor,
     this.buttonFontSize = 16,
     this.buttonFontVariant = FontVariant.bold,
+    this.bankAccountController,
+    this.bankController,
   });
 
   @override
@@ -187,6 +191,84 @@ class WithdrawalDetailsCard extends StatelessWidget {
             ),
             readOnly: true,
             onTap: () {},
+          ),
+          SizedBox(height: 20),
+          CustomText(
+            'Select Bank',
+            fontSize: labelFontSize,
+            fontWeight: labelFontVariant,
+            color: labelTextColor,
+          ),
+          SizedBox(height: 10),
+          TextField(
+            controller: bankController,
+            cursorColor: blackColor,
+            style: TextStyle(color: blackColor),
+            decoration: InputDecoration(
+              hintText: 'United Bank Limited',
+              hintStyle: TextStyle(
+                color: hintTextColor,
+                fontSize: hintFontSize,
+              ),
+              filled: true,
+              fillColor: inputBackgroundColor,
+              suffixIcon: Icon(Icons.keyboard_arrow_down, color: hintTextColor),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: inputBorderColor),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: inputBorderColor),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: inputBorderColor, width: 2),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
+            ),
+            readOnly: true,
+            onTap: () {},
+          ),
+          SizedBox(height: 20),
+          CustomText(
+            'Add Bank Account Number',
+            fontSize: labelFontSize,
+            fontWeight: labelFontVariant,
+            color: labelTextColor,
+          ),
+          SizedBox(height: 10),
+          TextField(
+            controller: bankAccountController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              hintText: '00001111222333',
+              hintStyle: TextStyle(
+                color: hintTextColor,
+                fontSize: hintFontSize,
+              ),
+              filled: true,
+              fillColor: inputBackgroundColor,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: inputBorderColor),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: inputBorderColor),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: inputBorderColor, width: 2),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
+            ),
           ),
           SizedBox(height: 20),
           InfoCard(
