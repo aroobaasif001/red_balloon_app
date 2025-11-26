@@ -47,12 +47,8 @@ class FaqTile extends StatelessWidget {
                   fontWeight: FontVariant.medium,
                   color: Colors.black,
                 ),
-                Icon(
-                  isOpen
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: Colors.black,
-                )
+                Icon( isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down, color: Colors.black, )
+
               ],
             ),
 

@@ -49,7 +49,9 @@ class ProfileCard extends StatelessWidget {
       borderRadius: borderRadius ?? BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: (shadowColor ?? walletBlackColor).withOpacity(shadowOpacity ?? 0.25),
+          color: (shadowColor ?? walletBlackColor).withOpacity(
+            shadowOpacity ?? 0.25,
+          ),
           blurRadius: shadowBlur ?? 4,
           offset: const Offset(0, 4),
         ),
@@ -89,7 +91,10 @@ class ProfileCard extends StatelessWidget {
                     height: 30,
                     conColor: avatarColor ?? redColor,
                     shape: BoxShape.circle,
-                    border: Border.all(color: avatarColor ?? redColor, width: 2),
+                    border: Border.all(
+                      color: avatarColor ?? redColor,
+                      width: 2,
+                    ),
                     child: Icon(
                       Icons.camera_alt_outlined,
                       color: whiteColor,
@@ -104,7 +109,7 @@ class ProfileCard extends StatelessWidget {
 
           // Name
           CustomText(
-            userName ?? 'Saad Sajid',
+            userName ?? 'Zernosh Haider',
             fontSize: namefontSize ?? 22,
             fontWeight: FontVariant.bold,
             color: textColor2,
@@ -115,13 +120,13 @@ class ProfileCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.location_on, size: 19, color: blackColor),
+              Icon(Icons.location_on, size: 19, color: redColor),
               const SizedBox(width: 4),
               CustomText(
                 location ?? 'Riyadh, Saudi Arabia',
                 fontSize: locationFontSize ?? 14,
                 fontWeight: FontVariant.regular,
-                color: grey5Color,
+                color: lastTextColor,
               ),
             ],
           ),
@@ -129,12 +134,9 @@ class ProfileCard extends StatelessWidget {
 
           // Verified Badge
           CustomContainer(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 6,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             conColor: white3Color,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(16),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -147,8 +149,8 @@ class ProfileCard extends StatelessWidget {
                 const SizedBox(width: 6),
                 CustomText(
                   verificationLabel ?? 'Verified Requester',
-                  fontSize: 12,
-                  fontWeight: FontVariant.medium,
+                  fontSize: 13,
+                  fontWeight: FontVariant.regular,
                   color: greenColor,
                 ),
               ],

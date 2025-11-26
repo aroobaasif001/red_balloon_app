@@ -351,6 +351,145 @@ class DialogHelpers {
       },
     );
   }
+
+ static void showBuyBadgeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+
+              // MAIN WHITE CARD
+              CustomContainer(
+                padding: const EdgeInsets.only(
+                  top: 90,
+                  left: 25,
+                  right: 25,
+                  bottom: 25,
+                ),
+                conColor: whiteColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.12),
+                    blurRadius: 10,
+                  ),
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+
+                    // TEXT
+                    CustomText(
+                      "Are You Sure you want\nto buy this badge",
+                      fontSize: 16,
+                      color: Colors.black,
+                      textAlign: TextAlign.center,
+                      fontWeight: FontVariant.semiBold,
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // BUTTONS ROW
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+
+                        // NO BUTTON
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              height: 48,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: fundCardBorderColor,
+                                  width: 2,
+                                ),
+                                color: Color(0xffFE70621A).withOpacity(0.10),
+                              ),
+                              child: const CustomText(
+                                "No",
+                                fontSize: 12,
+                                color: redColor,
+                                fontWeight: FontVariant.regular,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        // YES BUTTON
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              // TODO: Add Buy function here
+                            },
+                            child: Container(
+                              height: 48,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: const Color(0xFFE53935), // redColor
+                              ),
+                              child: const CustomText(
+                                "Yes",
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontVariant.medium,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                  ],
+                ),
+              ),
+
+              // 🔴 TOP CIRCLE WITH WHITE BORDER + ICON
+              Positioned(
+                top: -70,
+                child: Container(
+                  width: 140,
+                  height: 140,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE53935),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Center(
+                      child: Image.asset(
+                        "assets/icons/questionmark5.png", // YOUR ICON
+                        width: 55,
+                        height: 55,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
+
   void showFeedbackSubmittedDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -829,7 +968,7 @@ class DialogHelpers {
                   top: 80,
                   left: 25,
                   right: 25,
-                  bottom: showButton ? 25 : 10, // adjust padding
+                  bottom: showButton ? 50 : 10, // adjust padding
                 ),
                 conColor: const Color(0xFFF7FFF7),
                 borderRadius: BorderRadius.circular(20),

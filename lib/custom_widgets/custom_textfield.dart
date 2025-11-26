@@ -23,7 +23,7 @@ class CustomTextField extends StatefulWidget {
   final bool? autocorrect;
   final bool? enableSuggestions;
   final Brightness? keyboardAppearance;
-
+final border;
   // 🏷️ Label
   final String? label;
   final String? labelIcon;
@@ -36,7 +36,7 @@ class CustomTextField extends StatefulWidget {
   // ⭐ Optional Suffix / Prefix Widgets
   final Widget? suffixWidget;
   final Widget? prefixWidget;
-
+final borderColor;
   // ⭐ NEW: Optional Radius
   final double? radius;
 
@@ -68,6 +68,8 @@ class CustomTextField extends StatefulWidget {
 
     /// ⭐ New optional radius
     this.radius,
+    this.border,
+    this.borderColor,
   });
 
   @override

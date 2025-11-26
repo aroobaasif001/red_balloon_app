@@ -28,6 +28,13 @@ const Color rbtxColor = Color(0xff374151);
 const Color greenColor = Color(0xff43a047);
 const Color appbard = Color(0xffF3F4F6);
 const Color textcolord = Color(0xff111827);
+const Color pricecolor2 = Color(0xffBBBDBD);
+const Color bordercol = Color(0xFFE5E5EA);
+const Color borderno = Color(0xff003AC14F);
+const Color beforecolor = Color(0xffE5E7EB);
+
+
+
 
 const LinearGradient redOrangeGradientColor = LinearGradient(
   begin: Alignment.centerLeft,

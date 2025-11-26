@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/utils/dialog_helpers.dart';
 
 import '../../../../../custom_widgets/custom_container.dart';
 import '../../../../../custom_widgets/customtext.dart';
 import '../../../../../utils/colors.dart';
+
 class StoreItemCard extends StatelessWidget {
   final String title;
   final String image;
@@ -14,12 +19,13 @@ class StoreItemCard extends StatelessWidget {
     required this.price,
     required this.image,
   });
+
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      conColor: Colors.white,
+      conColor: white2Color,
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 10),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(15),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.20),
@@ -30,11 +36,29 @@ class StoreItemCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Image.asset(
-            image,
-            height: 60,
-            width: 60,
+
+          // 🔥 NEW — Circular White Background Around Image
+          Expanded(
+            child: Container(
+              height: 60,
+              width: 60,
+              decoration: const BoxDecoration(
+                color: whiteColor,
+                shape: BoxShape.circle,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10), // balanced padding
+                child: Image.asset(
+                  image,
+                  height: 44,
+                  width: 44,
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
+            ),
           ),
+
+
 
           const SizedBox(height: 10),
 
@@ -55,25 +79,35 @@ class StoreItemCard extends StatelessWidget {
               const SizedBox(width: 4),
               CustomText(
                 "$price",
+                color: pricecolor2,
                 fontSize: 14,
               ),
             ],
           ),
+
           const SizedBox(height: 10),
+
           /// 🔥 BUY Button
-          CustomContainer(
-            width: 111,
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            borderRadius: BorderRadius.circular(8),
-            conColor: redColor,
-            alignment: Alignment.center,
-            child: CustomText(
-              "Buy",
-              fontSize: 14,
-              fontWeight: FontVariant.bold,
-              color: Colors.white,
+          InkWell(
+            onTap: () {
+              DialogHelpers.showBuyBadgeDialog(context);
+            },
+            child: CustomContainer(
+              width: 111,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              borderRadius: BorderRadius.circular(8),
+              conColor: redColor,
+              alignment: Alignment.center,
+              child: const CustomText(
+                "Buy",
+                fontSize: 14,
+                fontWeight: FontVariant.bold,
+                color: Colors.white,
+              ),
             ),
-          ),
+          )
+
+
         ],
       ),
     );

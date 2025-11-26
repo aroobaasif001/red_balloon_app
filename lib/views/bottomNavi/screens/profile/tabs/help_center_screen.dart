@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/bottomNavi/screens/profile/widgets/faqtile.dart';
+
+import 'contact_support.dart';
 
 class HelpCenterScreen extends StatefulWidget {
   const HelpCenterScreen({super.key});
@@ -157,18 +161,24 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                             const SizedBox(height: 10),
           
                             /// RED BUTTON
-                            CustomContainer(
-                              height: 48,
-                              conColor: redColor,
-                              borderRadius: BorderRadius.circular(20),
-                              alignment: Alignment.center,
-                              child: CustomText(
-                                "Contact Support",
-                                fontSize: 16,
-                                fontWeight: FontVariant.semiBold,
-                                color: Colors.white,
+                            InkWell(
+                              onTap: () {
+                                Get.to(() => contactsupportScreen());
+                              },
+                              child: CustomContainer(
+                                height: 48,
+                                conColor: redColor,
+                                borderRadius: BorderRadius.circular(20),
+                                alignment: Alignment.center,
+                                child: CustomText(
+                                  "Contact Support",
+                                  fontSize: 16,
+                                  fontWeight: FontVariant.semiBold,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
+                            )
+
                           ],
                         ),
                       ),

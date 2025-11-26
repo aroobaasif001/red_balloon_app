@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
+import '../edit_profile/edit_profile_screen.dart';
 import '../widgets/profile_card.dart';
 import '../widgets/stats_grid.dart';
 import '../widgets/menu_section.dart';
@@ -19,7 +22,9 @@ class ProfileScreen extends StatelessWidget {
           titleText: 'Profile Section',
           action: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Get.to(() => EditProfileScreen());
+              },
               icon: Image.asset(
                 'assets/icons/edit_2.png',
                 height: 24,

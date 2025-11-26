@@ -82,9 +82,9 @@ class BeforeTab extends StatelessWidget {
                   bgColor: redColor,
                   borderRadius: BorderRadius.circular(12),
                   onPressed: () {
-                    DialogHelpers.showPaymentSuccessDialog(context: context);
+                    DialogHelpers.showPaymentSuccessDialog(context: context,showButton: false);
                   },
-                  leading: const Icon(Icons.close, color: Colors.white, size: 18),
+                  leading: const Icon(Icons.close, color: whiteColor, size: 18),
                   padding: const EdgeInsets.symmetric(horizontal: 8), // prevents overflow
                 ),
               ),
@@ -101,9 +101,9 @@ class BeforeTab extends StatelessWidget {
                   bgColor: redColor,
                   borderRadius: BorderRadius.circular(12),
                   onPressed: () {
-                    DialogHelpers.showPaymentSuccessDialog(context: context);
+                    DialogHelpers.showPaymentSuccessDialog(context: context,showButton: false);
                   },
-                  leading: const Icon(Icons.check, color: Colors.white, size: 18),
+                  leading: const Icon(Icons.check, color: whiteColor, size: 18),
                   padding: const EdgeInsets.symmetric(horizontal: 8), // prevents overflow
                 ),
               ),

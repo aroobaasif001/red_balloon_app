@@ -42,8 +42,8 @@ class InAppStoreScreen extends StatelessWidget {
                       ),
                       CustomContainer(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        borderRadius: BorderRadius.circular(25),
-                        conColor: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        conColor: white2Color,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.20),
@@ -62,14 +62,14 @@ class InAppStoreScreen extends StatelessWidget {
                               "0 Points",
                               fontSize: 13,
                               fontWeight: FontVariant.bold,
-                              color: redColor,
+                              color: red2Color,
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   /// 🔥 Grid of store badges
                   GridView.count(
                     shrinkWrap: true,

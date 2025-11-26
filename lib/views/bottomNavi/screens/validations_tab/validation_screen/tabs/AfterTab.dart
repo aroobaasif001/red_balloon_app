@@ -4,6 +4,8 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
+import '../../../../../../utils/dialog_helpers.dart';
+
 class AfterTab extends StatelessWidget {
   const AfterTab({super.key});
 
@@ -43,7 +45,7 @@ class AfterTab extends StatelessWidget {
               fontSize: 15,
               textAlign: TextAlign.center,
               fontWeight: FontVariant.medium,
-              color: Colors.white,
+              color: whiteColor,
             ),
           ),
 
@@ -64,8 +66,10 @@ class AfterTab extends StatelessWidget {
                   fontWeight: FontVariant.semiBold,
                   bgColor: redColor,
                   borderRadius: BorderRadius.circular(12),
-                  onPressed: () {},
-                  leading: const Icon(Icons.close, color: Colors.white, size: 18),
+                  onPressed: () {
+                    DialogHelpers.showPaymentSuccessDialog(context: context,showButton: false);
+                  },
+                  leading: const Icon(Icons.close, color:whiteColor, size: 18),
                   padding: const EdgeInsets.symmetric(horizontal: 8), // prevents overflow
                 ),
               ),
@@ -81,8 +85,10 @@ class AfterTab extends StatelessWidget {
                   fontWeight: FontVariant.semiBold,
                   bgColor: redColor,
                   borderRadius: BorderRadius.circular(12),
-                  onPressed: () {},
-                  leading: const Icon(Icons.check, color: Colors.white, size: 18),
+                  onPressed: () {
+                    DialogHelpers.showPaymentSuccessDialog(context: context,showButton: false);
+                  },
+                  leading: const Icon(Icons.check, color: whiteColor, size: 18),
                   padding: const EdgeInsets.symmetric(horizontal: 8), // prevents overflow
                 ),
               ),

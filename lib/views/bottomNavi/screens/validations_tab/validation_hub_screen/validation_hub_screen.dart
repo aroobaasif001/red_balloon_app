@@ -76,7 +76,7 @@ class ValidationHubScreen extends StatelessWidget {
                                   "BEFORE",
                                   fontWeight: FontVariant.semiBold,
                                   fontSize: 12,
-                                  color: Colors.black,
+                                  color: blackColor,
                                 ),
                               ),
                             ),
@@ -93,7 +93,7 @@ class ValidationHubScreen extends StatelessWidget {
                                   "AFTER",
                                   fontWeight: FontVariant.semiBold,
                                   fontSize: 12,
-                                  color: Colors.black,
+                                  color: blackColor,
                                 ),
                               ),
                             ),
@@ -113,27 +113,30 @@ class ValidationHubScreen extends StatelessWidget {
                                   fontSize: 18,
                                   fontWeight: FontVariant.bold,
                                   fontType: AppFont.montserrat,
-                                  color: Colors.black87,
+                                  color: blackColor,
                                 ),
                                 CustomText(
                                   "Help Move Furniture",
                                   fontSize: 16,
                                   fontWeight: FontVariant.semiBold,
                                   fontType: AppFont.montserrat,
-                                  color: Colors.black87,
+                                  color: blackColor,
                                 ),
                               ],
                             ),
                             const Spacer(),
                             CustomContainer(
-                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               borderRadius: BorderRadius.circular(20),
-                              conColor: Colors.white,
+                              conColor: whiteColor,
                               child: const CustomText(
                                 "Offline Task",
                                 fontSize: 12,
                                 fontWeight: FontVariant.medium,
-                                color: Colors.black87,
+                                color: blackColor,
                               ),
                             ),
                           ],
@@ -144,31 +147,51 @@ class ValidationHubScreen extends StatelessWidget {
                         /// TIMER + BUTTON
                         Row(
                           children: [
-                            Expanded(
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 9,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xffF8F8F8),
+                                borderRadius: BorderRadius.circular(
+                                  7,
+                                ), // FULL ROUND
+                              ),
                               child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: const [
-                                  Image(image: AssetImage("assets/icons/timer-icon1.png"), height: 20),
+                                  Image(
+                                    image: AssetImage(
+                                      "assets/icons/timer99.png",
+                                    ),
+                                    height: 20,
+                                  ),
                                   SizedBox(width: 8),
                                   CustomText(
                                     "15 min left to validate",
                                     fontSize: 12,
                                     fontWeight: FontVariant.medium,
-                                    color: Colors.black87,
+                                    color: blackColor,
                                   ),
                                 ],
                               ),
                             ),
-                            CustomButton(
-                              label: "Review Proof",
-                              onPressed: () {
-                                Get.to(() => ValidationScreen());
-                              },
-                              height: 40,
-                              width: 130,
-                              fontSize: 14,
-                              fontWeight: FontVariant.bold,
-                              borderRadius: BorderRadius.circular(14),
-                              bgColor: redColor,
+                            const SizedBox(width: 10),
+
+                            Expanded(
+                              child: CustomButton(
+                                label: "Review Proof",
+                                onPressed: () {
+                                  Get.to(() => ValidationScreen());
+                                },
+                                height: 40,
+                                width: 80,
+                                fontSize: 14,
+                                fontWeight: FontVariant.bold,
+                                borderRadius: BorderRadius.circular(14),
+                                bgColor: redColor,
+                              ),
                             ),
                           ],
                         ),

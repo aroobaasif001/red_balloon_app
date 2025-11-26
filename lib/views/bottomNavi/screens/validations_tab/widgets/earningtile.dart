@@ -69,7 +69,7 @@ class EarningTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 8, vertical: 4),
                 borderRadius: BorderRadius.circular(10),
-                conColor: Colors.green.withOpacity(0.12),
+                conColor: Color(0xffE8F5E9),
                 child: Row(
                   children: const [
                     Icon(

@@ -53,7 +53,7 @@ class _ReviewsAndFeedbackState extends State<ReviewsAndFeedback> {
                           color: redColor,
                         ),
                         const SizedBox(width: 5),
-                        const Icon(Icons.star, color: Colors.red, size: 28),
+                        const Icon(Icons.star, color: redColor, size: 28),
                         const SizedBox(width: 5),
                         CustomText(
                           "/ 5",
@@ -67,13 +67,16 @@ class _ReviewsAndFeedbackState extends State<ReviewsAndFeedback> {
                     CustomText(
                       "Based on 87 reviews",
                       fontSize: 14,
-                      color: timeColor,
+                      fontWeight: FontVariant.regular,
+                      color: lastTextColor,
                     ),
                     const SizedBox(height: 10),
                     CustomText(
                       "Your trust helps our community grow!",
                       fontSize: 14,
-                      color: Colors.black,
+                      color: blackLightColor,
+                      fontWeight: FontVariant.regular,
+
                     ),
                     const SizedBox(height: 15),
                     /// ⭐ RATING BARS (USING SEPARATE CLASS)
@@ -102,7 +105,7 @@ class _ReviewsAndFeedbackState extends State<ReviewsAndFeedback> {
                       initials: "RB",
                       id: "RB-452",
                       review:
-                      "Excellent helper, very efficient and friendly. Cleaned the solar panels perfectly!",
+                      "Amazing helper! Very thorough with theshopping list and even sent photos of product options. Delivered everything on time and in perfect condition.",
                       time: "2 days ago",
                     ),
                     const SizedBox(height: 15),

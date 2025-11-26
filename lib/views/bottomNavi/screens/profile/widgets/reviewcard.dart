@@ -3,7 +3,7 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
-class ReviewCard extends StatelessWidget {
+class ReviewCard extends StatefulWidget {
   final String initials;
   final String id;
   final String review;
@@ -16,6 +16,13 @@ class ReviewCard extends StatelessWidget {
     required this.review,
     required this.time,
   });
+
+  @override
+  State<ReviewCard> createState() => _ReviewCardState();
+}
+
+class _ReviewCardState extends State<ReviewCard> {
+  bool expanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +40,8 @@ class ReviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Row with initials + ID + stars
+
+          /// TOP ROW
           Row(
             children: [
               Container(
@@ -45,7 +53,7 @@ class ReviewCard extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: CustomText(
-                  initials,
+                  widget.initials,
                   fontSize: 16,
                   fontWeight: FontVariant.bold,
                   color: redColor,
@@ -58,13 +66,12 @@ class ReviewCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(
-                    id,
+                    widget.id,
                     fontSize: 14,
                     fontWeight: FontVariant.bold,
                     color: Colors.black,
                   ),
 
-                  /// Stars Row
                   Row(
                     children: const [
                       Icon(Icons.star, size: 16, color: redColor),
@@ -81,20 +88,49 @@ class ReviewCard extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          /// Review text
-          CustomText(
-            review,
-            fontSize: 14,
-            color: Colors.black87,
+          /// COLLAPSIBLE REVIEW TEXT
+          AnimatedCrossFade(
+            firstChild: CustomText(
+              widget.review,
+              fontSize: 14,
+              color: Colors.black87,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+            secondChild: CustomText(
+              widget.review,
+              fontSize: 14,
+              color: Colors.black87,
+            ),
+            crossFadeState:
+            expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 200),
           ),
 
           const SizedBox(height: 12),
 
-          /// Time
+          /// TIME
           CustomText(
-            time,
+            widget.time,
             fontSize: 12,
             color: Colors.grey,
+          ),
+
+          const SizedBox(height: 8),
+
+          /// VIEW FEEDBACK / SEE LESS BUTTON
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                expanded = !expanded;
+              });
+            },
+            child: CustomText(
+              expanded ? "See Less" : " See more",
+              fontSize: 14,
+              color: redColor,
+              fontWeight: FontVariant.bold,
+            ),
           ),
         ],
       ),

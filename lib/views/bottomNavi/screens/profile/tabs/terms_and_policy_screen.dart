@@ -25,6 +25,7 @@ class TermsAndPolicyScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildHeading("1. Introduction"),
+
                   buildBodyRichText(
                     "Welcome to Red Balloon! We are delighted to have you as part of our community. These Terms of Service and Privacy Policy (\"Terms\") govern your access to and use of the Red Balloon mobile application, website, and related services.",
                   ),

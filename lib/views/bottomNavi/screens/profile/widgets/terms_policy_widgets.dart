@@ -1,45 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 Widget buildHeading(String text) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 12),
-    child: Text(
+    child: CustomText(
       text,
-      style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        fontWeight: FontVariant.bold,
         color: redColor,
       ),
-    ),
+
   );
 }
 
 Widget buildSubHeading(String text) {
   return Padding(
     padding: const EdgeInsets.only(top: 12, bottom: 4),
-    child: Text(
+    child: CustomText(
       text,
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
+      fontSize: 14,
+        fontWeight: FontVariant.bold,
         color: textColor2,
       ),
-    ),
+
   );
 }
 
 Widget buildBodyText(String text) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 8),
-    child: Text(
+    child: CustomText(
       text,
-      style: const TextStyle(
+
         fontSize: 14,
         height: 1.5,
         color: grey5Color,
       ),
-    ),
   );
 }
 
@@ -94,7 +92,7 @@ Widget buildBulletPoints(List<String> items) {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            const CustomText(
               "•  ",
               style: TextStyle(
                 fontSize: 16,
@@ -102,7 +100,7 @@ Widget buildBulletPoints(List<String> items) {
               ),
             ),
             Expanded(
-              child: Text(
+              child: CustomText(
                 item,
                 style: const TextStyle(
                   fontSize: 14,

@@ -16,6 +16,7 @@ class CustomContainer extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   final backgroundColor;
+  final color;
 
 
   const CustomContainer({
@@ -34,6 +35,7 @@ class CustomContainer extends StatelessWidget {
     this.margin,
     this.padding,
     this.backgroundColor,
+    this.color,
 
   });
 
