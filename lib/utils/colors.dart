@@ -70,6 +70,7 @@ const Color timeColor = Color(0xff6B7280);
 const Color textColor2 = Color(0xff333333);
 const Color walletBalanceTextColor = Color(0xff1F2937);
 const Color proBgColor = Color(0xffFFF3E0);
+const Color helpBgColor = Color(0xfff9dedc);
 
 const Color escrowAmountCardWaitingBackground = Color(0xFFFFEBEE);
 const Color success = Color(0xFFFFA500);
