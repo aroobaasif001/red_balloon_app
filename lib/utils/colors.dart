@@ -55,6 +55,7 @@ const Color redColor2 = Color(0xffDA3331);
 
 
 
+const Color pinkColor = Color(0xffFEE2E2);
 
 const LinearGradient redOrangeGradientColor = LinearGradient(
   begin: Alignment.centerLeft,
@@ -92,6 +93,7 @@ const Color timeColor = Color(0xff6B7280);
 const Color textColor2 = Color(0xff333333);
 const Color walletBalanceTextColor = Color(0xff1F2937);
 const Color proBgColor = Color(0xffFFF3E0);
+const Color helpBgColor = Color(0xfff9dedc);
 
 const Color escrowAmountCardWaitingBackground = Color(0xFFFFEBEE);
 const Color success = Color(0xFFFFA500);
@@ -106,3 +108,5 @@ const Color greenBg = Color(0xffE8F5E9);
 const Color grayColor = Color(0xff5D5757);
 const Color borderColor = Color(0xffD1D5DB);
 const Color white4Color = Color(0xffF5F6FA);
+const Color black4Color = Color(0xff111827);
+const Color hintColor = Color(0xffADAEBC);

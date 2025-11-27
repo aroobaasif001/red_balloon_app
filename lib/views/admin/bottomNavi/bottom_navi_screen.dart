@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/modern_bottom_nav.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/disputes/tabs/disputes_tab.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/home/tabs/home_tab.dart';
-import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/tabs/tasks_tab.dart';
+import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/admin_tasks_tabs.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_management_tab.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/wallet/tabs/wallet_tab.dart';
 
@@ -101,7 +101,7 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
     AdminHomeTab(),
     AdminWalletTab(),
     AdminDisputesTab(),
-    AdminTasksTab(),
+    AdminTaskCenterScreen(),
     AdminUserManagementTab(),
   ];
 
