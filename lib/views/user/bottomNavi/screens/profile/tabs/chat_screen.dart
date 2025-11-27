@@ -34,11 +34,11 @@ class ChatScreen extends StatelessWidget {
                     child: CustomContainer(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       borderRadius: BorderRadius.circular(20),
-                      conColor: Colors.grey.shade200,
+                      conColor: whiteLiteColor,
                       child: CustomText(
                         "Today",
                         fontSize: 12,
-                        color: Colors.grey.shade600,
+                        color:grey1Color,
                       ),
                     ),
                   ),

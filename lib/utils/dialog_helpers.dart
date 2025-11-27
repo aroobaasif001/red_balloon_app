@@ -50,7 +50,7 @@ class DialogHelpers {
                   right: 25,
                   bottom: 25,
                 ),
-                conColor: const Color(0xFFF7FFF7),
+                conColor: taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -67,7 +67,7 @@ class DialogHelpers {
                       fontSize: 16,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,
-                      color: Colors.black,
+                      color: blackColor,
                     ),
                     const SizedBox(height: 15),
                   ],
@@ -108,7 +108,7 @@ class DialogHelpers {
                   right: 25,
                   bottom: 25,
                 ),
-                conColor: Colors.white,
+                conColor: whiteColor,
                 borderRadius: BorderRadius.circular(22),
                 boxShadow: [
                   BoxShadow(
@@ -148,7 +148,7 @@ class DialogHelpers {
                           child: CustomText(
                             "Next",
                             fontSize: 16,
-                            color: Colors.white,
+                            color:whiteColor,
                             fontWeight: FontVariant.semiBold,
                           ),
                         ),
@@ -164,14 +164,14 @@ class DialogHelpers {
                       child: CustomContainer(
                         height: 48,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.black87, width: 1.3),
-                        conColor: Colors.white,
+                        border: Border.all(color: blackColor, width: 1.3),
+                        conColor:whiteColor,
                         child: Center(
                           child: CustomText(
                             "Go Back",
                             fontSize: 15,
                             fontWeight: FontVariant.medium,
-                            color: Colors.black,
+                            color: blackColor,
                           ),
                         ),
                       ),
@@ -224,7 +224,7 @@ class DialogHelpers {
                       right: 20,
                       bottom: 25,
                     ),
-                    conColor: Colors.white,
+                    conColor: whiteColor,
                     borderRadius: BorderRadius.circular(22),
                     boxShadow: [
                       BoxShadow(
@@ -247,9 +247,9 @@ class DialogHelpers {
                               ),
                               margin: const EdgeInsets.only(bottom: 12),
                               borderRadius: BorderRadius.circular(12),
-                              conColor: active ? redColor : Colors.white,
+                              conColor: active ? redColor : whiteColor,
                               border: Border.all(
-                                color: active ? redColor : Colors.black26,
+                                color: active ? redColor : totaTextColor,
                                 width: 1.3,
                               ),
                               child: Row(
@@ -258,12 +258,12 @@ class DialogHelpers {
                                     active
                                         ? Icons.check_circle
                                         : Icons.circle_outlined,
-                                    color: active ? Colors.white : Colors.black,
+                                    color: active ?whiteColor : blackColor,
                                   ),
                                   const SizedBox(width: 10),
                                   CustomText(
                                     reasons[i],
-                                    color: active ? Colors.white : Colors.black,
+                                    color: active ? whiteColor : blackColor,
                                     fontWeight: FontVariant.medium,
                                     fontSize: 15,
                                   ),
@@ -324,7 +324,7 @@ class DialogHelpers {
                   right: 25,
                   bottom: 20,
                 ),
-                conColor: const Color(0xFFF7FFF7),
+                conColor:taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -345,7 +345,7 @@ class DialogHelpers {
                       "Task is marked as completed. Payment\nwill be released within 48 hours",
                       fontSize: 12,
                       textAlign: TextAlign.center,
-                      color: Colors.black87,
+                      color:blackColor,
                     ),
                   ],
                 ),
@@ -365,6 +365,139 @@ class DialogHelpers {
       },
     );
   }
+  static void showsavechangeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              // MAIN WHITE CARD
+              CustomContainer(
+                padding: const EdgeInsets.only(
+                  top: 90,
+                  left: 25,
+                  right: 25,
+                  bottom: 25,
+                ),
+                conColor: whiteColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.12),
+                    blurRadius: 10,
+                  ),
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // TEXT
+                    CustomText(
+                      "Are You Sure you want\nto Save Profile",
+                      fontSize: 16,
+                      color: blackColor,
+                      textAlign: TextAlign.center,
+                      fontWeight: FontVariant.semiBold,
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // BUTTONS ROW
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // NO BUTTON
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              height: 48,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: fundCardBorderColor,
+                                  width: 2,
+                                ),
+                                color: Color(0xffFE70621A).withOpacity(0.10),
+                              ),
+                              child: const CustomText(
+                                "No",
+                                fontSize: 12,
+                                color: redColor,
+                                fontWeight: FontVariant.regular,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        // YES BUTTON
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              // TODO: Add Buy function here
+                            },
+                            child: Container(
+                              height: 48,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color:redColor, // redColor
+                              ),
+                              child: const CustomText(
+                                "Yes",
+                                fontSize: 14,
+                                color: whiteColor,
+                                fontWeight: FontVariant.medium,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // 🔴 TOP CIRCLE WITH WHITE BORDER + ICON
+              Positioned(
+                top: -70,
+                child: Container(
+                  width: 140,
+                  height: 140,
+                  decoration: BoxDecoration(
+                    color: redColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Center(
+                      child: Image.asset(
+                        "assets/icons/savechange.png", // YOUR ICON
+                        width: 55,
+                        height: 55,
+                        color:whiteColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
+
 
   static void showBuyBadgeDialog(BuildContext context) {
     showDialog(
@@ -516,7 +649,7 @@ class DialogHelpers {
                   right: 25,
                   bottom: 25,
                 ),
-                conColor: const Color(0xFFF7FFF7),
+                conColor:taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -575,7 +708,7 @@ class DialogHelpers {
                   right: 25,
                   bottom: 25,
                 ),
-                conColor: const Color(0xFFF7FFF7),
+                conColor: taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -621,7 +754,7 @@ class DialogHelpers {
                             "Confirm Approval",
                             fontSize: 16,
                             fontWeight: FontVariant.semiBold,
-                            color: Colors.white,
+                            color: whiteColor,
                           ),
                         ),
                       ),
@@ -637,14 +770,14 @@ class DialogHelpers {
                       child: CustomContainer(
                         height: 48,
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.black, width: 1.5),
-                        conColor: Colors.white,
+                        border: Border.all(color: blackColor, width: 1.5),
+                        conColor:whiteColor,
                         child: Center(
                           child: CustomText(
                             "Go Back",
                             fontSize: 16,
                             fontWeight: FontVariant.medium,
-                            color: Colors.black,
+                            color: blackColor,
                           ),
                         ),
                       ),
@@ -675,7 +808,7 @@ class DialogHelpers {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor:whiteColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
@@ -740,9 +873,9 @@ class DialogHelpers {
                           ),
                           margin: const EdgeInsets.only(bottom: 12),
                           borderRadius: BorderRadius.circular(12),
-                          conColor: selected ? redColor : Colors.white,
+                          conColor: selected ? redColor :whiteColor,
                           border: Border.all(
-                            color: selected ? redColor : Colors.black,
+                            color: selected ? redColor :blackColor,
                             width: 1.5,
                           ),
 
@@ -761,7 +894,7 @@ class DialogHelpers {
                                 selected
                                     ? Icons.check_circle
                                     : Icons.circle_outlined,
-                                color: selected ? Colors.white : Colors.black,
+                                color: selected ? whiteColor: blackColor,
                               ),
                               const SizedBox(width: 12),
                               Expanded(
@@ -769,7 +902,7 @@ class DialogHelpers {
                                   reasons[index],
                                   fontSize: 15,
                                   fontWeight: FontVariant.semiBold,
-                                  color: selected ? Colors.white : Colors.black,
+                                  color: selected ?whiteColor : blackColor,
                                 ),
                               ),
                             ],
@@ -800,7 +933,7 @@ class DialogHelpers {
                       horizontal: 14,
                       vertical: 12,
                     ),
-                    conColor: const Color(0xFFF5F5F5),
+                    conColor:white2Color,
                     height: 105,
 
                     /// SHADOW ADDED EXACTLY LIKE YOUR OPTION BOXES
@@ -817,7 +950,7 @@ class DialogHelpers {
                       decoration: InputDecoration(
                         hintText: "e.g. Provide context",
                         hintStyle: TextStyle(
-                          color: Color(0xFF9E9E9E),
+                          color: taskstatus3,
                           fontSize: 14,
                         ),
                         border: InputBorder.none,
@@ -835,7 +968,7 @@ class DialogHelpers {
                       DialogHelpers.showReportSubmittedDialog(context: context);
                     },
                     bgColor: redColor,
-                    textColor: Colors.white,
+                    textColor:whiteColor,
                     borderRadius: BorderRadius.circular(15),
                     height: 51,
                     fontSize: 17,
@@ -859,7 +992,7 @@ class DialogHelpers {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: whiteColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
@@ -917,9 +1050,9 @@ class DialogHelpers {
                           ),
                           margin: const EdgeInsets.only(bottom: 12),
                           borderRadius: BorderRadius.circular(12),
-                          conColor: selected ? redColor : Colors.white,
+                          conColor: selected ? redColor :whiteColor,
                           border: Border.all(
-                            color: selected ? redColor : Colors.black,
+                            color: selected ? redColor : blackColor,
                             width: 1.5,
                           ),
                           boxShadow: [
@@ -935,7 +1068,7 @@ class DialogHelpers {
                                 selected
                                     ? Icons.check_circle
                                     : Icons.circle_outlined,
-                                color: selected ? Colors.white : Colors.black,
+                                color: selected ? whiteColor : blackColor,
                               ),
                               const SizedBox(width: 12),
                               Expanded(
@@ -943,7 +1076,7 @@ class DialogHelpers {
                                   reasons[index],
                                   fontSize: 15,
                                   fontWeight: FontVariant.semiBold,
-                                  color: selected ? Colors.white : Colors.black,
+                                  color: selected ? whiteColor :blackColor,
                                 ),
                               ),
                             ],
@@ -962,7 +1095,7 @@ class DialogHelpers {
                       DialogHelpers().showDescribeProblemSheet(context);
                     },
                     bgColor: redColor,
-                    textColor: Colors.white,
+                    textColor:whiteColor,
                     borderRadius: BorderRadius.circular(15),
                     height: 51,
                     fontSize: 17,
@@ -986,7 +1119,7 @@ class DialogHelpers {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor:whiteColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
@@ -1032,7 +1165,7 @@ class DialogHelpers {
 
               /// -------- MESSAGE BOX --------
               CustomContainer(
-                conColor: Color(0xffD9D9D9),
+                conColor:dialog1,
                 borderRadius: BorderRadius.circular(30),
                 padding: const EdgeInsets.all(12),
                 height: 266,
@@ -1041,11 +1174,11 @@ class DialogHelpers {
                   controller: msgController,
                   maxLines: null,
                   expands: true,
-                  style: const TextStyle(fontSize: 15, color: Colors.black),
+                  style: const TextStyle(fontSize: 15, color:blackColor),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: "Type your message...",
-                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                    hintStyle: TextStyle(color: greyColor, fontSize: 14),
                   ),
                 ),
               ),
@@ -1063,7 +1196,7 @@ class DialogHelpers {
                 height: 51,
                 width: 233,
                 bgColor: redColor,
-                textColor: Colors.white,
+                textColor:whiteColor,
                 borderRadius: BorderRadius.circular(15),
                 fontSize: 17,
                 fontWeight: FontVariant.semiBold,
@@ -1082,7 +1215,7 @@ class DialogHelpers {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: whiteColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
@@ -1135,7 +1268,7 @@ class DialogHelpers {
 
                   /// -------- MESSAGE BOX --------
                   CustomContainer(
-                    conColor: const Color(0xffD9D9D9),
+                    conColor:dialog1,
                     borderRadius: BorderRadius.circular(30),
                     padding: const EdgeInsets.all(12),
                     height: 266,
@@ -1144,11 +1277,11 @@ class DialogHelpers {
                       controller: msgController,
                       maxLines: null,
                       expands: true,
-                      style: const TextStyle(fontSize: 15, color: Colors.black),
+                      style: const TextStyle(fontSize: 15, color: blackColor),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         hintText: "Type your message...",
-                        hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                        hintStyle: TextStyle(color: greyColor, fontSize: 14),
                       ),
                     ),
                   ),
@@ -1166,7 +1299,7 @@ class DialogHelpers {
                     height: 51,
                     width: 233,
                     bgColor: redColor,
-                    textColor: Colors.white,
+                    textColor:whiteColor,
                     borderRadius: BorderRadius.circular(15),
                     fontSize: 17,
                     fontWeight: FontVariant.semiBold,
@@ -1203,7 +1336,7 @@ class DialogHelpers {
           insetPadding: EdgeInsets.all(20),
           child: CustomContainer(
             padding: EdgeInsets.symmetric(horizontal: 28, vertical: 25),
-            conColor: Colors.white,
+            conColor:whiteColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(15),
               topRight: Radius.circular(15),
@@ -1227,6 +1360,10 @@ class DialogHelpers {
       },
     );
   }
+
+
+
+
 
   static void showPaymentSuccessDialog({
     required BuildContext context,
@@ -1257,7 +1394,7 @@ class DialogHelpers {
                   right: 25,
                   bottom: showButton ? 50 : 10, // adjust padding
                 ),
-                conColor: const Color(0xFFF7FFF7),
+                conColor:taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -1275,7 +1412,7 @@ class DialogHelpers {
                       fontSize: 18,
                       fontWeight: FontVariant.semiBold,
                       textAlign: TextAlign.center,
-                      color: Colors.black87,
+                      color:blackColor,
                     ),
 
                     if (showButton) ...[
@@ -1327,7 +1464,7 @@ class DialogHelpers {
                   right: 25,
                   bottom: 25,
                 ),
-                conColor: const Color(0xFFF7FFF7), // same mint/white tone
+                conColor: taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -1345,7 +1482,7 @@ class DialogHelpers {
                       fontSize: 18,
                       fontWeight: FontVariant.semiBold,
                       textAlign: TextAlign.center,
-                      color: Colors.black,
+                      color:blackColor,
                     ),
 
                     const SizedBox(height: 3),
@@ -1405,7 +1542,7 @@ class DialogHelpers {
                   right: 25,
                   bottom: 25,
                 ),
-                conColor: const Color(0xFFF7FFF7),
+                conColor:taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -1423,7 +1560,7 @@ class DialogHelpers {
                       fontSize: 16,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,
-                      color: Colors.black87,
+                      color: blackColor,
                     ),
 
                     const SizedBox(height: 10),
@@ -1436,8 +1573,8 @@ class DialogHelpers {
                       },
                       height: 52,
                       width: 190,
-                      bgColor: const Color(0xFFE53935),
-                      textColor: Colors.white,
+                      bgColor: redColor,
+                      textColor:whiteColor,
                       borderRadius: BorderRadius.circular(14),
                       fontSize: 16,
                       fontWeight: FontVariant.semiBold,
@@ -1482,7 +1619,7 @@ class DialogHelpers {
               borderRadius: BorderRadius.circular(30),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: whiteColor,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -1534,7 +1671,7 @@ class DialogHelpers {
                               "A",
                               fontSize: 40,
                               fontWeight: FontVariant.bold,
-                              color: Colors.white,
+                              color: whiteColor,
                             ),
                           ),
                           Positioned(
@@ -1545,7 +1682,7 @@ class DialogHelpers {
                               width: 18,
                               conColor: redColor,
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 1),
+                              border: Border.all(color: whiteColor, width: 1),
                             ),
                           ),
                         ],
@@ -1562,7 +1699,7 @@ class DialogHelpers {
 
                       /// RB TAG
                       CustomContainer(
-                        conColor: Colors.red.shade50,
+                        conColor:redColor2.withOpacity(0.7),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 6,
@@ -1601,7 +1738,7 @@ class DialogHelpers {
 
                       /// STAR + RATING SECTION
                       CustomContainer(
-                        conColor: Colors.grey.shade100,
+                        conColor: beforecolor,
                         borderRadius: BorderRadius.circular(16),
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         child: Column(
@@ -1677,7 +1814,7 @@ class DialogHelpers {
 
                       /// DESCRIPTION BOX
                       CustomContainer(
-                        conColor: Colors.grey.shade100,
+                        conColor:beforecolor,
                         borderRadius: BorderRadius.circular(16),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 14,
@@ -1723,7 +1860,7 @@ class DialogHelpers {
   /// ================================
   static Widget _statBox(String title, String value, String imagePath) {
     return CustomContainer(
-      conColor: Colors.grey.shade100,
+      conColor:beforecolor,
       borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.symmetric(vertical: 18),
       child: Column(
@@ -1766,14 +1903,14 @@ class DialogHelpers {
 /// =================================================================
 Widget _statBox(String title, String value, IconData icon) {
   return CustomContainer(
-    conColor: Colors.grey.shade100,
+    conColor: beforecolor,
     borderRadius: BorderRadius.circular(16),
     padding: const EdgeInsets.symmetric(vertical: 18),
     child: Column(
       children: [
         Icon(icon, color: redColor, size: 26),
         const SizedBox(height: 8),
-        CustomText(title, fontSize: 13, color: Colors.grey),
+        CustomText(title, fontSize: 13, color: greyColor),
         const SizedBox(height: 4),
         CustomText(
           value,

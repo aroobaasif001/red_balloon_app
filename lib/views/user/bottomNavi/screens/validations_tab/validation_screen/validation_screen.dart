@@ -248,8 +248,8 @@ class _ValidationScreenState extends State<ValidationScreen> {
                             fontSize: 14,
                             fontWeight: FontVariant.semiBold,
                             color: selectedTab == 0
-                                ? Colors.white
-                                : Colors.black,
+                                ?whiteColor
+                                : blackColor,
                           ),
                         ),
                       ),
@@ -270,8 +270,8 @@ class _ValidationScreenState extends State<ValidationScreen> {
                             fontSize: 14,
                             fontWeight: FontVariant.semiBold,
                             color: selectedTab == 1
-                                ? Colors.white
-                                : Colors.black,
+                                ?whiteColor
+                                :whiteColor,
                           ),
                         ),
                       ),

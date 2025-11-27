@@ -14,7 +14,7 @@ Widget buildBeforeAfterToggle(UploadProofController controller) {
     borderRadius: BorderRadius.circular(14),
     boxShadow: [
       BoxShadow(
-        color: Color(0xff000000).withOpacity(0.25),
+        color: walletBlackColor,
         blurRadius: 4,
         offset: Offset(0, 4),
       ),

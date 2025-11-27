@@ -94,11 +94,11 @@ class ChatScreen extends StatelessWidget {
                       padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       borderRadius: BorderRadius.circular(20),
-                      conColor: Colors.grey.shade200,
+                      conColor: greyLiteColor,
                       child: CustomText(
                         "Today",
                         fontSize: 12,
-                        color: Colors.grey.shade600,
+                        color: grey2Color,
                       ),
                     ),
                   ),
@@ -150,12 +150,12 @@ class ChatScreen extends StatelessWidget {
 
             /// 🔥 MESSAGE INPUT BAR
             CustomContainer(
-              conColor: Colors.white,
+              conColor: whiteColor,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 children: [
                   Icon(Icons.attach_file_rounded,
-                      size: 26, color: Colors.grey.shade600),
+                      size: 26, color: grey4Color),
 
                   const SizedBox(width: 10),
 
@@ -195,13 +195,13 @@ class ChatScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomContainer(
-                conColor: Colors.grey.shade200,
+                conColor:greyLiteColor,
                 padding: const EdgeInsets.all(12),
                 borderRadius: BorderRadius.circular(12),
                 child: CustomText(
                   text,
                   fontSize: 14,
-                  color: Colors.black87,
+                  color: grey50Color,
                 ),
               ),
               const SizedBox(height: 6),
@@ -231,7 +231,7 @@ class ChatScreen extends StatelessWidget {
                 child: CustomText(
                   text,
                   fontSize: 14,
-                  color: Colors.white,
+                  color:whiteColor,
                 ),
               ),
               const SizedBox(height: 6),
@@ -257,7 +257,7 @@ class ChatScreen extends StatelessWidget {
 
         Expanded(
           child: CustomContainer(
-            conColor: Colors.white,
+            conColor: whiteColor,
             padding: const EdgeInsets.all(12),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [

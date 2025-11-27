@@ -9,7 +9,7 @@ class TaskHeaderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      conColor: const Color(0xfff7f7f7),
+      conColor: rbcolor,
       padding: const EdgeInsets.all(14),
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
@@ -42,7 +42,7 @@ class TaskHeaderCard extends StatelessWidget {
                   "Help Move Furniture",
                   fontSize: 20,
                   fontWeight: FontVariant.bold,
-                  color: Colors.black,
+                  color:blackColor,
                 ),
 
                 const SizedBox(height: 10),
@@ -59,14 +59,14 @@ class TaskHeaderCard extends StatelessWidget {
                     const SizedBox(width: 25),
 
                     Icon(Icons.watch_later_outlined,
-                        size: 16, color: Colors.grey.shade500),
+                        size: 16, color:grey4Color),
 
                     const SizedBox(width: 4),
 
                     CustomText(
                       "2 min ago",
                       fontSize: 13,
-                      color: const Color(0xff999999),
+                      color: grey4Color,
                     ),
                   ],
                 ),

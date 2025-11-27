@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
+import '../../../../../../../utils/colors.dart';
+
 class TaskStatusBadge extends StatelessWidget {
   final String status;
   final Color textColor;
@@ -10,7 +12,7 @@ class TaskStatusBadge extends StatelessWidget {
     super.key,
     required this.status,
     this.textColor = const Color(0xff202020),
-    this.bgColor = const Color(0xffF1F1F5),
+    this.bgColor = taskstatus,
   });
 
   @override

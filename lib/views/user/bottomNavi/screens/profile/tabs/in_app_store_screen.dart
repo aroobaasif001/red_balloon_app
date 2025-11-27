@@ -42,7 +42,7 @@ class InAppStoreScreen extends StatelessWidget {
                         "Your Loyalty Points",
                         fontSize: 18,
                         fontWeight: FontVariant.semiBold,
-                        color: Colors.black,
+                        color:blackColor,
                       ),
                       CustomContainer(
                         padding: const EdgeInsets.symmetric(

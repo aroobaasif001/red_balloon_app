@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
 import '../../../../../../../utils/colors.dart';
+import '../../../../../../../utils/dialog_helpers.dart';
 
 class TaskOwnerTile extends StatelessWidget {
   const TaskOwnerTile({super.key});
@@ -60,13 +61,18 @@ class TaskOwnerTile extends StatelessWidget {
               fontWeight: FontVariant.regular,
             ),
             const SizedBox(height: 6),
-            CustomText(
-              "View Profile",
-              color: pricecolor,
-              fontSize: 14,
+            InkWell(
+              onTap: () {
+                DialogHelpers.showHelperProfileDialog(context);
+              },
+              child: CustomText(
+                "View Profile",
+                color: pricecolor,
+                fontSize: 14,
+                fontWeight: FontVariant.semiBold,
+              ),
+            )
 
-              fontWeight: FontVariant.semiBold,
-            ),
           ],
         ),
       ],

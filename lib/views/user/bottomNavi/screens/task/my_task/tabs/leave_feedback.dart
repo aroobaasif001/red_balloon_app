@@ -6,6 +6,7 @@ import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../../bottom_navi_screen.dart';
 import '../controller/leave_feedback_controller.dart';
+import '../my_task_screen.dart';
 import '../widgets/leave_feedback_rating_row.dart';
 import '../widgets/leave_feedback_review_field.dart';
 import '../widgets/leave_feedback_task_card.dart';
@@ -96,7 +97,7 @@ class LeaveFeedback extends StatelessWidget {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        Get.offAll(() => BottomNaviScreen());
+                        Get.offAll(() => MyTaskScreen());
                       },
                       child: CustomContainer(
                         height: 48,
@@ -117,7 +118,7 @@ class LeaveFeedback extends StatelessWidget {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        Get.offAll(() => BottomNaviScreen());
+                        Get.offAll(() => MyTaskScreen());
                       },
                       child: CustomContainer(
                         height: 48,

@@ -85,7 +85,7 @@ class _CustomBonusSliderState extends State<CustomBonusSlider> {
                       bonusCards[index]["title"]!,
                       fontSize: 20,
                       fontWeight: FontVariant.bold,
-                      color: Colors.white,
+                      color: whiteColor,
                     ),
                     const SizedBox(height: 10),
                     CustomText(

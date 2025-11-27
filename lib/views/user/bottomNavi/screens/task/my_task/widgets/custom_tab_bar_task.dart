@@ -62,7 +62,7 @@ class CustomTabBarTask extends StatelessWidget {
 
         child: CustomText(
           label,
-          color: isSelected ? Colors.white : Colors.black87,
+          color: isSelected ?whiteColor :blackColor,
           fontWeight: FontVariant.semiBold,
           fontSize: 14,
         ),

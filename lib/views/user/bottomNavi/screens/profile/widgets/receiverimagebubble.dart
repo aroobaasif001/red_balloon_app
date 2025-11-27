@@ -27,7 +27,7 @@ class ReceiverImageBubble extends StatelessWidget {
 
         Expanded(
           child: CustomContainer(
-            conColor: Colors.white,
+            conColor:whiteColor,
             padding: const EdgeInsets.all(12),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [

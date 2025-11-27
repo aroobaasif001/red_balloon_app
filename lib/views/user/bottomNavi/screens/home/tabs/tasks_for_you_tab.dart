@@ -50,7 +50,7 @@ class TasksForYouTab extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 15),
             itemCount: 3,
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            // physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),

@@ -28,7 +28,7 @@ class SenderBubble extends StatelessWidget {
             child: CustomText(
               text,
               fontSize: 15,
-              color: Colors.white,
+              color: whiteColor,
             ),
           ),
 

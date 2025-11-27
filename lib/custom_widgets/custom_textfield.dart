@@ -106,7 +106,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 ),
                 if (widget.isRequired) ...[
                   const SizedBox(width: 4),
-                  const CustomText("*", fontSize: 12, color: Colors.red),
+                  const CustomText("*", fontSize: 12, color:redColor),
                 ],
               ],
             ),
@@ -202,7 +202,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         _obscure
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: Colors.grey.shade700,
+                        color:grey5Color,
                       ),
                       onPressed: () => setState(() => _obscure = !_obscure),
                     )

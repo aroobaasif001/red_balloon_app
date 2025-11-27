@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 
+import '../../../../../../utils/colors.dart';
+
 class ChatInputBar extends StatelessWidget {
   const ChatInputBar({super.key});
 
@@ -25,11 +27,11 @@ class ChatInputBar extends StatelessWidget {
           Expanded(
             child: CustomContainer(
               height: 46,
-              conColor: Colors.white,
+              conColor: whiteColor,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               borderRadius: BorderRadius.circular(40),
               border: Border.all(
-                color: Colors.grey.shade300,
+                color: whiteLiteColor,
                 width: 1,
               ),
               child: const TextField(

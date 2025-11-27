@@ -17,7 +17,7 @@ class AllTaskTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomText('My Tasks', fontSize: 24, fontWeight: FontVariant.bold),
+          CustomText('My Tasks', fontSize: 22, fontWeight: FontVariant.bold),
           SizedBox(height: 15),
           CustomMyTaskCard(
             title: "Help needed move furniture",
@@ -37,7 +37,7 @@ class AllTaskTab extends StatelessWidget {
           SizedBox(height: 26),
           CustomText(
             'Tasks Near Me',
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontVariant.bold,
           ),
           SizedBox(height: 15),

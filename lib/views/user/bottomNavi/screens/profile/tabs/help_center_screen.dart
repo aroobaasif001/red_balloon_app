@@ -45,7 +45,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                         'Common Topics',
                         fontSize: 16,
                         fontWeight: FontVariant.bold,
-                        color: Colors.black,
+                        color:blackColor,
                       ),
                       const SizedBox(height: 15),
 
@@ -122,13 +122,13 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                         'More Options',
                         fontSize: 16,
                         fontWeight: FontVariant.bold,
-                        color: Colors.black,
+                        color:blackColor,
                       ),
                       const SizedBox(height: 15),
 
                       /// CONTACT SUPPORT CARD
                       CustomContainer(
-                        conColor: Colors.white,
+                        conColor: whiteColor,
                         borderRadius: BorderRadius.circular(12),
                         padding: const EdgeInsets.symmetric(
                           vertical: 25,
@@ -155,7 +155,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                               'Still need help?',
                               fontSize: 16,
                               fontWeight: FontVariant.bold,
-                              color: Colors.black,
+                              color:blackColor,
                             ),
                             const SizedBox(height: 20),
                             CustomText(
@@ -180,7 +180,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                                   "Contact Support",
                                   fontSize: 16,
                                   fontWeight: FontVariant.semiBold,
-                                  color: Colors.white,
+                                  color: whiteColor,
                                 ),
                               ),
                             ),

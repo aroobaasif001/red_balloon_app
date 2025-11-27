@@ -16,7 +16,7 @@ class TaskReviewScreen extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: whiteColor,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -80,7 +80,7 @@ class TaskReviewScreen extends StatelessWidget {
                             CustomContainer(
                               height: 26,
                               borderRadius: BorderRadius.circular(20),
-                              conColor: const Color(0xffF0F0F0),
+                              conColor: walletCardBorderColor,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
                                 vertical: 5,
@@ -135,7 +135,7 @@ class TaskReviewScreen extends StatelessWidget {
                   const Icon(
                     Icons.location_on_outlined,
                     size: 18,
-                    color: Colors.grey,
+                    color: greyColor,
                   ),
                   const SizedBox(width: 4),
                   CustomText(
@@ -145,7 +145,7 @@ class TaskReviewScreen extends StatelessWidget {
                     color: timeColor,
                   ),
                   const SizedBox(width: 20),
-                  const Icon(Icons.access_time, size: 18, color: Colors.grey),
+                  const Icon(Icons.access_time, size: 18, color: greyColor),
                   const SizedBox(width: 4),
                   CustomText(
                     "Submitted 2 min ago",
@@ -175,7 +175,7 @@ class TaskReviewScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black,
+                          color: blackColor,
                           blurRadius: 3,
                           offset: Offset(0, 3),
                         ),
@@ -205,7 +205,7 @@ class TaskReviewScreen extends StatelessWidget {
                               conColor: Colors.black.withOpacity(0.6),
                               child: CustomText(
                                 "BEFORE",
-                                color: Colors.white,
+                                color: whiteColor,
                                 fontSize: 12,
                                 fontWeight: FontVariant.semiBold,
                               ),
@@ -227,13 +227,13 @@ class TaskReviewScreen extends StatelessWidget {
                     },
                     child: CustomContainer(
                       height: 150,
-                      conColor: Colors.white,
+                      conColor: whiteColor,
                       width:
                           (MediaQuery.of(context).size.width - 15 * 2 - 12) / 2,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black,
+                          color:blackColor,
                           blurRadius: 3,
                           offset: Offset(0, 3),
                         ),
@@ -263,7 +263,7 @@ class TaskReviewScreen extends StatelessWidget {
                               conColor: Colors.black.withOpacity(0.6),
                               child: CustomText(
                                 "AFTER",
-                                color: Colors.white,
+                                color: whiteColor,
                                 fontSize: 12,
                                 fontWeight: FontVariant.semiBold,
                               ),
@@ -286,9 +286,9 @@ class TaskReviewScreen extends StatelessWidget {
                   horizontal: 10,
                   vertical: 18,
                 ),
-                conColor: Colors.white,
+                conColor:whiteColor,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black12),
+                border: Border.all(color: grey50Color),
                 child: RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
@@ -302,7 +302,7 @@ class TaskReviewScreen extends StatelessWidget {
                         text: "2 minutes",
                         style: const TextStyle(
                           fontSize: 14,
-                          color: Colors.red,
+                          color:redColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -310,7 +310,7 @@ class TaskReviewScreen extends StatelessWidget {
                         text: ".",
                         style: const TextStyle(
                           fontSize: 13,
-                          color: Colors.black87,
+                          color:blackColor,
                         ),
                       ),
                     ],
@@ -343,14 +343,14 @@ class TaskReviewScreen extends StatelessWidget {
                             children: [
                               const Icon(
                                 Icons.close,
-                                color: Colors.white,
+                                color:whiteColor,
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
                               CustomText(
                                 "Reject Proof",
                                 fontWeight: FontVariant.semiBold,
-                                color: Colors.white,
+                                color:whiteColor,
                                 fontSize: 15,
                               ),
                             ],

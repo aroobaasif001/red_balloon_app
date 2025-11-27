@@ -3,6 +3,8 @@ import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
+import '../../../../../../utils/colors.dart';
+
 class CustomNotificationTabs extends StatelessWidget {
   final int selectedIndex;
   final VoidCallback onAllTap;
@@ -49,7 +51,7 @@ class CustomNotificationTabs extends StatelessWidget {
             borderRadius: selectedIndex == 1 ? BorderRadius.circular(15) : BorderRadius.circular(20),
             child: CustomText(
               'Offers',
-              color: selectedIndex == 1 ? Colors.white : Colors.black,
+              color: selectedIndex == 1 ? whiteColor : blackColor,
               fontWeight: FontVariant.regular,
             ),
           ),
@@ -66,7 +68,7 @@ class CustomNotificationTabs extends StatelessWidget {
             borderRadius: selectedIndex == 2 ? BorderRadius.circular(15) : BorderRadius.circular(20),
             child: CustomText(
               'Validation Hub',
-              color: selectedIndex == 2 ? Colors.white : Colors.black,
+              color: selectedIndex == 2 ?whiteColor : blackColor,
               fontWeight: FontVariant.regular,
             ),
           ),

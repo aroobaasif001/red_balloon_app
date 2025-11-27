@@ -115,12 +115,12 @@ class CustomButton extends StatelessWidget {
                             label,
                             style:
                                 textStyle?.copyWith(
-                                  color: enabled ? textColor : Colors.white70,
+                                  color: enabled ? textColor :whiteLiteColor,
                                   fontWeight: _getFontWeight(fontWeight),
                                   fontSize: fontSize ?? 18,
                                 ) ??
                                 TextStyle(
-                                  color: enabled ? textColor : Colors.white70,
+                                  color: enabled ? textColor :whiteLiteColor,
                                   fontWeight: _getFontWeight(fontWeight),
                                   fontSize: fontSize ?? 18,
                                 ),

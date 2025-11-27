@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../custom_widgets/customtext.dart';
+import '../../../../../../utils/colors.dart';
 
 class FaqTile extends StatelessWidget {
   final int index;
@@ -45,11 +46,11 @@ class FaqTile extends StatelessWidget {
                   question,
                   fontSize: 14,
                   fontWeight: FontVariant.medium,
-                  color: Colors.black,
+                  color: blackColor,
                 ),
                 Icon(
                   isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                  color: Colors.black,
+                  color:blackColor,
                 ),
               ],
             ),
@@ -61,7 +62,7 @@ class FaqTile extends StatelessWidget {
                 answer,
                 fontSize: 13,
                 fontWeight: FontVariant.regular,
-                color: Colors.black87,
+                color: blackColor,
               ),
             ],
           ],

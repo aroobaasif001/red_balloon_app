@@ -21,7 +21,7 @@ class LeaveFeedbackTaskCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xff000000).withOpacity(0.25),
+            color: blackColor,
             blurRadius: 4,
             offset: const Offset(0, 4),
           ),

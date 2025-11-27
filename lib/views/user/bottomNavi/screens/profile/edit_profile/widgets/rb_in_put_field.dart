@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../utils/colors.dart';
+
 class RBInputField extends StatelessWidget {
   final String? hint;
   final int maxLines;
@@ -23,10 +25,10 @@ class RBInputField extends StatelessWidget {
       height: maxLines == 1 ? 52 : null,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
+        color: rbcolor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFFE5E5EA),
+          color: bordercol,
           width: 1,
         ),
       ),
@@ -50,7 +52,7 @@ class RBInputField extends StatelessWidget {
               enabled: enabled,
               maxLines: maxLines,
               style: const TextStyle(
-                color: Colors.black,
+                color: blackColor,
                 fontSize: 16,
               ),
               decoration: InputDecoration(
@@ -58,7 +60,7 @@ class RBInputField extends StatelessWidget {
                 border: InputBorder.none,
                 hintText: hint,
                 hintStyle: TextStyle(
-                  color: Colors.grey.shade400,
+                  color: balanceconbgColor,
                   fontSize: 16,
                 ),
               ),

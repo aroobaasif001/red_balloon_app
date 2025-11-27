@@ -113,7 +113,7 @@ class AfterTab extends StatelessWidget {
             fontSize: 13,
             textAlign: TextAlign.center,
             fontWeight: FontVariant.regular,
-            color: Colors.grey.shade600,
+            color:grey4Color,
           ),
 
           const SizedBox(height: 20),
