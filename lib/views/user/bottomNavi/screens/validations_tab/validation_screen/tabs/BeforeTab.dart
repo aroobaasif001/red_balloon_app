@@ -1,0 +1,140 @@
+import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/custom_button.dart';
+import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/utils/colors.dart';
+
+import '../../../../../../../utils/dialog_helpers.dart';
+
+class BeforeTab extends StatelessWidget {
+  const BeforeTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          /// -------------------------------
+          /// 📸 IMAGE (289 × 291)
+          /// -------------------------------
+          CustomContainer(
+            height: 289,
+            width: 291,
+            borderRadius: BorderRadius.circular(16),
+            conColor: Colors.white,
+            alignment: Alignment.center,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                "assets/images/Rectangle 34625290 (1).png", // <-- replace with your actual image
+                height: 289,
+                width: 291,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          /// -------------------------------
+          /// RED DESCRIPTION BOX
+          /// -------------------------------
+          CustomContainer(
+            width: double.infinity,
+            borderRadius: BorderRadius.circular(12),
+            conColor: redColor,
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+            alignment: Alignment.center,
+            child: CustomText(
+              "Helper uploaded proof of completion.\n"
+              "Review if the task appears done properly.",
+              fontSize: 15,
+              textAlign: TextAlign.center,
+              fontWeight: FontVariant.semiBold,
+              color: Colors.white,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          /// -------------------------------
+          /// BUTTONS ROW
+          /// -------------------------------
+          Row(
+            children: [
+              /// ❌ SUPPORT USER BUTTON
+              Flexible(
+                child: CustomButton(
+                  label: "Support User",
+                  height: 50,
+                  fontSize: 14, // slightly smaller = no overflow
+                  fontWeight: FontVariant.semiBold,
+                  bgColor: redColor,
+                  borderRadius: BorderRadius.circular(12),
+                  onPressed: () {
+                    DialogHelpers.showPaymentSuccessDialog(
+                      context: context,
+                      showButton: false,
+                    );
+                  },
+                  leading: const Icon(Icons.close, color: whiteColor, size: 18),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                  ), // prevents overflow
+                ),
+              ),
+
+              const SizedBox(width: 14),
+
+              /// ✔ SUPPORT PROVIDER BUTTON
+              Flexible(
+                child: CustomButton(
+                  label: "Support Provider",
+                  height: 50,
+                  fontSize: 14, // same as above
+                  fontWeight: FontVariant.semiBold,
+                  bgColor: redColor,
+                  borderRadius: BorderRadius.circular(12),
+                  onPressed: () {
+                    DialogHelpers.showPaymentSuccessDialog(
+                      context: context,
+                      showButton: false,
+                    );
+                  },
+                  leading: const Icon(Icons.check, color: whiteColor, size: 18),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                  ), // prevents overflow
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 25),
+
+          /// -------------------------------
+          /// FOOTER NOTE
+          /// -------------------------------
+          CustomText(
+            "Your vote must match community majority to earn\nrewards.",
+            fontSize: 14,
+            fontWeight: FontVariant.regular,
+            textAlign: TextAlign.center,
+            color: Colors.grey.shade700,
+          ),
+          SizedBox(height: 40),
+
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+}

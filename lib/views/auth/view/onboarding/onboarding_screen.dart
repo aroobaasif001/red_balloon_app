@@ -8,7 +8,8 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 import 'package:red_balloon_app/views/auth/widgets/social_button.dart';
-import 'package:red_balloon_app/views/bottomNavi/bottom_navi_screen.dart';
+
+import '../../../user/bottomNavi/bottom_navi_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});

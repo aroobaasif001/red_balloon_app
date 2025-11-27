@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'package:red_balloon_app/views/bottomNavi/bottom_navi_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/bottom_navi_screen.dart';
 
 import 'firebase_options.dart';
 
