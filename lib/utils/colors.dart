@@ -32,9 +32,7 @@ const Color pricecolor2 = Color(0xffBBBDBD);
 const Color bordercol = Color(0xFFE5E5EA);
 const Color borderno = Color(0xff003AC14F);
 const Color beforecolor = Color(0xffE5E7EB);
-
-
-
+const Color pinkColor = Color(0xffFEE2E2);
 
 const LinearGradient redOrangeGradientColor = LinearGradient(
   begin: Alignment.centerLeft,
@@ -86,3 +84,5 @@ const Color greenBg = Color(0xffE8F5E9);
 const Color grayColor = Color(0xff5D5757);
 const Color borderColor = Color(0xffD1D5DB);
 const Color white4Color = Color(0xffF5F6FA);
+const Color black4Color = Color(0xff111827);
+const Color hintColor = Color(0xffADAEBC);
