@@ -66,9 +66,9 @@ class AdminAfterTab extends StatelessWidget {
                     /// LEFT TILE
                     Expanded(
                       child: CustomContainer(
+                        conColor: conBgColor,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         borderRadius: BorderRadius.circular(12),
-                        conColor:walletGrey100Color,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.20),
@@ -107,7 +107,7 @@ class AdminAfterTab extends StatelessWidget {
                       child: CustomContainer(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         borderRadius: BorderRadius.circular(12),
-                        conColor: walletGrey100Color,
+                        conColor: conBgColor,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.20),
