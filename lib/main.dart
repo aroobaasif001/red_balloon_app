@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/admin/bottomNavi/bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_management_screen2.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/user_profile_details_screen.dart';
 import 'package:red_balloon_app/views/auth/view/onboarding/onboarding_screen.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(scaffoldBackgroundColor: whiteColor),
       debugShowCheckedModeBanner: false,
       // home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
-      home: UserProfileDetailsScreen(),
+      home: AdminBottomNaviScreen(),
     );
   }
 }
