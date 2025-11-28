@@ -19,12 +19,13 @@ class RatingSummaryCard extends StatelessWidget {
       height: 94,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: whiteColor,
+        color: white2Color,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
-            blurRadius: 12,
+            color: blackColor.withOpacity(0.25),
+            blurRadius: 4,
+            spreadRadius: 0,
             offset: const Offset(0, 4),
           ),
         ],
@@ -60,10 +61,8 @@ class RatingSummaryCard extends StatelessWidget {
                   alignment: Alignment.centerRight,
                 ),
               ),
-
-
             ],
-          )
+          ),
         ],
       ),
     );
@@ -73,10 +72,5 @@ class RatingSummaryCard extends StatelessWidget {
 BoxDecoration _box() => BoxDecoration(
   color: whiteColor,
   borderRadius: BorderRadius.circular(16),
-  boxShadow: [
-    BoxShadow(
-      color: Colors.black.withOpacity(0.05),
-      blurRadius: 8,
-    )
-  ],
+  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8)],
 );

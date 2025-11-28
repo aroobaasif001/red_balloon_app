@@ -21,12 +21,18 @@ class ProgressBarTile extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CustomText(title,
-              fontSize: 14,
+            CustomText(
+              title,
+              fontSize: 12,
               fontWeight: FontVariant.regular,
-              color:textcolord,
+              color: walletGrey500Color,
             ),
-            Text("${(percent * 100).round()}%"),
+            CustomText(
+              "${(percent * 100).round()}%",
+              color: walletGrey500Color,
+              fontWeight: FontVariant.regular,
+              fontSize: 12,
+            ),
           ],
         ),
         const SizedBox(height: 6),
@@ -34,9 +40,9 @@ class ProgressBarTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           child: LinearProgressIndicator(
             value: percent,
-            minHeight: 7,
+            minHeight: 10,
             color: redColor,
-            backgroundColor: white2Color,
+            backgroundColor: pricecolor2,
           ),
         ),
       ],
