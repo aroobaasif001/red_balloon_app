@@ -4,7 +4,7 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import '../../../../../../../../utils/colors.dart';
 
 class StatsSmallCard extends StatelessWidget {
-  final String imagePath;   // 🔥 icon ki jagah image
+  final String imagePath;
   final String title;
   final String value;
 
@@ -35,7 +35,6 @@ class StatsSmallCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          /// 🔥 Replace Icon with Image
           Image.asset(
             imagePath,
             height: 26,
