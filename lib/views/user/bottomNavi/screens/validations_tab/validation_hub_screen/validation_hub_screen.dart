@@ -51,7 +51,7 @@ class ValidationHubScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     borderRadius: BorderRadius.circular(20),
-                    conColor:white2Color,
+                    conColor: white2Color,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.20),
@@ -68,7 +68,7 @@ class ValidationHubScreen extends StatelessWidget {
                             Expanded(
                               child: CustomContainer(
                                 height: 120,
-                                conColor: rdLight100Color,
+                                conColor: redColor.withOpacity(0.4),
                                 borderRadius: BorderRadius.circular(16),
                                 alignment: Alignment.bottomCenter,
                                 padding: const EdgeInsets.only(bottom: 8),
@@ -85,7 +85,7 @@ class ValidationHubScreen extends StatelessWidget {
                             Expanded(
                               child: CustomContainer(
                                 height: 120,
-                                conColor: rdLight100Color,
+                                conColor: redColor.withOpacity(0.4),
                                 borderRadius: BorderRadius.circular(16),
                                 alignment: Alignment.bottomCenter,
                                 padding: const EdgeInsets.only(bottom: 8),
@@ -153,7 +153,7 @@ class ValidationHubScreen extends StatelessWidget {
                                 vertical: 9,
                               ),
                               decoration: BoxDecoration(
-                                color:walletCardBgColor,
+                                color: walletCardBgColor,
                                 borderRadius: BorderRadius.circular(
                                   7,
                                 ), // FULL ROUND

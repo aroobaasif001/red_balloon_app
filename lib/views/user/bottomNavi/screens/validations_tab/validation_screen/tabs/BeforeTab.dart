@@ -26,7 +26,7 @@ class BeforeTab extends StatelessWidget {
             alignment: Alignment.center,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: blackColor.withOpacity(0.08),
                 blurRadius: 6,
                 offset: const Offset(0, 3),
               ),
@@ -59,7 +59,7 @@ class BeforeTab extends StatelessWidget {
               fontSize: 15,
               textAlign: TextAlign.center,
               fontWeight: FontVariant.semiBold,
-              color:whiteColor,
+              color: whiteColor,
             ),
           ),
 
@@ -128,7 +128,7 @@ class BeforeTab extends StatelessWidget {
             fontSize: 14,
             fontWeight: FontVariant.regular,
             textAlign: TextAlign.center,
-            color:grey5Color,
+            color: grey5Color,
           ),
           SizedBox(height: 40),
 
