@@ -66,7 +66,7 @@ class AdminBeforeTab extends StatelessWidget {
                     child: CustomContainer(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       borderRadius: BorderRadius.circular(12),
-                      conColor: walletGrey100Color,
+                      conColor: conBgColor,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.20),
@@ -105,7 +105,7 @@ class AdminBeforeTab extends StatelessWidget {
                     child: CustomContainer(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       borderRadius: BorderRadius.circular(12),
-                      conColor: walletGrey100Color,
+                      conColor: conBgColor,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.20),
