@@ -92,7 +92,7 @@ class ProviderCard extends StatelessWidget {
                           CustomContainer(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 6),
-                            conColor: Colors.red.shade50,
+                            conColor: rdBgColor,
                             borderRadius: BorderRadius.circular(10),
                             child: CustomText(
                               id,

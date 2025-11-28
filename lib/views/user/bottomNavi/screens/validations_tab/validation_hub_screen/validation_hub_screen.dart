@@ -68,7 +68,7 @@ class ValidationHubScreen extends StatelessWidget {
                             Expanded(
                               child: CustomContainer(
                                 height: 120,
-                                conColor: Colors.red.shade100,
+                                conColor: rdLight100Color,
                                 borderRadius: BorderRadius.circular(16),
                                 alignment: Alignment.bottomCenter,
                                 padding: const EdgeInsets.only(bottom: 8),
@@ -85,7 +85,7 @@ class ValidationHubScreen extends StatelessWidget {
                             Expanded(
                               child: CustomContainer(
                                 height: 120,
-                                conColor: Colors.red.shade100,
+                                conColor: rdLight100Color,
                                 borderRadius: BorderRadius.circular(16),
                                 alignment: Alignment.bottomCenter,
                                 padding: const EdgeInsets.only(bottom: 8),

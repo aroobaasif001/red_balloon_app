@@ -28,7 +28,7 @@ class ChatScreen extends StatelessWidget {
 
                   /// 🔥 TASK HEADER CARD
                   CustomContainer(
-                    conColor: Colors.white,
+                    conColor: whiteColor,
                     padding: const EdgeInsets.all(12),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
@@ -60,7 +60,7 @@ class ChatScreen extends StatelessWidget {
                                 "Help Move Furniture",
                                 fontSize: 16,
                                 fontWeight: FontVariant.semiBold,
-                                color: Colors.black,
+                                color: blackColor,
                               ),
                               const SizedBox(height: 4),
                               CustomText(

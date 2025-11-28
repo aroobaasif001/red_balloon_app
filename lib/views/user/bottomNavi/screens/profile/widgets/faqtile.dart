@@ -25,7 +25,7 @@ class FaqTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: CustomContainer(
-        conColor: Colors.white,
+        conColor: whiteColor,
         borderRadius: BorderRadius.circular(12),
         padding: const EdgeInsets.all(12),
         boxShadow: [
