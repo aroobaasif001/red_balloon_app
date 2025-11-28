@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
+
+import '../../../../../../../utils/colors.dart';
 
 class CustomLocationTag extends StatelessWidget {
   final String city;
@@ -7,15 +11,15 @@ class CustomLocationTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return CustomContainer(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
+      conColor: appbard,
+      borderRadius: BorderRadius.circular(20),
+      child: CustomText(
         city,
-        style: const TextStyle(fontSize: 13),
+        fontSize: 12,
+        fontWeight: FontVariant.regular,
+        color: walletGrey600Color,
       ),
     );
   }

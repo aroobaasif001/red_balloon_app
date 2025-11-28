@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+
+import '../../../../../../../utils/colors.dart';
 
 class CustomTag extends StatelessWidget {
   final String title;
@@ -9,24 +12,22 @@ class CustomTag extends StatelessWidget {
   const CustomTag({
     super.key,
     required this.title,
-    this.bgColor = const Color(0xffFFE5E5),
-    this.textColor = const Color(0xffFF4D4D),
+    this.bgColor = iconBg6,
+    this.textColor = redColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return CustomContainer(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(30),
-      ),
+      conColor: popupBg,
+      borderRadius: BorderRadius.circular(30),
       child: CustomText(
         title,
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: textColor,
+          color: redColor,
         ),
       ),
     );

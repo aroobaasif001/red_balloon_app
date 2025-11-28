@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/widget/user_card.dart' show UserCard;
+import 'package:get/get.dart';
+import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
+import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/user_profile_details_screen.dart';
+import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/widget/user_card.dart'
+    show UserCard;
 
-import '../../../../../../custom_widgets/customtext.dart';
 import 'widget/custom_search_field.dart' show CustomSearchField;
+
 class UserManagementScreen extends StatelessWidget {
   UserManagementScreen({super.key});
 
@@ -65,25 +70,14 @@ class UserManagementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: CustomAppBar(titleText: "User Management", disableLeading: true),
+      backgroundColor: whiteColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-              const SizedBox(height: 10),
-
-              // TITLE
-              Center(
-                child: const CustomText(
-                  "User Management",
-                  fontSize: 20,
-                  fontWeight: FontVariant.bold,
-                ),
-              ),
-
               const SizedBox(height: 20),
 
               // SEARCH FIELD
@@ -105,7 +99,9 @@ class UserManagementScreen extends StatelessWidget {
                         tasksText: user["tasks"],
                         price: user["price"],
                         initials: user["initials"],
-                        onView: () {}, // Navigate to profile
+                        onView: () {
+                          Get.to(() => UserProfileDetailsScreen());
+                        }, // Navigate to profile
                       );
                     }).toList(),
                   ),

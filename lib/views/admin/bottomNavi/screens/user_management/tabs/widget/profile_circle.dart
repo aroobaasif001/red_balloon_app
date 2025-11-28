@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 
 class ProfileCircle extends StatelessWidget {
   final String initials;
@@ -9,11 +10,11 @@ class ProfileCircle extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: 26,
-      backgroundColor: Colors.red,
+      backgroundColor: redColor,
       child: Text(
         initials,
         style: const TextStyle(
-          color: Colors.white,
+          color: whiteColor,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),

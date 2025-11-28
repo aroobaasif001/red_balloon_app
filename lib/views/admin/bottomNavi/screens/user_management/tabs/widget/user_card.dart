@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/widget/profile_circle.dart';
 
 import '../../../../../../../custom_widgets/custom_button.dart';
@@ -37,38 +38,53 @@ class UserCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 18),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: whiteColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.10),
-            blurRadius: 6,
+            color: blackColor.withOpacity(0.25),
+            blurRadius: 4,
+            spreadRadius: 0,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// LEFT SIDE
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomText(
-                  code,
-                  fontSize: 18,
-                  fontWeight: FontVariant.bold,
-                ),
-                const SizedBox(height: 8),
-
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CustomTag(title: userType),
-                    const SizedBox(width: 8),
-                    if (verified) CustomTag(title: "Verified"),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          code,
+                          fontSize: 18,
+                          fontWeight: FontVariant.bold,
+                          color: black4Color,
+                        ),
+                        const SizedBox(height: 8),
+
+                        Row(
+                          children: [
+                            CustomTag(title: userType),
+                            const SizedBox(width: 8),
+                            if (verified) CustomTag(title: "Verified"),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 12),
+
+                    /// RIGHT SIDE (Avatar + Button)
+                    ProfileCircle(initials: initials),
                   ],
                 ),
 
@@ -76,7 +92,7 @@ class UserCard extends StatelessWidget {
 
                 Row(
                   children: [
-                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                    const Icon(Icons.location_on, size: 16, color: taskstatus3),
                     const SizedBox(width: 6),
                     CustomLocationTag(city),
                   ],
@@ -84,41 +100,46 @@ class UserCard extends StatelessWidget {
 
                 const SizedBox(height: 10),
 
-                // Row(
-                //   children: [
-                //     CustomRatingStars(stars: stars),
-                //     const SizedBox(width: 8),
-                //     CustomText(tasksText, fontSize: 14),
-                //   ],
-                // ),
-
+                Row(
+                  children: [
+                    CustomRatingStars(stars: stars),
+                    const SizedBox(width: 8),
+                    CustomText(
+                      tasksText,
+                      fontSize: 14,
+                      color: walletGrey600Color,
+                      fontWeight: FontVariant.regular,
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 10),
-                CustomText(
-                  price,
-                  fontSize: 14,
-                  color: Colors.grey.shade700,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomText(
+                      price,
+                      fontSize: 12,
+                      color: walletGrey500Color,
+                      fontWeight: FontVariant.regular,
+                    ),
+                    SizedBox(
+                      width: 177, // REQUIRED FIX
+                      child: CustomButton(
+                        borderRadius: BorderRadius.circular(9999),
+                        height: 36,
+                        textStyle: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        label: "View Profile",
+                        onPressed: onView,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-
-          const SizedBox(width: 12),
-
-          /// RIGHT SIDE (Avatar + Button)
-          Column(
-            children: [
-              ProfileCircle(initials: initials),
-              const SizedBox(height: 16),
-
-              SizedBox(
-                width: 120, // REQUIRED FIX
-                child: CustomButton(
-                  label: "View Profile",
-                  onPressed: onView,
-                ),
-              ),
-            ],
-          )
         ],
       ),
     );
