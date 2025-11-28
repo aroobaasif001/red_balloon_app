@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../../utils/colors.dart';
+
 class OutlineBlackButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
@@ -17,14 +19,14 @@ class OutlineBlackButton extends StatelessWidget {
         height: 52,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black),
+          border: Border.all(color:blackColor),
         ),
         child: MaterialButton(
           onPressed: onTap,
           child: Text(
             label,
             style: const TextStyle(
-              color: Colors.black,
+              color:blackColor,
               fontWeight: FontWeight.w600,
             ),
           ),

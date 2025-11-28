@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/key_value_row.dart';
 
+import '../../../../../../../../utils/colors.dart';
+
 class AdminAnalyticsSection extends StatelessWidget {
   const AdminAnalyticsSection({super.key});
 
@@ -9,7 +11,7 @@ class AdminAnalyticsSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xffF5F6FA),
+        color:white4Color,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -27,7 +29,7 @@ class AdminAnalyticsSection extends StatelessWidget {
           // 🔴 SECTION TITLE
           Row(
             children: const [
-              Icon(Icons.show_chart, color: Colors.red),
+              Icon(Icons.show_chart, color:redColor),
               SizedBox(width: 8),
               Text(
                 "Admin Analytics",
@@ -46,7 +48,7 @@ class AdminAnalyticsSection extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color:whiteColor,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -84,7 +86,7 @@ class AdminAnalyticsSection extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color:whiteColor,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(

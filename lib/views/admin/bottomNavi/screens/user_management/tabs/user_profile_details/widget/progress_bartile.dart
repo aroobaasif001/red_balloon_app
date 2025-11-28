@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
+import '../../../../../../../../utils/colors.dart';
+
 class ProgressBarTile extends StatelessWidget {
   final String title;
   final double percent;
@@ -22,7 +24,7 @@ class ProgressBarTile extends StatelessWidget {
             CustomText(title,
               fontSize: 14,
               fontWeight: FontVariant.regular,
-              color: Colors.black26,
+              color:textcolord,
             ),
             Text("${(percent * 100).round()}%"),
           ],
@@ -33,8 +35,8 @@ class ProgressBarTile extends StatelessWidget {
           child: LinearProgressIndicator(
             value: percent,
             minHeight: 7,
-            color: Colors.red,
-            backgroundColor: Colors.grey.shade300,
+            color: redColor,
+            backgroundColor: white2Color,
           ),
         ),
       ],

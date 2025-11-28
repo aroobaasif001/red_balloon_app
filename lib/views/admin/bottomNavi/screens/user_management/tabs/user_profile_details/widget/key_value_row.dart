@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../../utils/colors.dart';
+
 class KeyValueRow extends StatelessWidget {
   final String title;
   final String value;
@@ -22,7 +24,7 @@ class KeyValueRow extends StatelessWidget {
             title,
             style: const TextStyle(
               fontSize: 14,
-              color: Colors.black87,
+              color:blackColor,
             ),
           ),
           Text(
@@ -30,7 +32,7 @@ class KeyValueRow extends StatelessWidget {
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: blackColor,
             ),
           ),
         ],

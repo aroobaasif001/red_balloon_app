@@ -93,32 +93,33 @@ class UserProfileDetailsScreen extends StatelessWidget {
                 runSpacing: 12,
                 children: const [
                   StatsSmallCard(
-                    icon: Icons.brightness_auto,
+                    imagePath: "assets/icons/validation1.png",
                     title: "Validation Accuracy",
                     value: "96%",
                   ),
+
                   StatsSmallCard(
-                    icon: Icons.bolt,
+                    imagePath: "assets/icons/response1.png",
                     title: "Response Time",
                     value: "< 5 min",
                   ),
                   StatsSmallCard(
-                    icon: Icons.location_on,
+                    imagePath: "assets/icons/avgd.png",
                     title: "Average Distance",
                     value: "3.2 km",
                   ),
                   StatsSmallCard(
-                    icon: Icons.check_circle,
+                    imagePath: "assets/icons/comr.png",
                     title: "Completion Rate",
                     value: "98%",
                   ),
                   StatsSmallCard(
-                    icon: Icons.warning_amber_outlined,
+                    imagePath: "assets/icons/disr.png",
                     title: "Dispute Rate",
                     value: "2.5%",
                   ),
                   StatsSmallCard(
-                    icon: Icons.error_outline,
+                    imagePath: "assets/icons/vio.png",
                     title: "Violations",
                     value: "0",
                   ),

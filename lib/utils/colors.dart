@@ -46,6 +46,9 @@ const Color dialog1 = Color(0xffD9D9D9);
 const Color redColor2 = Color(0xffDA3331);
 const Color lightredcolor2 = Color(0xffFFE8E8);
 const Color lightgray3 = Color(0xffFAFAFA);
+const Color pinklight4 = Color(0xffFFE4E4);
+
+
 
 
 
@@ -116,3 +119,4 @@ const Color iconBg5 = Color(0xFFFFEAEA); // avatar bg, similar to red/pink
 const Color gray6Color = Color(0xff616161);
 const Color iconBg6 = Color(0xffFFE5E5);
 const Color amber = Color(0xffffc107);
+

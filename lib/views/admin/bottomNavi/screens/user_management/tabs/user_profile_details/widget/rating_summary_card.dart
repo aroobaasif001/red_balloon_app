@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
+import '../../../../../../../../utils/colors.dart';
+
 class RatingSummaryCard extends StatelessWidget {
   final double rating;
   final int completed;
@@ -17,7 +19,7 @@ class RatingSummaryCard extends StatelessWidget {
       height: 94,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: whiteColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -32,7 +34,7 @@ class RatingSummaryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.star, color: Colors.amber, size: 28),
+              const Icon(Icons.star, color: yellow, size: 28),
               const SizedBox(width: 6),
               CustomText(
                 rating.toString(),
@@ -69,7 +71,7 @@ class RatingSummaryCard extends StatelessWidget {
 }
 
 BoxDecoration _box() => BoxDecoration(
-  color: Colors.white,
+  color: whiteColor,
   borderRadius: BorderRadius.circular(16),
   boxShadow: [
     BoxShadow(

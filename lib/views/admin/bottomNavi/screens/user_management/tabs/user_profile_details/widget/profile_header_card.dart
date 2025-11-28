@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/verified_tag.dart';
 
 import '../../../../../../../../custom_widgets/customtext.dart';
+import '../../../../../../../../utils/colors.dart';
 
 class ProfileHeaderCard extends StatelessWidget {
   final String name;
@@ -20,9 +21,9 @@ class ProfileHeaderCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 60),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 69),
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: redColor2,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -32,7 +33,7 @@ class ProfileHeaderCard extends StatelessWidget {
               fontSize: 30,
               fontWeight: FontVariant.bold,
               alignment: Alignment.center,
-              color: Colors.white,
+              color:whiteColor,
             ),
             const SizedBox(height: 6),
 
@@ -44,9 +45,9 @@ class ProfileHeaderCard extends StatelessWidget {
                 width: 14,
                 margin: const EdgeInsets.only(right: 70),
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color:greenColor,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
+                  border: Border.all(color:whiteColor, width: 2),
                 ),
               ),
             ),
@@ -59,7 +60,7 @@ class ProfileHeaderCard extends StatelessWidget {
               fontSize: 20,
               fontWeight: FontVariant.bold,
               alignment: Alignment.center,
-              color: Colors.white,
+              color: whiteColor,
 
               maxLines: 1,        // 🔥 Force one line
               overflow: TextOverflow.ellipsis, // 🔥 Prevent wrapping

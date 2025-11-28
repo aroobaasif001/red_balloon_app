@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../../utils/colors.dart';
+
 class DangerButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
@@ -16,7 +18,7 @@ class DangerButton extends StatelessWidget {
       child: Container(
         height: 52,
         decoration: BoxDecoration(
-          color: Colors.red,
+          color:redColor,
           borderRadius: BorderRadius.circular(12),
         ),
         child: MaterialButton(
@@ -24,7 +26,7 @@ class DangerButton extends StatelessWidget {
           child: Text(
             label,
             style: const TextStyle(
-              color: Colors.white,
+              color: whiteColor,
               fontWeight: FontWeight.w600,
             ),
           ),

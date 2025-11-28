@@ -123,9 +123,9 @@ class UserCard extends StatelessWidget {
                       fontWeight: FontVariant.regular,
                     ),
                     SizedBox(
-                      width: 177, // REQUIRED FIX
+                      width: 135, // REQUIRED FIX
                       child: CustomButton(
-                        borderRadius: BorderRadius.circular(9999),
+                        borderRadius: BorderRadius.circular(16),
                         height: 36,
                         textStyle: TextStyle(
                           fontSize: 14,

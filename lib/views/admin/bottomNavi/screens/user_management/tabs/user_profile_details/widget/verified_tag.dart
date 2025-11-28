@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../../utils/colors.dart';
+
 class VerifiedTag extends StatelessWidget {
   const VerifiedTag({super.key});
 
@@ -12,18 +14,18 @@ class VerifiedTag extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
         decoration: BoxDecoration(
-          color: const Color(0xffFFE4E4),
+          color: pinklight4,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: const [
-            Icon(Icons.check_circle, color: Colors.red, size: 16),
+            Icon(Icons.check_circle, color: redColor, size: 16),
             SizedBox(width: 6),
             Text(
               "Verified",
               style: TextStyle(
-                color: Colors.red,
+                color: redColor,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
