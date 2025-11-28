@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../utils/colors.dart';
+
 /// Supported fonts
 enum AppFont { instrumentSans, lora, poppins, manrope, montserrat, inter }
 
@@ -131,7 +133,7 @@ class CustomText extends StatelessWidget {
     final googleFont = _mappedFont(fontType);
 
     // 🔹 Use theme-aware text color fallback
-    final effectiveColor = color ?? theme.textTheme.bodyMedium?.color ?? Colors.black;
+    final effectiveColor = color ?? theme.textTheme.bodyMedium?.color ?? blackColor;
 
     // 🔹 Use theme or provided font size
     final effectiveFontSize = fontSize ?? theme.textTheme.bodyMedium?.fontSize ?? 14.0;

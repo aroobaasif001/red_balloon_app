@@ -41,7 +41,7 @@ class TaskDetailsScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomContainer(
                   borderRadius: BorderRadius.circular(14),
-                  conColor: Colors.white,
+                  conColor:whiteColor,
                   height: 150,
                   width: double.infinity,
                   boxShadow: [
@@ -68,7 +68,7 @@ class TaskDetailsScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomContainer(
-                  conColor: Colors.white,
+                  conColor:whiteColor,
                   borderRadius: BorderRadius.circular(14),
                   padding: const EdgeInsets.all(18),
                   boxShadow: [
@@ -100,7 +100,7 @@ class TaskDetailsScreen extends StatelessWidget {
                           ),
                           Spacer(),
                           CustomContainer(
-                            conColor: Colors.grey.shade100,
+                            conColor: white2Color,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
                               vertical: 7,
@@ -141,7 +141,7 @@ class TaskDetailsScreen extends StatelessWidget {
                       CustomText(
                         "Need help moving furniture from my apartment to a new location. Items include a sofa, dining table, and several boxes. Helper should have a truck or van. Estimated time: 2-3 hours.",
                         fontSize: 13,
-                        color: Colors.black87,
+                        color: blackLightColor,
                       ),
                       const SizedBox(height: 25),
 
@@ -177,7 +177,7 @@ class TaskDetailsScreen extends StatelessWidget {
 
                             /// White Input Box
                             CustomContainer(
-                              conColor: Colors.white,
+                              conColor:whiteColor,
                               width: double.infinity,
                               borderRadius: BorderRadius.circular(16),
                               padding: const EdgeInsets.symmetric(

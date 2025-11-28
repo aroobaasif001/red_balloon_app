@@ -18,7 +18,7 @@ class EarningTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      conColor: Colors.white,
+      conColor: whiteColor,
       borderRadius: BorderRadius.circular(14),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       margin: const EdgeInsets.only(bottom: 14),
@@ -54,7 +54,7 @@ class EarningTile extends StatelessWidget {
                   CustomText(
                     date,
                     fontSize: 12,
-                    color: Colors.grey.shade700,
+                    color: grey5Color,
                   ),
                 ],
               ),
@@ -69,13 +69,13 @@ class EarningTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 8, vertical: 4),
                 borderRadius: BorderRadius.circular(10),
-                conColor: Color(0xffE8F5E9),
+                conColor: white3Color,
                 child: Row(
                   children: const [
                     Icon(
                       Icons.check_circle,
                       size: 14,
-                      color: Colors.green,
+                      color:greenColor,
                     ),
                     SizedBox(width: 4),
                     CustomText(

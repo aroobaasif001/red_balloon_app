@@ -39,7 +39,7 @@ class ValidationEmptyWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               fontWeight: FontVariant.bold,
               fontType: AppFont.montserrat,
-              color: Colors.black87,
+              color: grey50Color,
             ),
 
             const SizedBox(height: 12),

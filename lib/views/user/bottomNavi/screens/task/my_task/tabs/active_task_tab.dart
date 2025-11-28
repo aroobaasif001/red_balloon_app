@@ -20,7 +20,7 @@ class ActiveTasksTab extends StatelessWidget {
               alignment: Alignment.bottomLeft,
               child: CustomText(
                 'My Tasks',
-                fontSize: 24,
+                fontSize: 22,
                 fontWeight: FontVariant.bold,
               ),
             ),

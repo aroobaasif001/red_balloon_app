@@ -28,12 +28,12 @@ class CustomTaskTypeTabs extends StatelessWidget {
             conColor: selectedIndex == 0 ? redColor : Colors.transparent,
             border: selectedIndex == 0
                 ? null
-                : Border.all(color: Colors.black, width: 1.5),
+                : Border.all(color: blackColor, width: 1.5),
             borderRadius: BorderRadius.circular(12),
             child: Center(
               child: CustomText(
                 'Offline Task',
-                color: selectedIndex == 0 ? Colors.white : Colors.black,
+                color: selectedIndex == 0 ?whiteColor : blackColor,
                 fontWeight: FontVariant.semiBold,
                 fontSize: 18,
               ),
@@ -51,12 +51,12 @@ class CustomTaskTypeTabs extends StatelessWidget {
             conColor: selectedIndex == 1 ? redColor : Colors.transparent,
             border: selectedIndex == 1
                 ? null
-                : Border.all(color: Colors.black, width: 1.5),
+                : Border.all(color:blackColor, width: 1.5),
             borderRadius: BorderRadius.circular(12),
             child: Center(
               child: CustomText(
                 'Online Task',
-                color: selectedIndex == 1 ? Colors.white : Colors.black,
+                color: selectedIndex == 1 ? whiteColor :blackColor,
                 fontWeight: FontVariant.semiBold,
                 fontSize: 18,
               ),

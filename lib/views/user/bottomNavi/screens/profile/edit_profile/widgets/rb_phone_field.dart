@@ -15,9 +15,9 @@ class RBPhoneField extends StatelessWidget {
       height: 52,
       padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
+        color: rbcolor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E5EA), width: 1),
+        border: Border.all(color: bordercol, width: 1),
       ),
 
       child: Row(
@@ -26,7 +26,7 @@ class RBPhoneField extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: whiteColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: whiteColor, width: 1),
             ),
@@ -47,7 +47,7 @@ class RBPhoneField extends StatelessWidget {
 
                   fontSize: 10,
                   fontWeight: FontVariant.regular,
-                  color: Colors.black,
+                  color: blackColor,
                 ),
               ],
             ),
@@ -60,7 +60,7 @@ class RBPhoneField extends StatelessWidget {
             child: TextField(
               controller: controller,
               keyboardType: TextInputType.phone,
-              style: const TextStyle(fontSize: 16, color: Colors.black),
+              style: const TextStyle(fontSize: 16, color: blackColor),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 isCollapsed: true,

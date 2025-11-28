@@ -31,7 +31,7 @@ class MessageTile extends StatelessWidget {
           Get.to(() => ChatScreen());
         },
         child: CustomContainer(
-          conColor: Colors.white,
+          conColor:whiteColor,
           borderRadius: const BorderRadius.all(Radius.circular(16)),
           padding: const EdgeInsets.all(12),
           boxShadow: [
@@ -64,9 +64,9 @@ class MessageTile extends StatelessWidget {
                       height: 12,
                       width: 12,
                       decoration: BoxDecoration(
-                        color: Colors.green,
+                        color:greenColor,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+                        border: Border.all(color:whiteColor, width: 2),
                       ),
                     ),
                   ),
@@ -84,7 +84,7 @@ class MessageTile extends StatelessWidget {
                       name,
                       fontSize: 16,
                       fontWeight: FontVariant.semiBold,
-                      color: Colors.black,
+                      color: blackColor,
                     ),
 
                     const SizedBox(height: 5),
@@ -96,7 +96,7 @@ class MessageTile extends StatelessWidget {
                     CustomText(
                       message,
                       fontSize: 14,
-                      color: Colors.black87,
+                      color: grey50Color,
                       fontWeight: FontVariant.regular,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -122,7 +122,7 @@ class MessageTile extends StatelessWidget {
                     child: const CustomText(
                       "1",
                       fontSize: 12,
-                      color: Colors.white,
+                      color: whiteColor,
                       fontWeight: FontVariant.bold,
                     ),
                   ),

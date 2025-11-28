@@ -14,7 +14,7 @@ class LeaveFeedbackScreen extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: whiteColor,
 
         /// -------------- OVERFLOW FIX --------------
         body: SingleChildScrollView(
@@ -60,7 +60,7 @@ class LeaveFeedbackScreen extends StatelessWidget {
                     vertical: 16,
                   ),
                   borderRadius: BorderRadius.circular(16),
-                  conColor: Colors.white,
+                  conColor:whiteColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.20),
@@ -156,7 +156,7 @@ class LeaveFeedbackScreen extends StatelessWidget {
               const CustomText(
                 "Tap to rate",
                 fontSize: 13,
-                color: Colors.black54,
+                color:blackColor,
               ),
 
               const SizedBox(height: 25),
@@ -170,14 +170,14 @@ class LeaveFeedbackScreen extends StatelessWidget {
                     const CustomText(
                       "Write a short review (optional)",
                       fontSize: 14,
-                      color: Colors.black87,
+                      color:blackColor,
                     ),
 
                     const SizedBox(height: 10),
 
                     CustomContainer(
                       height: 145,
-                      conColor: Colors.grey.shade200,
+                      conColor:greyLiteColor,
                       borderRadius: BorderRadius.circular(14),
                       padding: const EdgeInsets.all(12),
                       child: const TextField(
@@ -185,7 +185,7 @@ class LeaveFeedbackScreen extends StatelessWidget {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Type your message...",
-                          hintStyle: TextStyle(color: Colors.black45),
+                          hintStyle: TextStyle(color:walletProgressBgColor),
                         ),
                       ),
                     ),
@@ -197,7 +197,7 @@ class LeaveFeedbackScreen extends StatelessWidget {
                       child: CustomText(
                         "0/250 characters",
                         fontSize: 12,
-                        color: Colors.black45,
+                        color:walletTransactionDescColor,
                       ),
                     ),
                   ],
@@ -216,14 +216,14 @@ class LeaveFeedbackScreen extends StatelessWidget {
                       child: CustomContainer(
                         height: 50,
                         borderRadius: BorderRadius.circular(30),
-                        conColor: Colors.white,
-                        border: Border.all(color: Colors.black26),
+                        conColor: whiteColor,
+                        border: Border.all(color: fundCardBorderColor),
                         child: const Center(
                           child: CustomText(
                             "Skip",
                             fontSize: 15,
                             fontWeight: FontVariant.semiBold,
-                            color: Colors.black87,
+                            color: lastTextColor,
                           ),
                         ),
                       ),

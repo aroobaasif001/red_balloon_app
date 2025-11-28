@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
+import '../../../../../auth/view/onboarding/onboarding_screen.dart';
 import '../edit_profile/edit_profile_screen.dart';
+import '../widgets/help_section.dart';
+import '../widgets/menu_section.dart';
 import '../widgets/profile_card.dart';
 import '../widgets/stats_grid.dart';
-import '../widgets/menu_section.dart';
-import '../widgets/help_section.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -94,7 +94,7 @@ class ProfileScreen extends StatelessWidget {
                     // Handle help center tap
                   },
                   onLogoutTap: () {
-                    // Handle logout
+                    Get.offAll(() => OnboardingScreen());
                   },
                 ),
                 const SizedBox(height: 20),

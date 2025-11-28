@@ -8,6 +8,7 @@ import '../../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../../custom_widgets/customappbar.dart';
 import '../../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
+import '../../../profile/tabs/chat_screen.dart';
 
 class TaskInProgressScreen extends StatelessWidget {
   const TaskInProgressScreen({super.key});
@@ -17,7 +18,7 @@ class TaskInProgressScreen extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor:whiteColor,
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,7 +77,7 @@ class TaskInProgressScreen extends StatelessWidget {
                         text: "(3.2 km away)",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color:blackColor,
                         ),
                       ),
                     ],
@@ -114,7 +115,7 @@ class TaskInProgressScreen extends StatelessWidget {
                 child: CustomContainer(
                   padding: const EdgeInsets.all(20),
                   borderRadius: BorderRadius.circular(16),
-                  conColor: Colors.white,
+                  conColor:whiteColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.20),
@@ -133,7 +134,7 @@ class TaskInProgressScreen extends StatelessWidget {
                             child: CustomText(
                               "AR",
                               fontWeight: FontVariant.bold,
-                              color: Colors.red,
+                              color: redColor,
                               fontSize: 18,
                             ),
                           ),
@@ -150,14 +151,14 @@ class TaskInProgressScreen extends StatelessWidget {
                                 children: [
                                   const Icon(
                                     Icons.star,
-                                    color: Colors.orange,
+                                    color:orangecolor,
                                     size: 16,
                                   ),
                                   const SizedBox(width: 4),
                                   CustomText(
                                     "4.9 (25 tasks completed)",
                                     fontSize: 13,
-                                    color: Colors.grey,
+                                    color: lastTextColor,
                                   ),
                                 ],
                               ),
@@ -180,7 +181,7 @@ class TaskInProgressScreen extends StatelessWidget {
                                 height: 45,
                                 borderRadius: BorderRadius.circular(30),
                                 border: Border.all(
-                                  color: Colors.red,
+                                  color: redColor,
                                   width: 1.5,
                                 ),
                                 boxShadow: [
@@ -202,11 +203,17 @@ class TaskInProgressScreen extends StatelessWidget {
                                         width: 20,
                                       ),
                                       const SizedBox(width: 6),
-                                      CustomText(
-                                        "Chat",
-                                        fontWeight: FontVariant.semiBold,
-                                        color: redColor,
-                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          Get.to(() => ChatScreen());
+                                        },
+                                        child: CustomText(
+                                          "Chat",
+                                          fontWeight: FontVariant.semiBold,
+                                          color: redColor,
+                                        ),
+                                      )
+
                                     ],
                                   ),
                                 ),
@@ -239,14 +246,14 @@ class TaskInProgressScreen extends StatelessWidget {
                                     children: [
                                       const Icon(
                                         Icons.call,
-                                        color: Colors.white,
+                                        color: whiteColor,
                                         size: 20,
                                       ),
                                       const SizedBox(width: 6),
                                       CustomText(
                                         "Call",
                                         fontWeight: FontVariant.semiBold,
-                                        color: Colors.white,
+                                        color:whiteColor,
                                       ),
                                     ],
                                   ),
@@ -269,7 +276,7 @@ class TaskInProgressScreen extends StatelessWidget {
                 child: CustomContainer(
                   padding: const EdgeInsets.all(18),
                   borderRadius: BorderRadius.circular(16),
-                  conColor: Colors.white,
+                  conColor:whiteColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.20),
@@ -291,7 +298,7 @@ class TaskInProgressScreen extends StatelessWidget {
                                 CustomText(
                                   "Task:",
                                   fontWeight: FontVariant.bold,
-                                  color: Colors.black,
+                                  color:blackColor,
                                 ),
                                 SizedBox(width: 3),
                                 Expanded(
@@ -423,7 +430,7 @@ class TaskInProgressScreen extends StatelessWidget {
                 child: CustomContainer(
                   padding: const EdgeInsets.all(18),
                   borderRadius: BorderRadius.circular(14),
-                  conColor: const Color(0xffF7F7F7),
+                  conColor: rbcolor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.03),
@@ -434,7 +441,7 @@ class TaskInProgressScreen extends StatelessWidget {
                   child: CustomText(
                     "Once the helper marks this task as completed, you’ll be asked to review and confirm within 2 minutes.",
                     fontSize: 14,
-                    color: Colors.black87,
+                    color:blackColor,
                   ),
                 ),
               ),
@@ -450,7 +457,7 @@ class TaskInProgressScreen extends StatelessWidget {
                     DialogHelpers().showSupportHelpSheet(context);
                   },
                   bgColor: redColor,
-                  textColor: Colors.white,
+                  textColor: whiteColor,
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
@@ -461,7 +468,7 @@ class TaskInProgressScreen extends StatelessWidget {
               Center(
                 child: Column(
                   children: [
-                    Container(height: 1, color: Colors.grey.shade300),
+                    Container(height: 1, color: greyLiteColor),
                     const SizedBox(height: 8),
                     RichText(
                       text: TextSpan(
@@ -471,7 +478,7 @@ class TaskInProgressScreen extends StatelessWidget {
                           TextSpan(
                             text: "ETA: 10 mins",
                             style: TextStyle(
-                              color: Colors.black,
+                              color:blackColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

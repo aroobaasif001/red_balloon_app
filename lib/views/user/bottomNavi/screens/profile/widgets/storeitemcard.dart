@@ -60,7 +60,7 @@ class StoreItemCard extends StatelessWidget {
             title,
             fontSize: 15,
             fontWeight: FontVariant.semiBold,
-            color: Colors.black,
+            color:blackColor,
             textAlign: TextAlign.center,
           ),
 
@@ -92,7 +92,7 @@ class StoreItemCard extends StatelessWidget {
                 "Buy",
                 fontSize: 14,
                 fontWeight: FontVariant.bold,
-                color: Colors.white,
+                color:whiteColor,
               ),
             ),
           ),

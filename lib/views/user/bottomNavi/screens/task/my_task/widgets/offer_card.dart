@@ -4,6 +4,7 @@ import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
 import '../../../../../../../utils/colors.dart';
+import '../../../../../../../utils/dialog_helpers.dart';
 
 class OfferCard extends StatelessWidget {
   final String name;
@@ -99,20 +100,26 @@ class OfferCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
-                CustomContainer(
-                  width: 254,
-                  height: 40,
-                  conColor: pricecolor,
-                  borderRadius: BorderRadius.circular(12),
-                  child: const Center(
-                    child: CustomText(
-                      "View Profile",
-                      color: whiteColor,
-                      fontSize: 14,
-                      fontWeight: FontVariant.semiBold,
+                InkWell(
+                  onTap: () {
+                    DialogHelpers.showHelperProfileDialog(context);
+                  },
+                  child: CustomContainer(
+                    width: 254,
+                    height: 40,
+                    conColor: pricecolor,
+                    borderRadius: BorderRadius.circular(12),
+                    child: const Center(
+                      child: CustomText(
+                        "View Profile",
+                        color: whiteColor,
+                        fontSize: 14,
+                        fontWeight: FontVariant.semiBold,
+                      ),
                     ),
                   ),
-                ),
+                )
+
               ],
             ),
           ),

@@ -51,7 +51,7 @@ class ValidationHubScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     borderRadius: BorderRadius.circular(20),
-                    conColor: Colors.grey.shade200,
+                    conColor:white2Color,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.20),
@@ -153,7 +153,7 @@ class ValidationHubScreen extends StatelessWidget {
                                 vertical: 9,
                               ),
                               decoration: BoxDecoration(
-                                color: Color(0xffF8F8F8),
+                                color:walletCardBgColor,
                                 borderRadius: BorderRadius.circular(
                                   7,
                                 ), // FULL ROUND

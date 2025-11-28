@@ -93,14 +93,14 @@ class _ReviewCardState extends State<ReviewCard> {
             firstChild: CustomText(
               widget.review,
               fontSize: 14,
-              color: Colors.black87,
+              color: grey50Color,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
             secondChild: CustomText(
               widget.review,
               fontSize: 14,
-              color: Colors.black87,
+              color: grey50Color,
             ),
             crossFadeState:
             expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
@@ -113,7 +113,7 @@ class _ReviewCardState extends State<ReviewCard> {
           CustomText(
             widget.time,
             fontSize: 12,
-            color: Colors.grey,
+            color: grey4Color,
           ),
 
           const SizedBox(height: 8),

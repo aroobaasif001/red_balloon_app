@@ -29,7 +29,7 @@ class TaskDetails2Screen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomContainer(
-                  conColor: const Color(0xffF5F5F5),
+                  conColor: white2Color,
                   borderRadius: BorderRadius.circular(18),
                   padding: const EdgeInsets.all(14),
                   boxShadow: [
@@ -75,13 +75,13 @@ class TaskDetails2Screen extends StatelessWidget {
                                     Icon(
                                       Icons.access_time,
                                       size: 15,
-                                      color: Colors.grey.shade500,
+                                      color: walletGrey600Color,
                                     ),
                                     const SizedBox(width: 5),
                                     CustomText(
                                       "2 min ago",
                                       fontSize: 13,
-                                      color: Colors.grey.shade500,
+                                      color:walletGrey600Color,
                                     ),
                                   ],
                                 ),
@@ -116,6 +116,9 @@ class TaskDetails2Screen extends StatelessWidget {
                 onAccept: () {
                   DialogHelpers.showOfferAcceptedDialog(context: context);
                 },
+
+
+
               ),
 
               ProviderCard(

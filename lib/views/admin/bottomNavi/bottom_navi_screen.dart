@@ -6,6 +6,8 @@ import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_management_tab.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/wallet/tabs/wallet_tab.dart';
 
+import '../../../utils/colors.dart';
+
 class AdminBottomNaviScreen extends StatefulWidget {
   final int initialIndex;
   const AdminBottomNaviScreen({super.key, this.initialIndex = 0});
@@ -32,12 +34,12 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/home_active.png',
           height: 24,
-          color: Colors.white,
+          color:whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/home_inactive.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
       ),
       ModernBottomNavItem(
@@ -45,12 +47,12 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/wallet_active.png',
           height: 24,
-          color: Colors.white,
+          color:whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/wallet_inactive.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
       ),
       ModernBottomNavItem(
@@ -58,12 +60,12 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/disputes_active.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/disputes_inactive.png',
           height: 24,
-          color: Colors.white,
+          color:whiteColor,
         ),
       ),
       ModernBottomNavItem(
@@ -71,12 +73,12 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/task_active.png',
           height: 24,
-          color: Colors.white,
+          color:whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/search_inactive.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
       ),
       ModernBottomNavItem(
@@ -84,12 +86,12 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/user_active.png',
           height: 24,
-          color: Colors.white,
+          color: whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/user_inactive.png',
           height: 24,
-          color: Colors.white,
+          color:whiteColor,
         ),
       ),
     ];

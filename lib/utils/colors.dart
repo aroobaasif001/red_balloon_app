@@ -32,6 +32,29 @@ const Color pricecolor2 = Color(0xffBBBDBD);
 const Color bordercol = Color(0xFFE5E5EA);
 const Color borderno = Color(0xff003AC14F);
 const Color beforecolor = Color(0xffE5E7EB);
+const Color tasktext = Color(0xDD00000);
+const Color rbcolor = Color(0xFFF7F7F7);
+const Color rbnewcolor = Color(0xffBDBDBDFF);
+const Color orangecolor = Color(0xffFFB300);
+const Color starcolor = Color(0xfff7d400);
+const Color taskstatus = Color(0xffF1F1F5);
+const Color taskstatus2 = Color(0xFFF7FFF7);
+const Color taskstatus3 = Color(0xFF9E9E9E);
+const Color dialog1 = Color(0xffD9D9D9);
+const Color redColor2 = Color(0xffDA3331);
+
+
+
+
+
+
+
+
+
+
+
+
+
 const Color pinkColor = Color(0xffFEE2E2);
 
 const LinearGradient redOrangeGradientColor = LinearGradient(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -6,6 +8,8 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/edit_profile/widgets/rb_in_put_field.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/edit_profile/widgets/rb_phone_field.dart';
+
+import '../../../../../../utils/dialog_helpers.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
@@ -180,7 +184,9 @@ class EditProfileScreen extends StatelessWidget {
             const SizedBox(height: 40),
             CustomButton(
               label: 'Save Changes',
-              onPressed: () {},
+              onPressed: () {
+                DialogHelpers.showsavechangeDialog(context);
+              },
               bgColor: redColor,
               height: 52,
               borderRadius: BorderRadius.circular(16),
@@ -192,7 +198,9 @@ class EditProfileScreen extends StatelessWidget {
 
             CustomButton(
               label: 'Cancel',
-              onPressed: () {},
+              onPressed: () {
+                Get.back();
+              },
               bgColor: whiteColor,
               height: 52,
               borderRadius: BorderRadius.circular(16),

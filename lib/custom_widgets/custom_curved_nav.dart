@@ -23,11 +23,11 @@ class CustomCurvedNav extends StatelessWidget {
           child: Image.asset(
             currentIndex == 0 ? 'assets/navi_icons/home_active.png' : 'assets/navi_icons/home_inactive.png',
             height: 24,
-            color: currentIndex == 0 ? Colors.white : grey3Color,
+            color: currentIndex == 0 ? whiteColor : grey3Color,
           ),
           label: 'Home',
           labelStyle: TextStyle(
-            color: currentIndex == 0 ? Colors.white : grey3Color,
+            color: currentIndex == 0 ? whiteColor : grey3Color,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
@@ -37,11 +37,11 @@ class CustomCurvedNav extends StatelessWidget {
           child: Image.asset(
             currentIndex == 1 ? 'assets/navi_icons/task_active.png' : 'assets/navi_icons/search_inactive.png',
             height: 24,
-            color: currentIndex == 1 ? Colors.white : grey3Color,
+            color: currentIndex == 1 ?whiteColor : grey3Color,
           ),
           label: 'Tasks',
           labelStyle: TextStyle(
-            color: currentIndex == 1 ? Colors.white : grey3Color,
+            color: currentIndex == 1 ?whiteColor : grey3Color,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
@@ -53,11 +53,11 @@ class CustomCurvedNav extends StatelessWidget {
                 ? 'assets/navi_icons/validations_active.png'
                 : 'assets/navi_icons/validation_inactive.png',
             height: 24,
-            color: currentIndex == 2 ? Colors.white : grey3Color,
+            color: currentIndex == 2 ?whiteColor : grey3Color,
           ),
           label: 'Validations',
           labelStyle: TextStyle(
-            color: currentIndex == 2 ? Colors.white : grey3Color,
+            color: currentIndex == 2 ? whiteColor : grey3Color,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
@@ -69,11 +69,11 @@ class CustomCurvedNav extends StatelessWidget {
                 ? 'assets/navi_icons/wallet_active.png'
                 : 'assets/navi_icons/wallet_inactive.png',
             height: 24,
-            color: currentIndex == 3 ? Colors.white : grey3Color,
+            color: currentIndex == 3 ?whiteColor : grey3Color,
           ),
           label: 'Wallet',
           labelStyle: TextStyle(
-            color: currentIndex == 3 ? Colors.white : grey3Color,
+            color: currentIndex == 3 ? whiteColor : grey3Color,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),

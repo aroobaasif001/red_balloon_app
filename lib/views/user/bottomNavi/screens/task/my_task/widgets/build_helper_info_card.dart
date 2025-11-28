@@ -5,6 +5,7 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/widge
 import '../../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../../utils/colors.dart';
+import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
 import '../controller/in_progress_task_controller.dart';
 
@@ -111,14 +112,20 @@ Widget buildHelperInfoCard(InProgressTaskController controller) {
             ],
           ),
           const SizedBox(height: 12),
-          const Center(
-            child: CustomText(
-              'View Profile',
-              fontSize: 13,
-              fontWeight: FontVariant.semiBold,
-              color: redColor,
+          InkWell(
+            onTap: () {
+              DialogHelpers.showHelperProfileDialog(Get.context!);
+            },
+            child: const Center(
+              child: CustomText(
+                'View Profile',
+                fontSize: 13,
+                fontWeight: FontVariant.semiBold,
+                color: redColor,
+              ),
             ),
-          ),
+          )
+
         ],
       ),
     ),

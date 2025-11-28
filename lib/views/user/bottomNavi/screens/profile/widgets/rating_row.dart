@@ -26,7 +26,7 @@ class RatingRow extends StatelessWidget {
               CustomText(
                 star,
                 fontSize: 14,
-                color: Colors.black,
+                color:blackColor,
               ),
               const SizedBox(width: 3),
               const Icon(
@@ -44,7 +44,7 @@ class RatingRow extends StatelessWidget {
             child: Container(
               height: 6,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color:greyLiteColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: FractionallySizedBox(
@@ -66,7 +66,7 @@ class RatingRow extends StatelessWidget {
           CustomText(
             "($count)",
             fontSize: 14,
-            color: Colors.black,
+            color: blackColor,
           ),
         ],
       ),

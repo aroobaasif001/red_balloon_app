@@ -13,7 +13,7 @@ class ValidationHistoryScreen extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: whiteColor,
         body: Column(
           children: [
             /// 🔴 HEADER
@@ -31,7 +31,7 @@ class ValidationHistoryScreen extends StatelessWidget {
                     /// 🔵 TOP TOTAL EARNINGS CARD (IMAGE JAISE)
                     CustomContainer(
                       height: 180,
-                      conColor: Colors.white,
+                      conColor: whiteColor,
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: [
                         BoxShadow(
@@ -47,7 +47,7 @@ class ValidationHistoryScreen extends StatelessWidget {
                             vertical: 10,
                           ),
                           borderRadius: BorderRadius.circular(40),
-                          conColor: Colors.white,
+                          conColor:whiteColor,
                           border: Border.all(
                             color: Colors.grey.withOpacity(0.25),
                             width: 1,
@@ -92,7 +92,7 @@ class ValidationHistoryScreen extends StatelessWidget {
                             color: redColor,
                           ),
                           const SizedBox(height: 4),
-                          Container(height: 1.5, width: 290, color: Colors.red),
+                          Container(height: 1.5, width: 290, color: redColor),
                         ],
                       ),
                     ),
@@ -131,7 +131,7 @@ class ValidationHistoryScreen extends StatelessWidget {
               ),
             ),
             CustomContainer(
-              conColor: Color(0xffF0F0F0),
+              conColor: walletCardBorderColor,
               width: double.infinity,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),

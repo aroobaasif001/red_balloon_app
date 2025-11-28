@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../utils/colors.dart';
 import 'customtext.dart'; // <-- Correct import (important!)
 
 class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
@@ -73,7 +74,7 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
       decoration:
           decoration ??
           BoxDecoration(
-            color: backgroundColor ?? Colors.white,
+            color: backgroundColor ??whiteColor,
             gradient: gradient,
           ),
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -127,7 +128,7 @@ class CustomAppBar1 extends StatelessWidget implements PreferredSizeWidget {
       fontSize: titleFontSize ?? 20,
       fontWeight: titleFontWeight ?? FontVariant.bold,
       fontType: titleFontType ?? AppFont.montserrat,
-      color: titleGradient == null ? titleColor ?? Colors.black : Colors.white,
+      color: titleGradient == null ? titleColor ?? blackColor :whiteColor,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.center,

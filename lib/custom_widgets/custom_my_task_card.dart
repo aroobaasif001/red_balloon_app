@@ -90,12 +90,15 @@ class CustomMyTaskCard extends StatelessWidget {
                           ),
                         ),
                         CustomContainer(
+                          width: Get.width*0.33,
                           conColor: whiteColor,
                           borderRadius: BorderRadius.circular(15),
                           child: CustomText(
                             ' • ${postedTime}',
                             fontSize: 14,
                             fontWeight: FontVariant.regular,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
