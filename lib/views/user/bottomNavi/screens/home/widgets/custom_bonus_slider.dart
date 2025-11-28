@@ -18,9 +18,18 @@ class _CustomBonusSliderState extends State<CustomBonusSlider> {
   Timer? _autoSlideTimer;
 
   final List<Map<String, String>> bonusCards = [
-    {"title": "Earn 15 SAR Bonus!", "subtitle": "Complete your first task today"},
-    {"title": "Get Rewarded Instantly", "subtitle": "Finish tasks and earn more coins"},
-    {"title": "Level Up Your Profile", "subtitle": "Stay active & unlock perks"},
+    {
+      "title": "Earn 15 SAR Bonus!",
+      "subtitle": "Complete your first task today",
+    },
+    {
+      "title": "Get Rewarded Instantly",
+      "subtitle": "Finish tasks and earn more coins",
+    },
+    {
+      "title": "Level Up Your Profile",
+      "subtitle": "Stay active & unlock perks",
+    },
   ];
 
   @override
@@ -91,7 +100,7 @@ class _CustomBonusSliderState extends State<CustomBonusSlider> {
                     CustomText(
                       bonusCards[index]["subtitle"]!,
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.9),
+                      color: whiteColor.withOpacity(0.9),
                     ),
                   ],
                 ),
@@ -112,9 +121,13 @@ class _CustomBonusSliderState extends State<CustomBonusSlider> {
                 duration: const Duration(milliseconds: 300),
                 height: 8,
                 width: isActive ? 22 : 8,
-                margin: EdgeInsets.only(right: index == bonusCards.length - 1 ? 0 : 6),
+                margin: EdgeInsets.only(
+                  right: index == bonusCards.length - 1 ? 0 : 6,
+                ),
                 decoration: BoxDecoration(
-                  color: isActive ? Colors.white.withOpacity(0.9) : Colors.white.withOpacity(0.5),
+                  color: isActive
+                      ? whiteColor.withOpacity(0.9)
+                      : whiteColor.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(20),
                 ),
               );
