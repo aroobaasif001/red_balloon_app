@@ -13,8 +13,10 @@ class AdminProfileScreen extends StatelessWidget {
   AdminProfileScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final AdminProfileController controller =
-        Get.put(AdminProfileController(), permanent: false);
+    final AdminProfileController controller = Get.put(
+      AdminProfileController(),
+      permanent: false,
+    );
     return SafeArea(
       top: false,
       child: Scaffold(

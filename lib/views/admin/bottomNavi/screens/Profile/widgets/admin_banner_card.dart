@@ -70,85 +70,88 @@ Widget adminBannerCard(
               const SizedBox(height: 14),
               CustomContainer(
                 width: Get.width * 0.76,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: FittedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                  children: [
-                    Row(
-                      children: [
-                        CustomText(
-                          isActive ? 'Active' : 'Inactive',
-                          fontSize: 12,
-                          fontWeight: FontVariant.medium,
-                          color: walletInfoTextColor,
-                        ),
-                        const SizedBox(width: 8),
-                        Switch(
-                          value: isActive,
-                          onChanged: onToggle,
-                          activeTrackColor: redColor,
-                          activeThumbColor: whiteColor,
-                          inactiveTrackColor: whiteColor,
-                          inactiveThumbColor: redColor,
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        OutlinedButton.icon(
-                          onPressed: () {},
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: borderColor),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                    children: [
+                      Row(
+                        children: [
+                          CustomText(
+                            isActive ? 'Active' : 'Inactive',
+                            fontSize: 12,
+                            fontWeight: FontVariant.medium,
+                            color: walletInfoTextColor,
+                          ),
+                          const SizedBox(width: 8),
+                          Switch(
+                            value: isActive,
+                            onChanged: onToggle,
+                            activeTrackColor: redColor,
+                            activeThumbColor: whiteColor,
+                            inactiveTrackColor: whiteColor,
+                            inactiveThumbColor: redColor,
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 10),
+                      Row(
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: borderColor),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
 
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          icon: Image.asset(
-                            'assets/icons/edit_3.png',
-                            height: 16,
-                            width: 16,
-                            color: rbtxColor,
-                          ),
-                          label: const CustomText(
-                            'Edit',
-                            fontSize: 12,
-                            fontWeight: FontVariant.semiBold,
-                            color: rbtxColor,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        TextButton.icon(
-                          onPressed: onDelete,
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 8,
+                            icon: Image.asset(
+                              'assets/icons/edit_3.png',
+                              height: 16,
+                              width: 16,
+                              color: rbtxColor,
                             ),
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            label: const CustomText(
+                              'Edit',
+                              fontSize: 12,
+                              fontWeight: FontVariant.semiBold,
+                              color: rbtxColor,
+                            ),
                           ),
-                          icon: const Icon(
-                            Icons.delete_outline,
-                            size: 16,
-                            color: redColor,
+                          const SizedBox(width: 8),
+                          TextButton.icon(
+                            onPressed: onDelete,
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 8,
+                              ),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            icon: const Icon(
+                              Icons.delete_outline,
+                              size: 16,
+                              color: redColor,
+                            ),
+                            label: const CustomText(
+                              'Delete',
+                              fontSize: 12,
+                              fontWeight: FontVariant.semiBold,
+                              color: redColor,
+                            ),
                           ),
-                          label: const CustomText(
-                            'Delete',
-                            fontSize: 12,
-                            fontWeight: FontVariant.semiBold,
-                            color: redColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

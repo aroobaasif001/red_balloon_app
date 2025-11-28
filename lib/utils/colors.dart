@@ -43,18 +43,6 @@ const Color taskstatus3 = Color(0xFF9E9E9E);
 const Color dialog1 = Color(0xffD9D9D9);
 const Color redColor2 = Color(0xffDA3331);
 
-
-
-
-
-
-
-
-
-
-
-
-
 const Color pinkColor = Color(0xffFEE2E2);
 
 const LinearGradient redOrangeGradientColor = LinearGradient(
@@ -110,3 +98,10 @@ const Color borderColor = Color(0xffD1D5DB);
 const Color white4Color = Color(0xffF5F6FA);
 const Color black4Color = Color(0xff111827);
 const Color hintColor = Color(0xffADAEBC);
+const Color iconBg = Color(0xffF0FDF4);
+const Color iconBg2 = Color(0xffEFF6FF);
+const Color iconBg3 = Color(0xffFAF5FF);
+const Color iconBg4 = Color(0xffECFDF5);
+const Color popupBg = Color(0xFFFEE2E2);
+const Color greenbgColor = Color(0xFFE9F8F1); // light green bg
+const Color iconBg5 = Color(0xFFFFEAEA); // avatar bg, similar to red/pink
