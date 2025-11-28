@@ -34,7 +34,7 @@ class ChatScreen extends StatelessWidget {
                     child: CustomContainer(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       borderRadius: BorderRadius.circular(20),
-                      conColor: whiteLiteColor,
+                      conColor: walletCardBorderColor,
                       child: CustomText(
                         "Today",
                         fontSize: 12,

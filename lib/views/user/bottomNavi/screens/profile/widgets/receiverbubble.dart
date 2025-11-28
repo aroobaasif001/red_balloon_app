@@ -36,7 +36,7 @@ class ReceiverBubble extends StatelessWidget {
             children: [
               CustomContainer(
                 width: 262,
-                conColor:greyLiteColor,
+                conColor:white2Color,
                 padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
                 borderRadius: BorderRadius.circular(22),
                 child: CustomText(

@@ -44,6 +44,10 @@ const Color taskstatus2 = Color(0xFFF7FFF7);
 const Color taskstatus3 = Color(0xFF9E9E9E);
 const Color dialog1 = Color(0xffD9D9D9);
 const Color redColor2 = Color(0xffDA3331);
+const Color lightredcolor2 = Color(0xffFFE8E8);
+const Color lightgray3 = Color(0xffFAFAFA);
+
+
 
 const Color pinkColor = Color(0xffFEE2E2);
 

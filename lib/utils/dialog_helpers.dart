@@ -1689,7 +1689,7 @@ class DialogHelpers {
 
                       /// RB TAG
                       CustomContainer(
-                        conColor:redColor2.withOpacity(0.7),
+                        conColor:lightredcolor2,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 6,
@@ -1728,7 +1728,7 @@ class DialogHelpers {
 
                       /// STAR + RATING SECTION
                       CustomContainer(
-                        conColor: beforecolor,
+                        conColor: lightgray3,
                         borderRadius: BorderRadius.circular(16),
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         child: Column(
@@ -1762,7 +1762,7 @@ class DialogHelpers {
                         children: [
                           Expanded(
                             child: _statBox(
-                              "Validation Accuracy",
+                              "Validation \nAccuracy",
                               "96%",
                               'assets/icons/streamline-color_target.png',
                             ),
@@ -1804,7 +1804,7 @@ class DialogHelpers {
 
                       /// DESCRIPTION BOX
                       CustomContainer(
-                        conColor:beforecolor,
+                        conColor:white2Color,
                         borderRadius: BorderRadius.circular(16),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 14,
@@ -1850,7 +1850,7 @@ class DialogHelpers {
   /// ================================
   static Widget _statBox(String title, String value, String imagePath) {
     return CustomContainer(
-      conColor:beforecolor,
+      conColor: white2Color,
       borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.symmetric(vertical: 18),
       child: Column(
