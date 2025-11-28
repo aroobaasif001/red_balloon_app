@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 const Color blackColor = Color(0xff000000);
+const Color hColor = Color(0xffFE70621A);
+const Color bColor = Color(0xffFE70621A);
 const Color whiteColor = Color(0xffffffff);
 const Color redColor = Color(0xffda3331);
 const Color lastTextColor = Color(0xff666666);
@@ -43,18 +45,6 @@ const Color taskstatus3 = Color(0xFF9E9E9E);
 const Color dialog1 = Color(0xffD9D9D9);
 const Color redColor2 = Color(0xffDA3331);
 
-
-
-
-
-
-
-
-
-
-
-
-
 const Color pinkColor = Color(0xffFEE2E2);
 
 const LinearGradient redOrangeGradientColor = LinearGradient(
@@ -66,18 +56,21 @@ const LinearGradient redOrangeGradientColor = LinearGradient(
     0.98, // 98%
   ],
 );
-
 // Wallet Colors
 const Color walletPrimaryColor = Color(0xFFE53935);
 const Color walletCardBgColor = Color(0xffF8F8F8);
 const Color walletCardBorderColor = Color(0xffF0F0F0);
 const Color fundCardBorderColor = Color(0xffE0E0E0);
-
 const Color walletInfoBgColor = Color(0xFFFFFBF0);
+const Color conBgColor = Color(0xFFEEEEEE);
 const Color walletInfoBorderColor = Color(0xFFFFE0B2);
 const Color walletTextGreyColor = Color(0xff9CA3AF);
+const Color disBgColor= Color(0xffFFEBEE);
+const Color rdBgColor= Color(0xFFFFEBEE);
 const Color mapBgColor = Color(0xffDDF2D2);
 const Color walletGrey600Color = Color(0xff4B5563);
+const Color walletGrey100Color = Color(0xFFF5F5FF5);
+const Color rdLight100Color = Color(0xFFFCDD2);
 const Color walletGrey500Color = Color(0xff6B7280);
 const Color walletGrey700Color = Color(0xff374151);
 const Color walletSuccessColor = Color(0xFF4CAF50);
@@ -94,7 +87,6 @@ const Color textColor2 = Color(0xff333333);
 const Color walletBalanceTextColor = Color(0xff1F2937);
 const Color proBgColor = Color(0xffFFF3E0);
 const Color helpBgColor = Color(0xfff9dedc);
-
 const Color escrowAmountCardWaitingBackground = Color(0xFFFFEBEE);
 const Color success = Color(0xFFFFA500);
 const Color totaTextColor = Color(0xFF333333);
@@ -110,3 +102,10 @@ const Color borderColor = Color(0xffD1D5DB);
 const Color white4Color = Color(0xffF5F6FA);
 const Color black4Color = Color(0xff111827);
 const Color hintColor = Color(0xffADAEBC);
+const Color iconBg = Color(0xffF0FDF4);
+const Color iconBg2 = Color(0xffEFF6FF);
+const Color iconBg3 = Color(0xffFAF5FF);
+const Color iconBg4 = Color(0xffECFDF5);
+const Color popupBg = Color(0xFFFEE2E2);
+const Color greenbgColor = Color(0xFFE9F8F1); // light green bg
+const Color iconBg5 = Color(0xFFFFEAEA); // avatar bg, similar to red/pink

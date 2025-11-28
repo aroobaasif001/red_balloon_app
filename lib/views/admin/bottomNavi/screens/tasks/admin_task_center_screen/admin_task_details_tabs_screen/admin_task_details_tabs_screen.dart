@@ -65,7 +65,7 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
                         CustomContainer(
                           height: 40,
                           width: 33,
-                            color: const Color(0xFFFFE6E6),
+                            color: rdBgColor,
                             borderRadius: BorderRadius.circular(14),
                           alignment: Alignment.center,
                           child: Image.asset(
@@ -98,7 +98,7 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
                               CustomText(
                                 "Completed 10 minutes ago",
                                 fontSize: 12,
-                                color: Colors.grey.shade600,
+                                color: walletGrey600Color,
                               ),
                               CustomText(
                                 "Task ID: RBT-204",
@@ -351,7 +351,7 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
                             "BEFORE",
                             fontSize: 14,
                             fontWeight: FontVariant.semiBold,
-                            color: selectedTab == 0 ? Colors.white : Colors.black,
+                            color: selectedTab == 0 ? whiteColor : blackColor,
                           ),
                         ),
                       ),
@@ -369,7 +369,7 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
                             "AFTER",
                             fontSize: 14,
                             fontWeight: FontVariant.semiBold,
-                            color: selectedTab == 1 ? Colors.white : Colors.black,
+                            color: selectedTab == 1 ? whiteColor : blackColor,
                           ),
                         ),
                       ),

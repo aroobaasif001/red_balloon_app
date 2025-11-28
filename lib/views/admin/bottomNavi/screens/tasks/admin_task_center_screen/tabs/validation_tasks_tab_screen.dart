@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../widget/validation_task_item_card.dart';
-
-
-
 class ValidationTasksTab extends StatelessWidget {
   const ValidationTasksTab({super.key});
 

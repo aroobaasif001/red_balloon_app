@@ -20,7 +20,6 @@ class AdminHomeTab extends StatelessWidget {
     final HomeTabsController controller = Get.put(HomeTabsController());
 
     return SafeArea(
-      top: false,
       child: Scaffold(
         body: CustomContainer(
           width: double.infinity,

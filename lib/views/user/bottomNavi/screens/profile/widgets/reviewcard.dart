@@ -27,7 +27,7 @@ class _ReviewCardState extends State<ReviewCard> {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      conColor: Colors.white,
+      conColor: whiteColor,
       borderRadius: BorderRadius.circular(14),
       padding: const EdgeInsets.all(18),
       boxShadow: [
@@ -44,13 +44,13 @@ class _ReviewCardState extends State<ReviewCard> {
           /// TOP ROW
           Row(
             children: [
-              Container(
+              CustomContainer(
                 height: 40,
                 width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.red.shade100,
+
+                  conColor: rdLight100Color,
                   shape: BoxShape.circle,
-                ),
+
                 alignment: Alignment.center,
                 child: CustomText(
                   widget.initials,
@@ -69,7 +69,7 @@ class _ReviewCardState extends State<ReviewCard> {
                     widget.id,
                     fontSize: 14,
                     fontWeight: FontVariant.bold,
-                    color: Colors.black,
+                    color: blackColor,
                   ),
 
                   Row(

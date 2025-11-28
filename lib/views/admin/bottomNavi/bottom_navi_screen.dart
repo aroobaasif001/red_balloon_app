@@ -34,7 +34,7 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/home_active.png',
           height: 24,
-          color:whiteColor,
+          color: whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/home_inactive.png',
@@ -47,7 +47,7 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/wallet_active.png',
           height: 24,
-          color:whiteColor,
+          color: whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/wallet_inactive.png',
@@ -65,7 +65,7 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
         inactiveIcon: Image.asset(
           'assets/navi_icons/disputes_inactive.png',
           height: 24,
-          color:whiteColor,
+          color: whiteColor,
         ),
       ),
       ModernBottomNavItem(
@@ -73,7 +73,7 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
         activeIcon: Image.asset(
           'assets/navi_icons/task_active.png',
           height: 24,
-          color:whiteColor,
+          color: whiteColor,
         ),
         inactiveIcon: Image.asset(
           'assets/navi_icons/search_inactive.png',
@@ -91,7 +91,7 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
         inactiveIcon: Image.asset(
           'assets/navi_icons/user_inactive.png',
           height: 24,
-          color:whiteColor,
+          color: whiteColor,
         ),
       ),
     ];

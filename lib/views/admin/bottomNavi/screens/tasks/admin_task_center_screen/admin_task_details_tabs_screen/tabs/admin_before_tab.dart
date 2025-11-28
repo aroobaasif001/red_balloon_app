@@ -34,7 +34,6 @@ class AdminBeforeTab extends StatelessWidget {
             "User Votes",
             fontSize: 18,
             fontWeight: FontVariant.bold,
-            color: Colors.black,
           ),
           const SizedBox(height: 10),
           const SizedBox(height: 12),
@@ -56,7 +55,6 @@ class AdminBeforeTab extends StatelessWidget {
                   "Voting Poll",
                   fontSize: 16,
                   fontWeight: FontVariant.semiBold,
-                  color: Colors.black,
                 ),
                 SizedBox(height: 5,),
                 Divider(thickness: 0.5,),
@@ -68,7 +66,7 @@ class AdminBeforeTab extends StatelessWidget {
                     child: CustomContainer(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       borderRadius: BorderRadius.circular(12),
-                      conColor: Colors.grey.shade100,
+                      conColor: walletGrey100Color,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.20),
@@ -107,7 +105,7 @@ class AdminBeforeTab extends StatelessWidget {
                     child: CustomContainer(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       borderRadius: BorderRadius.circular(12),
-                      conColor: Colors.grey.shade100,
+                      conColor: walletGrey100Color,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.20),
@@ -257,7 +255,7 @@ class AdminBeforeTab extends StatelessWidget {
     child: CustomContainer(
     height: 56,
     borderRadius: BorderRadius.circular(10),
-    border: Border.all(color: Colors.black, width: 1),
+    border: Border.all(color: blackColor, width: 1),
     alignment: Alignment.center,
     child: const CustomText(
     "Hold Payment",
