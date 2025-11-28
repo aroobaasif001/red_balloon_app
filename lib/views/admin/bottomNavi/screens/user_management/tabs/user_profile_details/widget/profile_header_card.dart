@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/verified_tag.dart';
 
 import '../../../../../../../../custom_widgets/customtext.dart';
@@ -20,20 +21,28 @@ class ProfileHeaderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
+      child: CustomContainer(
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 4),
+            spreadRadius: 0,
+            blurRadius: 4,
+            color: blackColor.withOpacity(0.25),
+          ),
+        ],
+        height: 234,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 69),
-        decoration: BoxDecoration(
-          color: redColor2,
-          borderRadius: BorderRadius.circular(16),
-        ),
+        conColor: redColor,
+        borderRadius: BorderRadius.circular(16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CustomText(
               initial,
               fontSize: 30,
               fontWeight: FontVariant.bold,
               alignment: Alignment.center,
-              color:whiteColor,
+              color: whiteColor,
             ),
             const SizedBox(height: 6),
 
@@ -45,14 +54,12 @@ class ProfileHeaderCard extends StatelessWidget {
                 width: 14,
                 margin: const EdgeInsets.only(right: 70),
                 decoration: BoxDecoration(
-                  color:greenColor,
+                  color: greenColor,
                   shape: BoxShape.circle,
-                  border: Border.all(color:whiteColor, width: 2),
+                  border: Border.all(color: whiteColor, width: 2),
                 ),
               ),
             ),
-
-
 
             const SizedBox(height: 10),
             CustomText(
@@ -62,9 +69,9 @@ class ProfileHeaderCard extends StatelessWidget {
               alignment: Alignment.center,
               color: whiteColor,
 
-              maxLines: 1,        // 🔥 Force one line
+              maxLines: 1, // 🔥 Force one line
               overflow: TextOverflow.ellipsis, // 🔥 Prevent wrapping
-              softWrap: false,    // 🔥 Disable automatic line break
+              softWrap: false, // 🔥 Disable automatic line break
             ),
 
             const SizedBox(height: 12),

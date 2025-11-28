@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../../../../custom_widgets/customtext.dart';
+import '../../../../../../../../utils/colors.dart';
 
 class SectionTitle extends StatelessWidget {
   final String title;
@@ -14,10 +15,10 @@ class SectionTitle extends StatelessWidget {
 
       child: Row(
         children: [
-          const SizedBox(width: 8),
           CustomText(
             title,
             fontSize: 18,
+            color: black4Color,
             fontWeight: FontVariant.bold,
             alignment: Alignment.center,
           ),
