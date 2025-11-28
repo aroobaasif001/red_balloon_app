@@ -415,17 +415,15 @@ class DialogHelpers {
                         Expanded(
                           child: GestureDetector(
                             onTap: () => Navigator.pop(context),
-                            child: Container(
+                            child: CustomContainer(
                               height: 48,
                               alignment: Alignment.center,
-                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
                                   color: fundCardBorderColor,
                                   width: 2,
                                 ),
-                                color: Color(0xffFE70621A).withOpacity(0.10),
-                              ),
+                                conColor: hColor.withOpacity(0.10),
                               child: const CustomText(
                                 "No",
                                 fontSize: 12,
@@ -445,13 +443,11 @@ class DialogHelpers {
                               Navigator.pop(context);
                               // TODO: Add Buy function here
                             },
-                            child: Container(
+                            child: CustomContainer(
                               height: 48,
                               alignment: Alignment.center,
-                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color:redColor, // redColor
-                              ),
                               child: const CustomText(
                                 "Yes",
                                 fontSize: 14,
@@ -470,13 +466,13 @@ class DialogHelpers {
               // 🔴 TOP CIRCLE WITH WHITE BORDER + ICON
               Positioned(
                 top: -70,
-                child: Container(
+                child: CustomContainer(
                   width: 140,
                   height: 140,
-                  decoration: BoxDecoration(
-                    color: redColor,
+
+                    conColor: redColor,
                     shape: BoxShape.circle,
-                  ),
+
                   child: Center(
                     child: Center(
                       child: Image.asset(
@@ -534,7 +530,6 @@ class DialogHelpers {
                     CustomText(
                       "Are You Sure you want\nto buy this badge",
                       fontSize: 16,
-                      color: Colors.black,
                       textAlign: TextAlign.center,
                       fontWeight: FontVariant.semiBold,
                     ),
@@ -549,17 +544,15 @@ class DialogHelpers {
                         Expanded(
                           child: GestureDetector(
                             onTap: () => Navigator.pop(context),
-                            child: Container(
+                            child: CustomContainer(
                               height: 48,
                               alignment: Alignment.center,
-                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
                                   color: fundCardBorderColor,
                                   width: 2,
                                 ),
-                                color: Color(0xffFE70621A).withOpacity(0.10),
-                              ),
+                                conColor: bColor.withOpacity(0.10),
                               child: const CustomText(
                                 "No",
                                 fontSize: 12,
@@ -579,17 +572,15 @@ class DialogHelpers {
                               Navigator.pop(context);
                               // TODO: Add Buy function here
                             },
-                            child: Container(
+                            child: CustomContainer(
                               height: 48,
                               alignment: Alignment.center,
-                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
-                                color: const Color(0xFFE53935), // redColor
-                              ),
+                                conColor: redColor, // redColor
                               child: const CustomText(
                                 "Yes",
                                 fontSize: 14,
-                                color: Colors.white,
+                                color: whiteColor,
                                 fontWeight: FontVariant.medium,
                               ),
                             ),
@@ -608,7 +599,7 @@ class DialogHelpers {
                   width: 140,
                   height: 140,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE53935),
+                    color: redColor,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -617,7 +608,7 @@ class DialogHelpers {
                         "assets/icons/questionmark5.png", // YOUR ICON
                         width: 55,
                         height: 55,
-                        color: Colors.white,
+                        color: whiteColor,
                       ),
                     ),
                   ),
@@ -1617,11 +1608,10 @@ class DialogHelpers {
             backgroundColor: Colors.transparent,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: whiteColor,
+              child: CustomContainer(
+                  conColor: whiteColor,
                   borderRadius: BorderRadius.circular(30),
-                ),
+
                 padding: const EdgeInsets.symmetric(
                   horizontal: 22,
                   vertical: 25,
@@ -1659,13 +1649,13 @@ class DialogHelpers {
                       Stack(
                         alignment: Alignment.center,
                         children: [
-                          Container(
+                          CustomContainer(
                             height: 90,
                             width: 90,
-                            decoration: BoxDecoration(
+
                               shape: BoxShape.circle,
-                              color: redColor,
-                            ),
+                              conColor: redColor,
+
                             alignment: Alignment.center,
                             child: CustomText(
                               "A",

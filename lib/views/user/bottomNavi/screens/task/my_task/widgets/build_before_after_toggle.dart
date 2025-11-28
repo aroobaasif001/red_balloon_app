@@ -26,12 +26,11 @@ Widget buildBeforeAfterToggle(UploadProofController controller) {
           Expanded(
             child: GestureDetector(
               onTap: controller.selectBefore,
-              child: Container(
+              child: CustomContainer(
                 height: 44,
-                decoration: BoxDecoration(
-                  color: isBefore ? redColor : appbard,
+
+                  conColor: isBefore ? redColor : appbard,
                   borderRadius: BorderRadius.circular(14),
-                ),
                 alignment: Alignment.center,
                 child: CustomText(
                   'BEFORE',
@@ -45,12 +44,12 @@ Widget buildBeforeAfterToggle(UploadProofController controller) {
           Expanded(
             child: GestureDetector(
               onTap: controller.selectAfter,
-              child: Container(
+              child: CustomContainer(
                 height: 44,
-                decoration: BoxDecoration(
-                  color: isBefore ? appbard : redColor,
+
+                  conColor: isBefore ? appbard : redColor,
                   borderRadius: BorderRadius.circular(14),
-                ),
+
                 alignment: Alignment.center,
                 child: CustomText(
                   'AFTER',

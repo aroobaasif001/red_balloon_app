@@ -100,7 +100,7 @@ class TaskInProgressScreen extends StatelessWidget {
                     child: CustomContainer(
                       width: 120,
                       height: 4,
-                      conColor: Colors.red,
+                      conColor: redColor,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -130,7 +130,7 @@ class TaskInProgressScreen extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 25,
-                            backgroundColor: Colors.red.shade100,
+                            backgroundColor: rdLight100Color,
                             child: CustomText(
                               "AR",
                               fontWeight: FontVariant.bold,

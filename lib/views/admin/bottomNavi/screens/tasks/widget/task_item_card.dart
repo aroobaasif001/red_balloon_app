@@ -28,7 +28,7 @@ class TaskItemCard extends StatelessWidget {
     return CustomContainer(
       padding: const EdgeInsets.all(16),
       borderRadius: BorderRadius.circular(16),
-      conColor: Colors.white,
+      conColor: whiteColor,
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.20),
@@ -118,7 +118,7 @@ class TaskItemCard extends StatelessWidget {
                   vertical: 8,
                 ),
                 borderRadius: BorderRadius.circular(30),
-                conColor: Colors.grey.shade200,
+                conColor: conBgColor,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.20),
@@ -129,7 +129,7 @@ class TaskItemCard extends StatelessWidget {
                 child: const CustomText(
                   "Offline Task",
                   fontSize: 13,
-                  color: Colors.black54,
+                  color: walletTextGreyColor,
                 ),
               ),
 
@@ -141,7 +141,7 @@ class TaskItemCard extends StatelessWidget {
                 width: 140,
                 child: CustomButton(
                   label: "View Details",
-                  textColor: Colors.white,
+                  textColor: whiteColor,
                   fontSize: 15,
                   borderRadius: BorderRadius.circular(10),
                   onPressed: () {

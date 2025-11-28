@@ -23,7 +23,7 @@ class ValidationTaskItemCard extends StatelessWidget {
     return CustomContainer(
       padding: const EdgeInsets.all(16),
       borderRadius: BorderRadius.circular(16),
-      conColor: Colors.white,
+      conColor: whiteColor,
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.20),
@@ -107,7 +107,7 @@ class ValidationTaskItemCard extends StatelessWidget {
                   vertical: 8,
                 ),
                 borderRadius: BorderRadius.circular(30),
-                conColor: Colors.grey.shade200,
+                conColor:conBgColor,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.18),
@@ -118,7 +118,7 @@ class ValidationTaskItemCard extends StatelessWidget {
                 child: const CustomText(
                   "Validation in progress",
                   fontSize: 12,
-                  color: Colors.black54,
+                  color: blackColor,
                 ),
               ),
 
@@ -130,7 +130,7 @@ class ValidationTaskItemCard extends StatelessWidget {
                 width: 115,
                 child: CustomButton(
                   label: "View Details",
-                  textColor: Colors.white,
+                  textColor: whiteColor,
                   fontSize: 14,
                   borderRadius: BorderRadius.circular(10),
                   onPressed: () {},

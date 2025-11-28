@@ -39,6 +39,7 @@ final border;
 final borderColor;
   // ⭐ NEW: Optional Radius
   final double? radius;
+  final prefixIcon;
 
   const CustomTextField({
     super.key,
@@ -70,6 +71,7 @@ final borderColor;
     this.radius,
     this.border,
     this.borderColor,
+    this.prefixIcon,
   });
 
   @override

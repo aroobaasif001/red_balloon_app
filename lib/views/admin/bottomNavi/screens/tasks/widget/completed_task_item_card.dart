@@ -20,7 +20,7 @@ class CompletedTaskItemCard extends StatelessWidget {
     return CustomContainer(
       padding: const EdgeInsets.all(16),
       borderRadius: BorderRadius.circular(16),
-      conColor: Colors.white,
+      conColor: whiteColor,
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.20),
@@ -90,7 +90,7 @@ class CompletedTaskItemCard extends StatelessWidget {
             width: double.infinity,
             child: CustomButton(
               label: "Task Completed",
-              textColor: Colors.white,
+              textColor: whiteColor,
               fontSize: 16,
               borderRadius: BorderRadius.circular(10),
               onPressed: () {},

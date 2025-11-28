@@ -34,7 +34,7 @@ class AdminAfterTab extends StatelessWidget {
             "User Votes",
             fontSize: 18,
             fontWeight: FontVariant.bold,
-            color: Colors.black,
+            color: blackColor,
           ),
           const SizedBox(height: 10),
           const SizedBox(height: 12),
@@ -56,7 +56,7 @@ class AdminAfterTab extends StatelessWidget {
                   "Voting Poll",
                   fontSize: 16,
                   fontWeight: FontVariant.semiBold,
-                  color: Colors.black,
+                  color: blackColor,
                 ),
                 SizedBox(height: 5,),
                 Divider(thickness: 0.5,),
@@ -68,7 +68,7 @@ class AdminAfterTab extends StatelessWidget {
                       child: CustomContainer(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         borderRadius: BorderRadius.circular(12),
-                        conColor: Colors.grey.shade100,
+                        conColor:walletGrey100Color,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.20),
@@ -107,7 +107,7 @@ class AdminAfterTab extends StatelessWidget {
                       child: CustomContainer(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         borderRadius: BorderRadius.circular(12),
-                        conColor: Colors.grey.shade100,
+                        conColor: walletGrey100Color,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.20),
@@ -155,7 +155,6 @@ class AdminAfterTab extends StatelessWidget {
             "Task Details",
             fontSize: 18,
             fontWeight: FontVariant.bold,
-            color: Colors.black,
           ),
           const SizedBox(height: 15),
           CustomContainer(
@@ -256,13 +255,13 @@ class AdminAfterTab extends StatelessWidget {
                 child: CustomContainer(
                   height: 56,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.black, width: 1),
+                  border: Border.all(color: blackColor, width: 1),
                   alignment: Alignment.center,
                   child: const CustomText(
                     "Hold Payment",
                     fontSize: 14,
                     fontWeight: FontVariant.semiBold,
-                    color: Colors.black,
+                    color: blackColor,
                   ),
                 ),
               ),

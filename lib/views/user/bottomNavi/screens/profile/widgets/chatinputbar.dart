@@ -9,7 +9,7 @@ class ChatInputBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      conColor: Colors.white,
+      conColor: whiteColor,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
         children: [

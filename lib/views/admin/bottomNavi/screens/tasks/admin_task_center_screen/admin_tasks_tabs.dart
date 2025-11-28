@@ -21,7 +21,7 @@ class _AdminTaskCenterScreenState extends State<AdminTaskCenterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: whiteColor,
 
       body: SafeArea(
         child: Column(
@@ -37,7 +37,7 @@ class _AdminTaskCenterScreenState extends State<AdminTaskCenterScreen> {
               child: CustomContainer(
                 height: 44,
                 borderRadius: BorderRadius.circular(14),
-                conColor: Colors.grey.shade200,
+                conColor: conBgColor,
                 padding: const EdgeInsets.all(4),
                 boxShadow: [
                   BoxShadow(
@@ -93,7 +93,7 @@ class _AdminTaskCenterScreenState extends State<AdminTaskCenterScreen> {
             title,
             fontSize: 14,
             fontWeight: FontVariant.semiBold,
-            color: isActive ? Colors.white : Colors.black,
+            color: isActive ? whiteColor : blackColor,
           ),
         ),
       ),
