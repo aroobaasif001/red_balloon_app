@@ -17,10 +17,7 @@ class DialogHelpers {
   }
 
   static void showAddFundsSuccess(String amount, String paymentMethod) {
-    Get.snackbar(
-      'Success',
-      'Processing payment of SAR $amount via $paymentMethod',
-    );
+    Get.snackbar('Success', 'Processing payment of SAR $amount via $paymentMethod');
   }
 
   static void handleWithdrawalRequest() {
@@ -28,10 +25,7 @@ class DialogHelpers {
     Get.snackbar('Success', 'Withdrawal request submitted');
   }
 
-  void showNoVoteDialog({
-    required BuildContext context,
-    bool barrierDismissible = true,
-  }) {
+  void showNoVoteDialog({required BuildContext context, bool barrierDismissible = true}) {
     showDialog(
       context: context,
       barrierDismissible: barrierDismissible,
@@ -44,20 +38,11 @@ class DialogHelpers {
             alignment: Alignment.topCenter,
             children: [
               CustomContainer(
-                padding: const EdgeInsets.only(
-                  top: 80,
-                  left: 25,
-                  right: 25,
-                  bottom: 25,
-                ),
+                padding: const EdgeInsets.only(top: 80, left: 25, right: 25, bottom: 25),
                 conColor: taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
-                  BoxShadow(
-                    color: blackColor.withOpacity(0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
+                  BoxShadow(color: blackColor.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
                 ],
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -76,11 +61,7 @@ class DialogHelpers {
 
               Positioned(
                 top: -74,
-                child: Image.asset(
-                  "assets/icons/Group 1686555644.png",
-                  width: 135,
-                  height: 135,
-                ),
+                child: Image.asset("assets/icons/Group 1686555644.png", width: 135, height: 135),
               ),
             ],
           ),
@@ -102,20 +83,11 @@ class DialogHelpers {
             alignment: Alignment.topCenter,
             children: [
               CustomContainer(
-                padding: const EdgeInsets.only(
-                  top: 80,
-                  left: 25,
-                  right: 25,
-                  bottom: 25,
-                ),
+                padding: const EdgeInsets.only(top: 80, left: 25, right: 25, bottom: 25),
                 conColor: whiteColor,
                 borderRadius: BorderRadius.circular(22),
                 boxShadow: [
-                  BoxShadow(
-                    color: blackColor.withOpacity(0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
+                  BoxShadow(color: blackColor.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
                 ],
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -182,11 +154,7 @@ class DialogHelpers {
 
               Positioned(
                 top: -75,
-                child: Image.asset(
-                  "assets/icons/Group 1686555649.png",
-                  width: 135,
-                  height: 135,
-                ),
+                child: Image.asset("assets/icons/Group 1686555649.png", width: 135, height: 135),
               ),
             ],
           ),
@@ -204,11 +172,7 @@ class DialogHelpers {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            final reasons = [
-              "Work not completed",
-              "Communication issue",
-              "Task was ignored",
-            ];
+            final reasons = ["Work not completed", "Communication issue", "Task was ignored"];
 
             return Dialog(
               backgroundColor: Colors.transparent,
@@ -218,20 +182,10 @@ class DialogHelpers {
                 clipBehavior: Clip.none,
                 children: [
                   CustomContainer(
-                    padding: const EdgeInsets.only(
-                      top: 80,
-                      left: 20,
-                      right: 20,
-                      bottom: 25,
-                    ),
+                    padding: const EdgeInsets.only(top: 80, left: 20, right: 20, bottom: 25),
                     conColor: whiteColor,
                     borderRadius: BorderRadius.circular(22),
-                    boxShadow: [
-                      BoxShadow(
-                        color: blackColor.withOpacity(0.15),
-                        blurRadius: 10,
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: blackColor.withOpacity(0.15), blurRadius: 10)],
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -241,23 +195,15 @@ class DialogHelpers {
                           return GestureDetector(
                             onTap: () => setState(() => selected = i),
                             child: CustomContainer(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 14,
-                                horizontal: 12,
-                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
                               margin: const EdgeInsets.only(bottom: 12),
                               borderRadius: BorderRadius.circular(12),
                               conColor: active ? redColor : whiteColor,
-                              border: Border.all(
-                                color: active ? redColor : totaTextColor,
-                                width: 1.3,
-                              ),
+                              border: Border.all(color: active ? redColor : totaTextColor, width: 1.3),
                               child: Row(
                                 children: [
                                   Icon(
-                                    active
-                                        ? Icons.check_circle
-                                        : Icons.circle_outlined,
+                                    active ? Icons.check_circle : Icons.circle_outlined,
                                     color: active ? whiteColor : blackColor,
                                   ),
                                   const SizedBox(width: 10),
@@ -290,11 +236,7 @@ class DialogHelpers {
 
                   Positioned(
                     top: -74,
-                    child: Image.asset(
-                      "assets/icons/Group 1686555649.png",
-                      width: 135,
-                      height: 135,
-                    ),
+                    child: Image.asset("assets/icons/Group 1686555649.png", width: 135, height: 135),
                   ),
                 ],
               ),
@@ -318,28 +260,14 @@ class DialogHelpers {
             clipBehavior: Clip.none,
             children: [
               CustomContainer(
-                padding: const EdgeInsets.only(
-                  top: 80,
-                  left: 25,
-                  right: 25,
-                  bottom: 20,
-                ),
+                padding: const EdgeInsets.only(top: 80, left: 25, right: 25, bottom: 20),
                 conColor: taskstatus2,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: blackColor.withOpacity(0.15),
-                    blurRadius: 10,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: blackColor.withOpacity(0.15), blurRadius: 10)],
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CustomText(
-                      "Task Completed!",
-                      fontSize: 18,
-                      fontWeight: FontVariant.bold,
-                    ),
+                    CustomText("Task Completed!", fontSize: 18, fontWeight: FontVariant.bold),
                     const SizedBox(height: 6),
                     CustomText(
                       "Task is marked as completed. Payment\nwill be released within 48 hours",
@@ -351,14 +279,7 @@ class DialogHelpers {
                 ),
               ),
 
-              Positioned(
-                top: -75,
-                child: Image.asset(
-                  "assets/icons/check.png",
-                  width: 135,
-                  height: 135,
-                ),
-              ),
+              Positioned(top: -75, child: Image.asset("assets/icons/check.png", width: 135, height: 135)),
             ],
           ),
         );
@@ -380,20 +301,10 @@ class DialogHelpers {
             children: [
               // MAIN WHITE CARD
               CustomContainer(
-                padding: const EdgeInsets.only(
-                  top: 90,
-                  left: 25,
-                  right: 25,
-                  bottom: 25,
-                ),
+                padding: const EdgeInsets.only(top: 90, left: 25, right: 25, bottom: 25),
                 conColor: whiteColor,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.12),
-                    blurRadius: 10,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 10)],
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -420,10 +331,7 @@ class DialogHelpers {
                               height: 48,
                               alignment: Alignment.center,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: fundCardBorderColor,
-                                width: 2,
-                              ),
+                              border: Border.all(color: fundCardBorderColor, width: 2),
                               conColor: hColor.withOpacity(0.10),
                               child: const CustomText(
                                 "No",
@@ -507,20 +415,10 @@ class DialogHelpers {
             children: [
               // MAIN WHITE CARD
               CustomContainer(
-                padding: const EdgeInsets.only(
-                  top: 90,
-                  left: 25,
-                  right: 25,
-                  bottom: 25,
-                ),
+                padding: const EdgeInsets.only(top: 90, left: 25, right: 25, bottom: 25),
                 conColor: whiteColor,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.12),
-                    blurRadius: 10,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 10)],
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -546,10 +444,7 @@ class DialogHelpers {
                               height: 48,
                               alignment: Alignment.center,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: fundCardBorderColor,
-                                width: 2,
-                              ),
+                              border: Border.all(color: fundCardBorderColor, width: 2),
                               conColor: bColor.withOpacity(0.10),
                               child: const CustomText(
                                 "No",
@@ -596,10 +491,7 @@ class DialogHelpers {
                 child: Container(
                   width: 140,
                   height: 140,
-                  decoration: BoxDecoration(
-                    color: redColor,
-                    shape: BoxShape.circle,
-                  ),
+                  decoration: BoxDecoration(color: redColor, shape: BoxShape.circle),
                   child: Center(
                     child: Center(
                       child: Image.asset(
@@ -632,20 +524,10 @@ class DialogHelpers {
             clipBehavior: Clip.none,
             children: [
               CustomContainer(
-                padding: const EdgeInsets.only(
-                  top: 80,
-                  left: 25,
-                  right: 25,
-                  bottom: 25,
-                ),
+                padding: const EdgeInsets.only(top: 80, left: 25, right: 25, bottom: 25),
                 conColor: taskstatus2,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.12),
-                    blurRadius: 10,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 10)],
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -659,14 +541,7 @@ class DialogHelpers {
                 ),
               ),
 
-              Positioned(
-                top: -74,
-                child: Image.asset(
-                  "assets/icons/check.png",
-                  width: 135,
-                  height: 135,
-                ),
-              ),
+              Positioned(top: -74, child: Image.asset("assets/icons/check.png", width: 135, height: 135)),
             ],
           ),
         );
@@ -674,10 +549,7 @@ class DialogHelpers {
     );
   }
 
-  void showApproveCompletionDialog({
-    required BuildContext context,
-    bool barrierDismissible = true,
-  }) {
+  void showApproveCompletionDialog({required BuildContext context, bool barrierDismissible = true}) {
     showDialog(
       context: context,
       barrierDismissible: barrierDismissible,
@@ -691,12 +563,7 @@ class DialogHelpers {
             children: [
               /// ================= WHITE CARD =================
               CustomContainer(
-                padding: const EdgeInsets.only(
-                  top: 80,
-                  left: 25,
-                  right: 25,
-                  bottom: 25,
-                ),
+                padding: const EdgeInsets.only(top: 80, left: 25, right: 25, bottom: 25),
                 conColor: taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
@@ -776,14 +643,7 @@ class DialogHelpers {
               ),
 
               /// ================= TOP RED CHECK ICON =================
-              Positioned(
-                top: -73,
-                child: Image.asset(
-                  "assets/icons/check.png",
-                  width: 135,
-                  height: 135,
-                ),
-              ),
+              Positioned(top: -73, child: Image.asset("assets/icons/check.png", width: 135, height: 135)),
             ],
           ),
         );
@@ -798,9 +658,7 @@ class DialogHelpers {
       context: context,
       isScrollControlled: true,
       backgroundColor: whiteColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
@@ -856,17 +714,11 @@ class DialogHelpers {
                       return GestureDetector(
                         onTap: () => setState(() => selectedIndex = index),
                         child: CustomContainer(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 10,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                           margin: const EdgeInsets.only(bottom: 12),
                           borderRadius: BorderRadius.circular(12),
                           conColor: selected ? redColor : whiteColor,
-                          border: Border.all(
-                            color: selected ? redColor : blackColor,
-                            width: 1.5,
-                          ),
+                          border: Border.all(color: selected ? redColor : blackColor, width: 1.5),
 
                           /// SAME SHADOW AS ORIGINAL
                           boxShadow: [
@@ -880,9 +732,7 @@ class DialogHelpers {
                           child: Row(
                             children: [
                               Icon(
-                                selected
-                                    ? Icons.check_circle
-                                    : Icons.circle_outlined,
+                                selected ? Icons.check_circle : Icons.circle_outlined,
                                 color: selected ? whiteColor : blackColor,
                               ),
                               const SizedBox(width: 12),
@@ -918,10 +768,7 @@ class DialogHelpers {
                   /// 🔥 NEW TEXTFIELD + SHADOW ADDED (MATCHING SCREENSHOT STYLE)
                   CustomContainer(
                     borderRadius: BorderRadius.circular(12),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     conColor: white2Color,
                     height: 105,
 
@@ -979,9 +826,7 @@ class DialogHelpers {
       context: context,
       isScrollControlled: true,
       backgroundColor: whiteColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
@@ -1030,17 +875,11 @@ class DialogHelpers {
                       return GestureDetector(
                         onTap: () => setState(() => selectedIndex = index),
                         child: CustomContainer(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 14,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
                           margin: const EdgeInsets.only(bottom: 12),
                           borderRadius: BorderRadius.circular(12),
                           conColor: selected ? redColor : whiteColor,
-                          border: Border.all(
-                            color: selected ? redColor : blackColor,
-                            width: 1.5,
-                          ),
+                          border: Border.all(color: selected ? redColor : blackColor, width: 1.5),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.05),
@@ -1051,9 +890,7 @@ class DialogHelpers {
                           child: Row(
                             children: [
                               Icon(
-                                selected
-                                    ? Icons.check_circle
-                                    : Icons.circle_outlined,
+                                selected ? Icons.check_circle : Icons.circle_outlined,
                                 color: selected ? whiteColor : blackColor,
                               ),
                               const SizedBox(width: 12),
@@ -1106,9 +943,7 @@ class DialogHelpers {
       context: context,
       isScrollControlled: true,
       backgroundColor: whiteColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
       builder: (context) {
         return Padding(
           padding: EdgeInsets.only(
@@ -1121,12 +956,7 @@ class DialogHelpers {
             mainAxisSize: MainAxisSize.min,
             children: [
               /// -------- TOP ICON --------
-              Image.asset(
-                "assets/icons/Group 1686555533.png",
-                height: 114,
-                width: 114,
-                fit: BoxFit.contain,
-              ),
+              Image.asset("assets/icons/Group 1686555533.png", height: 114, width: 114, fit: BoxFit.contain),
 
               const SizedBox(height: 20),
 
@@ -1202,9 +1032,7 @@ class DialogHelpers {
       context: context,
       isScrollControlled: true,
       backgroundColor: whiteColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
       builder: (context) {
         return DraggableScrollableSheet(
           expand: false,
@@ -1329,11 +1157,7 @@ class DialogHelpers {
               bottomLeft: Radius.circular(15),
             ),
             boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
+              BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 10, offset: Offset(0, 4)),
             ],
             child: CustomText(
               "🎈 Minimum Price, SAR 15 • Every task needs at least this starting amount",
@@ -1379,11 +1203,7 @@ class DialogHelpers {
                 conColor: taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
+                  BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 10, offset: Offset(0, 4)),
                 ],
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -1408,14 +1228,7 @@ class DialogHelpers {
               ),
 
               // ================= RED CHECK ICON =================
-              Positioned(
-                top: -80,
-                child: Image.asset(
-                  'assets/icons/check.png',
-                  width: 150,
-                  height: 150,
-                ),
-              ),
+              Positioned(top: -80, child: Image.asset('assets/icons/check.png', width: 150, height: 150)),
             ],
           ),
         );
@@ -1423,10 +1236,7 @@ class DialogHelpers {
     );
   }
 
-  static void showReportSubmittedDialog({
-    required BuildContext context,
-    bool barrierDismissible = true,
-  }) {
+  static void showReportSubmittedDialog({required BuildContext context, bool barrierDismissible = true}) {
     showDialog(
       context: context,
       barrierDismissible: barrierDismissible,
@@ -1440,12 +1250,7 @@ class DialogHelpers {
             children: [
               /// ================= WHITE CARD =================
               CustomContainer(
-                padding: const EdgeInsets.only(
-                  top: 80,
-                  left: 25,
-                  right: 25,
-                  bottom: 25,
-                ),
+                padding: const EdgeInsets.only(top: 80, left: 25, right: 25, bottom: 25),
                 conColor: taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
@@ -1483,14 +1288,7 @@ class DialogHelpers {
               ),
 
               /// ================= RED CHECK ICON =================
-              Positioned(
-                top: -74,
-                child: Image.asset(
-                  'assets/icons/check.png',
-                  width: 135,
-                  height: 135,
-                ),
-              ),
+              Positioned(top: -74, child: Image.asset('assets/icons/check.png', width: 135, height: 135)),
             ],
           ),
         );
@@ -1518,12 +1316,7 @@ class DialogHelpers {
             children: [
               // ================= WHITE CARD =================
               CustomContainer(
-                padding: const EdgeInsets.only(
-                  top: 80,
-                  left: 25,
-                  right: 25,
-                  bottom: 25,
-                ),
+                padding: const EdgeInsets.only(top: 80, left: 25, right: 25, bottom: 25),
                 conColor: taskstatus2,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
@@ -1592,10 +1385,7 @@ class DialogHelpers {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
           child: Dialog(
-            insetPadding: const EdgeInsets.symmetric(
-              horizontal: 25,
-              vertical: 35,
-            ),
+            insetPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 35),
             backgroundColor: Colors.transparent,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(30),
@@ -1603,10 +1393,7 @@ class DialogHelpers {
                 conColor: whiteColor,
                 borderRadius: BorderRadius.circular(30),
 
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 22,
-                  vertical: 25,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 25),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -1618,19 +1405,11 @@ class DialogHelpers {
                             onTap: () {
                               DialogHelpers().showReportUserSheet(context);
                             },
-                            child: Icon(
-                              Icons.flag_outlined,
-                              color: redColor,
-                              size: 22,
-                            ),
+                            child: Icon(Icons.flag_outlined, color: redColor, size: 22),
                           ),
                           GestureDetector(
                             onTap: () => Navigator.pop(context),
-                            child: Icon(
-                              Icons.close,
-                              color: timeColor,
-                              size: 20,
-                            ),
+                            child: Icon(Icons.close, color: timeColor, size: 20),
                           ),
                         ],
                       ),
@@ -1671,47 +1450,29 @@ class DialogHelpers {
                       const SizedBox(height: 18),
 
                       /// NAME
-                      CustomText(
-                        "Anton Furnitures",
-                        fontSize: 20,
-                        fontWeight: FontVariant.bold,
-                      ),
+                      CustomText("Anton Furnitures", fontSize: 20, fontWeight: FontVariant.bold),
                       const SizedBox(height: 10),
 
                       /// RB TAG
                       CustomContainer(
                         conColor: lightredcolor2,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         borderRadius: BorderRadius.circular(10),
-                        child: CustomText(
-                          "RB-452",
-                          fontSize: 12,
-                          color: redColor,
-                        ),
+                        child: CustomText("RB-452", fontSize: 12, color: redColor),
                       ),
                       const SizedBox(height: 14),
 
                       /// VERIFIED HELPER TAG
                       CustomContainer(
                         conColor: greenBg,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         borderRadius: BorderRadius.circular(20),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.verified, color: redColor),
                             const SizedBox(width: 6),
-                            CustomText(
-                              "Verified Helper",
-                              fontSize: 13,
-                              color: walletSuccessColor,
-                            ),
+                            CustomText("Verified Helper", fontSize: 13, color: walletSuccessColor),
                           ],
                         ),
                       ),
@@ -1729,19 +1490,11 @@ class DialogHelpers {
                               children: [
                                 Icon(Icons.star, color: redColor, size: 26),
                                 const SizedBox(width: 8),
-                                CustomText(
-                                  "4.9",
-                                  fontSize: 22,
-                                  fontWeight: FontVariant.bold,
-                                ),
+                                CustomText("4.9", fontSize: 22, fontWeight: FontVariant.bold),
                               ],
                             ),
                             const SizedBox(height: 6),
-                            CustomText(
-                              "(25 tasks completed)",
-                              fontSize: 13,
-                              color: timeColor,
-                            ),
+                            CustomText("(25 tasks completed)", fontSize: 13, color: timeColor),
                           ],
                         ),
                       ),
@@ -1774,19 +1527,11 @@ class DialogHelpers {
                       Row(
                         children: [
                           Expanded(
-                            child: _statBox(
-                              "Distance",
-                              "3.2 km",
-                              'assets/icons/duo-icons_location.png',
-                            ),
+                            child: _statBox("Distance", "3.2 km", 'assets/icons/duo-icons_location.png'),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: _statBox(
-                              "Completion Rate",
-                              "98%",
-                              'assets/icons/charm_circle-tick.png',
-                            ),
+                            child: _statBox("Completion Rate", "98%", 'assets/icons/charm_circle-tick.png'),
                           ),
                         ],
                       ),
@@ -1797,10 +1542,7 @@ class DialogHelpers {
                       CustomContainer(
                         conColor: white2Color,
                         borderRadius: BorderRadius.circular(16),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 14,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1808,8 +1550,7 @@ class DialogHelpers {
                               "assets/icons/duo-icons_message-3.png", // 🔥 your image path here
                               height: 24,
                               width: 24,
-                              color:
-                                  redColor, // ⭐ keeps the same red tint/color
+                              color: redColor, // ⭐ keeps the same red tint/color
                             ),
 
                             const SizedBox(width: 10),
@@ -1853,12 +1594,7 @@ class DialogHelpers {
 
           const SizedBox(height: 4),
 
-          CustomText(
-            value,
-            fontSize: 20,
-            fontWeight: FontVariant.bold,
-            color: redColor,
-          ),
+          CustomText(value, fontSize: 20, fontWeight: FontVariant.bold, color: redColor),
         ],
       ),
     );
@@ -1877,29 +1613,4 @@ class DialogHelpers {
       },
     );
   }
-}
-
-/// =================================================================
-/// SMALL STAT BOX WIDGET (Matches Screenshot Perfectly)
-/// =================================================================
-Widget _statBox(String title, String value, IconData icon) {
-  return CustomContainer(
-    conColor: beforecolor,
-    borderRadius: BorderRadius.circular(16),
-    padding: const EdgeInsets.symmetric(vertical: 18),
-    child: Column(
-      children: [
-        Icon(icon, color: redColor, size: 26),
-        const SizedBox(height: 8),
-        CustomText(title, fontSize: 13, color: greyColor),
-        const SizedBox(height: 4),
-        CustomText(
-          value,
-          fontSize: 18,
-          fontWeight: FontVariant.bold,
-          color: redColor,
-        ),
-      ],
-    ),
-  );
 }

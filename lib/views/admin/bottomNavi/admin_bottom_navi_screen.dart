@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/modern_bottom_nav.dart';
-import 'package:red_balloon_app/views/admin/bottomNavi/screens/disputes/tabs/disputes_tab.dart';
+import 'package:red_balloon_app/views/admin/bottomNavi/screens/disputes/disputes/disputes_tab.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/home/tabs/home_tab.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/admin_tasks_tabs.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_management_screen.dart';
@@ -31,68 +31,28 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
     navItems = [
       ModernBottomNavItem(
         label: 'Home',
-        activeIcon: Image.asset(
-          'assets/navi_icons/home_active.png',
-          height: 24,
-          color: whiteColor,
-        ),
-        inactiveIcon: Image.asset(
-          'assets/navi_icons/home_inactive.png',
-          height: 24,
-          color: whiteColor,
-        ),
+        activeIcon: Image.asset('assets/navi_icons/home_active.png', height: 24, color: whiteColor),
+        inactiveIcon: Image.asset('assets/navi_icons/home_inactive.png', height: 24, color: whiteColor),
       ),
       ModernBottomNavItem(
         label: 'Wallet',
-        activeIcon: Image.asset(
-          'assets/navi_icons/wallet_active.png',
-          height: 24,
-          color: whiteColor,
-        ),
-        inactiveIcon: Image.asset(
-          'assets/navi_icons/wallet_inactive.png',
-          height: 24,
-          color: whiteColor,
-        ),
+        activeIcon: Image.asset('assets/navi_icons/wallet_active.png', height: 24, color: whiteColor),
+        inactiveIcon: Image.asset('assets/navi_icons/wallet_inactive.png', height: 24, color: whiteColor),
       ),
       ModernBottomNavItem(
         label: 'Disputes',
-        activeIcon: Image.asset(
-          'assets/navi_icons/disputes_active.png',
-          height: 24,
-          color: whiteColor,
-        ),
-        inactiveIcon: Image.asset(
-          'assets/navi_icons/disputes_inactive.png',
-          height: 24,
-          color: whiteColor,
-        ),
+        activeIcon: Image.asset('assets/navi_icons/disputes_active.png', height: 24, color: whiteColor),
+        inactiveIcon: Image.asset('assets/navi_icons/disputes_inactive.png', height: 24, color: whiteColor),
       ),
       ModernBottomNavItem(
         label: 'Tasks',
-        activeIcon: Image.asset(
-          'assets/navi_icons/task_active.png',
-          height: 24,
-          color: whiteColor,
-        ),
-        inactiveIcon: Image.asset(
-          'assets/navi_icons/search_inactive.png',
-          height: 24,
-          color: whiteColor,
-        ),
+        activeIcon: Image.asset('assets/navi_icons/task_active.png', height: 24, color: whiteColor),
+        inactiveIcon: Image.asset('assets/navi_icons/search_inactive.png', height: 24, color: whiteColor),
       ),
       ModernBottomNavItem(
         label: 'Users',
-        activeIcon: Image.asset(
-          'assets/navi_icons/user_active.png',
-          height: 24,
-          color: whiteColor,
-        ),
-        inactiveIcon: Image.asset(
-          'assets/navi_icons/user_inactive.png',
-          height: 24,
-          color: whiteColor,
-        ),
+        activeIcon: Image.asset('assets/navi_icons/user_active.png', height: 24, color: whiteColor),
+        inactiveIcon: Image.asset('assets/navi_icons/user_inactive.png', height: 24, color: whiteColor),
       ),
     ];
   }

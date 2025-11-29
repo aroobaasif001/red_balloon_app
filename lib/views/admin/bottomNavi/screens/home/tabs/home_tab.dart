@@ -5,7 +5,7 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/Profile/tabs/profile_screen.dart';
 
 import '../../../../../../utils/colors.dart';
-import '../../Notification/tabs/notification_screen.dart';
+import '../../Notification/notification_screen.dart';
 import '../controllers/home_tab_controller.dart';
 import '../widgets/admin_custom_tab_bar_task.dart';
 import '../widgets/admin_home_morning_widget.dart';
@@ -34,37 +34,25 @@ class AdminHomeTab extends StatelessWidget {
                     // Header
                     Row(
                       children: [
-                        Image(
-                          image: AssetImage('assets/images/splash_logo.png'),
-                          height: 84,
-                        ),
+                        Image(image: AssetImage('assets/images/splash_logo.png'), height: 84),
                         Spacer(),
                         IconButton(
                           onPressed: () {
                             Get.to(() => AdminNotificationScreen());
                           },
-                          icon: Image(
-                            image: AssetImage('assets/icons/notification.png'),
-                            height: 24,
-                          ),
+                          icon: Image(image: AssetImage('assets/icons/notification.png'), height: 24),
                         ),
                         InkWell(
                           onTap: () {
                             Get.to(() => AdminProfileScreen());
                           },
-                          child: Image(
-                            image: AssetImage('assets/icons/profile.png'),
-                            height: 50,
-                          ),
+                          child: Image(image: AssetImage('assets/icons/profile.png'), height: 50),
                           customBorder: CircleBorder(),
                         ),
                       ],
                     ),
                     SizedBox(height: 14.99),
-                    admin_home_morning_widget(
-                      iconPath: 'assets/icons/sun.png',
-                      greeting: 'Good Morning',
-                    ),
+                    admin_home_morning_widget(iconPath: 'assets/icons/sun.png', greeting: 'Good Morning'),
                   ],
                 ),
                 SizedBox(height: 22),
@@ -103,12 +91,7 @@ class AdminHomeTab extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 22),
-                CustomText(
-                  'Alerts',
-                  fontSize: 20,
-                  fontWeight: FontVariant.semiBold,
-                  color: blackLightColor,
-                ),
+                CustomText('Alerts', fontSize: 20, fontWeight: FontVariant.semiBold, color: blackLightColor),
                 SizedBox(height: 22),
                 Obx(
                   () => AdminCustomTabBarTask(

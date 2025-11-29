@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'package:red_balloon_app/views/admin/bottomNavi/bottom_navi_screen.dart';
+import 'package:red_balloon_app/views/admin/bottomNavi/admin_bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 import 'package:red_balloon_app/views/auth/widgets/social_button.dart';
 
@@ -39,9 +39,7 @@ class OnboardingScreen extends StatelessWidget {
                       child: CustomContainer(
                         height: 177,
                         width: 280,
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/splash_logo.png'),
-                        ),
+                        image: const DecorationImage(image: AssetImage('assets/images/splash_logo.png')),
                       ),
                     ),
                     const SizedBox(height: 39),
@@ -53,8 +51,7 @@ class OnboardingScreen extends StatelessWidget {
                           if (Platform.isIOS) ...[
                             SocialButton.apple(
                               onPressed: () async {
-                                final user = await authController
-                                    .signInWithApple();
+                                final user = await authController.signInWithApple();
                                 if (user != null) {
                                   Get.off(() => BottomNaviScreen());
                                 }
