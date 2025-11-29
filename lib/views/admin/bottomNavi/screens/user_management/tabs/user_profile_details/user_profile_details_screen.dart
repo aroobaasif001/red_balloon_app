@@ -11,6 +11,7 @@ import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/t
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/rating_summary_card.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/section_title.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/stats_small_card.dart';
+import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/strong_box.dart';
 
 class UserProfileDetailsScreen extends StatelessWidget {
   const UserProfileDetailsScreen({super.key});
@@ -38,7 +39,7 @@ class UserProfileDetailsScreen extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(bottom: 10),
                 padding: EdgeInsets.all(18),
-                decoration: _strongBox(),
+                decoration: strongBox(),
                 child: Column(
                   children: [
                     SectionTitle("User Progress"),
@@ -110,7 +111,7 @@ class UserProfileDetailsScreen extends StatelessWidget {
               /// ADMIN ANALYTICS
               Container(
                 margin: const EdgeInsets.only(bottom: 18),
-                decoration: _strongBox(),
+                decoration: strongBox(),
                 padding: const EdgeInsets.all(18),
 
                 child: Column(
@@ -207,15 +208,3 @@ class UserProfileDetailsScreen extends StatelessWidget {
 }
 
 /// STRONG SHADOW BOX (Visible Always)
-BoxDecoration _strongBox() => BoxDecoration(
-  color: white2Color,
-  borderRadius: BorderRadius.circular(20),
-  boxShadow: [
-    BoxShadow(
-      color: blackColor.withOpacity(0.25),
-      blurRadius: 4,
-      spreadRadius: 0,
-      offset: const Offset(0, 4),
-    ),
-  ],
-);
