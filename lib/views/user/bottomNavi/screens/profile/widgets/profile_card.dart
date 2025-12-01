@@ -109,7 +109,7 @@ class ProfileCard extends StatelessWidget {
 
           // Name
           CustomText(
-            userName ?? 'Zernosh Haider',
+            userName ?? 'Saad Sajid',
             fontSize: namefontSize ?? 22,
             fontWeight: FontVariant.bold,
             color: textColor2,
@@ -127,26 +127,32 @@ class ProfileCard extends StatelessWidget {
           ),
           const SizedBox(height: 13),
           // Location
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(Icons.location_on, size: 19, color: redColor),
+              /// LOCATION ROW
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.location_on, size: 19, color: redColor),
 
-              /// Make ONLY text flexible
-              Flexible(
-                child: CustomText(
-                  location ?? 'Riyadh, Saudi Arabia',
-                  fontSize: locationFontSize ?? 12,
-                  fontWeight: FontVariant.regular,
-                  color: lastTextColor,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                  /// Make ONLY text flexible
+                  Flexible(
+                    child: CustomText(
+                      location ?? 'Riyadh, Saudi Arabia',
+                      fontSize: locationFontSize ?? 12,
+                      fontWeight: FontVariant.regular,
+                      color: lastTextColor,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 30),
 
+              const SizedBox(height: 8),
 
-              /// Verified Badge (fixed size)
+              /// VERIFIED BADGE (full row or left aligned)
               CustomContainer(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 conColor: white3Color,
@@ -162,7 +168,6 @@ class ProfileCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     CustomText(
-                      CrossAxisAlignment: CrossAxisAlignment.end,
                       verificationLabel ?? 'Verified',
                       fontSize: 13,
                       fontWeight: FontVariant.regular,
@@ -173,6 +178,7 @@ class ProfileCard extends StatelessWidget {
               ),
             ],
           ),
+
 
 
           const SizedBox(height: 12),

@@ -14,7 +14,10 @@ class MyTaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TaskTabsController controller = Get.put(TaskTabsController());
+    final TaskTabsController controller =
+    Get.isRegistered<TaskTabsController>()
+        ? Get.find<TaskTabsController>()
+        : Get.put(TaskTabsController());
     return Scaffold(
       appBar: CustomAppBar(titleText: 'Tasks', disableLeading: true),
 
