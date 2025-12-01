@@ -25,6 +25,19 @@ class AuthController extends GetxController {
     }
   }
 
+  // Refresh current user data from Firebase
+  Future<void> refreshCurrentUser() async {
+    try {
+      final user = _authService.getCurrentUserModel();
+      if (user != null) {
+        currentUser.value = user;
+        update(); // Notify GetBuilder listeners
+      }
+    } catch (e) {
+      print('Error refreshing user: $e');
+    }
+  }
+
   // Sign in with Google
   Future<AuthModel?> signInWithGoogle() async {
     try {

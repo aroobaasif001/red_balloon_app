@@ -42,17 +42,12 @@ class ProfileScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: GetBuilder<AuthController>(
-              // init: AuthController(),
               builder: (authController) {
                 final currentUser = authController.currentUser.value;
                 final displayName = currentUser?.displayName ?? 'User';
                 final photoURL = currentUser?.photoURL;
                 final initials = displayName.isNotEmpty
-                    ? displayName
-                          .split(' ')
-                          .map((e) => e[0])
-                          .join()
-                          .toUpperCase()
+                    ? displayName.split(' ').map((e) => e[0]).join().toUpperCase()
                     : 'RB';
 
                 return Column(
@@ -91,42 +86,44 @@ class ProfileScreen extends StatelessWidget {
                     StatsGrid(postedCount: '500'),
                     const SizedBox(height: 20),
 
-                // Menu Section
-                MenuSection(
-                  containerColor: white2Color,
-                  shadowColor: walletBlackColor,
-                  shadowOpacity: 0.25,
-                  shadowBlur: 4,
-                  dividerColor: walletCardBorderColor,
-                ),
-                const SizedBox(height: 20),
+                    // Menu Section
+                    MenuSection(
+                      containerColor: white2Color,
+                      shadowColor: walletBlackColor,
+                      shadowOpacity: 0.25,
+                      shadowBlur: 4,
+                      dividerColor: walletCardBorderColor,
+                    ),
+                    const SizedBox(height: 20),
 
-                // Help Section
-                HelpSection(
-                  helpText: 'Need help? ',
-                  helpLinkText: 'Visit Help Center',
-                  logoutButtonLabel: 'Logout',
-                  helpTextColor: blackColor,
-                  helpLinkColor: redColor,
-                  helpTextFontSize: 13,
-                  helpLinkFontSize: 13,
-                  spacingBeforeButton: 16,
-                  onHelpTap: () {
-                    // Handle help center tap
-                  },
-                  onLogoutTap: () {
-                    DialogHelpers.showLogoutDialog(
-                      context,
-                      onConfirm: () async {
-                        await FirebaseAuth.instance.signOut();
-                        await GoogleSignIn().signOut();
-                        Get.offAll(() => OnboardingScreen());
+                    // Help Section
+                    HelpSection(
+                      helpText: 'Need help? ',
+                      helpLinkText: 'Visit Help Center',
+                      logoutButtonLabel: 'Logout',
+                      helpTextColor: blackColor,
+                      helpLinkColor: redColor,
+                      helpTextFontSize: 13,
+                      helpLinkFontSize: 13,
+                      spacingBeforeButton: 16,
+                      onHelpTap: () {
+                        // Handle help center tap
                       },
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
-              ],
+                      onLogoutTap: () {
+                        DialogHelpers.showLogoutDialog(
+                          context,
+                          onConfirm: () async {
+                            await FirebaseAuth.instance.signOut();
+                            await GoogleSignIn().signOut();
+                            Get.offAll(() => OnboardingScreen());
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                );
+              },
             ),
           ),
         ),

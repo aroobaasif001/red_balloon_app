@@ -7,14 +7,12 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/home/tabs/tasks_fo
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_bonus_slider.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_wallet_card.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/in_app_store_screen.dart';
-import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 
 import '../../bottom_navi_screen.dart';
 import '../notification/notification_screen.dart';
 import '../profile/tabs/messages_screen.dart';
 import '../profile/tabs/profile_screen.dart';
 import '../task/post_new_task/post_new_task_screen.dart';
-import '../wallet/tabs/add_funds.dart';
 import 'controller/home_controller.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -90,7 +88,6 @@ class HomeScreen extends StatelessWidget {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-
                                 IconButton(
                                   onPressed: () {
                                     Get.to(() => MessagesScreen());
@@ -102,8 +99,6 @@ class HomeScreen extends StatelessWidget {
 
                                     height: 24,
                                   ),
-
-
                                 ),
                                 IconButton(
                                   onPressed: () {
@@ -123,28 +118,39 @@ class HomeScreen extends StatelessWidget {
                                   child: GetBuilder<AuthController>(
                                     init: AuthController(),
                                     builder: (authController) {
-                                      final photoURL = authController.currentUser.value?.photoURL;
-                                      
+                                      final photoURL = authController
+                                          .currentUser
+                                          .value
+                                          ?.photoURL;
+
                                       return CustomContainer(
                                         height: 50,
                                         width: 50,
                                         borderRadius: BorderRadius.circular(25),
                                         child: Center(
-                                          child: photoURL != null && photoURL.isNotEmpty
+                                          child:
+                                              photoURL != null &&
+                                                  photoURL.isNotEmpty
                                               ? ClipRRect(
-                                                  borderRadius: BorderRadius.circular(25),
+                                                  borderRadius:
+                                                      BorderRadius.circular(25),
                                                   child: Image.network(
                                                     photoURL,
                                                     height: 50,
                                                     width: 50,
                                                     fit: BoxFit.cover,
-                                                    errorBuilder: (context, error, stackTrace) {
-                                                      return Image.asset(
-                                                        'assets/icons/profile.png',
-                                                        height: 50,
-                                                        width: 50,
-                                                      );
-                                                    },
+                                                    errorBuilder:
+                                                        (
+                                                          context,
+                                                          error,
+                                                          stackTrace,
+                                                        ) {
+                                                          return Image.asset(
+                                                            'assets/icons/profile.png',
+                                                            height: 50,
+                                                            width: 50,
+                                                          );
+                                                        },
                                                   ),
                                                 )
                                               : Image.asset(
@@ -170,7 +176,7 @@ class HomeScreen extends StatelessWidget {
                           availableAmount: '255.00',
                           onAddFunds: () {
                             print("Add funds tapped");
-                            Get.offAll(() => BottomNaviScreen(initialIndex: 3,));
+                            Get.offAll(() => BottomNaviScreen(initialIndex: 3));
                           },
                         ),
                         SizedBox(height: 20),
@@ -180,7 +186,6 @@ class HomeScreen extends StatelessWidget {
                   // Tasks Section
                   const TasksForYouTab(),
                   SizedBox(height: 80),
-
                 ],
               ),
             ),

@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:red_balloon_app/model/auth_model.dart';
@@ -10,6 +12,7 @@ class AuthService {
   // final FirestoreService _firestoreService = FirestoreService();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   // Collection reference
   CollectionReference get usersCollection => _firestore.collection('users');
@@ -270,5 +273,42 @@ class AuthService {
   // Stream user data
   Stream<DocumentSnapshot> streamUserData(String uid) {
     return usersCollection.doc(uid).snapshots();
+  }
+
+  // Upload profile image to Firebase Storage
+  Future<String?> uploadProfileImage(File imageFile) async {
+    try {
+      if (currentUser == null) {
+        print('User not authenticated');
+        return null;
+      }
+
+      final uid = currentUser!.uid;
+      final fileName = 'profile_${uid}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final ref = _storage.ref().child('profiles/$uid/$fileName');
+
+      await ref.putFile(imageFile);
+      final downloadUrl = await ref.getDownloadURL();
+
+      print('Profile image uploaded successfully: $downloadUrl');
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading profile image: $e');
+      return null;
+    }
+  }
+
+  // Update user profile with multiple fields
+  Future<void> updateUserProfileWithFields({
+    required String uid,
+    required Map<String, dynamic> updateData,
+  }) async {
+    try {
+      await usersCollection.doc(uid).update(updateData);
+      print('User profile updated successfully with all fields');
+    } catch (e) {
+      print('Error updating user profile: $e');
+      rethrow;
+    }
   }
 }

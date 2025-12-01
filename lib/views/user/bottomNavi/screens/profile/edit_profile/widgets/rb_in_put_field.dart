@@ -8,6 +8,9 @@ class RBInputField extends StatelessWidget {
   final Widget? prefix;
   final TextEditingController? controller;
   final bool enabled;
+  final TextInputType keyboardType;
+  final String? errorText;
+  final Function(String)? onChanged;
 
   const RBInputField({
     super.key,
@@ -16,58 +19,82 @@ class RBInputField extends StatelessWidget {
     this.controller,
     this.enabled = true,
     this.maxLines = 1,
+    this.keyboardType = TextInputType.text,
+    this.errorText,
+    this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: maxLines == 1 ? 52 : null,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: rbcolor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: bordercol,
-          width: 1,
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment:
-        maxLines == 1 ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-        children: [
-          // ---------------- PREFIX ICON ----------------
-          if (prefix != null) ...[
-            Align(
-              alignment: Alignment.centerLeft,
-              child: prefix!,
-            ),
-            const SizedBox(width: 10),
-          ],
+    final hasError = errorText != null && errorText!.isNotEmpty;
 
-          // ---------------- TEXT FIELD ----------------
-          Expanded(
-            child: TextField(
-              controller: controller,
-              enabled: enabled,
-              maxLines: maxLines,
-              style: const TextStyle(
-                color: blackColor,
-                fontSize: 16,
-              ),
-              decoration: InputDecoration(
-                isCollapsed: true, // Better alignment
-                border: InputBorder.none,
-                hintText: hint,
-                hintStyle: TextStyle(
-                  color: balanceconbgColor,
-                  fontSize: 16,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: double.infinity,
+          height: maxLines == 1 ? 52 : null,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: rbcolor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: hasError ? Colors.red : bordercol,
+              width: 1,
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment:
+            maxLines == 1 ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+            children: [
+              // ---------------- PREFIX ICON ----------------
+              if (prefix != null) ...[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: prefix!,
                 ),
+                const SizedBox(width: 10),
+              ],
+
+              // ---------------- TEXT FIELD ----------------
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  enabled: enabled,
+                  maxLines: maxLines,
+                  keyboardType: keyboardType,
+                  onChanged: onChanged,
+                  style: const TextStyle(
+                    color: blackColor,
+                    fontSize: 16,
+                  ),
+                  decoration: InputDecoration(
+                    isCollapsed: true, // Better alignment
+                    border: InputBorder.none,
+                    hintText: hint,
+                    hintStyle: TextStyle(
+                      color: balanceconbgColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Error message
+        if (hasError)
+          Padding(
+            padding: const EdgeInsets.only(top: 6, left: 8),
+            child: Text(
+              errorText!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 12,
               ),
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 }
