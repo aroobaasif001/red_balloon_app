@@ -1,10 +1,12 @@
 // import 'package:device_preview/device_preview.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/auth/view/onboarding/onboarding_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/bottom_navi_screen.dart';
 
 import 'firebase_options.dart';
 
@@ -23,13 +25,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final user = FirebaseAuth.instance.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
 
     return GetMaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: whiteColor),
       debugShowCheckedModeBanner: false,
-      // home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
-      home: OnboardingScreen(),
+      home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
+      // home: OnboardingScreen(),
     );
   }
 }

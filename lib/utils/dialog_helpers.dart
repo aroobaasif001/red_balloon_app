@@ -791,6 +791,132 @@ class DialogHelpers {
     );
   }
 
+  static void showLogoutDialog(
+    BuildContext context, {
+    required VoidCallback onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              // MAIN WHITE CARD
+              CustomContainer(
+                padding: const EdgeInsets.only(
+                  top: 90,
+                  left: 25,
+                  right: 25,
+                  bottom: 25,
+                ),
+                conColor: whiteColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.12),
+                    blurRadius: 10,
+                  ),
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // TEXT
+                    CustomText(
+                      "Are You Sure you want\nto Logout",
+                      fontSize: 16,
+                      color: blackColor,
+                      textAlign: TextAlign.center,
+                      fontWeight: FontVariant.semiBold,
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // BUTTONS ROW
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // NO BUTTON
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: fundCardBorderColor,
+                                width: 2,
+                              ),
+                              conColor: hColor.withOpacity(0.10),
+                              child: const CustomText(
+                                "No",
+                                fontSize: 12,
+                                color: redColor,
+                                fontWeight: FontVariant.regular,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        // YES BUTTON
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              onConfirm();
+                            },
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              conColor: redColor,
+                              child: const CustomText(
+                                "Yes",
+                                fontSize: 14,
+                                color: whiteColor,
+                                fontWeight: FontVariant.medium,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // 🔴 TOP CIRCLE WITH LOGOUT ICON
+              Positioned(
+                top: -70,
+                child: CustomContainer(
+                  width: 140,
+                  height: 140,
+                  conColor: redColor,
+                  shape: BoxShape.circle,
+                  child: Center(
+                    child: Image.asset(
+                      "assets/icons/logout.png",
+                      width: 55,
+                      height: 55,
+                      color: whiteColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void showReportUserSheet(BuildContext context) {
     int selectedIndex = 0;
 
