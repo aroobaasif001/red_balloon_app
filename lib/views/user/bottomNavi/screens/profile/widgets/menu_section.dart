@@ -71,7 +71,7 @@ class MenuSection extends StatelessWidget {
       },
     ),
     MenuItemData(
-      icon: 'assets/icons/messages.png',
+      icon: 'assets/icons/homemessage.png',
       label: 'Messages',
       hasArrow: true,
       onTap: () {

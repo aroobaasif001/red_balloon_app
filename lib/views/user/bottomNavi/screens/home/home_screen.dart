@@ -8,7 +8,9 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custo
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/in_app_store_screen.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 
+import '../../bottom_navi_screen.dart';
 import '../notification/notification_screen.dart';
+import '../profile/tabs/messages_screen.dart';
 import '../profile/tabs/profile_screen.dart';
 import '../task/post_new_task/post_new_task_screen.dart';
 import '../wallet/tabs/add_funds.dart';
@@ -65,6 +67,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           body: SafeArea(
+
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,6 +90,21 @@ class HomeScreen extends StatelessWidget {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+
+                                IconButton(
+                                  onPressed: () {
+                                    Get.to(() => MessagesScreen());
+                                  },
+                                  icon: Image(
+                                    image: AssetImage(
+                                      'assets/icons/homemessage.png',
+                                    ),
+
+                                    height: 24,
+                                  ),
+
+
+                                ),
                                 IconButton(
                                   onPressed: () {
                                     Get.to(() => NotificationScreen());
@@ -106,7 +124,7 @@ class HomeScreen extends StatelessWidget {
                                     init: AuthController(),
                                     builder: (authController) {
                                       final photoURL = authController.currentUser.value?.photoURL;
-                                      
+
                                       return CustomContainer(
                                         height: 50,
                                         width: 50,
@@ -152,7 +170,7 @@ class HomeScreen extends StatelessWidget {
                           availableAmount: '255.00',
                           onAddFunds: () {
                             print("Add funds tapped");
-                            Get.to(() => AddFunds());
+                            Get.offAll(() => BottomNaviScreen(initialIndex: 3,));
                           },
                         ),
                         SizedBox(height: 20),
@@ -161,6 +179,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                   // Tasks Section
                   const TasksForYouTab(),
+                  SizedBox(height: 80),
+
                 ],
               ),
             ),

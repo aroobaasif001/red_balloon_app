@@ -26,7 +26,7 @@ class ProfileCard extends StatelessWidget {
     this.avatarInitials = 'RB',
     this.userName = 'Saad Sajid',
     this.location = 'Riyadh, Saudi Arabia',
-    this.verificationLabel = 'Verified Requester',
+    this.verificationLabel = 'Verified',
     this.loyaltyPoints = 'Your Loyalty Points: 05',
     this.avatarColor,
     this.containerColor,
@@ -128,7 +128,7 @@ class ProfileCard extends StatelessWidget {
           const SizedBox(height: 13),
           // Location
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Icon(Icons.location_on, size: 19, color: redColor),
 
@@ -136,13 +136,15 @@ class ProfileCard extends StatelessWidget {
               Flexible(
                 child: CustomText(
                   location ?? 'Riyadh, Saudi Arabia',
-                  fontSize: locationFontSize ?? 14,
+                  fontSize: locationFontSize ?? 12,
                   fontWeight: FontVariant.regular,
                   color: lastTextColor,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 30),
+
 
               /// Verified Badge (fixed size)
               CustomContainer(
@@ -160,7 +162,8 @@ class ProfileCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     CustomText(
-                      verificationLabel ?? 'Verified Requester',
+                      CrossAxisAlignment: CrossAxisAlignment.end,
+                      verificationLabel ?? 'Verified',
                       fontSize: 13,
                       fontWeight: FontVariant.regular,
                       color: greenColor,
@@ -184,7 +187,7 @@ class ProfileCard extends StatelessWidget {
           const SizedBox(height: 5),
 
           CustomText(
-            'Help Task: 09',
+            'Helped Tasks: 09',
             fontSize: 12,
             fontWeight: FontVariant.medium,
             color: grey4Color,

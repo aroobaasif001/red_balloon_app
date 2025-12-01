@@ -47,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
                   avatarInitials: 'RB',
                   userName: 'Saad Sajid',
                   location: 'Riyadh, Saudi Arabia',
-                  verificationLabel: 'Verified Requester',
+                  verificationLabel: 'Verified',
                   loyaltyPoints: 'Your Loyalty Points: 05',
                   avatarColor: redColor,
                   containerColor: white2Color,
