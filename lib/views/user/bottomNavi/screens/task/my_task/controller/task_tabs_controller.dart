@@ -13,7 +13,7 @@ class TaskTabsController extends GetxController
     super.onInit();
 
     // 4 tabs
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
 
     // Sync Flutter TabController → GetX variable
     tabController.addListener(() {

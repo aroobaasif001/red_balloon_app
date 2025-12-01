@@ -95,28 +95,28 @@ class Cleanmysolarpanels extends StatelessWidget {
                   fontSize: 16,
                   fontWeight: FontVariant.semiBold,
                 ),
-                CustomContainer(
-                  height: 35,
-                  conColor: bordercolor1,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: blackColor.withOpacity(0.25),
-                      offset: Offset(0, 4),
-                      blurRadius: 4,
-                      spreadRadius: 0,
-                    ),
-                  ],
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: CustomText(
-                        taskType ?? '',
-                        color: walletGrey600Color,
-                      ),
-                    ),
-                  ),
-                ),
+                // CustomContainer(
+                //   height: 35,
+                //   conColor: bordercolor1,
+                //   borderRadius: BorderRadius.circular(15),
+                //   boxShadow: [
+                //     BoxShadow(
+                //       color: blackColor.withOpacity(0.25),
+                //       offset: Offset(0, 4),
+                //       blurRadius: 4,
+                //       spreadRadius: 0,
+                //     ),
+                //   ],
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(8.0),
+                //     child: Center(
+                //       child: CustomText(
+                //         taskType ?? '',
+                //         color: walletGrey600Color,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
             const SizedBox(height: 18),

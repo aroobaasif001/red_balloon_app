@@ -25,7 +25,7 @@ class AllTaskTab extends StatelessWidget {
             status: "Not accepted",
             postedTime: "2 hours ago",
             image: "assets/images/sofa.png",
-            type: 'Offline Task',
+            // type: 'Offline Task',
             onEdit: () {
               Get.to(() => PostNewTaskScreen());
             },
@@ -44,7 +44,7 @@ class AllTaskTab extends StatelessWidget {
           CustomMyTaskCard(
             title: "Help needed move furniture",
             amount: "SAR 500",
-            type: 'Offline Task',
+            // type: 'Offline Task',
 
             status: "Not accepted",
             postedTime: "2 hours ago",

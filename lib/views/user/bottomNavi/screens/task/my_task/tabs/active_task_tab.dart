@@ -16,14 +16,14 @@ class ActiveTasksTab extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 15.0),
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: CustomText(
-                'My Tasks',
-                fontSize: 22,
-                fontWeight: FontVariant.bold,
-              ),
-            ),
+            // child: Align(
+            //   alignment: Alignment.bottomLeft,
+            //   child: CustomText(
+            //     'My Tasks',
+            //     fontSize: 22,
+            //     fontWeight: FontVariant.bold,
+            //   ),
+            // ),
           ),
           SizedBox(height: 15),
           ListView.builder(
@@ -40,7 +40,7 @@ class ActiveTasksTab extends StatelessWidget {
                   status: "Not accepted",
                   postedTime: "Posted 2 hours ago",
                   image: "assets/images/sofa.png",
-                  type: 'Offline Task',
+
                   showType: false,
                   showButton: true,
                   btnText: 'In Progress',

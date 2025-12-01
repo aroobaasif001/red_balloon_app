@@ -29,37 +29,15 @@ class StatsGrid extends StatelessWidget {
             Expanded(
               child: StatCard(
                 number: postedCount ?? '12',
-                label: 'Posted',
-              ),
-            ),
-            SizedBox(width: spacing ?? 12),
-            Expanded(
-              child: StatCard(
-                number: pendingCount ?? '09',
-                label: 'Pending',
+                label: 'Eltie Tasker',
+
+                iconPath: 'assets/icons/badge.png',
               ),
             ),
           ],
         ),
         SizedBox(height: verticalSpacing ?? 12),
         // Second Row
-        Row(
-          children: [
-            Expanded(
-              child: StatCard(
-                number: completedCount ?? '03',
-                label: 'Completed',
-              ),
-            ),
-            SizedBox(width: spacing ?? 12),
-            Expanded(
-              child: StatCard(
-                number: ratingValue ?? '4.8',
-                label: 'Rating',
-              ),
-            ),
-          ],
-        ),
       ],
     );
   }
