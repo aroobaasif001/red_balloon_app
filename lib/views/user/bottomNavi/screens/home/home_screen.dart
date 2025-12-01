@@ -6,6 +6,7 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/home/tabs/tasks_fo
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_bonus_slider.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_wallet_card.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/in_app_store_screen.dart';
+import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 
 import '../notification/notification_screen.dart';
 import '../profile/tabs/profile_screen.dart';
@@ -101,18 +102,41 @@ class HomeScreen extends StatelessWidget {
                                   onTap: () {
                                     Get.to(() => ProfileScreen());
                                   },
-                                  child: CustomContainer(
-                                    height: 50,
-                                    width: 50,
-                                    child: Center(
-                                      child: Image(
-                                        image: AssetImage(
-                                          'assets/icons/profile.png',
-                                        ),
+                                  child: GetBuilder<AuthController>(
+                                    init: AuthController(),
+                                    builder: (authController) {
+                                      final photoURL = authController.currentUser.value?.photoURL;
+                                      
+                                      return CustomContainer(
                                         height: 50,
                                         width: 50,
-                                      ),
-                                    ),
+                                        borderRadius: BorderRadius.circular(25),
+                                        child: Center(
+                                          child: photoURL != null && photoURL.isNotEmpty
+                                              ? ClipRRect(
+                                                  borderRadius: BorderRadius.circular(25),
+                                                  child: Image.network(
+                                                    photoURL,
+                                                    height: 50,
+                                                    width: 50,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context, error, stackTrace) {
+                                                      return Image.asset(
+                                                        'assets/icons/profile.png',
+                                                        height: 50,
+                                                        width: 50,
+                                                      );
+                                                    },
+                                                  ),
+                                                )
+                                              : Image.asset(
+                                                  'assets/icons/profile.png',
+                                                  height: 50,
+                                                  width: 50,
+                                                ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],

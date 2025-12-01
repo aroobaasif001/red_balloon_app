@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/utils/dialog_helpers.dart';
 
 import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../auth/view/onboarding/onboarding_screen.dart';
@@ -69,10 +72,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                StatsGrid(
-                  postedCount: '500',
-
-                ),
+                StatsGrid(postedCount: '500'),
                 const SizedBox(height: 20),
 
                 // Menu Section
@@ -99,7 +99,14 @@ class ProfileScreen extends StatelessWidget {
                     // Handle help center tap
                   },
                   onLogoutTap: () {
-                    Get.offAll(() => OnboardingScreen());
+                    DialogHelpers.showLogoutDialog(
+                      context,
+                      onConfirm: () async {
+                        await FirebaseAuth.instance.signOut();
+                        await GoogleSignIn().signOut();
+                        Get.offAll(() => OnboardingScreen());
+                      },
+                    );
                   },
                 ),
                 const SizedBox(height: 20),
