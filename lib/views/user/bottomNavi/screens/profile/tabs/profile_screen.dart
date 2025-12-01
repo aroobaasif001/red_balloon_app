@@ -91,44 +91,42 @@ class ProfileScreen extends StatelessWidget {
                     StatsGrid(postedCount: '500'),
                     const SizedBox(height: 20),
 
-                    // Menu Section
-                    MenuSection(
-                      containerColor: white2Color,
-                      shadowColor: walletBlackColor,
-                      shadowOpacity: 0.25,
-                      shadowBlur: 4,
-                      dividerColor: walletCardBorderColor,
-                    ),
-                    const SizedBox(height: 20),
+                // Menu Section
+                MenuSection(
+                  containerColor: white2Color,
+                  shadowColor: walletBlackColor,
+                  shadowOpacity: 0.25,
+                  shadowBlur: 4,
+                  dividerColor: walletCardBorderColor,
+                ),
+                const SizedBox(height: 20),
 
-                    // Help Section
-                    HelpSection(
-                      helpText: 'Need help? ',
-                      helpLinkText: 'Visit Help Center',
-                      logoutButtonLabel: 'Logout',
-                      helpTextColor: blackColor,
-                      helpLinkColor: redColor,
-                      helpTextFontSize: 13,
-                      helpLinkFontSize: 13,
-                      spacingBeforeButton: 16,
-                      onHelpTap: () {
-                        // Handle help center tap
+                // Help Section
+                HelpSection(
+                  helpText: 'Need help? ',
+                  helpLinkText: 'Visit Help Center',
+                  logoutButtonLabel: 'Logout',
+                  helpTextColor: blackColor,
+                  helpLinkColor: redColor,
+                  helpTextFontSize: 13,
+                  helpLinkFontSize: 13,
+                  spacingBeforeButton: 16,
+                  onHelpTap: () {
+                    // Handle help center tap
+                  },
+                  onLogoutTap: () {
+                    DialogHelpers.showLogoutDialog(
+                      context,
+                      onConfirm: () async {
+                        await FirebaseAuth.instance.signOut();
+                        await GoogleSignIn().signOut();
+                        Get.offAll(() => OnboardingScreen());
                       },
-                      onLogoutTap: () {
-                        DialogHelpers.showLogoutDialog(
-                          context,
-                          onConfirm: () async {
-                            await FirebaseAuth.instance.signOut();
-                            await GoogleSignIn().signOut();
-                            Get.offAll(() => OnboardingScreen());
-                          },
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                );
-              },
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
         ),

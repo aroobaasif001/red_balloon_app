@@ -135,7 +135,7 @@ class PostNewTaskScreen extends StatelessWidget {
               CustomTextField(
                 controller: controller.taskBudget, // ADD THIS
                 labelIcon: 'assets/icons/hugeicons_coins-yen.png',
-                label: 'Budget',
+                label: 'Task Budget',
                 prefixWidget: CustomText(
                   'SAR',
                   fontSize: 13,

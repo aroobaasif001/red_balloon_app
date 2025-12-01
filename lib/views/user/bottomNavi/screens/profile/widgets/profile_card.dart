@@ -28,7 +28,7 @@ class ProfileCard extends StatelessWidget {
     this.photoURL,
     this.userName = 'Saad Sajid',
     this.location = 'Riyadh, Saudi Arabia',
-    this.verificationLabel = 'Verified Requester',
+    this.verificationLabel = 'Verified',
     this.loyaltyPoints = 'Your Loyalty Points: 05',
     this.avatarColor,
     this.containerColor,
@@ -129,7 +129,7 @@ class ProfileCard extends StatelessWidget {
 
           // Name
           CustomText(
-            userName ?? 'Zernosh Haider',
+            userName ?? 'Saad Sajid',
             fontSize: namefontSize ?? 22,
             fontWeight: FontVariant.bold,
             color: textColor2,
@@ -147,24 +147,32 @@ class ProfileCard extends StatelessWidget {
           ),
           const SizedBox(height: 13),
           // Location
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(Icons.location_on, size: 19, color: redColor),
+              /// LOCATION ROW
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.location_on, size: 19, color: redColor),
 
-              /// Make ONLY text flexible
-              Flexible(
-                child: CustomText(
-                  location ?? 'Riyadh, Saudi Arabia',
-                  fontSize: locationFontSize ?? 14,
-                  fontWeight: FontVariant.regular,
-                  color: lastTextColor,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                  /// Make ONLY text flexible
+                  Flexible(
+                    child: CustomText(
+                      location ?? 'Riyadh, Saudi Arabia',
+                      fontSize: locationFontSize ?? 12,
+                      fontWeight: FontVariant.regular,
+                      color: lastTextColor,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
 
-              /// Verified Badge (fixed size)
+              const SizedBox(height: 8),
+
+              /// VERIFIED BADGE (full row or left aligned)
               CustomContainer(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 conColor: white3Color,
@@ -180,7 +188,7 @@ class ProfileCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     CustomText(
-                      verificationLabel ?? 'Verified Requester',
+                      verificationLabel ?? 'Verified',
                       fontSize: 13,
                       fontWeight: FontVariant.regular,
                       color: greenColor,
@@ -190,6 +198,7 @@ class ProfileCard extends StatelessWidget {
               ),
             ],
           ),
+
 
 
           const SizedBox(height: 12),
@@ -204,7 +213,7 @@ class ProfileCard extends StatelessWidget {
           const SizedBox(height: 5),
 
           CustomText(
-            'Help Task: 09',
+            'Helped Tasks: 09',
             fontSize: 12,
             fontWeight: FontVariant.medium,
             color: grey4Color,
