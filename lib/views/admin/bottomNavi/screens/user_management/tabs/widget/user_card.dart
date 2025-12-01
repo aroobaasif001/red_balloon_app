@@ -40,12 +40,13 @@ class UserCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: whiteColor,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: bordercolor1),
         boxShadow: [
           BoxShadow(
-            color: blackColor.withOpacity(0.25),
-            blurRadius: 4,
-            spreadRadius: 0,
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 1,
             offset: const Offset(0, 4),
+            spreadRadius: 0,
           ),
         ],
       ),

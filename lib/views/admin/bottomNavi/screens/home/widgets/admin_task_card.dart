@@ -18,10 +18,10 @@ Widget adminTaskCard(
     borderRadius: BorderRadius.circular(16),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.05),
-        blurRadius: 2,
+        color: Colors.black.withOpacity(0.25),
+        blurRadius: 1,
         spreadRadius: 0,
-        offset: const Offset(0, 1),
+        offset: const Offset(0, 4),
       ),
     ],
     child: Column(
@@ -34,6 +34,7 @@ Widget adminTaskCard(
               height: 48,
               width: 48,
               borderRadius: BorderRadius.circular(12),
+
               conColor: pinkColor,
               child: Center(
                 child: Image.asset(

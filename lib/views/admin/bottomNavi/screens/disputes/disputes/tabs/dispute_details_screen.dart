@@ -33,10 +33,11 @@ class DisputeDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       borderRadius: BorderRadius.circular(16),
                       conColor: whiteColor,
+                      border: Border.all(color: bordercolor1),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.20),
-                          blurRadius: 3,
+                          color: Colors.black.withOpacity(0.25),
+                          blurRadius: 1,
                           offset: const Offset(0, 4),
                         )
                       ],
@@ -121,11 +122,13 @@ class DisputeDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       borderRadius: BorderRadius.circular(16),
                       conColor: whiteColor,
+                      border: Border.all(color: bordercolor1),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.20),
-                          blurRadius: 3,
+                          color: Colors.black.withOpacity(0.25),
+                          blurRadius: 1,
                           offset: const Offset(0, 4),
+                          spreadRadius: 0,
                         )
                       ],
                       child: Column(
@@ -143,10 +146,10 @@ class DisputeDetailsScreen extends StatelessWidget {
                               CustomContainer(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 6),
-                                  conColor: rdBgColor,
+                                  conColor: greenBg,
                                   borderRadius: BorderRadius.circular(20),
                                 child: CustomText(
-                                  "Verified Requester",
+                                  "Verified",
                                   fontSize: 12,
                                   color: redColor,
                                 ),
@@ -195,10 +198,11 @@ class DisputeDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       borderRadius: BorderRadius.circular(16),
                       conColor: whiteColor,
+                      border: Border.all(color: bordercolor1),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.20),
-                          blurRadius: 3,
+                          color: Colors.black.withOpacity(0.25),
+                          blurRadius: 1,
                           offset: const Offset(0, 4),
                         )
                       ],
@@ -305,10 +309,11 @@ class DisputeDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       borderRadius: BorderRadius.circular(16),
                       conColor: whiteColor,
+                      border: Border.all(color: bordercolor1),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.20),
-                          blurRadius: 3,
+                          color: Colors.black.withOpacity(0.25),
+                          blurRadius: 1,
                           offset: const Offset(0, 4),
                         )
                       ],

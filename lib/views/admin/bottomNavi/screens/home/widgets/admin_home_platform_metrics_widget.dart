@@ -19,17 +19,19 @@ class admin_home_platform_metrics_widget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: CustomContainer(
+
         padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
         // height: 136,
         width: double.infinity,
         conColor: whiteColor,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: blackColor.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
-            color: blackColor.withOpacity(0.05),
-            offset: Offset(0, 1),
+            color: blackColor.withOpacity(0.25),
+            offset: Offset(0, 4),
             spreadRadius: 0,
-            blurRadius: 2,
+            blurRadius: 1,
           ),
         ],
         child: Column(

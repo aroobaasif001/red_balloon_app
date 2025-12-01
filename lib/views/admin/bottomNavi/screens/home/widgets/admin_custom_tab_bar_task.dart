@@ -24,11 +24,12 @@ class AdminCustomTabBarTask extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       margin: const EdgeInsets.symmetric(horizontal: 10),
       conColor: whiteColor,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: blackColor.withOpacity(0.1)),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.25),
-          blurRadius: 4,
+          blurRadius: 1,
           offset: const Offset(0, 4),
           spreadRadius: 0,
         ),

@@ -31,8 +31,8 @@ class TaskItemCard extends StatelessWidget {
       conColor: whiteColor,
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.20),
-          blurRadius: 3,
+          color: Colors.black.withOpacity(0.25),
+          blurRadius: 1,
           offset: const Offset(0, 4),
         ),
       ],
@@ -112,26 +112,26 @@ class TaskItemCard extends StatelessWidget {
             children: [
 
               /// Offline Task Badge
-              CustomContainer(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 8,
-                ),
-                borderRadius: BorderRadius.circular(30),
-                conColor: conBgColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.20),
-                    blurRadius: 3,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-                child: const CustomText(
-                  "Offline Task",
-                  fontSize: 13,
-                  color: walletTextGreyColor,
-                ),
-              ),
+              // CustomContainer(
+              //   padding: const EdgeInsets.symmetric(
+              //     horizontal: 18,
+              //     vertical: 8,
+              //   ),
+              //   borderRadius: BorderRadius.circular(30),
+              //   conColor: conBgColor,
+              //   boxShadow: [
+              //     BoxShadow(
+              //       color: Colors.black.withOpacity(0.20),
+              //       blurRadius: 3,
+              //       offset: const Offset(0, 2),
+              //     ),
+              //   ],
+              //   child: const CustomText(
+              //     "Offline Task",
+              //     fontSize: 13,
+              //     color: walletTextGreyColor,
+              //   ),
+              // ),
 
               const Spacer(),
 

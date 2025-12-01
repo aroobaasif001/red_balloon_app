@@ -19,10 +19,11 @@ Widget adminSummaryCard(
       padding: const EdgeInsets.all(14),
       conColor: white2Color,
       borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: blackColor.withOpacity(0.1)),
       boxShadow: [
         BoxShadow(
           color: blackColor.withOpacity(0.25),
-          blurRadius: 2.8,
+          blurRadius: 1,
           spreadRadius: 0,
           offset: const Offset(0, 4),
         ),

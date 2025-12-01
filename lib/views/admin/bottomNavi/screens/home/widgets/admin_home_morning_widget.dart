@@ -19,14 +19,14 @@ class admin_home_morning_widget extends StatelessWidget {
       width: double.infinity,
       height: 152,
       conColor: redColor,
-      borderRadius: BorderRadius.circular(15),
+      borderRadius: BorderRadius.circular(16),
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 25),
       boxShadow: [
         BoxShadow(
           spreadRadius: 0,
           offset: Offset(0, 4),
-          blurRadius: 4,
-          color: blackColor.withOpacity(0.1),
+          blurRadius: 1,
+          color: blackColor.withOpacity(0.25),
         ),
       ],
       child: Column(

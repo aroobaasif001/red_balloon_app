@@ -21,12 +21,13 @@ class ProfileHeaderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
+
       child: CustomContainer(
         boxShadow: [
           BoxShadow(
             offset: Offset(0, 4),
             spreadRadius: 0,
-            blurRadius: 4,
+            blurRadius: 1,
             color: blackColor.withOpacity(0.25),
           ),
         ],

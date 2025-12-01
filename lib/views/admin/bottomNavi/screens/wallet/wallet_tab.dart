@@ -26,6 +26,7 @@ class AdminWalletTab extends StatelessWidget {
           width: double.infinity,
           height: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+
           child: Column(
             children: [
               Expanded(
