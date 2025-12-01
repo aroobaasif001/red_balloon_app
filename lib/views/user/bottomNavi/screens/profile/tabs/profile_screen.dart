@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
+import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../auth/view/onboarding/onboarding_screen.dart';
 import '../edit_profile/edit_profile_screen.dart';
 import '../widgets/help_section.dart';
@@ -58,15 +59,19 @@ class ProfileScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 20),
-
-                // Stats Grid
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: CustomText(
+                    'User Badges',
+                    fontSize: 16,
+                    fontWeight: FontVariant.bold,
+                    color: textColor2,
+                  ),
+                ),
+                const SizedBox(height: 10),
                 StatsGrid(
-                  postedCount: '12',
-                  pendingCount: '09',
-                  completedCount: '03',
-                  ratingValue: '4.8',
-                  spacing: 12,
-                  verticalSpacing: 12,
+                  postedCount: '500',
+
                 ),
                 const SizedBox(height: 20),
 

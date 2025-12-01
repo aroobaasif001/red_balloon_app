@@ -12,7 +12,7 @@ class CustomMyTaskCard extends StatelessWidget {
   final String postedTime;
   final String image;
   final String distance;
-  final String type;
+  // final String type;
 
   final String? btnText;
   final VoidCallback? onEdit;
@@ -33,7 +33,7 @@ class CustomMyTaskCard extends StatelessWidget {
     this.onViewDetails,
     this.showButton = false, // default -> hidden
     this.distance = '2.5 km away',
-    this.type = 'Location-based Task',
+    // this.type = 'Location-based Task',
     this.showType = true,
     this.buttonText = 'View Details',
   });
@@ -104,37 +104,37 @@ class CustomMyTaskCard extends StatelessWidget {
                       ],
                     ),
 
-                    if (showType == false) ...[
-                      SizedBox(height: 9),
-                      CustomContainer(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: blackColor.withOpacity(0.25),
-                            offset: const Offset(0, 4),
-                            blurRadius: 4,
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(12),
-                        conColor: white2Color,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomText(
-                              type,
-                              fontWeight: FontVariant.regular,
-                              fontSize: 14,
-                              color: walletGrey500Color,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                    ],
+                    // if (showType == false) ...[
+                    //   SizedBox(height: 9),
+                    //   CustomContainer(
+                    //     padding: const EdgeInsets.symmetric(
+                    //       horizontal: 14,
+                    //       vertical: 8,
+                    //     ),
+                    //     boxShadow: [
+                    //       BoxShadow(
+                    //         color: blackColor.withOpacity(0.25),
+                    //         offset: const Offset(0, 4),
+                    //         blurRadius: 4,
+                    //       ),
+                    //     ],
+                    //     borderRadius: BorderRadius.circular(12),
+                    //     conColor: white2Color,
+                    //     child: Row(
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       mainAxisAlignment: MainAxisAlignment.center,
+                    //       children: [
+                    //         // CustomText(
+                    //         //   // type,
+                    //         //   fontWeight: FontVariant.regular,
+                    //         //   fontSize: 14,
+                    //         //   color: walletGrey500Color,
+                    //         // ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    //   SizedBox(height: 8),
+                    // ],
                   ],
                 ),
               ),
@@ -174,12 +174,12 @@ class CustomMyTaskCard extends StatelessWidget {
                       conColor: white2Color,
                       child: Row(
                         children: [
-                          CustomText(
-                            type,
-                            fontWeight: FontVariant.regular,
-                            fontSize: 14,
-                            color: walletGrey500Color,
-                          ),
+                          // CustomText(
+                          //   type,
+                          //   fontWeight: FontVariant.regular,
+                          //   fontSize: 14,
+                          //   color: walletGrey500Color,
+                          // ),
                         ],
                       ),
                     ),

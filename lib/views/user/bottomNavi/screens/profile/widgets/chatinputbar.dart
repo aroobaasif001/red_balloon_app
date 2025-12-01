@@ -31,7 +31,7 @@ class ChatInputBar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               borderRadius: BorderRadius.circular(40),
               border: Border.all(
-                color: whiteLiteColor,
+                color: Color(0xffE0E0E0),
                 width: 1,
               ),
               child: const TextField(

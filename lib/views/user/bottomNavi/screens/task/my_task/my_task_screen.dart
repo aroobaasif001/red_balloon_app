@@ -39,22 +39,22 @@ class MyTaskScreen extends StatelessWidget {
         ),
         body: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Obx(
                 () => CustomTabBarTask(
                   selectedIndex: controller
                       .selectedTab
                       .value, // ← your GetX or state variable
-                  onAllTasksTap: () => controller.changeTab(0),
-                  onPostedByMeTap: () => controller.changeTab(1),
-                  onInProgressTap: () => controller.changeTab(2),
+                  onPostedByMeTap: () => controller.changeTab(0),
+                  onInProgressTap: () => controller.changeTab(1),
                 ),
               ),
               SizedBox(height: 35),
               Expanded(
                 child: TabBarView(
                   controller: controller.tabController,
-                  children: [AllTaskTab(), ActiveTasksTab(), HistoryTab()],
+                  children: [ActiveTasksTab(), HistoryTab()],
                 ),
               ),
             ],

@@ -45,7 +45,7 @@ class RBPhoneField extends StatelessWidget {
                 CustomText(
                   countryCode,
 
-                  fontSize: 10,
+                  fontSize: 12,
                   fontWeight: FontVariant.regular,
                   color: blackColor,
                 ),
@@ -60,7 +60,7 @@ class RBPhoneField extends StatelessWidget {
             child: TextField(
               controller: controller,
               keyboardType: TextInputType.phone,
-              style: const TextStyle(fontSize: 16, color: blackColor),
+              style: const TextStyle(fontSize: 15, color: blackLightColor),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 isCollapsed: true,

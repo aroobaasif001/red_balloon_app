@@ -114,55 +114,87 @@ class ProfileCard extends StatelessWidget {
             fontWeight: FontVariant.bold,
             color: textColor2,
           ),
-          const SizedBox(height: 4),
-
+          const SizedBox(height: 12),
+          CustomText('Rating',
+          fontSize: 16,
+            fontWeight: FontVariant.bold,
+            color: textColor2,
+          ),
+          CustomText('(4.9)',
+            fontSize: 16,
+            fontWeight: FontVariant.bold,
+            color: textColor2,
+          ),
+          const SizedBox(height: 13),
           // Location
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.location_on, size: 19, color: redColor),
-              const SizedBox(width: 4),
-              CustomText(
-                location ?? 'Riyadh, Saudi Arabia',
-                fontSize: locationFontSize ?? 14,
-                fontWeight: FontVariant.regular,
-                color: lastTextColor,
+
+              /// Make ONLY text flexible
+              Flexible(
+                child: CustomText(
+                  location ?? 'Riyadh, Saudi Arabia',
+                  fontSize: locationFontSize ?? 14,
+                  fontWeight: FontVariant.regular,
+                  color: lastTextColor,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+              /// Verified Badge (fixed size)
+              CustomContainer(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                conColor: white3Color,
+                borderRadius: BorderRadius.circular(16),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/icons/check_2.png',
+                      height: 20,
+                      width: 20,
+                      color: red2Color,
+                    ),
+                    const SizedBox(width: 6),
+                    CustomText(
+                      verificationLabel ?? 'Verified Requester',
+                      fontSize: 13,
+                      fontWeight: FontVariant.regular,
+                      color: greenColor,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
 
-          // Verified Badge
-          CustomContainer(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            conColor: white3Color,
-            borderRadius: BorderRadius.circular(16),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  'assets/icons/check_2.png',
-                  height: 24,
-                  width: 24,
-                  color: red2Color,
-                ),
-                const SizedBox(width: 6),
-                CustomText(
-                  verificationLabel ?? 'Verified Requester',
-                  fontSize: 13,
-                  fontWeight: FontVariant.regular,
-                  color: greenColor,
-                ),
-              ],
-            ),
-          ),
+
           const SizedBox(height: 12),
 
           // Loyalty Points
           CustomText(
+            'Posted: 09',
+            fontSize: 12,
+            fontWeight: FontVariant.medium,
+            color: grey4Color,
+          ),
+          const SizedBox(height: 5),
+
+          CustomText(
+            'Help Task: 09',
+            fontSize: 12,
+            fontWeight: FontVariant.medium,
+            color: grey4Color,
+          ),
+          const SizedBox(height: 5),
+
+          CustomText(
             loyaltyPoints ?? 'Your Loyalty Points: 05',
             fontSize: 12,
-            fontWeight: FontVariant.regular,
+            fontWeight: FontVariant.medium,
             color: grey4Color,
           ),
         ],

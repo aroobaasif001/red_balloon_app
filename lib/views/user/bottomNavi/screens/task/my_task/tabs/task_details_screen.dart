@@ -99,31 +99,31 @@ class TaskDetailsScreen extends StatelessWidget {
                             color: redColor,
                           ),
                           Spacer(),
-                          CustomContainer(
-                            conColor: white2Color,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 7,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.20),
-                                blurRadius: 4,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                            child: Row(
-                              children: [
-                                CustomText(
-                                  "Offline Task",
-                                  fontSize: 13,
-                                  color: timeColor,
-                                  fontWeight: FontVariant.regular,
-                                ),
-                              ],
-                            ),
-                          ),
+                          // CustomContainer(
+                          //   conColor: white2Color,
+                          //   padding: const EdgeInsets.symmetric(
+                          //     horizontal: 14,
+                          //     vertical: 7,
+                          //   ),
+                          //   borderRadius: BorderRadius.circular(10),
+                          //   boxShadow: [
+                          //     BoxShadow(
+                          //       color: Colors.black.withOpacity(0.20),
+                          //       blurRadius: 4,
+                          //       offset: const Offset(0, 4),
+                          //     ),
+                          //   ],
+                          //   child: Row(
+                          //     children: [
+                          //       CustomText(
+                          //         "Offline Task",
+                          //         fontSize: 13,
+                          //         color: timeColor,
+                          //         fontWeight: FontVariant.regular,
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                         ],
                       ),
                       const SizedBox(height: 25),
