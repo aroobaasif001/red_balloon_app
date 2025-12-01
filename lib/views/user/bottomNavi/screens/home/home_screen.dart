@@ -23,6 +23,9 @@ class HomeScreen extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           floatingActionButton: CustomContainer(
+            height: 300,
+            width: 100,
+            borderRadius: BorderRadius.circular(50),
             padding: EdgeInsets.only(bottom: 80),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -80,7 +83,6 @@ class HomeScreen extends StatelessWidget {
                               ),
                               height: 84,
                             ),
-                            // Spacer(),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -95,15 +97,22 @@ class HomeScreen extends StatelessWidget {
                                     height: 24,
                                   ),
                                 ),
-                                IconButton(
-                                  onPressed: () {
+                                InkWell(
+                                  onTap: () {
                                     Get.to(() => ProfileScreen());
                                   },
-                                  icon: Image(
-                                    image: AssetImage(
-                                      'assets/icons/profile.png',
-                                    ),
+                                  child: CustomContainer(
                                     height: 50,
+                                    width: 50,
+                                    child: Center(
+                                      child: Image(
+                                        image: AssetImage(
+                                          'assets/icons/profile.png',
+                                        ),
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
