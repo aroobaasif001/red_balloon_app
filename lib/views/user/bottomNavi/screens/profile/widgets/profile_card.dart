@@ -5,6 +5,7 @@ import 'package:red_balloon_app/utils/colors.dart';
 
 class ProfileCard extends StatelessWidget {
   final String? avatarInitials;
+  final String? photoURL;
   final String? userName;
   final String? location;
   final String? verificationLabel;
@@ -24,6 +25,7 @@ class ProfileCard extends StatelessWidget {
   const ProfileCard({
     super.key,
     this.avatarInitials = 'RB',
+    this.photoURL,
     this.userName = 'Saad Sajid',
     this.location = 'Riyadh, Saudi Arabia',
     this.verificationLabel = 'Verified Requester',
@@ -70,12 +72,30 @@ class ProfileCard extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Center(
-                  child: CustomText(
-                    avatarInitials ?? 'RB',
-                    fontSize: (avatarSize ?? 100) * 0.4,
-                    fontWeight: FontVariant.bold,
-                    color: whiteColor,
-                  ),
+                  child: photoURL != null && photoURL!.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(avatarSize ?? 100),
+                          child: Image.network(
+                            photoURL!,
+                            width: avatarSize,
+                            height: avatarSize,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return CustomText(
+                                avatarInitials ?? 'RB',
+                                fontSize: (avatarSize ?? 100) * 0.4,
+                                fontWeight: FontVariant.bold,
+                                color: whiteColor,
+                              );
+                            },
+                          ),
+                        )
+                      : CustomText(
+                          avatarInitials ?? 'RB',
+                          fontSize: (avatarSize ?? 100) * 0.4,
+                          fontWeight: FontVariant.bold,
+                          color: whiteColor,
+                        ),
                 ),
               ),
               GestureDetector(

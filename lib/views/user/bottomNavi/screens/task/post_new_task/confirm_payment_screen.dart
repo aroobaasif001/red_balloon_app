@@ -7,6 +7,7 @@ import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/utils/dialog_helpers.dart';
 
 import '../../../bottom_navi_screen.dart';
+import 'controller/post_new_task_controller.dart';
 
 class ConfirmPaymentScreen extends StatelessWidget {
   const ConfirmPaymentScreen({super.key});
@@ -165,28 +166,54 @@ class ConfirmPaymentScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 55),
-            CustomButton(
-              width: MediaQuery.of(context).size.width * 0.7,
-              leading: Image(
-                image: AssetImage('assets/icons/lock.png'),
-                height: 26,
-              ),
-              label: 'Confirm & Lock Funds',
-              onPressed: () {
-                DialogHelpers.showPaymentSuccessDialog(
-                  context: context,
-                  // barrierDismissible: true,
-                  message:
-                      'Your Payment has been\nlocked in escrow successfully',
-                  showButton: true,
-                  onButtonTap: () {
-                    Get.offAll(() => BottomNaviScreen());
-                    DialogHelpers.showPaymentSuccessDialog(
-                      showButton: false,
-                      context: context,
-                      message: 'Your Task was posted\nsuccessfully!',
-                    );
-                  },
+            GetBuilder<PostNewTaskController>(
+              builder: (controller) {
+                return Obx(
+                  () => CustomButton(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    leading: controller.isLoading.value
+                        ? SizedBox(
+                            width: 26,
+                            height: 26,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                            ),
+                          )
+                        : Image(
+                            image: AssetImage('assets/icons/lock.png'),
+                            height: 26,
+                          ),
+                    label: controller.isLoading.value ? 'Processing...' : 'Confirm & Lock Funds',
+                    onPressed: controller.isLoading.value
+                        ? null
+                        : () async {
+                            final success = await controller.submitTask();
+
+                            if (success) {
+                              DialogHelpers.showPaymentSuccessDialog(
+                                context: context,
+                                message:
+                                    'Your Payment has been\nlocked in escrow successfully',
+                                showButton: true,
+                                onButtonTap: () {
+                                  Get.offAll(() => BottomNaviScreen());
+                                  DialogHelpers.showPaymentSuccessDialog(
+                                    showButton: false,
+                                    context: context,
+                                    message: 'Your Task was posted\nsuccessfully!',
+                                  );
+                                },
+                              );
+                            } else {
+                              Get.snackbar(
+                                'Error',
+                                'Failed to submit task. Please try again.',
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                            }
+                          },
+                  ),
                 );
               },
             ),
@@ -204,7 +231,7 @@ class ConfirmPaymentScreen extends StatelessWidget {
                   0,
                 ), // FULL WIDTH
               ),
-              onPressed: () {},
+              onPressed: () => Get.back(),
               child: CustomText(
                 'Go Back',
                 fontSize: 20,

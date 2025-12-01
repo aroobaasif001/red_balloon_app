@@ -1,0 +1,56 @@
+class TaskModel {
+  final String? id;
+  final String uid;
+  final String taskType;
+  final String title;
+  final String description;
+  final double budget;
+  final String? location;
+  final String? imageUrl;
+  final DateTime createdAt;
+  final String status;
+
+  TaskModel({
+    this.id,
+    required this.uid,
+    required this.taskType,
+    required this.title,
+    required this.description,
+    required this.budget,
+    this.location,
+    this.imageUrl,
+    required this.createdAt,
+    this.status = 'active',
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uid': uid,
+      'taskType': taskType,
+      'title': title,
+      'description': description,
+      'budget': budget,
+      'location': location,
+      'imageUrl': imageUrl,
+      'createdAt': createdAt.toIso8601String(),
+      'status': status,
+    };
+  }
+
+  factory TaskModel.fromJson(Map<String, dynamic> json, String docId) {
+    return TaskModel(
+      id: docId,
+      uid: json['uid'] ?? '',
+      taskType: json['taskType'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      budget: (json['budget'] ?? 0).toDouble(),
+      location: json['location'],
+      imageUrl: json['imageUrl'],
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+      status: json['status'] ?? 'active',
+    );
+  }
+}

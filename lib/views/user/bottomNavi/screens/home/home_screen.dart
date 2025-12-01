@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/tabs/tasks_for_you_tab.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_bonus_slider.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_wallet_card.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/in_app_store_screen.dart';
-import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 
 import '../notification/notification_screen.dart';
 import '../profile/tabs/profile_screen.dart';
@@ -105,28 +105,39 @@ class HomeScreen extends StatelessWidget {
                                   child: GetBuilder<AuthController>(
                                     init: AuthController(),
                                     builder: (authController) {
-                                      final photoURL = authController.currentUser.value?.photoURL;
-                                      
+                                      final photoURL = authController
+                                          .currentUser
+                                          .value
+                                          ?.photoURL;
+
                                       return CustomContainer(
                                         height: 50,
                                         width: 50,
                                         borderRadius: BorderRadius.circular(25),
                                         child: Center(
-                                          child: photoURL != null && photoURL.isNotEmpty
+                                          child:
+                                              photoURL != null &&
+                                                  photoURL.isNotEmpty
                                               ? ClipRRect(
-                                                  borderRadius: BorderRadius.circular(25),
+                                                  borderRadius:
+                                                      BorderRadius.circular(25),
                                                   child: Image.network(
                                                     photoURL,
                                                     height: 50,
                                                     width: 50,
                                                     fit: BoxFit.cover,
-                                                    errorBuilder: (context, error, stackTrace) {
-                                                      return Image.asset(
-                                                        'assets/icons/profile.png',
-                                                        height: 50,
-                                                        width: 50,
-                                                      );
-                                                    },
+                                                    errorBuilder:
+                                                        (
+                                                          context,
+                                                          error,
+                                                          stackTrace,
+                                                        ) {
+                                                          return Image.asset(
+                                                            'assets/icons/profile.png',
+                                                            height: 50,
+                                                            width: 50,
+                                                          );
+                                                        },
                                                   ),
                                                 )
                                               : Image.asset(

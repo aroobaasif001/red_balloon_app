@@ -16,8 +16,9 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AuthController authController = Get.put(AuthController());
-
+    final AuthController authController = Get.isRegistered<AuthController>()
+        ? Get.find<AuthController>()
+        : Get.put(AuthController());
     return Scaffold(
       backgroundColor: whiteColor,
       body: Obx(
