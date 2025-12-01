@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'package:red_balloon_app/views/admin/bottomNavi/admin_bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/auth/view/onboarding/onboarding_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/home_screen.dart';
@@ -18,8 +17,8 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
-    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
-    // MyApp(),
+    // DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    MyApp(),
   );
 }
 
@@ -34,7 +33,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(scaffoldBackgroundColor: whiteColor),
       debugShowCheckedModeBanner: false,
       // home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
-      home:AdminBottomNaviScreen(),
+      home:OnboardingScreen(),
     );
   }
 }
