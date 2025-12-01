@@ -22,22 +22,26 @@ class BeforeTab extends StatelessWidget {
             height: 289,
             width: 291,
             borderRadius: BorderRadius.circular(16),
+            padding: EdgeInsets.all(15),
             conColor: whiteColor,
             alignment: Alignment.center,
             boxShadow: [
               BoxShadow(
-                color: blackColor.withOpacity(0.08),
-                blurRadius: 6,
-                offset: const Offset(0, 3),
+                color: blackColor.withOpacity(0.25),
+                blurRadius: 4,
+                spreadRadius: 0,
+                offset: const Offset(0, 4),
               ),
             ],
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset(
-                "assets/images/Rectangle 34625290 (1).png", // <-- replace with your actual image
-                height: 289,
-                width: 291,
-                fit: BoxFit.cover,
+            child: CustomContainer(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  "assets/images/Rectangle 34625290 (1).png", // <-- replace with your actual image
+                  height: 289,
+                  width: 291,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -32,8 +33,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      width: double.maxFinite,
-      padding: const EdgeInsets.all(16),
+      width: Get.width * 0.45,
       conColor: whiteColor,
       borderRadius: BorderRadius.circular(15),
       boxShadow: [
@@ -44,122 +44,115 @@ class OfflineAndOnlineCard extends StatelessWidget {
         ),
       ],
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: CustomText(
-                            title,
-                            fontSize: 18,
-                            fontWeight: FontVariant.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15.1),
+          // Image
+          CustomContainer(
+            height: 115,
+            width: Get.width * 0.45,
+            conColor: whiteColor,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: blackColor.withOpacity(0.25),
+                offset: const Offset(0, 4),
+                blurRadius: 4,
+                spreadRadius: 0,
+              ),
+            ],
+            child: Center(child: Image.asset(image)),
+          ),
 
-                    CustomText(
-                      price,
-                      fontSize: 18,
-                      fontWeight: FontVariant.bold,
-                      color: blackColor,
-                    ),
-                    const SizedBox(height: 10.1),
+          CustomContainer(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
 
-                    Row(
-                      children: [
-                        if (distance != null)
-                          CustomContainer(
-                            child: Row(
-                              children: [
-                                CustomText(
-                                  distance!,
-                                  fontSize: 12,
-                                  color: grey5Color,
-                                ),
-                              ],
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: CustomText(
+                              title,
+                              fontSize: 13,
+                              fontWeight: FontVariant.bold,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 15.1),
 
-                        if (distance != null) const SizedBox(width: 7),
-
-                        CustomContainer(
-                          child: Row(
-                            children: [
-                              CustomText(
-                                " • ${timeAgo}",
-                                fontSize: 12,
-                                color: grey5Color,
+                      FittedBox(
+                        child: Row(
+                          children: [
+                            if (distance != null)
+                              CustomContainer(
+                                child: Row(
+                                  children: [
+                                    CustomText(
+                                      distance!,
+                                      fontSize: 11,
+                                      fontWeight: FontVariant.regular,
+                                      color: grey5Color,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
+
+                            // if (distance != null) const SizedBox(width: 7),
+                            CustomContainer(
+                              child: Row(
+                                children: [
+                                  CustomText(
+                                    " • ${timeAgo}",
+                                    fontSize: 11,
+                                    fontWeight: FontVariant.regular,
+
+                                    color: grey5Color,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 10.1),
 
-                    const SizedBox(height: 15.73),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 16),
-
-              // Image
-              CustomContainer(
-                height: 80,
-                width: 80,
-                borderRadius: BorderRadius.circular(12),
-                image: DecorationImage(image: AssetImage(image)),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomContainer(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 7,
-                ),
-                conColor: white1Color,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: blackColor.withOpacity(0.15),
-                    offset: const Offset(0, 4),
-                    blurRadius: 8,
+                      CustomText(
+                        price,
+                        fontSize: 18,
+                        fontWeight: FontVariant.bold,
+                        color: blackColor,
+                      ),
+                    ],
                   ),
-                ],
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CustomText(
-                      type,
-                      fontSize: 14,
-                      fontWeight: FontVariant.regular,
-                      color: txColor,
-                    ),
-                  ],
                 ),
-              ),
+              ],
+            ),
+          ),
+          CustomContainer(
+            padding: const EdgeInsets.only(right: 16),
 
-              const SizedBox(width: 14),
-
-              CustomButton(
-                width: 107,
-                fontSize: 12,
-                height: 40,
-                label: 'View Details',
-                onPressed: onViewDetails,
-              ),
-            ],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CustomButton(
+                  width: 107,
+                  fontSize: 12,
+                  height: 40,
+                  label: 'View Details',
+                  onPressed: onViewDetails,
+                ),
+              ],
+            ),
           ),
         ],
       ),

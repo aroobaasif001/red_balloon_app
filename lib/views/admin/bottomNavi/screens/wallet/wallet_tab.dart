@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../../custom_widgets/custom_container.dart';
-import '../../../../../../custom_widgets/customtext.dart';
-import '../../../../../../utils/colors.dart';
-import '../controllers/wallet_controller.dart';
-import '../widgets/admin_build_bottom_info_bar.dart';
-import '../widgets/admin_build_filter_row.dart';
-import '../widgets/admin_build_header.dart';
-import '../widgets/admin_build_summary_row.dart';
-import '../widgets/admin_wallet_transaction_card.dart';
+import '../../../../../custom_widgets/custom_container.dart';
+import '../../../../../custom_widgets/customtext.dart';
+import '../../../../../utils/colors.dart';
+import 'controllers/wallet_controller.dart';
+import 'widgets/admin_build_bottom_info_bar.dart';
+import 'widgets/admin_build_filter_row.dart';
+import 'widgets/admin_build_header.dart';
+import 'widgets/admin_build_summary_row.dart';
+import 'widgets/admin_wallet_transaction_card.dart';
 
 class AdminWalletTab extends StatelessWidget {
   const AdminWalletTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final WalletController controller =
-        Get.put(WalletController(), permanent: false);
+    final WalletController controller = Get.put(
+      WalletController(),
+      permanent: false,
+    );
     return SafeArea(
       child: Scaffold(
         body: CustomContainer(
@@ -58,30 +60,28 @@ class AdminWalletTab extends StatelessWidget {
                         color: txColor,
                       ),
                       const SizedBox(height: 16),
-                      Obx(
-                        () {
-                          final items = controller.filteredTransactions;
-                          return Column(
-                            children: [
-                              for (int i = 0; i < items.length; i++) ...[
-                                adminWalletTransactionCard(
-                                  context,
-                                  iconPath: items[i].iconPath,
-                                  iconBg: _iconBgForType(items[i].type),
-                                  id: items[i].id,
-                                  amount: items[i].amount,
-                                  title: items[i].title,
-                                  subtitle: items[i].subtitle,
-                                  timeAgo: items[i].timeAgo,
-                                  isWithDrawal: items[i].type == 'withdrawal',
-                                ),
-                                if (i != items.length - 1)
-                                  const SizedBox(height: 12),
-                              ],
+                      Obx(() {
+                        final items = controller.filteredTransactions;
+                        return Column(
+                          children: [
+                            for (int i = 0; i < items.length; i++) ...[
+                              adminWalletTransactionCard(
+                                context,
+                                iconPath: items[i].iconPath,
+                                iconBg: _iconBgForType(items[i].type),
+                                id: items[i].id,
+                                amount: items[i].amount,
+                                title: items[i].title,
+                                subtitle: items[i].subtitle,
+                                timeAgo: items[i].timeAgo,
+                                isWithDrawal: items[i].type == 'withdrawal',
+                              ),
+                              if (i != items.length - 1)
+                                const SizedBox(height: 12),
                             ],
-                          );
-                        },
-                      ),
+                          ],
+                        );
+                      }),
                       const SizedBox(height: 80),
                     ],
                   ),

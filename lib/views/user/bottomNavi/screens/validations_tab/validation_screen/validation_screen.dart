@@ -144,7 +144,7 @@ class _ValidationScreenState extends State<ValidationScreen> {
                     conColor: whiteColor,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.35),
+                        color: blackColor.withOpacity(0.35),
                         blurRadius: 6,
                         offset: const Offset(0, 3),
                       ),
@@ -222,11 +222,11 @@ class _ValidationScreenState extends State<ValidationScreen> {
                 height: 44,
                 width: 173,
                 borderRadius: BorderRadius.circular(14),
-                conColor:beforecolor,
+                conColor: appbard,
                 padding: const EdgeInsets.all(4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: blackColor.withOpacity(0.15),
                     blurRadius: 1,
                     offset: const Offset(0, 5),
                   ),
@@ -248,7 +248,7 @@ class _ValidationScreenState extends State<ValidationScreen> {
                             fontSize: 14,
                             fontWeight: FontVariant.semiBold,
                             color: selectedTab == 0
-                                ?whiteColor
+                                ? whiteColor
                                 : walletGrey500Color,
                           ),
                         ),
@@ -270,8 +270,8 @@ class _ValidationScreenState extends State<ValidationScreen> {
                             fontSize: 14,
                             fontWeight: FontVariant.semiBold,
                             color: selectedTab == 1
-                                ?whiteColor
-                                :walletGrey500Color,
+                                ? whiteColor
+                                : walletGrey500Color,
                           ),
                         ),
                       ),

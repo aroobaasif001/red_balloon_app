@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/tabs/tasks_for_you_tab.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_bonus_slider.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_quick_actions.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_wallet_card.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/in_app_store_screen.dart';
 
 import '../notification/notification_screen.dart';
 import '../profile/tabs/profile_screen.dart';
+import '../task/post_new_task/post_new_task_screen.dart';
 import '../wallet/tabs/add_funds.dart';
 import 'controller/home_controller.dart';
 
@@ -20,6 +22,44 @@ class HomeScreen extends StatelessWidget {
       init: HomeController(),
       builder: (controller) {
         return Scaffold(
+          floatingActionButton: CustomContainer(
+            padding: EdgeInsets.only(bottom: 80),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  onPressed: () {
+                    Get.to(() => InAppStoreScreen());
+                  },
+                  heroTag: 'favorites_fab',
+                  backgroundColor: redColor,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/icons/inapp.png',
+                      height: 30,
+                      width: 30,
+                      color: whiteColor,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                FloatingActionButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  onPressed: () {
+                    Get.to(() => PostNewTaskScreen());
+                  },
+                  heroTag: 'add_task_fab',
+                  backgroundColor: redColor,
+                  child: Icon(Icons.add, color: whiteColor),
+                ),
+              ],
+            ),
+          ),
           body: SafeArea(
             child: SingleChildScrollView(
               child: Column(
@@ -31,6 +71,8 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         // Header
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Image(
                               image: AssetImage(
@@ -38,27 +80,33 @@ class HomeScreen extends StatelessWidget {
                               ),
                               height: 84,
                             ),
-                            Spacer(),
-                            IconButton(
-                              onPressed: () {
-                                Get.to(() => NotificationScreen());
-                              },
-                              icon: Image(
-                                image: AssetImage(
-                                  'assets/icons/notification.png',
+                            // Spacer(),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    Get.to(() => NotificationScreen());
+                                  },
+                                  icon: Image(
+                                    image: AssetImage(
+                                      'assets/icons/notification.png',
+                                    ),
+                                    height: 24,
+                                  ),
                                 ),
-                                height: 24,
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Get.to(() => ProfileScreen());
-                              },
-                              child: Image(
-                                image: AssetImage('assets/icons/profile.png'),
-                                height: 50,
-                              ),
-                              customBorder: CircleBorder(),
+                                IconButton(
+                                  onPressed: () {
+                                    Get.to(() => ProfileScreen());
+                                  },
+                                  icon: Image(
+                                    image: AssetImage(
+                                      'assets/icons/profile.png',
+                                    ),
+                                    height: 50,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -78,32 +126,8 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 22),
-                  // Tab Views
-                  SizedBox(
-                    height: Get.height * 0.53,
-                    child: TabBarView(
-                      controller: controller.tabController,
-                      // physics: const NeverScrollableScrollPhysics(),
-                      children: const [TasksForYouTab()],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          'Quick Actions',
-                          fontSize: 18,
-                          fontWeight: FontVariant.bold,
-                        ),
-                        SizedBox(height: 10),
-                        CustomQuickActions(),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 110),
+                  // Tasks Section
+                  const TasksForYouTab(),
                 ],
               ),
             ),

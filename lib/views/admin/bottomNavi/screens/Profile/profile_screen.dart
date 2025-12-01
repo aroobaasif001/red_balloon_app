@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 
-import '../controllers/profile_controller.dart';
-import '../widgets/admin_logout_button.dart';
-import '../widgets/admin_profile_header_card.dart';
-import '../widgets/admin_setting_card.dart';
-import '../widgets/admin_user_overall_view_card.dart';
+import 'controllers/profile_controller.dart';
+import 'widgets/admin_logout_button.dart';
+import 'widgets/admin_profile_header_card.dart';
+import 'widgets/admin_setting_card.dart';
+import 'widgets/admin_user_overall_view_card.dart';
 
 class AdminProfileScreen extends StatelessWidget {
   AdminProfileScreen({super.key});

@@ -170,7 +170,7 @@ class PostNewTaskScreen extends StatelessWidget {
               SizedBox(height: 29),
               // ---------------- Location ----------------
               Obx(() {
-                return controller.selectedTaskType.value == "Online Task"
+                return controller.selectedTaskType.value == "Offline Task"
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

@@ -35,7 +35,7 @@ class ValidationHistoryScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.20),
+                          color: blackColor.withOpacity(0.20),
                           blurRadius: 5,
                           offset: const Offset(0, 4),
                         ),
@@ -47,9 +47,9 @@ class ValidationHistoryScreen extends StatelessWidget {
                             vertical: 10,
                           ),
                           borderRadius: BorderRadius.circular(40),
-                          conColor:whiteColor,
+                          conColor: whiteColor,
                           border: Border.all(
-                            color: Colors.grey.withOpacity(0.25),
+                            color: taskstatus3.withOpacity(0.25),
                             width: 1,
                           ),
                           child: Row(

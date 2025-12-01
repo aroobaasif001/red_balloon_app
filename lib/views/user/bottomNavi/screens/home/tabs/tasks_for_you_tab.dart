@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
@@ -12,6 +13,12 @@ class TasksForYouTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = Get.size.height;
+    final screenWidth = Get.size.width;
+
+    // Calculate responsive aspect ratio based on device dimensions
+    final responsiveAspectRatio = screenWidth / (screenHeight * 0.8);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -45,12 +52,18 @@ class TasksForYouTab extends StatelessWidget {
           child: Divider(color: blackColor.withOpacity(0.35)),
         ),
         SizedBox(height: 17),
-        Expanded(
-          child: ListView.builder(
+        CustomContainer(
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: responsiveAspectRatio,
+              crossAxisSpacing: 12,
+            ),
+
             padding: EdgeInsets.symmetric(horizontal: 15),
             itemCount: 3,
-            shrinkWrap: true,
-            // physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),

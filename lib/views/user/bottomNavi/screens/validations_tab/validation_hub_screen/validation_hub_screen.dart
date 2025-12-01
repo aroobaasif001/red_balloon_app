@@ -54,7 +54,7 @@ class ValidationHubScreen extends StatelessWidget {
                     conColor: white2Color,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.20),
+                        color: blackColor.withOpacity(0.20),
                         blurRadius: 3,
                         offset: const Offset(0, 5),
                       ),
@@ -123,21 +123,6 @@ class ValidationHubScreen extends StatelessWidget {
                                   color: blackColor,
                                 ),
                               ],
-                            ),
-                            const Spacer(),
-                            CustomContainer(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                              conColor: whiteColor,
-                              child: const CustomText(
-                                "Offline Task",
-                                fontSize: 12,
-                                fontWeight: FontVariant.medium,
-                                color: blackColor,
-                              ),
                             ),
                           ],
                         ),

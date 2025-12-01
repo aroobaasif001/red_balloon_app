@@ -15,44 +15,63 @@ class AfterTab extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          /// ---------------------------
-          /// IMAGE (289 x 291)
-          /// ---------------------------
+          /// -------------------------------
+          /// 📸 IMAGE (289 × 291)
+          /// -------------------------------
           CustomContainer(
             height: 289,
             width: 291,
             borderRadius: BorderRadius.circular(16),
-            child: Image.asset(
-              "assets/images/Rectangle 34625290.png", // replace with your actual image
-              fit: BoxFit.cover,
+            padding: EdgeInsets.all(15),
+            conColor: whiteColor,
+            alignment: Alignment.center,
+            boxShadow: [
+              BoxShadow(
+                color: blackColor.withOpacity(0.25),
+                blurRadius: 4,
+                spreadRadius: 0,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            child: CustomContainer(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  "assets/images/Rectangle 34625290.png", // <-- replace with your actual image
+                  height: 289,
+                  width: 291,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
 
-          const SizedBox(height: 25),
+          const SizedBox(height: 20),
 
-          /// ---------------------------
-          /// RED INFO BOX
-          /// ---------------------------
+          /// -------------------------------
+          /// RED DESCRIPTION BOX
+          /// -------------------------------
           CustomContainer(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
             conColor: redColor,
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+            alignment: Alignment.center,
             child: CustomText(
               "Helper uploaded proof of completion.\n"
-              "Review if the task was done properly.",
+              "Review if the task appears done properly.",
               fontSize: 15,
               textAlign: TextAlign.center,
-              fontWeight: FontVariant.medium,
+              fontWeight: FontVariant.semiBold,
               color: whiteColor,
             ),
           ),
 
           const SizedBox(height: 20),
 
-          /// ---------------------------
-          /// BUTTON ROW
-          /// ---------------------------
+          /// -------------------------------
+          /// BUTTONS ROW
+          /// -------------------------------
           Row(
             children: [
               /// ❌ SUPPORT USER BUTTON
@@ -103,18 +122,19 @@ class AfterTab extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 25),
 
-          /// ---------------------------
-          /// FOOTNOTE
-          /// ---------------------------
+          /// -------------------------------
+          /// FOOTER NOTE
+          /// -------------------------------
           CustomText(
-            "Your vote must match community majority to earn rewards.",
-            fontSize: 13,
-            textAlign: TextAlign.center,
+            "Your vote must match community majority to earn\nrewards.",
+            fontSize: 14,
             fontWeight: FontVariant.regular,
-            color:grey4Color,
+            textAlign: TextAlign.center,
+            color: grey5Color,
           ),
+          SizedBox(height: 40),
 
           const SizedBox(height: 20),
         ],
