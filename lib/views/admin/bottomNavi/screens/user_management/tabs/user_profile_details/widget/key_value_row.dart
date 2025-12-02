@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
 import '../../../../../../../../utils/colors.dart';
 
@@ -20,20 +21,17 @@ class KeyValueRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
+          CustomText(
             title,
-            style: const TextStyle(
-              fontSize: 14,
-              color:blackColor,
-            ),
+            fontSize: 12,
+            fontWeight: FontVariant.regular,
+            color: walletGrey600Color,
           ),
-          Text(
+          CustomText(
             value,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: blackColor,
-            ),
+            fontSize: 14,
+            fontWeight: FontVariant.bold,
+            color: black4Color,
           ),
         ],
       ),

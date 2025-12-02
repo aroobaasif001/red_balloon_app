@@ -18,10 +18,11 @@ Widget adminBannerCard(
     padding: const EdgeInsets.all(14),
     conColor: whiteColor,
     borderRadius: BorderRadius.circular(18),
+    border: Border.all(color: borderColor),
     boxShadow: [
       BoxShadow(
-        color: blackColor.withOpacity(0.06),
-        blurRadius: 8,
+        color: blackColor.withOpacity(0.25),
+        blurRadius: 1,
         offset: const Offset(0, 3),
       ),
     ],
@@ -79,9 +80,9 @@ Widget adminBannerCard(
                         children: [
                           CustomText(
                             isActive ? 'Active' : 'Inactive',
-                            fontSize: 12,
+                            fontSize: 13,
                             fontWeight: FontVariant.medium,
-                            color: walletInfoTextColor,
+                            color: walletGrey600Color,
                           ),
                           const SizedBox(width: 8),
                           Switch(

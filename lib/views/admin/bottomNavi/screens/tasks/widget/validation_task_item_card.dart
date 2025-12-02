@@ -23,11 +23,15 @@ class ValidationTaskItemCard extends StatelessWidget {
     return CustomContainer(
       padding: const EdgeInsets.all(16),
       borderRadius: BorderRadius.circular(16),
-      conColor: whiteColor,
+      border: Border(
+        bottom: BorderSide(color: bordercol, width: 1),
+        right: BorderSide(color: bordercol, width: 1),
+        left: BorderSide(color: bordercol, width: 1),
+      ),       conColor: whiteColor,
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.20),
-          blurRadius: 3,
+          color: Colors.black.withOpacity(0.25),
+          blurRadius: 1,
           offset: const Offset(0, 4),
         ),
       ],

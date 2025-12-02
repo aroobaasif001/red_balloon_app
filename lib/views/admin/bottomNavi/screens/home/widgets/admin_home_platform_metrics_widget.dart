@@ -25,8 +25,11 @@ class admin_home_platform_metrics_widget extends StatelessWidget {
         width: double.infinity,
         conColor: whiteColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: blackColor.withOpacity(0.1)),
-        boxShadow: [
+        border: Border(
+          bottom: BorderSide(color: bordercol, width: 1),
+          right: BorderSide(color: bordercol, width: 1),
+          left: BorderSide(color: bordercol, width: 1),
+        ),         boxShadow: [
           BoxShadow(
             color: blackColor.withOpacity(0.25),
             offset: Offset(0, 4),

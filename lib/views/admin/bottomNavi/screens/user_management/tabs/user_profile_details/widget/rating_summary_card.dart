@@ -16,15 +16,19 @@ class RatingSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 94,
+      height: 90,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: white2Color,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        border: Border(
+          bottom: BorderSide(color: bordercol, width: 1),
+          right: BorderSide(color: bordercol, width: 1),
+          left: BorderSide(color: bordercol, width: 1),
+        ),         boxShadow: [
           BoxShadow(
             color: blackColor.withOpacity(0.25),
-            blurRadius: 4,
+            blurRadius: 1,
             spreadRadius: 0,
             offset: const Offset(0, 4),
           ),
@@ -51,16 +55,19 @@ class RatingSummaryCard extends StatelessWidget {
                 "Tasks Completed",
                 fontSize: 14,
                 fontWeight: FontVariant.regular,
+                color: txColor,
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: CustomText(
-                  completed.toString(),
-                  fontSize: 24,
-                  fontWeight: FontVariant.bold,
+              Expanded(
+                child: Align(
                   alignment: Alignment.centerRight,
+                  child: CustomText(
+                    completed.toString(),
+                    fontSize: 24,
+                    fontWeight: FontVariant.bold,
+                  ),
                 ),
-              ),
+              )
+
             ],
           ),
         ],

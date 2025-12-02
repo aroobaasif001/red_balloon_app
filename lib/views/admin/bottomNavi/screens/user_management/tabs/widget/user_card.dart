@@ -36,12 +36,15 @@ class UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 18),
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: whiteColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bordercolor1),
-        boxShadow: [
+        borderRadius: BorderRadius.circular(20),
+        border: Border(
+          bottom: BorderSide(color: bordercol, width: 1),
+          right: BorderSide(color: bordercol, width: 1),
+          left: BorderSide(color: bordercol, width: 1),
+        ),         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
             blurRadius: 1,
@@ -129,8 +132,8 @@ class UserCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                         height: 36,
                         textStyle: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
                         ),
                         label: "View Profile",
                         onPressed: onView,

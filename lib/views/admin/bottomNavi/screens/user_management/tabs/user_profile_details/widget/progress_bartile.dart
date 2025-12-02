@@ -23,7 +23,7 @@ class ProgressBarTile extends StatelessWidget {
           children: [
             CustomText(
               title,
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: FontVariant.regular,
               color: walletGrey500Color,
             ),

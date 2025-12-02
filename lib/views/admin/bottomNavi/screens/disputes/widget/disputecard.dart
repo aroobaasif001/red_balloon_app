@@ -18,8 +18,11 @@ class DisputeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         conColor: whiteColor,
         padding: const EdgeInsets.all(14),
-        border: Border.all(color: blackColor.withOpacity(0.1)),
-        boxShadow: [
+        border: Border(
+          bottom: BorderSide(color: bordercol, width: 1),
+          right: BorderSide(color: bordercol, width: 1),
+          left: BorderSide(color: bordercol, width: 1),
+        ),         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
             blurRadius: 1,

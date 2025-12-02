@@ -33,8 +33,11 @@ class DisputeDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       borderRadius: BorderRadius.circular(16),
                       conColor: whiteColor,
-                      border: Border.all(color: bordercolor1),
-                      boxShadow: [
+                      border: Border(
+                        bottom: BorderSide(color: bordercol, width: 1),
+                        right: BorderSide(color: bordercol, width: 1),
+                        left: BorderSide(color: bordercol, width: 1),
+                      ),                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.25),
                           blurRadius: 1,
@@ -122,8 +125,11 @@ class DisputeDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       borderRadius: BorderRadius.circular(16),
                       conColor: whiteColor,
-                      border: Border.all(color: bordercolor1),
-                      boxShadow: [
+                      border: Border(
+                        bottom: BorderSide(color: bordercol, width: 1),
+                        right: BorderSide(color: bordercol, width: 1),
+                        left: BorderSide(color: bordercol, width: 1),
+                      ),                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.25),
                           blurRadius: 1,
@@ -198,8 +204,11 @@ class DisputeDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       borderRadius: BorderRadius.circular(16),
                       conColor: whiteColor,
-                      border: Border.all(color: bordercolor1),
-                      boxShadow: [
+                      border: Border(
+                        bottom: BorderSide(color: bordercol, width: 1),
+                        right: BorderSide(color: bordercol, width: 1),
+                        left: BorderSide(color: bordercol, width: 1),
+                      ),                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.25),
                           blurRadius: 1,
@@ -309,8 +318,11 @@ class DisputeDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       borderRadius: BorderRadius.circular(16),
                       conColor: whiteColor,
-                      border: Border.all(color: bordercolor1),
-                      boxShadow: [
+                      border: Border(
+                        bottom: BorderSide(color: bordercol, width: 1),
+                        right: BorderSide(color: bordercol, width: 1),
+                        left: BorderSide(color: bordercol, width: 1),
+                      ),                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.25),
                           blurRadius: 1,
