@@ -9,7 +9,7 @@ class TaskDetailController extends GetxController {
   final RxBool isSubmitting = false.obs;
   final TextEditingController offerPriceController = TextEditingController();
 
-  final OfferService _offerService = OfferService();
+  final OfferService2 _offerService = OfferService2();
   final AuthService _authService = AuthService();
 
   @override

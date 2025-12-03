@@ -41,7 +41,7 @@ class SendOfferBottomSheet extends StatefulWidget {
 
 class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
   late TextEditingController _priceController;
-  final OfferService _offerService = OfferService();
+  final OfferService2 _offerService = OfferService2();
   final AuthService _authService = AuthService();
   bool _isSubmitting = false;
 

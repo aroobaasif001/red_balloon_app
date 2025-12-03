@@ -243,7 +243,7 @@ class TaskOffersController extends GetxController {
   Timer? _cooldownTimer;
 
   StreamSubscription? _offersSubscription;
-  final OfferService _offerService = OfferService();
+  final OfferService2 _offerService = OfferService2();
 
   TaskOffersController({required this.taskId});
 
