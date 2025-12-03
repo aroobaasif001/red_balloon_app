@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
-import 'package:red_balloon_app/services/offer_service.dart';
+
+import '../../../../../../../services/offer_service2.dart';
 
 class TaskDetailController extends GetxController {
   final RxInt updateTrigger = 0.obs;
@@ -81,7 +82,8 @@ class TaskDetailController extends GetxController {
       }
 
       final userData = await _authService.getUserData(currentUser.uid);
-      final userName = userData?['displayName'] ?? currentUser.displayName ?? 'Unknown';
+      final userName =
+          userData?['displayName'] ?? currentUser.displayName ?? 'Unknown';
       final userPhoto = userData?['photoURL'] ?? currentUser.photoURL;
 
       // Prepare task details

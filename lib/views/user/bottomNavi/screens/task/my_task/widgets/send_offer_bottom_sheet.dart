@@ -4,9 +4,9 @@ import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
-import 'package:red_balloon_app/services/offer_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
+import '../../../../../../../services/offer_service2.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 
 class SendOfferBottomSheet extends StatefulWidget {

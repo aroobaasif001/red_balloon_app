@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 
 import '../../../../../../../custom_widgets/customtext.dart';
-import '../../../../../../../services/offer_service.dart';
+import '../../../../../../../services/offer_service2.dart';
 import '../../../../../../../utils/colors.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
