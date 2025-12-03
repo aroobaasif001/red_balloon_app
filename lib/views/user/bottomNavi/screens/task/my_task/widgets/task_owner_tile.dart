@@ -5,21 +5,26 @@ import '../../../../../../../utils/colors.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 
 class TaskOwnerTile extends StatelessWidget {
-  const TaskOwnerTile({super.key});
+  final String? photoUrl;
+  final String? name;
+  final String? id;
+  const TaskOwnerTile({super.key, this.id, this.name, this.photoUrl});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const CircleAvatar(
+        CircleAvatar(
           radius: 32,
-          backgroundImage: AssetImage("assets/images/profile3.png"),
+          backgroundImage: photoUrl == null
+              ? AssetImage("assets/images/profile3.png")
+              : NetworkImage(photoUrl!),
         ),
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CustomText("Ahmed Al Harbi"),
+            CustomText(name == null ? "Ahmed Al Harbi" : name!),
             const SizedBox(height: 4),
             Row(
               children: [
@@ -55,7 +60,7 @@ class TaskOwnerTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             CustomText(
-              "RB-124",
+              id == null ? "RB-124" : id!,
               color: textcolord,
               fontSize: 12,
               fontWeight: FontVariant.regular,
@@ -71,8 +76,7 @@ class TaskOwnerTile extends StatelessWidget {
                 fontSize: 14,
                 fontWeight: FontVariant.semiBold,
               ),
-            )
-
+            ),
           ],
         ),
       ],

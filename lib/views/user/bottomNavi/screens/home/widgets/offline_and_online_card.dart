@@ -44,12 +44,12 @@ class OfflineAndOnlineCard extends StatelessWidget {
         ),
       ],
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        // mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Image
           CustomContainer(
-            height: 115,
+            // height: 115,
             width: Get.width * 0.45,
             conColor: whiteColor,
             borderRadius: BorderRadius.circular(15),
@@ -90,39 +90,47 @@ class OfflineAndOnlineCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 15.1),
 
-                      FittedBox(
-                        child: Row(
-                          children: [
-                            if (distance != null)
-                              CustomContainer(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (distance != null)
+                            Expanded(
+                              child: CustomContainer(
                                 child: Row(
                                   children: [
-                                    CustomText(
-                                      distance!,
-                                      fontSize: 11,
-                                      fontWeight: FontVariant.regular,
-                                      color: grey5Color,
+                                    Flexible(
+                                      child: CustomText(
+                                        distance!,
+                                        fontSize: 11,
+                                        fontWeight: FontVariant.regular,
+                                        color: grey5Color,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
+                            ),
 
-                            // if (distance != null) const SizedBox(width: 7),
-                            CustomContainer(
+                          if (distance == null) const Spacer(),
+                          Flexible(
+                            child: CustomContainer(
                               child: Row(
                                 children: [
-                                  CustomText(
-                                    " • ${timeAgo}",
-                                    fontSize: 11,
-                                    fontWeight: FontVariant.regular,
-
-                                    color: grey5Color,
+                                  Flexible(
+                                    child: CustomText(
+                                      distance != null ? " • ${timeAgo}" : timeAgo,
+                                      fontSize: 11,
+                                      fontWeight: FontVariant.regular,
+                                      color: grey5Color,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 10.1),
 
@@ -140,6 +148,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
           ),
           CustomContainer(
             width: double.infinity,
+            margin: EdgeInsets.only(bottom: 15),
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: CustomButton(
               // width: Get.width * 0.4,
