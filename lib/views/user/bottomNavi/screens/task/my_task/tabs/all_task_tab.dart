@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../post_new_task/post_new_task_screen.dart';
 import 'clean_my_solar_panels.dart';
@@ -12,53 +14,195 @@ class AllTaskTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomText('My Tasks', fontSize: 22, fontWeight: FontVariant.bold),
-          SizedBox(height: 15),
-          CustomMyTaskCard(
-            title: "Help needed move furniture",
-            amount: "SAR 500",
-            status: "Not accepted",
-            postedTime: "2 hours ago",
-            image: "assets/images/sofa.png",
-            // type: 'Offline Task',
-            onEdit: () {
-              Get.to(() => PostNewTaskScreen());
-            },
-            onViewDetails: () {
-              Get.to(() => TaskDetailsScreen());
-            },
-            showButton: true,
-          ),
-          SizedBox(height: 26),
-          CustomText(
-            'Tasks Near Me',
-            fontSize: 22,
-            fontWeight: FontVariant.bold,
-          ),
-          SizedBox(height: 15),
-          CustomMyTaskCard(
-            title: "Help needed move furniture",
-            amount: "SAR 500",
-            // type: 'Offline Task',
+    // Initialize the controller
+    final TasksController controller = Get.put(TasksController());
 
-            status: "Not accepted",
-            postedTime: "2 hours ago",
-            image: "assets/images/sofa.png",
-            onEdit: () {
-              Get.to(() => PostNewTaskScreen());
-            },
-            showButton: true,
-            onViewDetails: () {
-              Get.to(() => Cleanmysolarpanels(taskType: 'Offline Task'));
-            },
-          ),
-          SizedBox(height: 140),
-        ],
+    return RefreshIndicator(
+      onRefresh: () => controller.refreshTasks(),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ==================== MY TASKS SECTION ====================
+            CustomText('My Tasks', fontSize: 22, fontWeight: FontVariant.bold),
+            const SizedBox(height: 15),
+            
+            Obx(() {
+              // Show loading indicator
+              if (controller.isLoadingMyTasks.value) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+
+              // Show empty state if no tasks
+              if (controller.myTasks.isEmpty) {
+                return Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: blackColor.withOpacity(0.1),
+                          offset: const Offset(0, 2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.task_alt_outlined,
+                          size: 50,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 10),
+                        CustomText(
+                          'No tasks yet',
+                          fontSize: 16,
+                          color: Colors.grey[600]!,
+                        ),
+                        const SizedBox(height: 5),
+                        CustomText(
+                          'Create your first task to get started',
+                          fontSize: 14,
+                          color: Colors.grey[500]!,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              // Show list of tasks
+              return Column(
+                children: controller.myTasks.map((task) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: CustomMyTaskCard(
+                      title: task.title,
+                      amount: controller.formatBudget(task.budget),
+                      status: controller.getStatusText(task.status),
+                      postedTime: controller.getTimeAgo(task.createdAt),
+                      image: task.imageUrl != null && task.imageUrl!.isNotEmpty
+                          ? task.imageUrl!
+                          : "assets/images/sofa.png",
+                      isNetworkImage: task.imageUrl != null && task.imageUrl!.isNotEmpty,
+                      distance: '2.5 km away',
+                      taskType: task.taskType, // 🔥 Pass taskType
+                      onEdit: () {
+                        Get.to(() => PostNewTaskScreen());
+                      },
+                      onViewDetails: () {
+                        Get.to(() => TaskDetailsScreen(task: task)); // 🔥 Pass task object
+                      },
+                      showButton: true,
+                    ),
+                  );
+                }).toList(),
+              );
+            }),
+
+            const SizedBox(height: 26),
+
+            // ==================== TASKS NEAR ME SECTION ====================
+            CustomText(
+              'Tasks Near Me',
+              fontSize: 22,
+              fontWeight: FontVariant.bold,
+            ),
+            const SizedBox(height: 15),
+
+            Obx(() {
+              // Show loading indicator
+              if (controller.isLoadingTasksNearMe.value) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+
+              // Show empty state if no tasks
+              if (controller.tasksNearMe.isEmpty) {
+                return Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: whiteColor,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: blackColor.withOpacity(0.1),
+                        offset: const Offset(0, 2),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 50,
+                        color: Colors.grey[400],
+                      ),
+                      const SizedBox(height: 10),
+                      CustomText(
+                        'No tasks nearby',
+                        fontSize: 16,
+                        color: Colors.grey[600]!,
+                      ),
+                      const SizedBox(height: 5),
+                      CustomText(
+                        'Check back later for new tasks',
+                        fontSize: 14,
+                        color: Colors.grey[500]!,
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              // Show list of tasks
+              return Column(
+                children: controller.tasksNearMe.map((task) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: CustomMyTaskCard(
+                      title: task.title,
+                      amount: controller.formatBudget(task.budget),
+                      status: controller.getStatusText(task.status),
+                      postedTime: controller.getTimeAgo(task.createdAt),
+                      image: task.imageUrl != null && task.imageUrl!.isNotEmpty
+                          ? task.imageUrl!
+                          : "assets/images/sofa.png",
+                      isNetworkImage: task.imageUrl != null && task.imageUrl!.isNotEmpty,
+                      distance: '2.5 km away',
+                      taskType: task.taskType, // 🔥 Pass taskType
+                      onEdit: () {
+                        Get.to(() => PostNewTaskScreen());
+                      },
+                      showButton: true,
+                      btnText: 'Apply Now',
+                      onViewDetails: () {
+                        Get.to(() => Cleanmysolarpanels(taskType: task.taskType));
+                      },
+                    ),
+                  );
+                }).toList(),
+              );
+            }),
+
+            const SizedBox(height: 140),
+          ],
+        ),
       ),
     );
   }

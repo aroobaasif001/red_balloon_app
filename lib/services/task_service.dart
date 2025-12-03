@@ -90,15 +90,27 @@ class TaskService {
   /// Get all tasks
   Future<List<TaskModel>> getAllTasks() async {
     try {
-      final snapshot = await tasksCollection
-          .orderBy('createdAt', descending: true)
-          .get();
+      print('🔍 TaskService: Fetching ALL tasks from database');
+      
+      final snapshot = await tasksCollection.get();
 
-      return snapshot.docs
-          .map((doc) => TaskModel.fromJson(doc.data() as Map<String, dynamic>, doc.id))
+      print('📋 TaskService: Found ${snapshot.docs.length} total documents');
+      
+      final tasks = snapshot.docs
+          .map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            print('  Task: "${data['title']}" | UID: ${data['uid']}');
+            return TaskModel.fromJson(data, doc.id);
+          })
           .toList();
+      
+      // Sort by createdAt in memory (descending - newest first)
+      tasks.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      
+      print('✅ TaskService: Returning ${tasks.length} total tasks');
+      return tasks;
     } catch (e) {
-      print('Error getting tasks: $e');
+      print('❌ TaskService Error getting tasks: $e');
       return [];
     }
   }
@@ -106,16 +118,29 @@ class TaskService {
   /// Get user's tasks
   Future<List<TaskModel>> getUserTasks(String uid) async {
     try {
+      print('🔍 TaskService: Fetching tasks for UID: $uid');
+      
       final snapshot = await tasksCollection
           .where('uid', isEqualTo: uid)
-          .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs
-          .map((doc) => TaskModel.fromJson(doc.data() as Map<String, dynamic>, doc.id))
+      print('📋 TaskService: Found ${snapshot.docs.length} documents');
+      
+      final tasks = snapshot.docs
+          .map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            print('  Document ID: ${doc.id} | UID in doc: ${data['uid']}');
+            return TaskModel.fromJson(data, doc.id);
+          })
           .toList();
+      
+      // Sort by createdAt in memory (descending - newest first)
+      tasks.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      
+      print('✅ TaskService: Returning ${tasks.length} tasks');
+      return tasks;
     } catch (e) {
-      print('Error getting user tasks: $e');
+      print('❌ TaskService Error getting user tasks: $e');
       return [];
     }
   }
