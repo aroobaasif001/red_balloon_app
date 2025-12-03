@@ -4,14 +4,38 @@ import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details2_screen.dart';
 
 class TaskDetailsScreen extends StatelessWidget {
-  const TaskDetailsScreen({super.key});
+  final TaskModel? task; // 🔥 Made optional
+
+  const TaskDetailsScreen({
+    super.key,
+    this.task, // 🔥 Optional parameter
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Use provided task or create dummy fallback
+    final TaskModel displayTask = task ?? TaskModel(
+      id: 'dummy',
+      uid: 'dummy',
+      taskType: 'Offline Task',
+      title: 'Help Move Furniture',
+      description: 'Need help moving furniture from my apartment to a new location. Items include a sofa, dining table, and several boxes. Helper should have a truck or van. Estimated time: 2-3 hours.',
+      budget: 500,
+      location: 'Riyadh, King Fahd Road',
+      imageUrl: null,
+      createdAt: DateTime.now(),
+      status: 'active',
+    );
+
+    // Helper to check if image is network or asset
+    final bool isNetworkImage = displayTask.imageUrl != null && displayTask.imageUrl!.isNotEmpty;
+    final String displayImage = isNetworkImage ? displayTask.imageUrl! : "assets/images/sofa.png";
+
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -41,7 +65,7 @@ class TaskDetailsScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomContainer(
                   borderRadius: BorderRadius.circular(14),
-                  conColor:whiteColor,
+                  conColor: whiteColor,
                   height: 150,
                   width: double.infinity,
                   boxShadow: [
@@ -53,10 +77,22 @@ class TaskDetailsScreen extends StatelessWidget {
                   ],
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(14),
-                    child: Image.asset(
-                      "assets/images/sofa.png", // <— replace with your image
-                      fit: BoxFit.cover,
-                    ),
+                    child: isNetworkImage
+                        ? Image.network(
+                            displayImage,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Fallback to asset image if network image fails
+                              return Image.asset(
+                                "assets/images/sofa.png",
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            displayImage,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
               ),
@@ -68,7 +104,7 @@ class TaskDetailsScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomContainer(
-                  conColor:whiteColor,
+                  conColor: whiteColor,
                   borderRadius: BorderRadius.circular(14),
                   padding: const EdgeInsets.all(18),
                   boxShadow: [
@@ -83,7 +119,7 @@ class TaskDetailsScreen extends StatelessWidget {
                     children: [
                       /// TITLE
                       CustomText(
-                        "Help Move Furniture",
+                        displayTask.title, // 🔥 Real title
                         fontSize: 20,
                         fontWeight: FontVariant.bold,
                       ),
@@ -93,37 +129,13 @@ class TaskDetailsScreen extends StatelessWidget {
                       Row(
                         children: [
                           CustomText(
-                            "SAR 500",
+                            "SAR ${displayTask.budget.toStringAsFixed(0)}", // 🔥 Real budget
                             fontSize: 28,
                             fontWeight: FontVariant.bold,
                             color: redColor,
                           ),
                           Spacer(),
-                          // CustomContainer(
-                          //   conColor: white2Color,
-                          //   padding: const EdgeInsets.symmetric(
-                          //     horizontal: 14,
-                          //     vertical: 7,
-                          //   ),
-                          //   borderRadius: BorderRadius.circular(10),
-                          //   boxShadow: [
-                          //     BoxShadow(
-                          //       color: Colors.black.withOpacity(0.20),
-                          //       blurRadius: 4,
-                          //       offset: const Offset(0, 4),
-                          //     ),
-                          //   ],
-                          //   child: Row(
-                          //     children: [
-                          //       CustomText(
-                          //         "Offline Task",
-                          //         fontSize: 13,
-                          //         color: timeColor,
-                          //         fontWeight: FontVariant.regular,
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
+                          // Commented out task type badge as per original code
                         ],
                       ),
                       const SizedBox(height: 25),
@@ -139,60 +151,64 @@ class TaskDetailsScreen extends StatelessWidget {
 
                       /// DESCRIPTION TEXT
                       CustomText(
-                        "Need help moving furniture from my apartment to a new location. Items include a sofa, dining table, and several boxes. Helper should have a truck or van. Estimated time: 2-3 hours.",
+                        displayTask.description, // 🔥 Real description
                         fontSize: 13,
                         color: blackLightColor,
                       ),
-                      const SizedBox(height: 25),
+                      
+                      // 🔥 Only show location section if NOT Online Task
+                      if (displayTask.taskType != 'Online Task') ...[
+                        const SizedBox(height: 25),
 
-                      /// LOCATION NEARBY LABEL
-                      CustomText(
-                        "LOCATION NEAR BY",
-                        fontSize: 14,
-                        fontWeight: FontVariant.regular,
-                        color: walletTextGreyColor,
-                      ),
-                      const SizedBox(height: 10),
-
-                      /// MAP CARD
-                      CustomContainer(
-                        height: 150,
-                        conColor: mapBgColor,
-                        borderRadius: BorderRadius.circular(22),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                        /// LOCATION NEARBY LABEL
+                        CustomText(
+                          "LOCATION NEAR BY",
+                          fontSize: 14,
+                          fontWeight: FontVariant.regular,
+                          color: walletTextGreyColor,
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(height: 1),
+                        const SizedBox(height: 10),
 
-                            /// 📍 Center Pin (Emoji Style)
-                            Image(
-                              image: AssetImage('assets/icons/map-pin1.png'),
-                              height: 40,
-                              width: 40,
-                            ),
+                        /// MAP CARD
+                        CustomContainer(
+                          height: 150,
+                          conColor: mapBgColor,
+                          borderRadius: BorderRadius.circular(22),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(height: 1),
 
-                            /// White Input Box
-                            CustomContainer(
-                              conColor:whiteColor,
-                              width: double.infinity,
-                              borderRadius: BorderRadius.circular(16),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
+                              /// 📍 Center Pin (Emoji Style)
+                              Image(
+                                image: AssetImage('assets/icons/map-pin1.png'),
+                                height: 40,
+                                width: 40,
                               ),
-                              child: CustomText(
-                                "Riyadh, King Fahd Road",
-                                fontSize: 13,
-                                fontWeight: FontVariant.regular,
+
+                              /// White Input Box
+                              CustomContainer(
+                                conColor: whiteColor,
+                                width: double.infinity,
+                                borderRadius: BorderRadius.circular(16),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                                child: CustomText(
+                                  displayTask.location ?? "Location not specified", // 🔥 Real location
+                                  fontSize: 13,
+                                  fontWeight: FontVariant.regular,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -205,7 +221,7 @@ class TaskDetailsScreen extends StatelessWidget {
                   width: 263,
                   label: 'View Offers',
                   onPressed: () {
-                    Get.to(() => TaskDetails2Screen());
+                    Get.to(() => TaskDetails2Screen(task: displayTask)); // 🔥 Pass task object
                   },
                 ),
               ),

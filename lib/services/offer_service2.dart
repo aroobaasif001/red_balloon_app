@@ -1,135 +1,122 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:red_balloon_app/model/offer_model.dart';
 
 class OfferService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Collection reference
   CollectionReference get offersCollection => _firestore.collection('offers');
 
-  // Get current user ID
   String? get currentUserId => _auth.currentUser?.uid;
 
-  /// Submit an offer for a task
-  Future<bool> submitOffer({
-    required String taskId,
-    required double offerPrice,
-    required Map<String, dynamic> taskDetails,
-    required String taskOwnerUid,
-    required String taskOwnerName,
-    String? taskOwnerPhoto,
-    required String offeringUserName,
-    String? offeringUserPhoto,
-  }) async {
+  /// Get all offers for a specific task
+  Future<List<OfferModel>> getOffersForTask(String taskId) async {
     try {
-      if (currentUserId == null) {
-        print('User not authenticated');
-        return false;
-      }
-
-      // Create offer document
-      final offerRef = offersCollection.doc();
-      final offerId = offerRef.id;
-
-      final offerData = {
-        'offerId': offerId,
-        'taskId': taskId,
-        'offerPrice': offerPrice,
-        'taskDetails': taskDetails,
-        'taskOwnerUid': taskOwnerUid,
-        'taskOwnerName': taskOwnerName,
-        'taskOwnerPhoto': taskOwnerPhoto,
-        'offeringUserUid': currentUserId,
-        'offeringUserName': offeringUserName,
-        'offeringUserPhoto': offeringUserPhoto,
-        'status': 'pending',
-        'createdAt': FieldValue.serverTimestamp(),
-      };
-
-      // Save to Firestore
-      await offerRef.set(offerData);
-
-      print('Offer submitted successfully with ID: $offerId');
-      return true;
-    } catch (e) {
-      print('Error submitting offer: $e');
-      return false;
-    }
-  }
-
-  /// Get offers for a specific task
-  Future<List<Map<String, dynamic>>> getTaskOffers(String taskId) async {
-    try {
+      print('🔍 OfferService: Fetching offers for task: $taskId');
+      
+      // 🔥 Query root 'taskId' instead of 'taskDetails.taskId'
       final snapshot = await offersCollection
           .where('taskId', isEqualTo: taskId)
-          .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList();
+      print('📋 OfferService: Found ${snapshot.docs.length} offers');
+
+      final offers = snapshot.docs.map((doc) {
+        try {
+          final data = doc.data() as Map<String, dynamic>;
+          // print('  Offer from: ${data['offeringUserName']} | Price: ${data['offerPrice']}');
+          return OfferModel.fromJson(data, doc.id);
+        } catch (e) {
+          print('⚠️ Error parsing offer ${doc.id}: $e');
+          return null;
+        }
+      }).where((element) => element != null).cast<OfferModel>().toList();
+
+      // Sort by createdAt descending (newest first)
+      offers.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      return offers;
     } catch (e) {
-      print('Error getting task offers: $e');
+      print('❌ OfferService Error getting offers for task: $e');
       return [];
     }
   }
 
   /// Get offers made by current user
-  Future<List<Map<String, dynamic>>> getMyOffers() async {
+  Future<List<OfferModel>> getMyOffers() async {
     try {
-      if (currentUserId == null) return [];
+      final userId = currentUserId;
+      if (userId == null) {
+        print('❌ User not authenticated');
+        return [];
+      }
+
+      print('🔍 OfferService: Fetching offers by user: $userId');
 
       final snapshot = await offersCollection
-          .where('offeringUserUid', isEqualTo: currentUserId)
-          .orderBy('createdAt', descending: true)
+          .where('offeringUserUid', isEqualTo: userId)
           .get();
 
-      return snapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList();
+      print('📋 OfferService: Found ${snapshot.docs.length} offers by user');
+
+      final offers = snapshot.docs.map((doc) {
+        return OfferModel.fromJson(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+
+      offers.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      return offers;
     } catch (e) {
-      print('Error getting my offers: $e');
+      print('❌ OfferService Error getting my offers: $e');
       return [];
     }
   }
 
-  /// Update offer status (pending, accepted, rejected)
+  /// Get offers received by current user (for their tasks)
+  Future<List<OfferModel>> getReceivedOffers() async {
+    try {
+      final userId = currentUserId;
+      if (userId == null) {
+        print('❌ User not authenticated');
+        return [];
+      }
+
+      print('🔍 OfferService: Fetching offers received by user: $userId');
+
+      final snapshot = await offersCollection
+          .where('taskDetails.taskOwnerUid', isEqualTo: userId)
+          .get();
+
+      print('📋 OfferService: Found ${snapshot.docs.length} offers received');
+
+      final offers = snapshot.docs.map((doc) {
+        return OfferModel.fromJson(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+
+      offers.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      return offers;
+    } catch (e) {
+      print('❌ OfferService Error getting received offers: $e');
+      return [];
+    }
+  }
+
+  /// Update offer status
   Future<bool> updateOfferStatus(String offerId, String status) async {
     try {
+      print('🔄 OfferService: Updating offer $offerId to status: $status');
+      
       await offersCollection.doc(offerId).update({
         'status': status,
-        'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      print('Offer status updated to: $status');
+      print('✅ OfferService: Offer status updated successfully');
       return true;
     } catch (e) {
-      print('Error updating offer status: $e');
+      print('❌ OfferService Error updating offer status: $e');
       return false;
     }
-  }
-
-  /// Delete offer
-  Future<bool> deleteOffer(String offerId) async {
-    try {
-      await offersCollection.doc(offerId).delete();
-      print('Offer deleted successfully');
-      return true;
-    } catch (e) {
-      print('Error deleting offer: $e');
-      return false;
-    }
-  }
-
-  /// Stream offers for a task
-  Stream<List<Map<String, dynamic>>> streamTaskOffers(String taskId) {
-    return offersCollection
-        .where('taskId', isEqualTo: taskId)
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => doc.data() as Map<String, dynamic>)
-            .toList());
   }
 }
