@@ -466,9 +466,76 @@ class RefreshButtonWithData extends StatelessWidget {
       controller = Get.find<TaskOffersController>(tag: taskId);
     }
 
+    // If controller is not available, show a simple button without Obx
+    if (controller == null) {
+      return Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                // Show the dialog
+                DialogHelpers.showSendOfferBottomSheet(
+                  context,
+                  taskId: taskId,
+                  taskTitle: taskTitle,
+                  taskDescription: taskDescription,
+                  taskTimeAgo: taskTimeAgo,
+                  taskType: taskType,
+                  taskImage: taskImage,
+                  location: location,
+                  taskOwnerUid: taskOwnerUid,
+                  taskOwnerName: taskOwnerName,
+                  taskOwnerPhoto: taskOwnerPhoto,
+                );
+              },
+              child: Container(
+                height: 51,
+                decoration: BoxDecoration(
+                  color: pricecolor,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Center(
+                  child: CustomText(
+                    "Send Offer",
+                    color: whiteColor,
+                    fontSize: 18,
+                    fontWeight: FontVariant.medium,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                Get.to(() => ChatScreen());
+              },
+              child: Container(
+                height: 51,
+                decoration: BoxDecoration(
+                  color: pricecolor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: pricecolor, width: 1),
+                ),
+                child: const Center(
+                  child: CustomText(
+                    "Chat",
+                    color: whiteColor,
+                    fontSize: 18,
+                    fontWeight: FontVariant.medium,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Obx(() {
-      final isButtonDisabled = controller?.isCooldownActive.value ?? false;
-      final cooldownSeconds = controller?.cooldownSeconds.value ?? 0;
+      final isButtonDisabled = controller!.isCooldownActive.value;
+      final cooldownSeconds = controller!.cooldownSeconds.value;
 
       return Row(
         children: [
