@@ -63,7 +63,7 @@ class TasksForYouTab extends StatelessWidget {
             ),
 
             padding: EdgeInsets.symmetric(horizontal: 15),
-            itemCount: 3,
+            itemCount: 4,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),

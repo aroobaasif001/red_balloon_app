@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'package:red_balloon_app/utils/dialog_helpers.dart';
 
 import '../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../custom_widgets/customtext.dart';
 
-class StoreItemCard extends StatelessWidget {
+class UserBadgeCard extends StatelessWidget {
   final String title;
   final String image;
   final int price;
 
-  const StoreItemCard({
+  const UserBadgeCard({
     super.key,
     required this.title,
     required this.price,
@@ -73,28 +72,6 @@ class StoreItemCard extends StatelessWidget {
               const SizedBox(width: 4),
               CustomText("$price", color: pricecolor2, fontSize: 14),
             ],
-          ),
-
-          const SizedBox(height: 10),
-
-          /// 🔥 BUY Button
-          InkWell(
-            onTap: () {
-              DialogHelpers.showBuyBadgeDialog(context);
-            },
-            child: CustomContainer(
-              width: 111,
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              borderRadius: BorderRadius.circular(8),
-              conColor: redColor,
-              alignment: Alignment.center,
-              child: const CustomText(
-                "Buy",
-                fontSize: 14,
-                fontWeight: FontVariant.bold,
-                color: whiteColor,
-              ),
-            ),
           ),
         ],
       ),

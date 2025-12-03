@@ -6,10 +6,10 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'package:red_balloon_app/views/admin/bottomNavi/admin_bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 import 'package:red_balloon_app/views/auth/widgets/social_button.dart';
 
+import '../../../admin/bottomNavi/admin_bottom_navi_screen.dart';
 import '../../../user/bottomNavi/bottom_navi_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -68,9 +68,9 @@ class OnboardingScreen extends StatelessWidget {
                               // final user = await authController
                               //     .signInWithGoogle();
                               // if (user != null) {
-                                Get.offAll(() => BottomNaviScreen());
-                              // }
+                              Get.offAll(() => BottomNaviScreen());
                             },
+                            // },
                           ),
                           const SizedBox(height: 12),
 
@@ -79,7 +79,7 @@ class OnboardingScreen extends StatelessWidget {
                               // final user = await authController
                               //     .signInWithApple();
                               // if (user != null) {
-                                Get.off(() => AdminBottomNaviScreen());
+                              Get.off(() => AdminBottomNaviScreen());
                               // }
                             },
                           ),

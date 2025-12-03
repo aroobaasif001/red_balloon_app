@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/modern_bottom_nav.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/home_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/in_app_store_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/my_task_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_hub_screen/validation_hub_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/wallet_tab.dart';
@@ -54,6 +55,19 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
         ),
       ),
       ModernBottomNavItem(
+        label: 'Store',
+        activeIcon: Image.asset(
+          'assets/navi_icons/reward_active.png',
+          height: 24,
+          color: whiteColor,
+        ),
+        inactiveIcon: Image.asset(
+          'assets/navi_icons/reward_inactive.png',
+          height: 24,
+          color: whiteColor,
+        ),
+      ),
+      ModernBottomNavItem(
         label: 'Validations',
         activeIcon: Image.asset(
           'assets/navi_icons/validations_active.png',
@@ -85,6 +99,7 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
   List<Widget> screens = [
     HomeScreen(),
     MyTaskScreen(),
+    InAppStoreScreen(),
     ValidationHubScreen(),
     WalletTab(),
   ];

@@ -14,6 +14,7 @@ import '../widgets/help_section.dart';
 import '../widgets/menu_section.dart';
 import '../widgets/profile_card.dart';
 import '../widgets/stats_grid.dart';
+import 'badge_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -47,7 +48,11 @@ class ProfileScreen extends StatelessWidget {
                 final displayName = currentUser?.displayName ?? 'User';
                 final photoURL = currentUser?.photoURL;
                 final initials = displayName.isNotEmpty
-                    ? displayName.split(' ').map((e) => e[0]).join().toUpperCase()
+                    ? displayName
+                          .split(' ')
+                          .map((e) => e[0])
+                          .join()
+                          .toUpperCase()
                     : 'RB';
 
                 return Column(
@@ -73,17 +78,31 @@ class ProfileScreen extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: CustomText(
-                        'User Badges',
-                        fontSize: 16,
-                        fontWeight: FontVariant.bold,
-                        color: textColor2,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomText(
+                          'User Badges',
+                          fontSize: 16,
+                          fontWeight: FontVariant.bold,
+                          color: textColor2,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Get.to(() => BadgeScreen());
+                          },
+                          child: CustomText(
+                            'View All',
+                            fontSize: 16,
+                            fontWeight: FontVariant.bold,
+                            color: textColor2,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10),
-                    StatsGrid(postedCount: '500'),
+                    StatsGrid(postedCount: '50'),
+                    // StatsGrid(postedCount: '50'),
                     const SizedBox(height: 20),
 
                     // Menu Section

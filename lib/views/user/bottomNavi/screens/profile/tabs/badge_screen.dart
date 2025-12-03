@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../../custom_widgets/custom_appbar.dart';
-import '../../../../../../custom_widgets/customtext.dart';
-import '../../../../../../utils/colors.dart';
-import '../widgets/storeitemcard.dart';
+import '../../../../../../custom_widgets/custom_user_badge.dart';
 
-class InAppStoreScreen extends StatelessWidget {
-  const InAppStoreScreen({super.key});
+class BadgeScreen extends StatelessWidget {
+  const BadgeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +14,7 @@ class InAppStoreScreen extends StatelessWidget {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomAppBar(titleText: 'In-App Store', disableLeading: true),
+            CustomAppBar(titleText: 'User Badges'),
 
             Expanded(
               child: ListView(
@@ -25,15 +23,6 @@ class InAppStoreScreen extends StatelessWidget {
                   vertical: 10,
                 ),
                 children: [
-                  /// 🔥 Screen subtitle
-                  CustomText(
-                    "Unlock collectible badges with every purchase.",
-                    fontSize: 14,
-                    color: timeColor,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-
                   /// 🔥 Grid of store badges
                   GridView.count(
                     shrinkWrap: true,
@@ -41,59 +30,59 @@ class InAppStoreScreen extends StatelessWidget {
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    childAspectRatio: 0.90,
+                    childAspectRatio: 1.10,
                     children: const [
-                      StoreItemCard(
+                      UserBadgeCard(
                         title: "Elite Tasker",
                         price: 50,
                         image: 'assets/icons/image 51.png',
                       ),
 
-                      StoreItemCard(
+                      UserBadgeCard(
                         title: "Pro Performer",
                         price: 100,
                         image: 'assets/icons/image 49.png',
                       ),
 
-                      StoreItemCard(
+                      UserBadgeCard(
                         title: "Master Helper",
                         price: 200,
                         image: 'assets/icons/image 50.png',
                       ),
 
-                      StoreItemCard(
+                      UserBadgeCard(
                         title: "Task Expert",
                         price: 250,
                         image: 'assets/icons/image 48.png',
                       ),
 
-                      StoreItemCard(
+                      UserBadgeCard(
                         title: "Reliable Achiever",
                         price: 300,
                         image: 'assets/icons/image 52.png',
                       ),
 
-                      StoreItemCard(
+                      UserBadgeCard(
                         title: "Task Veteran",
                         price: 350,
                         image: 'assets/icons/image 53.png',
                       ),
-                      StoreItemCard(
+                      UserBadgeCard(
                         title: "Seasoned Helper",
                         price: 400,
                         image: 'assets/icons/leaf.png',
                       ),
-                      StoreItemCard(
+                      UserBadgeCard(
                         title: "Highly Experienced",
                         price: 450,
                         image: 'assets/icons/flag.png',
                       ),
-                      StoreItemCard(
+                      UserBadgeCard(
                         title: "Quality Assured",
                         price: 500,
                         image: 'assets/icons/micro.png',
                       ),
-                      StoreItemCard(
+                      UserBadgeCard(
                         title: "Safety Certified",
                         price: 550,
                         image: 'assets/icons/safety.png',
