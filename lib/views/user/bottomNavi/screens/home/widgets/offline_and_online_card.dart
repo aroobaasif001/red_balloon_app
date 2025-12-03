@@ -139,19 +139,14 @@ class OfflineAndOnlineCard extends StatelessWidget {
             ),
           ),
           CustomContainer(
-            padding: const EdgeInsets.only(right: 16),
-
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                CustomButton(
-                  width: 107,
-                  fontSize: 12,
-                  height: 40,
-                  label: 'View Details',
-                  onPressed: onViewDetails,
-                ),
-              ],
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: CustomButton(
+              // width: Get.width * 0.4,
+              fontSize: 12,
+              height: 40,
+              label: 'View Details',
+              onPressed: onViewDetails,
             ),
           ),
         ],

@@ -23,10 +23,14 @@ class StatsSmallCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: white2Color,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        border: Border(
+          bottom: BorderSide(color: bordercol, width: 1),
+          right: BorderSide(color: bordercol, width: 1),
+          left: BorderSide(color: bordercol, width: 1),
+        ),         boxShadow: [
           BoxShadow(
             color: blackColor.withOpacity(0.25),
-            blurRadius: 4,
+            blurRadius: 1,
             spreadRadius: 0,
             offset: const Offset(0, 4),
           ),
@@ -42,7 +46,9 @@ class StatsSmallCard extends StatelessWidget {
 
           CustomText(
             title,
-            style: const TextStyle(color: greyColor, fontSize: 13),
+            color: greyColor,
+            fontWeight: FontVariant.regular,
+            fontSize: 12,
           ),
 
           const SizedBox(height: 6),

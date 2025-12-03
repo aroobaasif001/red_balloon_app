@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'stat_card.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/widgets/stat_card.dart';
 
 class StatsGrid extends StatelessWidget {
   final String? postedCount;
@@ -30,13 +30,12 @@ class StatsGrid extends StatelessWidget {
               child: StatCard(
                 number: postedCount ?? '12',
                 label: 'Eltie Tasker',
-
                 iconPath: 'assets/icons/badge.png',
               ),
             ),
           ],
         ),
-        SizedBox(height: verticalSpacing ?? 12),
+        // SizedBox(height: verticalSpacing ?? 12),
         // Second Row
       ],
     );

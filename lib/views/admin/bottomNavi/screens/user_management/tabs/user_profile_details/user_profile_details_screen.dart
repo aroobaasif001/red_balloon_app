@@ -36,14 +36,27 @@ class UserProfileDetailsScreen extends StatelessWidget {
               const SizedBox(height: 25),
 
               // USER PROGRESS SECTION
-              Container(
+              CustomContainer(
                 margin: EdgeInsets.only(bottom: 10),
-                padding: EdgeInsets.all(18),
-                decoration: strongBox(),
+                padding: EdgeInsets.all(16),
+                conColor: white2Color,
+                borderRadius: BorderRadius.circular(20),
+                border: Border(
+                  bottom: BorderSide(color: bordercol, width: 1),
+                  right: BorderSide(color: bordercol, width: 1),
+                  left: BorderSide(color: bordercol, width: 1),
+                ),                 boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                    blurRadius: 1,
+                    color: blackColor.withOpacity(0.25),
+                  ),
+                ],
                 child: Column(
                   children: [
                     SectionTitle("User Progress"),
-                    SizedBox(height: 16),
+                    SizedBox(height: 10),
 
                     ProgressBarTile(
                       title: "Work as a Requester",
@@ -63,7 +76,7 @@ class UserProfileDetailsScreen extends StatelessWidget {
               const SizedBox(height: 25),
 
               // RATING CARD
-              const RatingSummaryCard(rating: 4.9, completed: 25),
+              const RatingSummaryCard(rating: 4.9, completed: 14),
 
               const SizedBox(height: 25),
 
@@ -109,9 +122,22 @@ class UserProfileDetailsScreen extends StatelessWidget {
               const SizedBox(height: 30),
 
               /// ADMIN ANALYTICS
-              Container(
+              CustomContainer(
                 margin: const EdgeInsets.only(bottom: 18),
-                decoration: strongBox(),
+                border: Border(
+                  bottom: BorderSide(color: bordercol, width: 1),
+                  right: BorderSide(color: bordercol, width: 1),
+                  left: BorderSide(color: bordercol, width: 1),
+                ),                 conColor: white2Color,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.25),
+                    blurRadius: 1,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
                 padding: const EdgeInsets.all(18),
 
                 child: Column(
@@ -131,8 +157,8 @@ class UserProfileDetailsScreen extends StatelessWidget {
                         children: [
                           const CustomText(
                             "Task Breakdown",
-                            fontSize: 16,
-                            fontWeight: FontVariant.bold,
+                            fontSize: 12,
+                            fontWeight: FontVariant.semiBold,
                           ),
                           const SizedBox(height: 10),
 

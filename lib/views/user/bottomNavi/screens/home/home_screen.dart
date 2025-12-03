@@ -6,7 +6,6 @@ import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/tabs/tasks_for_you_tab.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_bonus_slider.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/custom_wallet_card.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/in_app_store_screen.dart';
 
 import '../../bottom_navi_screen.dart';
 import '../notification/notification_screen.dart';
@@ -26,31 +25,12 @@ class HomeScreen extends StatelessWidget {
         return Scaffold(
           floatingActionButton: CustomContainer(
             height: 300,
-            width: 100,
+            // width: 100,
             borderRadius: BorderRadius.circular(50),
             padding: EdgeInsets.only(bottom: 80),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FloatingActionButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  onPressed: () {
-                    Get.to(() => InAppStoreScreen());
-                  },
-                  heroTag: 'favorites_fab',
-                  backgroundColor: redColor,
-                  child: Center(
-                    child: Image.asset(
-                      'assets/icons/inapp.png',
-                      height: 30,
-                      width: 30,
-                      color: whiteColor,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
                 FloatingActionButton(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(40),

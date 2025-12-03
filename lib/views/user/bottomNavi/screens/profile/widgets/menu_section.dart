@@ -4,7 +4,6 @@ import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 import '../tabs/help_center_screen.dart';
-import '../tabs/in_app_store_screen.dart';
 import '../tabs/messages_screen.dart';
 import '../tabs/reviews_and_feedback_screen.dart';
 import '../tabs/terms_and_policy_screen.dart';
@@ -62,14 +61,7 @@ class MenuSection extends StatelessWidget {
         Get.to(() => ReviewsAndFeedback());
       },
     ),
-    MenuItemData(
-      icon: 'assets/icons/inapp.png',
-      label: 'In-App Store',
-      hasArrow: true,
-      onTap: () {
-        Get.to(() => InAppStoreScreen());
-      },
-    ),
+
     MenuItemData(
       icon: 'assets/icons/homemessage.png',
       label: 'Messages',

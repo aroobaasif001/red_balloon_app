@@ -18,8 +18,17 @@ class DisputeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         conColor: whiteColor,
         padding: const EdgeInsets.all(14),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.20), blurRadius: 4, offset: const Offset(0, 3)),
+        border: Border(
+          bottom: BorderSide(color: bordercol, width: 1),
+          right: BorderSide(color: bordercol, width: 1),
+          left: BorderSide(color: bordercol, width: 1),
+        ),         boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 1,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
         ],
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,10 +38,18 @@ class DisputeCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomText("Wash and Clean my Car", fontSize: 15, fontWeight: FontVariant.bold),
+                  CustomText(
+                    "Wash and Clean my Car",
+                    fontSize: 15,
+                    fontWeight: FontVariant.bold,
+                  ),
                   const SizedBox(height: 4),
 
-                  CustomText("Requester claims incomplete work", fontSize: 13, color: walletTextGreyColor),
+                  CustomText(
+                    "Requester claims incomplete work",
+                    fontSize: 13,
+                    color: walletTextGreyColor,
+                  ),
 
                   const SizedBox(height: 10),
 
@@ -41,23 +58,37 @@ class DisputeCard extends StatelessWidget {
                     children: [
                       /// Disputed tag
                       CustomContainer(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         conColor: disBgColor,
                         borderRadius: BorderRadius.circular(20),
                         child: Row(
                           children: [
-                            Icon(Icons.error_outline, size: 14, color: redColor),
-                            const SizedBox(width: 4),
-                            CustomText("Disputed", fontSize: 12, color: redColor),
+                            Icon(
+                              Icons.error_outline,
+                              size: 14,
+                              color: redColor,
+                            ),
+                            const SizedBox(width: 1),
+                            CustomText(
+                              "Disputed",
+                              fontSize: 12,
+                              color: redColor,
+                            ),
                           ],
                         ),
                       ),
 
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 1),
 
                       /// Distance tag
                       CustomContainer(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         conColor: disBgColor,
                         borderRadius: BorderRadius.circular(20),
                         child: Row(
@@ -82,22 +113,38 @@ class DisputeCard extends StatelessWidget {
                         offset: const Offset(0, 3),
                       ),
                     ],
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     conColor: conBgColor,
                     borderRadius: BorderRadius.circular(20),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.access_time, size: 14, color: timeColor),
+                        const Icon(
+                          Icons.access_time,
+                          size: 14,
+                          color: timeColor,
+                        ),
                         const SizedBox(width: 4),
-                        CustomText("15 mins ago", fontSize: 12, color: timeColor),
+                        CustomText(
+                          "15 mins ago",
+                          fontSize: 12,
+                          color: timeColor,
+                        ),
                       ],
                     ),
                   ),
 
                   const SizedBox(height: 10),
 
-                  CustomText("SAR 500", fontSize: 18, fontWeight: FontVariant.bold, color: redColor),
+                  CustomText(
+                    "SAR 500",
+                    fontSize: 18,
+                    fontWeight: FontVariant.bold,
+                    color: redColor,
+                  ),
                 ],
               ),
             ),
@@ -132,9 +179,14 @@ class DisputeCard extends StatelessWidget {
                 ),
               ],
             ),
+
           ],
+
         ),
+
       ),
+
     );
+
   }
 }

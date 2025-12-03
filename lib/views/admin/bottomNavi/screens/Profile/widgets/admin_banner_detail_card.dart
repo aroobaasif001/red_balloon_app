@@ -19,13 +19,14 @@ Widget adminBannerDetailsCard(
     padding: const EdgeInsets.all(16),
     conColor: whiteColor,
     borderRadius: BorderRadius.circular(20),
-    border: Border.all(color: beforecolor, width: 1),
+    border: Border.all(color: beforecolor),
+
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.06),
-        blurRadius: 2,
+        color: Colors.black.withOpacity(0.25),
+        blurRadius: 1,
         spreadRadius: 0,
-        offset: const Offset(0, 1),
+        offset: const Offset(0, 4),
       ),
     ],
     child: Column(

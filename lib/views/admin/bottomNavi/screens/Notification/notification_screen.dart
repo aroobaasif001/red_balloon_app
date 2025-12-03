@@ -30,11 +30,15 @@ class AdminNotificationScreen extends StatelessWidget {
                     conColor: white2Color,
 
                     borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
+                    border: Border(
+                      bottom: BorderSide(color: bordercol, width: 1),
+                      right: BorderSide(color: bordercol, width: 1),
+                      left: BorderSide(color: bordercol, width: 1),
+                    ),                     boxShadow: [
                       BoxShadow(
-                        color: blackColor.withOpacity(0.15),
-                        blurRadius: 5,
-                        offset: Offset(0, 2),
+                        color: blackColor.withOpacity(0.25),
+                        blurRadius: 1,
+                        offset: Offset(0, 4),
                       ),
                     ],
                     child: Padding(

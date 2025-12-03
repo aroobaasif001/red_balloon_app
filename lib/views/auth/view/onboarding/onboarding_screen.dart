@@ -71,6 +71,18 @@ class OnboardingScreen extends StatelessWidget {
                               }
                             },
                           ),
+                          // const SizedBox(height: 12),
+
+                          // SocialButton.apple(
+                          //   onPressed: () async {
+                          //     // final user = await authController
+                          //     //     .signInWithApple();
+                          //     // if (user != null) {
+                          //     Get.off(() => AdminBottomNaviScreen());
+                          //     // }
+                          //   },
+                          // ),
+                          // const SizedBox(height: 12),
                         ],
                       ),
                     ),

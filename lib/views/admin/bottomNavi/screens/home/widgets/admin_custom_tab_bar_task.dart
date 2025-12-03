@@ -24,11 +24,16 @@ class AdminCustomTabBarTask extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       margin: const EdgeInsets.symmetric(horizontal: 10),
       conColor: whiteColor,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(16),
+      border: Border(
+        bottom: BorderSide(color: bordercol, width: 1),
+        right: BorderSide(color: bordercol, width: 1),
+        left: BorderSide(color: bordercol, width: 1),
+      ),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.25),
-          blurRadius: 4,
+          blurRadius: 1,
           offset: const Offset(0, 4),
           spreadRadius: 0,
         ),
@@ -68,6 +73,7 @@ class AdminCustomTabBarTask extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+
         child: CustomContainer(
           height: 42,
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),

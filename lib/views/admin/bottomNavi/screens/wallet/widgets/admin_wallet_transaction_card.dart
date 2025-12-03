@@ -19,10 +19,14 @@ Widget adminWalletTransactionCard(
     padding: const EdgeInsets.all(14),
     conColor: whiteColor,
     borderRadius: BorderRadius.circular(16),
-    boxShadow: [
+    border: Border(
+      bottom: BorderSide(color: bordercol, width: 1),
+      right: BorderSide(color: bordercol, width: 1),
+      left: BorderSide(color: bordercol, width: 1),
+    ),     boxShadow: [
       BoxShadow(
         color: Colors.black.withOpacity(0.25),
-        blurRadius: 4,
+        blurRadius: 1,
         offset: const Offset(0, 4),
         spreadRadius: 0,
       ),

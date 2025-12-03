@@ -17,10 +17,11 @@ Widget adminBuildTransactionCard2(
     padding: const EdgeInsets.all(14),
     conColor: whiteColor,
     borderRadius: BorderRadius.circular(16),
+    border: Border.all(color: bordercol),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.05),
-        blurRadius: 2,
+        color: Colors.black.withOpacity(0.09),
+        blurRadius: 1,
         spreadRadius: 0,
         offset: const Offset(0, 1),
       ),
