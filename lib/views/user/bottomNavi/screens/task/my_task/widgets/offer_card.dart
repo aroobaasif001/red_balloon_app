@@ -11,6 +11,8 @@ class OfferCard extends StatelessWidget {
   final String price;
   final int ratingCount;
   final int stars;
+  final String? photoUrl;
+  final Widget? timerWidget;
 
   const OfferCard({
     super.key,
@@ -18,6 +20,8 @@ class OfferCard extends StatelessWidget {
     required this.price,
     required this.ratingCount,
     required this.stars,
+    this.photoUrl,
+    this.timerWidget,
   });
 
   @override
@@ -31,9 +35,11 @@ class OfferCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 28,
-            backgroundImage: AssetImage("assets/images/user1.png"),
+            backgroundImage: photoUrl != null && photoUrl!.isNotEmpty
+                ? NetworkImage(photoUrl!)
+                : const AssetImage("assets/images/user1.png") as ImageProvider,
           ),
           SizedBox(width: 5),
           Expanded(
@@ -73,12 +79,7 @@ class OfferCard extends StatelessWidget {
                       const Spacer(),
                       Column(
                         children: [
-                          CustomText(
-                            "00:15",
-                            fontSize: 12,
-                            color: walletInfoTextColor,
-                            fontWeight: FontVariant.regular,
-                          ),
+                          timerWidget ?? const SizedBox.shrink(),
 
                           const SizedBox(height: 6),
                           CustomText(

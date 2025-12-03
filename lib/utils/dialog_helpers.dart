@@ -1993,13 +1993,36 @@ class DialogHelpers {
   /// ===================================================
   /// SHOW SEND OFFER BOTTOM SHEET
   /// ===================================================
-  static void showSendOfferBottomSheet(BuildContext context) {
+  static void showSendOfferBottomSheet(
+    BuildContext context, {
+    String? taskId,
+    String? taskTitle,
+    String? taskDescription,
+    String? taskTimeAgo,
+    String? taskType,
+    String? taskImage,
+    String? location,
+    String? taskOwnerUid,
+    String? taskOwnerName,
+    String? taskOwnerPhoto,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return const SendOfferBottomSheet();
+        return SendOfferBottomSheet(
+          taskId: taskId,
+          taskTitle: taskTitle,
+          taskDescription: taskDescription,
+          taskTimeAgo: taskTimeAgo,
+          taskType: taskType,
+          taskImage: taskImage,
+          location: location,
+          taskOwnerUid: taskOwnerUid,
+          taskOwnerName: taskOwnerName,
+          taskOwnerPhoto: taskOwnerPhoto,
+        );
       },
     );
   }
