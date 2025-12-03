@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
 import '../../../../../../../../utils/colors.dart';
 
@@ -23,12 +24,11 @@ class OutlineBlackButton extends StatelessWidget {
         ),
         child: MaterialButton(
           onPressed: onTap,
-          child: Text(
+          child: CustomText(
             label,
-            style: const TextStyle(
-              color:blackColor,
-              fontWeight: FontWeight.w600,
-            ),
+            color: blackColor,
+            fontSize: 14,
+            fontWeight: FontVariant.semiBold,
           ),
         ),
       ),

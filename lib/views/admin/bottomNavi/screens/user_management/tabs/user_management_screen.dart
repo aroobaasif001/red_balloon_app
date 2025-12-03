@@ -107,6 +107,8 @@ class UserManagementScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              SizedBox(height: 100),
+
             ],
           ),
         ),

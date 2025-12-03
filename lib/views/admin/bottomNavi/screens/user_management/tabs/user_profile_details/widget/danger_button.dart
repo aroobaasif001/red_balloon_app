@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
 import '../../../../../../../../utils/colors.dart';
 
@@ -18,17 +19,17 @@ class DangerButton extends StatelessWidget {
       child: Container(
         height: 52,
         decoration: BoxDecoration(
-          color:redColor,
+          color:redColor2,
           borderRadius: BorderRadius.circular(12),
         ),
         child: MaterialButton(
           onPressed: onTap,
-          child: Text(
+          child: CustomText(
             label,
-            style: const TextStyle(
-              color: whiteColor,
-              fontWeight: FontWeight.w600,
-            ),
+            color: whiteColor,
+            fontSize: 14,
+            fontWeight: FontVariant.semiBold,
+
           ),
         ),
       ),

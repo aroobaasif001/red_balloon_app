@@ -15,10 +15,14 @@ Widget adminSettingsCard(
     padding: const EdgeInsets.all(16),
     conColor: white2Color,
     borderRadius: BorderRadius.circular(20),
-    boxShadow: [
+    border: Border(
+      bottom: BorderSide(color: bordercol, width: 1),
+      right: BorderSide(color: bordercol, width: 1),
+      left: BorderSide(color: bordercol, width: 1),
+    ),     boxShadow: [
       BoxShadow(
         color: Colors.black.withOpacity(0.25),
-        blurRadius: 4,
+        blurRadius: 1,
         spreadRadius: 0,
         offset: const Offset(0, 4),
       ),

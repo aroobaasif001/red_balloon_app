@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/admin/bottomNavi/admin_bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 import 'package:red_balloon_app/views/auth/widgets/social_button.dart';
 
@@ -64,13 +65,25 @@ class OnboardingScreen extends StatelessWidget {
                           ],
                           SocialButton.google(
                             onPressed: () async {
-                              final user = await authController
-                                  .signInWithGoogle();
-                              if (user != null) {
+                              // final user = await authController
+                              //     .signInWithGoogle();
+                              // if (user != null) {
                                 Get.offAll(() => BottomNaviScreen());
-                              }
+                              // }
                             },
                           ),
+                          const SizedBox(height: 12),
+
+                          SocialButton.apple(
+                            onPressed: () async {
+                              // final user = await authController
+                              //     .signInWithApple();
+                              // if (user != null) {
+                                Get.off(() => AdminBottomNaviScreen());
+                              // }
+                            },
+                          ),
+                          const SizedBox(height: 12),
                         ],
                       ),
                     ),

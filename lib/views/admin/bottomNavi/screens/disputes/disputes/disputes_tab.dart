@@ -48,13 +48,14 @@ class AdminDisputesTab extends StatelessWidget {
                   return DisputeCard();
                 },
               ),
-            )
+
+            ),
+            SizedBox(height: 100),
           ],
+
         ),
+
       ),
     );
   }
-
-  /// 🔥 DISPUTE CARD — UI EXACTLY LIKE SCREENSHOT
-
 }

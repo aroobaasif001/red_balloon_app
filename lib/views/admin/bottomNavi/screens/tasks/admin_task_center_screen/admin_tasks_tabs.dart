@@ -41,9 +41,9 @@ class _AdminTaskCenterScreenState extends State<AdminTaskCenterScreen> {
                 padding: const EdgeInsets.all(4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: Colors.black.withOpacity(0.25),
                     blurRadius: 1,
-                    offset: const Offset(0, 5),
+                    offset: const Offset(0, 4),
                   ),
                 ],
                 child: Row(

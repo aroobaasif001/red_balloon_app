@@ -8,8 +8,10 @@ class ValidationTasksTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+
       child: Column(
         children: [
+
           ValidationTaskItemCard(
             title: "Deliver a car to my home",
             price: "SAR 450.00",
