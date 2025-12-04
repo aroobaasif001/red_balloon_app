@@ -5,6 +5,7 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/in_progress_view_details.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
 
 import '../../post_new_task/post_new_task_screen.dart';
@@ -87,8 +88,9 @@ class AllTaskTab extends StatelessWidget {
               return Column(
                 children: controller.myTasks.map((task) {
                   // 🔥 Check if task is in progress
-                  final isInProgress = task.status.toLowerCase() == 'in progress';
-                  
+                  final isInProgress =
+                      task.status.toLowerCase() == 'in progress';
+
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 15),
                     child: CustomMyTaskCard(
@@ -103,7 +105,9 @@ class AllTaskTab extends StatelessWidget {
                           task.imageUrl != null && task.imageUrl!.isNotEmpty,
                       distance: '2.5 km away',
                       taskType: task.taskType, // 🔥 Pass taskType
-                      btnText: isInProgress ? 'In Progress' : 'View Details', // 🔥 Dynamic button text
+                      btnText: isInProgress
+                          ? 'In Progress'
+                          : 'View Details', // 🔥 Dynamic button text
                       onEdit: () {
                         Get.to(() => PostNewTaskScreen());
                       },
@@ -125,7 +129,6 @@ class AllTaskTab extends StatelessWidget {
             const SizedBox(height: 26),
 
             // ==================== TASKS NEAR ME SECTION ====================
-
             CustomText(
               'Tasks Near Me',
               fontSize: 22,
@@ -144,8 +147,23 @@ class AllTaskTab extends StatelessWidget {
                 );
               }
 
-              // Show empty state if no tasks
-              if (controller.tasksNearMe.isEmpty) {
+              // 🔥 Filter out completed tasks
+              final filteredTasks = controller.tasksNearMe
+                  .where((task) => task.status.toLowerCase() != 'completed')
+                  .toList();
+
+              // 🔥 Sort tasks: "in progress" first, then others
+              filteredTasks.sort((a, b) {
+                final aIsInProgress = a.status.toLowerCase() == 'in progress';
+                final bIsInProgress = b.status.toLowerCase() == 'in progress';
+
+                if (aIsInProgress && !bIsInProgress) return -1;
+                if (!aIsInProgress && bIsInProgress) return 1;
+                return 0;
+              });
+
+              // Show empty state if no tasks after filtering
+              if (filteredTasks.isEmpty) {
                 return Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -183,9 +201,12 @@ class AllTaskTab extends StatelessWidget {
                 );
               }
 
-              // Show list of tasks
+              // Show list of filtered and sorted tasks
               return Column(
-                children: controller.tasksNearMe.map((task) {
+                children: filteredTasks.map((task) {
+                  // 🔥 Check task status for conditional button text
+                  final isAccepted = task.status.toLowerCase() == 'in progress';
+
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 15),
                     child: CustomMyTaskCard(
@@ -204,7 +225,9 @@ class AllTaskTab extends StatelessWidget {
                         Get.to(() => PostNewTaskScreen());
                       },
                       showButton: true,
-                      btnText: 'View Details',
+                      btnText: isAccepted
+                          ? 'In Progress'
+                          : 'View Details', // 🔥 Conditional button text
                       onViewDetails: () async {
                         // Fetch user profile data
                         final authService = AuthService();
@@ -215,28 +238,34 @@ class AllTaskTab extends StatelessWidget {
                         final userName = userData?['displayName'] ?? 'Unknown';
                         final userPhoto = userData?['photoURL'];
 
-                        Get.to(
-                          () => Cleanmysolarpanels(
-                            taskId: task.id,
-                            location: task.taskType == 'Offline Task'
-                                ? task.location
-                                : null,
-                            taskType: task.taskType,
-                            taskDescription: task.description,
-                            taskTitle: task.title,
-                            taskPrice: controller.formatBudget(task.budget),
-                            taskBudget: task.budget,
-                            taskTimeAgo: controller.getTimeAgo(task.createdAt),
-                            taskImage:
-                                task.imageUrl != null &&
-                                    task.imageUrl!.isNotEmpty
-                                ? task.imageUrl!
-                                : "assets/images/sofa.png",
-                            userId: task.uid,
-                            userName: userName,
-                            userPhoto: userPhoto,
-                          ),
-                        );
+                        isAccepted
+                            ? Get.to(() => InProgressViewDetails())
+                            : Get.to(
+                                () => Cleanmysolarpanels(
+                                  taskId: task.id,
+                                  location: task.taskType == 'Offline Task'
+                                      ? task.location
+                                      : null,
+                                  taskType: task.taskType,
+                                  taskDescription: task.description,
+                                  taskTitle: task.title,
+                                  taskPrice: controller.formatBudget(
+                                    task.budget,
+                                  ),
+                                  taskBudget: task.budget,
+                                  taskTimeAgo: controller.getTimeAgo(
+                                    task.createdAt,
+                                  ),
+                                  taskImage:
+                                      task.imageUrl != null &&
+                                          task.imageUrl!.isNotEmpty
+                                      ? task.imageUrl!
+                                      : "assets/images/sofa.png",
+                                  userId: task.uid,
+                                  userName: userName,
+                                  userPhoto: userPhoto,
+                                ),
+                              );
                       },
                     ),
                   );
