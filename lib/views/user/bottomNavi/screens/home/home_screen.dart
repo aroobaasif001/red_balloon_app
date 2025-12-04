@@ -156,7 +156,7 @@ class HomeScreen extends StatelessWidget {
                           availableAmount: '255.00',
                           onAddFunds: () {
                             print("Add funds tapped");
-                            Get.offAll(() => BottomNaviScreen(initialIndex: 3));
+                            Get.offAll(() => BottomNaviScreen(initialIndex: 4));
                           },
                         ),
                         SizedBox(height: 20),

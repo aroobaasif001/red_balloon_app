@@ -74,7 +74,9 @@ class ProfileCard extends StatelessWidget {
                 child: Center(
                   child: photoURL != null && photoURL!.isNotEmpty
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(avatarSize ?? 100),
+                          borderRadius: BorderRadius.circular(
+                            avatarSize ?? 100,
+                          ),
                           child: Image.network(
                             photoURL!,
                             width: avatarSize,
@@ -135,12 +137,14 @@ class ProfileCard extends StatelessWidget {
             color: textColor2,
           ),
           const SizedBox(height: 12),
-          CustomText('Rating',
-          fontSize: 16,
+          CustomText(
+            'Rating',
+            fontSize: 16,
             fontWeight: FontVariant.bold,
             color: textColor2,
           ),
-          CustomText('(4.9)',
+          CustomText(
+            '(4.9)',
             fontSize: 16,
             fontWeight: FontVariant.bold,
             color: textColor2,
@@ -150,6 +154,35 @@ class ProfileCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              /// VERIFIED BADGE (full row or left aligned)
+              CustomContainer(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                conColor: white3Color,
+                borderRadius: BorderRadius.circular(16),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/icons/check_2.png',
+                      height: 20,
+                      width: 20,
+                      color: red2Color,
+                    ),
+                    const SizedBox(width: 6),
+                    CustomText(
+                      'Verified',
+                      fontSize: 13,
+                      fontWeight: FontVariant.regular,
+                      color: greenColor,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+
               /// LOCATION ROW
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -169,43 +202,14 @@ class ProfileCard extends StatelessWidget {
                   ),
                 ],
               ),
-
-              const SizedBox(height: 8),
-
-              /// VERIFIED BADGE (full row or left aligned)
-              CustomContainer(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                conColor: white3Color,
-                borderRadius: BorderRadius.circular(16),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'assets/icons/check_2.png',
-                      height: 20,
-                      width: 20,
-                      color: red2Color,
-                    ),
-                    const SizedBox(width: 6),
-                    CustomText(
-                      verificationLabel ?? 'Verified',
-                      fontSize: 13,
-                      fontWeight: FontVariant.regular,
-                      color: greenColor,
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
-
-
 
           const SizedBox(height: 12),
 
           // Loyalty Points
           CustomText(
-            'Posted: 09',
+            'Posted Tasks: 09',
             fontSize: 12,
             fontWeight: FontVariant.medium,
             color: grey4Color,
@@ -214,14 +218,6 @@ class ProfileCard extends StatelessWidget {
 
           CustomText(
             'Helped Tasks: 09',
-            fontSize: 12,
-            fontWeight: FontVariant.medium,
-            color: grey4Color,
-          ),
-          const SizedBox(height: 5),
-
-          CustomText(
-            loyaltyPoints ?? 'Your Loyalty Points: 05',
             fontSize: 12,
             fontWeight: FontVariant.medium,
             color: grey4Color,

@@ -45,7 +45,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
       ],
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Image
           CustomContainer(
@@ -139,6 +139,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
             ),
           ),
           CustomContainer(
+            margin: EdgeInsets.only(bottom: 15),
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: CustomButton(

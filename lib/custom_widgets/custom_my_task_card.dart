@@ -90,7 +90,7 @@ class CustomMyTaskCard extends StatelessWidget {
                           ),
                         ),
                         CustomContainer(
-                          width: Get.width*0.33,
+                          width: Get.width * 0.33,
                           conColor: whiteColor,
                           borderRadius: BorderRadius.circular(15),
                           child: CustomText(
@@ -155,38 +155,6 @@ class CustomMyTaskCard extends StatelessWidget {
             const SizedBox(height: 9),
             Row(
               children: [
-                if (showType == true) ...[
-                  Flexible(
-                    flex: 0,
-                    child: CustomContainer(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: blackColor.withOpacity(0.25),
-                          offset: const Offset(0, 4),
-                          blurRadius: 4,
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(12),
-                      conColor: white2Color,
-                      child: Row(
-                        children: [
-                          // CustomText(
-                          //   type,
-                          //   fontWeight: FontVariant.regular,
-                          //   fontSize: 14,
-                          //   color: walletGrey500Color,
-                          // ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 70),
-                ],
-
                 /// BUTTON FIX
                 Expanded(
                   child: CustomButton(

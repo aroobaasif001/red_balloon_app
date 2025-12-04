@@ -7,7 +7,8 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/va
 import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_screen/tabs/BeforeTab.dart';
 
 class ValidationScreen extends StatefulWidget {
-  const ValidationScreen({super.key});
+  final bool isTask;
+  const ValidationScreen({super.key, this.isTask = false});
 
   @override
   State<ValidationScreen> createState() => _ValidationScreenState();
@@ -31,6 +32,7 @@ class _ValidationScreenState extends State<ValidationScreen> {
               rightImagePath: 'assets/icons/button.png',
               rightImageHeight: 50,
               rightImageWidth: 20,
+              showRightImage: false,
             ),
 
             const SizedBox(height: 20),
@@ -284,7 +286,9 @@ class _ValidationScreenState extends State<ValidationScreen> {
             const SizedBox(height: 20),
 
             /// TAB CONTENT (NO EXPANDED INSIDE SCROLL)
-            selectedTab == 0 ? const BeforeTab() : const AfterTab(),
+            selectedTab == 0
+                ? BeforeTab(isTask: widget.isTask)
+                : AfterTab(isTask: widget.isTask),
 
             const SizedBox(height: 40),
           ],

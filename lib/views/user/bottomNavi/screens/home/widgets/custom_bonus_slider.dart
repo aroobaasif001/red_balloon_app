@@ -83,6 +83,7 @@ class _CustomBonusSliderState extends State<CustomBonusSlider> {
             },
             itemBuilder: (context, index) {
               return CustomContainer(
+                margin: EdgeInsets.only(left: 5, right: 5),
                 width: double.infinity,
                 conColor: redColor,
                 borderRadius: BorderRadius.circular(15),

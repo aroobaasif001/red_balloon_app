@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/clean_my_solar_panels.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_completed_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_disputed_screen.dart';
 
 import '../../../../../../../custom_widgets/custom_my_task_card.dart';
-import '../../post_new_task/post_new_task_screen.dart';
+import '../../../validations_tab/validation_screen/validation_screen.dart';
 
 class HistoryTab extends StatelessWidget {
   const HistoryTab({super.key});
@@ -20,6 +20,27 @@ class HistoryTab extends StatelessWidget {
             itemCount: 3,
             shrinkWrap: true,
             itemBuilder: (context, index) {
+              // Define button text and navigation based on index
+              String buttonText;
+              VoidCallback onViewDetails;
+
+              if (index == 0) {
+                buttonText = 'Disputed';
+                onViewDetails = () {
+                  Get.to(() => TaskDisputedScreen());
+                };
+              } else if (index == 1) {
+                buttonText = 'Validation';
+                onViewDetails = () {
+                  Get.to(() => ValidationScreen(isTask: true));
+                };
+              } else {
+                buttonText = 'Completed';
+                onViewDetails = () {
+                  Get.to(() => TaskCompletedScreen());
+                };
+              }
+
               return Padding(
                 padding: const EdgeInsets.only(bottom: 15),
                 child: CustomMyTaskCard(
@@ -29,14 +50,10 @@ class HistoryTab extends StatelessWidget {
                   postedTime: "Posted 2 hours ago",
                   image: "assets/images/sofa.png",
                   showButton: true,
-                  btnText: 'Completed',
+                  btnText: buttonText,
                   showType: false,
-                  onViewDetails: () {
-                    index==0?Get.to(()=>Cleanmysolarpanels()):Get.to(()=>TaskDetailsScreen());
-                  },
-                  onEdit: () {
-                    Get.to(() => PostNewTaskScreen());
-                  },
+                  onViewDetails: onViewDetails,
+                  onEdit: () {},
                 ),
               );
             },

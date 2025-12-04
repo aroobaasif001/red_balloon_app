@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/active_task_tab.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/all_task_tab.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/history_tab.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/widgets/custom_tab_bar_task.dart';
 
@@ -14,8 +14,7 @@ class MyTaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TaskTabsController controller =
-    Get.isRegistered<TaskTabsController>()
+    final TaskTabsController controller = Get.isRegistered<TaskTabsController>()
         ? Get.find<TaskTabsController>()
         : Get.put(TaskTabsController());
     return Scaffold(
@@ -56,7 +55,7 @@ class MyTaskScreen extends StatelessWidget {
                 builder: (ctrl) {
                   return TabBarView(
                     controller: ctrl.tabController,
-                    children: [ActiveTasksTab(), HistoryTab()],
+                    children: [AllTaskTab(), HistoryTab()],
                   );
                 },
               ),
