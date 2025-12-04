@@ -5,10 +5,13 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/model/offer_model.dart';
 import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/services/offer_service.dart';
+import 'package:get/get.dart';
+import 'package:red_balloon_app/services/user_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../widgets/providercard.dart';
+import 'user_profile_screen.dart'; // 🔥 Import profile screen
 
 class TaskDetails2Screen extends StatefulWidget {
   final TaskModel task; // 🔥 Accept task data
@@ -24,6 +27,7 @@ class TaskDetails2Screen extends StatefulWidget {
 
 class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
   final OfferService _offerService = OfferService();
+  final UserService _userService = UserService(); // 🔥 Add UserService
   List<OfferModel> offers = [];
   bool isLoading = true;
 
@@ -221,8 +225,24 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                     description: "(25 Tasks Completed)", // TODO: Add task count
                     price: "SAR ${offer.offerPrice}", // 🔥 Real offer price
                     distance: "34.5 km away", // TODO: Calculate distance
-                    onViewProfile: () {
-                      DialogHelpers.showHelperProfileDialog(context);
+                    onViewProfile: () async {
+                      // 🔥 Fetch user data and navigate to profile screen
+                      try {
+                        final user = await _userService.getUserByUid(offer.offeringUserUid);
+                        final stats = await _userService.getUserStatistics(offer.offeringUserUid);
+
+                        if (user != null) {
+                          Get.to(() => UserProfileScreen(
+                                userName: user.displayName,
+                                userInitials: user.initials,
+                                rating: (stats['rating'] ?? 4.9).toDouble(),
+                                tasksCompleted: stats['tasksCompleted'] ?? 0,
+                                tasksRequested: stats['tasksRequested'] ?? 0,
+                              ));
+                        }
+                      } catch (e) {
+                        print('Error loading user profile: $e');
+                      }
                     },
                     onAccept: () {
                       DialogHelpers.showOfferAcceptedDialog(context: context);
