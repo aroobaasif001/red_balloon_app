@@ -2370,6 +2370,7 @@ class DialogHelpers {
     String? taskOwnerUid,
     String? taskOwnerName,
     String? taskOwnerPhoto,
+    double? taskBudget,
   }) {
     showModalBottomSheet(
       context: context,
@@ -2387,6 +2388,7 @@ class DialogHelpers {
           taskOwnerUid: taskOwnerUid,
           taskOwnerName: taskOwnerName,
           taskOwnerPhoto: taskOwnerPhoto,
+          taskBudget: taskBudget,
         );
       },
     );

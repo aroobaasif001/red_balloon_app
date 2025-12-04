@@ -122,7 +122,7 @@ class TasksForYouTab extends StatelessWidget {
                 child: GridView.builder(
                   shrinkWrap: true,
 
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: responsiveAspectRatio,
@@ -164,6 +164,7 @@ class TasksForYouTab extends StatelessWidget {
                               taskTitle: task.title,
                               taskDescription: task.description,
                               taskPrice: controller.formatBudget(task.budget),
+                              taskBudget: task.budget,
                               taskTimeAgo: controller.getTimeAgo(
                                 task.createdAt,
                               ),

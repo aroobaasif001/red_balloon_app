@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/services/auth_service.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
-import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../post_new_task/post_new_task_screen.dart';
 import 'clean_my_solar_panels.dart';
@@ -28,7 +29,7 @@ class AllTaskTab extends StatelessWidget {
             // ==================== MY TASKS SECTION ====================
             CustomText('My Tasks', fontSize: 22, fontWeight: FontVariant.bold),
             const SizedBox(height: 15),
-            
+
             Obx(() {
               // Show loading indicator
               if (controller.isLoadingMyTasks.value) {
@@ -94,14 +95,17 @@ class AllTaskTab extends StatelessWidget {
                       image: task.imageUrl != null && task.imageUrl!.isNotEmpty
                           ? task.imageUrl!
                           : "assets/images/sofa.png",
-                      isNetworkImage: task.imageUrl != null && task.imageUrl!.isNotEmpty,
+                      isNetworkImage:
+                          task.imageUrl != null && task.imageUrl!.isNotEmpty,
                       distance: '2.5 km away',
                       taskType: task.taskType, // 🔥 Pass taskType
                       onEdit: () {
                         Get.to(() => PostNewTaskScreen());
                       },
                       onViewDetails: () {
-                        Get.to(() => TaskDetailsScreen(task: task)); // 🔥 Pass task object
+                        Get.to(
+                          () => TaskDetailsScreen(task: task),
+                        ); // 🔥 Pass task object
                       },
                       showButton: true,
                     ),
@@ -183,16 +187,47 @@ class AllTaskTab extends StatelessWidget {
                       image: task.imageUrl != null && task.imageUrl!.isNotEmpty
                           ? task.imageUrl!
                           : "assets/images/sofa.png",
-                      isNetworkImage: task.imageUrl != null && task.imageUrl!.isNotEmpty,
+                      isNetworkImage:
+                          task.imageUrl != null && task.imageUrl!.isNotEmpty,
                       distance: '2.5 km away',
                       taskType: task.taskType, // 🔥 Pass taskType
                       onEdit: () {
                         Get.to(() => PostNewTaskScreen());
                       },
                       showButton: true,
-                      btnText: 'Apply Now',
-                      onViewDetails: () {
-                        Get.to(() => Cleanmysolarpanels(taskType: task.taskType));
+                      btnText: 'View Details',
+                      onViewDetails: () async {
+                        // Fetch user profile data
+                        final authService = AuthService();
+                        final userData = await authService.getUserData(
+                          task.uid,
+                        );
+
+                        final userName = userData?['displayName'] ?? 'Unknown';
+                        final userPhoto = userData?['photoURL'];
+
+                        Get.to(
+                          () => Cleanmysolarpanels(
+                            taskId: task.id,
+                            location: task.taskType == 'Offline Task'
+                                ? task.location
+                                : null,
+                            taskType: task.taskType,
+                            taskDescription: task.description,
+                            taskTitle: task.title,
+                            taskPrice: controller.formatBudget(task.budget),
+                            taskBudget: task.budget,
+                            taskTimeAgo: controller.getTimeAgo(task.createdAt),
+                            taskImage:
+                                task.imageUrl != null &&
+                                    task.imageUrl!.isNotEmpty
+                                ? task.imageUrl!
+                                : "assets/images/sofa.png",
+                            userId: task.uid,
+                            userName: userName,
+                            userPhoto: userPhoto,
+                          ),
+                        );
                       },
                     ),
                   );

@@ -20,6 +20,7 @@ class SendOfferBottomSheet extends StatefulWidget {
   final String? taskOwnerUid;
   final String? taskOwnerName;
   final String? taskOwnerPhoto;
+  final double? taskBudget; // Task budget for OfferModel
 
   const SendOfferBottomSheet({
     super.key,
@@ -33,6 +34,7 @@ class SendOfferBottomSheet extends StatefulWidget {
     this.taskOwnerUid,
     this.taskOwnerName,
     this.taskOwnerPhoto,
+    this.taskBudget,
   });
 
   @override
@@ -234,6 +236,7 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
       final success = await _offerService.submitOffer(
         taskId: widget.taskId!,
         offerPrice: offerPrice,
+        taskBudget: widget.taskBudget ?? 0.0,
         taskDetails: taskDetails,
         taskOwnerUid: widget.taskOwnerUid!,
         taskOwnerName: widget.taskOwnerName ?? 'Unknown',
