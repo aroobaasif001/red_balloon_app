@@ -9,7 +9,7 @@ import '../controller/in_progress_task_controller.dart';
 
 /// Bottom Submit Proof button
 Widget buildSubmitButton(BuildContext context) {
-  final controller = Get.find<InProgressTaskController>();
+  final controller = Get.put(InProgressTaskController());
   return SizedBox(
     width: double.infinity,
     child: InkWell(

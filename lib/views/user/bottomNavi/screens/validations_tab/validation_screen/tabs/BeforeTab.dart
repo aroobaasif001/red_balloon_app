@@ -7,7 +7,8 @@ import 'package:red_balloon_app/utils/colors.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 
 class BeforeTab extends StatelessWidget {
-  const BeforeTab({super.key});
+  final bool isTask;
+  const BeforeTab({super.key, required this.isTask});
 
   @override
   Widget build(BuildContext context) {
@@ -46,81 +47,96 @@ class BeforeTab extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: isTask == false ? 20 : 0),
 
           /// -------------------------------
           /// RED DESCRIPTION BOX
           /// -------------------------------
-          CustomContainer(
-            width: double.infinity,
-            borderRadius: BorderRadius.circular(12),
-            conColor: redColor,
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-            alignment: Alignment.center,
-            child: CustomText(
-              "Helper uploaded proof of completion.\n"
-              "Review if the task appears done properly.",
-              fontSize: 15,
-              textAlign: TextAlign.center,
-              fontWeight: FontVariant.semiBold,
-              color: whiteColor,
-            ),
-          ),
+          isTask == false
+              ? CustomContainer(
+                  width: double.infinity,
+                  borderRadius: BorderRadius.circular(12),
+                  conColor: redColor,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 18,
+                    horizontal: 12,
+                  ),
+                  alignment: Alignment.center,
+                  child: CustomText(
+                    "Helper uploaded proof of completion.\n"
+                    "Review if the task appears done properly.",
+                    fontSize: 15,
+                    textAlign: TextAlign.center,
+                    fontWeight: FontVariant.semiBold,
+                    color: whiteColor,
+                  ),
+                )
+              : CustomContainer(),
 
-          const SizedBox(height: 20),
+          SizedBox(height: isTask == false ? 20 : 0),
 
           /// -------------------------------
           /// BUTTONS ROW
           /// -------------------------------
-          Row(
-            children: [
-              /// ❌ SUPPORT USER BUTTON
-              Flexible(
-                child: CustomButton(
-                  label: "Support User",
-                  height: 50,
-                  fontSize: 14, // slightly smaller = no overflow
-                  fontWeight: FontVariant.semiBold,
-                  bgColor: redColor,
-                  borderRadius: BorderRadius.circular(12),
-                  onPressed: () {
-                    DialogHelpers.showPaymentSuccessDialog(
-                      context: context,
-                      showButton: false,
-                    );
-                  },
-                  leading: const Icon(Icons.close, color: whiteColor, size: 18),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                  ), // prevents overflow
-                ),
-              ),
+          isTask == false
+              ? Row(
+                  children: [
+                    /// ❌ SUPPORT USER BUTTON
+                    Flexible(
+                      child: CustomButton(
+                        label: "Support Helper",
+                        height: 50,
+                        fontSize: 14, // slightly smaller = no overflow
+                        fontWeight: FontVariant.semiBold,
+                        bgColor: redColor,
+                        borderRadius: BorderRadius.circular(12),
+                        onPressed: () {
+                          DialogHelpers.showPaymentSuccessDialog(
+                            context: context,
+                            showButton: false,
+                          );
+                        },
+                        leading: const Icon(
+                          Icons.close,
+                          color: whiteColor,
+                          size: 18,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                        ), // prevents overflow
+                      ),
+                    ),
 
-              const SizedBox(width: 14),
+                    const SizedBox(width: 14),
 
-              /// ✔ SUPPORT PROVIDER BUTTON
-              Flexible(
-                child: CustomButton(
-                  label: "Support Provider",
-                  height: 50,
-                  fontSize: 14, // same as above
-                  fontWeight: FontVariant.semiBold,
-                  bgColor: redColor,
-                  borderRadius: BorderRadius.circular(12),
-                  onPressed: () {
-                    DialogHelpers.showPaymentSuccessDialog(
-                      context: context,
-                      showButton: false,
-                    );
-                  },
-                  leading: const Icon(Icons.check, color: whiteColor, size: 18),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                  ), // prevents overflow
-                ),
-              ),
-            ],
-          ),
+                    /// ✔ SUPPORT PROVIDER BUTTON
+                    Flexible(
+                      child: CustomButton(
+                        label: "Support Requester",
+                        height: 50,
+                        fontSize: 14, // same as above
+                        fontWeight: FontVariant.semiBold,
+                        bgColor: redColor,
+                        borderRadius: BorderRadius.circular(12),
+                        onPressed: () {
+                          DialogHelpers.showPaymentSuccessDialog(
+                            context: context,
+                            showButton: false,
+                          );
+                        },
+                        leading: const Icon(
+                          Icons.check,
+                          color: whiteColor,
+                          size: 18,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                        ), // prevents overflow
+                      ),
+                    ),
+                  ],
+                )
+              : CustomContainer(),
 
           const SizedBox(height: 25),
 
