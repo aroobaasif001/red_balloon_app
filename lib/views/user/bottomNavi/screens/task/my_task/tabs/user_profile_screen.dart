@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
@@ -53,41 +54,13 @@ class UserProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+        titleText: 'User Profile',
+      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /// BACK ARROW + TITLE
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 20,
-              ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Get.back(),
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: whiteColor,
-                      size: 24,
-                    ),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: CustomText(
-                        "User Profile",
-                        fontSize: 18,
-                        fontWeight: FontVariant.bold,
-                        color: whiteColor,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 24),
-                ],
-              ),
-            ),
-
             /// MAIN PROFILE CARD
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
