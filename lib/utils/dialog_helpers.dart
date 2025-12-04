@@ -1706,6 +1706,14 @@ class DialogHelpers {
 
                             // Update offer status to 'accepted' in Firestore
                             try {
+                              // 🔥 First, fetch the offer to get offeringUserUid
+                              final offerDoc = await FirebaseFirestore.instance
+                                  .collection('offers')
+                                  .doc(offerId)
+                                  .get();
+
+                              final offeringUserUid = offerDoc.data()?['offeringUserUid'] ?? '';
+
                               // Update offer status
                               await FirebaseFirestore.instance
                                   .collection('offers')
@@ -1714,13 +1722,16 @@ class DialogHelpers {
 
                               print('✅ Offer $offerId status updated to accepted');
 
-                              // 🔥 Update task status to 'in progress'
+                              // 🔥 Update task status to 'in progress' and store offeringUserUid
                               await FirebaseFirestore.instance
                                   .collection('tasks')
                                   .doc(taskId)
-                                  .update({'status': 'in progress'});
+                                  .update({
+                                    'status': 'in progress',
+                                    'acceptedOfferUid': offeringUserUid, // 🔥 Store helper's UID
+                                  });
 
-                              print('✅ Task $taskId status updated to in progress');
+                              print('✅ Task $taskId status updated to in progress with acceptedOfferUid: $offeringUserUid');
 
                               // Call the callback
                               onAccepted();
