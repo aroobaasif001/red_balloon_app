@@ -26,23 +26,11 @@ class TasksForYouTab extends StatelessWidget {
     final crossAxisSpacing = 12.0;
     final cardWidth = (screenWidth - horizontalPadding - crossAxisSpacing) / 2;
 
-    // 🔥 Dynamic aspect ratio based on screen size
-    // This ensures cards work well on all devices - small phones, large phones, tablets
-    double responsiveAspectRatio;
-
-    if (screenHeight < 700) {
-      // Small phones (like iPhone SE, small Android phones)
-      responsiveAspectRatio = 0.56;
-    } else if (screenHeight < 800) {
-      // Medium phones (most common phones)
-      responsiveAspectRatio = 0.60;
-    } else if (screenHeight < 900) {
-      // Large phones (like iPhone Pro Max, large Android phones)
-      responsiveAspectRatio = 0.63;
-    } else {
-      // Very large phones and tablets
-      responsiveAspectRatio = 0.66;
-    }
+    // 🔥 Fully dynamic aspect ratio based on screen dimensions
+    // This formula automatically adjusts for ANY device size
+    // Formula: cardWidth / (screenHeight * factor)
+    // Lower factor = taller cards, Higher factor = shorter cards
+    final responsiveAspectRatio = cardWidth / (screenHeight * 0.32);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,8 +150,7 @@ class TasksForYouTab extends StatelessWidget {
                   physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio:
-                        responsiveAspectRatio, // 🔥 Better aspect ratio
+                    childAspectRatio: responsiveAspectRatio, // 🔥 Dynamic aspect ratio
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12, // 🔥 Added vertical spacing
                   ),
