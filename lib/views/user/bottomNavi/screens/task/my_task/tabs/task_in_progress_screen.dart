@@ -11,12 +11,14 @@ import '../../../profile/tabs/chat_screen.dart';
 import '../controller/task_in_progress_controller.dart'; // 🔥 Import controller
 
 class TaskInProgressScreen extends StatelessWidget {
-  const TaskInProgressScreen({super.key});
+  final String? taskId; // 🔥 Optional task ID
+  
+  const TaskInProgressScreen({super.key, this.taskId});
 
   @override
   Widget build(BuildContext context) {
-    // 🔥 Initialize GetX controller
-    final controller = Get.put(TaskInProgressController());
+    // 🔥 Initialize GetX controller with taskId
+    final controller = Get.put(TaskInProgressController(taskId: taskId));
 
     return SafeArea(
       top: false,

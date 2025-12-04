@@ -1728,14 +1728,11 @@ class DialogHelpers {
                               // 🔥 Close confirmation dialog first
                               Get.back(); 
                               
-
-                              
                               // Close task details screen and navigate
                               Get.back(); // Close task details screen
-                              Get.back(); // Close task details screen
-                              Get.back(); // Close task details screen
-                              Get.to(() => TaskInProgressScreen());
-
+                              
+                              // 🔥 Navigate to TaskInProgressScreen with specific taskId
+                              Get.to(() => TaskInProgressScreen(taskId: taskId));
 
                               // Show snackbar
                               Get.snackbar(
@@ -1769,7 +1766,7 @@ class DialogHelpers {
                 ),
               ),
 
-              // ================= RED CHECK ICON =================
+              // ================= RED CHECK ICON ================= //
               Positioned(
                 top: -60,
                 child: Image.asset(

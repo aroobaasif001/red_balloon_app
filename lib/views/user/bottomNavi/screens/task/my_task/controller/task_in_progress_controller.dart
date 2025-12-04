@@ -20,13 +20,18 @@ class TaskInProgressController extends GetxController {
   Rx<UserModel?> helperUser = Rx<UserModel?>(null);
   var helperStats = <String, dynamic>{}.obs;
 
+  // 🔥 Optional task ID to fetch specific task
+  final String? taskId;
+
+  TaskInProgressController({this.taskId});
+
   @override
   void onInit() {
     super.onInit();
     fetchInProgressTask();
   }
 
-  /// Fetch the first in-progress task for current user
+  /// Fetch in-progress task (specific or first available)
   Future<void> fetchInProgressTask() async {
     try {
       isLoading.value = true;
@@ -38,31 +43,52 @@ class TaskInProgressController extends GetxController {
         return;
       }
 
-      // Get all tasks with 'in progress' status for current user
-      final tasksSnapshot = await FirebaseFirestore.instance
-          .collection('tasks')
-          .where('uid', isEqualTo: currentUser.uid)
-          .where('status', isEqualTo: 'in progress')
-          .limit(1)
-          .get();
+      // 🔥 If taskId is provided, fetch that specific task
+      if (taskId != null && taskId!.isNotEmpty) {
+        final taskDoc = await FirebaseFirestore.instance
+            .collection('tasks')
+            .doc(taskId)
+            .get();
 
-      if (tasksSnapshot.docs.isEmpty) {
-        print('❌ No in-progress tasks found');
-        isLoading.value = false;
-        return;
+        if (!taskDoc.exists) {
+          print('❌ Task not found: $taskId');
+          isLoading.value = false;
+          return;
+        }
+
+        task.value = TaskModel.fromJson(
+          taskDoc.data()!,
+          taskDoc.id,
+        );
+
+        print('✅ Found specific task: ${task.value?.title}');
+      } else {
+        // Get first in-progress task for current user
+        final tasksSnapshot = await FirebaseFirestore.instance
+            .collection('tasks')
+            .where('uid', isEqualTo: currentUser.uid)
+            .where('status', isEqualTo: 'in progress')
+            .limit(1)
+            .get();
+
+        if (tasksSnapshot.docs.isEmpty) {
+          print('❌ No in-progress tasks found');
+          isLoading.value = false;
+          return;
+        }
+
+        // Parse task
+        final taskDoc = tasksSnapshot.docs.first;
+        task.value = TaskModel.fromJson(
+          taskDoc.data(),
+          taskDoc.id,
+        );
+
+        print('✅ Found in-progress task: ${task.value?.title}');
       }
 
-      // Parse task
-      final taskDoc = tasksSnapshot.docs.first;
-      task.value = TaskModel.fromJson(
-        taskDoc.data(),
-        taskDoc.id, // 🔥 Pass docId as second parameter
-      );
-
-      print('✅ Found in-progress task: ${task.value?.title}');
-
       // Fetch accepted offer for this task
-      await fetchAcceptedOffer(taskDoc.id);
+      await fetchAcceptedOffer(task.value!.id!);
 
       isLoading.value = false;
     } catch (e) {
