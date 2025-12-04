@@ -14,6 +14,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
   final String price;
   final String image;
   final String type;
+  final String btnText; // 🔥 Dynamic button text
 
   final VoidCallback? onViewDetails;
 
@@ -28,6 +29,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
     required this.image,
     this.onViewDetails,
     required this.type,
+    this.btnText = 'View Details', // 🔥 Default value
   });
 
   @override
@@ -154,7 +156,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
               // width: Get.width * 0.4,
               fontSize: 12,
               height: 40,
-              label: 'View Details',
+              label: btnText, // 🔥 Dynamic button text
               onPressed: onViewDetails,
             ),
           ),

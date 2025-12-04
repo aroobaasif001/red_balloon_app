@@ -7,6 +7,7 @@ import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../bottom_navi_screen.dart';
 import '../../task/my_task/tabs/clean_my_solar_panels.dart';
+import '../../task/my_task/tabs/in_progress_view_details.dart';
 import '../widgets/offline_and_online_card.dart';
 import 'controller/tasks_for_you_controller.dart';
 
@@ -17,11 +18,31 @@ class TasksForYouTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = Get.size.height;
     final screenWidth = Get.size.width;
+    final screenHeight = Get.size.height;
 
-    // Calculate responsive aspect ratio based on device dimensions
-    final responsiveAspectRatio = screenWidth / (screenHeight * 0.8);
+    // 🔥 Calculate card width for 2 columns with proper spacing
+    final horizontalPadding = 15.0 * 2; // left and right padding
+    final crossAxisSpacing = 12.0;
+    final cardWidth = (screenWidth - horizontalPadding - crossAxisSpacing) / 2;
+
+    // 🔥 Dynamic aspect ratio based on screen size
+    // This ensures cards work well on all devices - small phones, large phones, tablets
+    double responsiveAspectRatio;
+
+    if (screenHeight < 700) {
+      // Small phones (like iPhone SE, small Android phones)
+      responsiveAspectRatio = 0.56;
+    } else if (screenHeight < 800) {
+      // Medium phones (most common phones)
+      responsiveAspectRatio = 0.60;
+    } else if (screenHeight < 900) {
+      // Large phones (like iPhone Pro Max, large Android phones)
+      responsiveAspectRatio = 0.63;
+    } else {
+      // Very large phones and tablets
+      responsiveAspectRatio = 0.66;
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,6 +135,22 @@ class TasksForYouTab extends StatelessWidget {
               // Listen to updateTrigger to rebuild when time updates
               controller.updateTrigger.value;
 
+              // 🔥 Filter tasks: only show "in progress" and "active" status
+              final filteredTasks = controller.tasksForYou.where((task) {
+                final status = task.status.toLowerCase();
+                return status == 'in progress' || status == 'active';
+              }).toList();
+
+              // 🔥 Sort tasks: "in progress" first, then "active"
+              filteredTasks.sort((a, b) {
+                final aIsInProgress = a.status.toLowerCase() == 'in progress';
+                final bIsInProgress = b.status.toLowerCase() == 'in progress';
+
+                if (aIsInProgress && !bIsInProgress) return -1;
+                if (!aIsInProgress && bIsInProgress) return 1;
+                return 0;
+              });
+
               return RefreshIndicator(
                 backgroundColor: whiteColor,
 
@@ -125,14 +162,20 @@ class TasksForYouTab extends StatelessWidget {
                   physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: responsiveAspectRatio,
+                    childAspectRatio:
+                        responsiveAspectRatio, // 🔥 Better aspect ratio
                     crossAxisSpacing: 12,
+                    mainAxisSpacing: 12, // 🔥 Added vertical spacing
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 15),
-                  itemCount: controller.tasksForYou.length,
+                  itemCount:
+                      filteredTasks.length, // 🔥 Use filtered list length
                   itemBuilder: (context, index) {
-                    final task = controller.tasksForYou[index];
+                    final task = filteredTasks[index]; // 🔥 Use filtered list
                     final isOfflineTask = task.taskType == 'Offline Task';
+                    // 🔥 Check status for conditional button text
+                    final isInProgress =
+                        task.status.toLowerCase() == 'in progress';
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: OfflineAndOnlineCard(
@@ -144,6 +187,9 @@ class TasksForYouTab extends StatelessWidget {
                         price: controller.formatBudget(task.budget),
                         image: controller.getImageUrl(task),
                         type: task.taskType,
+                        btnText: isInProgress
+                            ? 'In Progress'
+                            : 'View Details', // 🔥 Conditional button text
                         onViewDetails: () async {
                           print("Task details tapped: ${task.id}");
 
@@ -157,24 +203,30 @@ class TasksForYouTab extends StatelessWidget {
                               userData?['displayName'] ?? 'Unknown';
                           final userPhoto = userData?['photoURL'];
 
-                          Get.to(
-                            () => Cleanmysolarpanels(
-                              taskId: task.id,
-                              location: isOfflineTask ? task.location : null,
-                              taskTitle: task.title,
-                              taskDescription: task.description,
-                              taskPrice: controller.formatBudget(task.budget),
-                              taskBudget: task.budget,
-                              taskTimeAgo: controller.getTimeAgo(
-                                task.createdAt,
-                              ),
-                              taskType: task.taskType,
-                              taskImage: controller.getImageUrl(task),
-                              userId: task.uid,
-                              userName: userName,
-                              userPhoto: userPhoto,
-                            ),
-                          );
+                          isInProgress
+                              ? Get.to(() => InProgressViewDetails())
+                              : Get.to(
+                                  () => Cleanmysolarpanels(
+                                    taskId: task.id,
+                                    location: isOfflineTask
+                                        ? task.location
+                                        : null,
+                                    taskTitle: task.title,
+                                    taskDescription: task.description,
+                                    taskPrice: controller.formatBudget(
+                                      task.budget,
+                                    ),
+                                    taskBudget: task.budget,
+                                    taskTimeAgo: controller.getTimeAgo(
+                                      task.createdAt,
+                                    ),
+                                    taskType: task.taskType,
+                                    taskImage: controller.getImageUrl(task),
+                                    userId: task.uid,
+                                    userName: userName,
+                                    userPhoto: userPhoto,
+                                  ),
+                                );
                         },
                       ),
                     );
