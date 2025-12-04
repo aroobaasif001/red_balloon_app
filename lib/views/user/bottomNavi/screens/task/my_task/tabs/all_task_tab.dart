@@ -147,15 +147,38 @@ class AllTaskTab extends StatelessWidget {
                 );
               }
 
-              // 🔥 Filter out completed tasks
-              final filteredTasks = controller.tasksNearMe
-                  .where((task) => task.status.toLowerCase() != 'completed')
-                  .toList();
+              // 🔥 Get current user ID
+              final authService = AuthService();
+              final currentUserId = authService.currentUser!.uid;
 
-              // 🔥 Sort tasks: "in progress" first, then others
+              // 🔥 Filter tasks:
+              // 1. Remove completed tasks
+              // 2. Remove "in progress" tasks where acceptedOfferUid != current user
+              final filteredTasks = controller.tasksNearMe.where((task) {
+                final status = task.status.toLowerCase();
+
+                // Remove completed tasks
+                if (status == 'completed') return false;
+
+                // Remove "in progress" tasks that don't belong to current user
+                if (status == 'in progress' &&
+                    task.acceptedOfferUid != currentUserId) {
+                  return false;
+                }
+
+                // Keep all other tasks
+                return true;
+              }).toList();
+
+              // 🔥 Sort tasks: "in progress" (with matching acceptedOfferUid) first, then others
               filteredTasks.sort((a, b) {
-                final aIsInProgress = a.status.toLowerCase() == 'in progress';
-                final bIsInProgress = b.status.toLowerCase() == 'in progress';
+                // Check if task is truly in progress for current user
+                final aIsInProgress =
+                    a.status.toLowerCase() == 'in progress' &&
+                    a.acceptedOfferUid == currentUserId;
+                final bIsInProgress =
+                    b.status.toLowerCase() == 'in progress' &&
+                    b.acceptedOfferUid == currentUserId;
 
                 if (aIsInProgress && !bIsInProgress) return -1;
                 if (!aIsInProgress && bIsInProgress) return 1;
@@ -204,8 +227,11 @@ class AllTaskTab extends StatelessWidget {
               // Show list of filtered and sorted tasks
               return Column(
                 children: filteredTasks.map((task) {
-                  // 🔥 Check task status for conditional button text
-                  final isAccepted = task.status.toLowerCase() == 'in progress';
+                  // 🔥 Check if task is truly "in progress" for current user
+                  // Must have status "in progress" AND acceptedOfferUid matches current user
+                  final isAccepted =
+                      task.status.toLowerCase() == 'in progress' &&
+                      task.acceptedOfferUid == currentUserId;
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 15),
@@ -239,7 +265,18 @@ class AllTaskTab extends StatelessWidget {
                         final userPhoto = userData?['photoURL'];
 
                         isAccepted
-                            ? Get.to(() => InProgressViewDetails())
+                            ? Get.to(
+                                () => InProgressViewDetails(
+                                  timeAgo: controller.getTimeAgo(
+                                    task.createdAt,
+                                  ),
+                                  taskTitle: task.title,
+                                  price: task.budget.toString(),
+                                  userName: userName,
+                                  photoUrl: userPhoto,
+                                  location: task.location,
+                                ),
+                              )
                             : Get.to(
                                 () => Cleanmysolarpanels(
                                   taskId: task.id,

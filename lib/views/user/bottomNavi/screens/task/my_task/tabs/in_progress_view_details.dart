@@ -11,7 +11,21 @@ import '../widgets/build_status_card.dart';
 import '../widgets/build_task_summary_card.dart';
 
 class InProgressViewDetails extends StatelessWidget {
-  const InProgressViewDetails({super.key});
+  final String? taskTitle;
+  final String? price;
+  final String? timeAgo;
+  final String? userName;
+  final String? photoUrl;
+  final String? location;
+  const InProgressViewDetails({
+    super.key,
+    this.userName,
+    this.photoUrl,
+    this.timeAgo,
+    this.price,
+    this.taskTitle,
+    this.location,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +49,16 @@ class InProgressViewDetails extends StatelessWidget {
                     const SizedBox(height: 16),
                     buildRouteCard(),
                     const SizedBox(height: 16),
-                    buildTaskSummaryCard(controller),
+                    buildTaskSummaryCard(
+                      controller,
+                      timeAgo!,
+                      price!,
+                      userName,
+                      taskTitle,
+                      location ?? '',
+                    ),
                     const SizedBox(height: 16),
-                    buildHelperInfoCard(controller),
+                    buildHelperInfoCard(controller, photoUrl, userName ?? ''),
                     const SizedBox(height: 100),
                   ],
                 ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/user_profile_screen.dart';
 
 import '../../../../../../../utils/colors.dart';
-import '../../../../../../../utils/dialog_helpers.dart';
 
 class TaskOwnerTile extends StatelessWidget {
   final String? photoUrl;
@@ -46,7 +47,7 @@ class TaskOwnerTile extends StatelessWidget {
 
                 const SizedBox(width: 4),
                 const CustomText(
-                  "10 Verified",
+                  "Verified",
                   color: textcolord,
                   fontSize: 12,
                   fontWeight: FontVariant.regular,
@@ -68,7 +69,15 @@ class TaskOwnerTile extends StatelessWidget {
             const SizedBox(height: 6),
             InkWell(
               onTap: () {
-                DialogHelpers.showHelperProfileDialog(context);
+                Get.to(
+                  () => UserProfileScreen(
+                    userName: name!,
+                    userInitials: '',
+                    rating: 0,
+                    tasksCompleted: 0,
+                    tasksRequested: 0,
+                  ),
+                );
               },
               child: CustomText(
                 "View Profile",

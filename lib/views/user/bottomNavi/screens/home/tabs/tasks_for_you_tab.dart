@@ -123,16 +123,39 @@ class TasksForYouTab extends StatelessWidget {
               // Listen to updateTrigger to rebuild when time updates
               controller.updateTrigger.value;
 
-              // 🔥 Filter tasks: only show "in progress" and "active" status
+              // 🔥 Get current user ID
+              final authService = AuthService();
+              final currentUserId = authService.currentUser!.uid;
+
+              // 🔥 Filter tasks:
+              // 1. Only show "in progress" and "active" status
+              // 2. Remove "in progress" tasks where acceptedOfferUid != current user
               final filteredTasks = controller.tasksForYou.where((task) {
                 final status = task.status.toLowerCase();
-                return status == 'in progress' || status == 'active';
+
+                // Remove tasks that are not "in progress" or "active"
+                if (status != 'in progress' && status != 'active') {
+                  return false;
+                }
+
+                // Remove "in progress" tasks that don't belong to current user
+                if (status == 'in progress' &&
+                    task.acceptedOfferUid != currentUserId) {
+                  return false;
+                }
+
+                // Keep "active" tasks and "in progress" tasks for current user
+                return true;
               }).toList();
 
-              // 🔥 Sort tasks: "in progress" first, then "active"
+              // 🔥 Sort tasks: "in progress" (with matching acceptedOfferUid) first, then "active"
               filteredTasks.sort((a, b) {
-                final aIsInProgress = a.status.toLowerCase() == 'in progress';
-                final bIsInProgress = b.status.toLowerCase() == 'in progress';
+                final aIsInProgress =
+                    a.status.toLowerCase() == 'in progress' &&
+                    a.acceptedOfferUid == currentUserId;
+                final bIsInProgress =
+                    b.status.toLowerCase() == 'in progress' &&
+                    b.acceptedOfferUid == currentUserId;
 
                 if (aIsInProgress && !bIsInProgress) return -1;
                 if (!aIsInProgress && bIsInProgress) return 1;
@@ -150,7 +173,8 @@ class TasksForYouTab extends StatelessWidget {
                   physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: responsiveAspectRatio, // 🔥 Dynamic aspect ratio
+                    childAspectRatio:
+                        responsiveAspectRatio, // 🔥 Dynamic aspect ratio
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12, // 🔥 Added vertical spacing
                   ),
@@ -160,9 +184,10 @@ class TasksForYouTab extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final task = filteredTasks[index]; // 🔥 Use filtered list
                     final isOfflineTask = task.taskType == 'Offline Task';
-                    // 🔥 Check status for conditional button text
+                    // 🔥 Check if task is truly "in progress" for current user
                     final isInProgress =
-                        task.status.toLowerCase() == 'in progress';
+                        task.status.toLowerCase() == 'in progress' &&
+                        task.acceptedOfferUid == currentUserId;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: OfflineAndOnlineCard(
@@ -191,7 +216,18 @@ class TasksForYouTab extends StatelessWidget {
                           final userPhoto = userData?['photoURL'];
 
                           isInProgress
-                              ? Get.to(() => InProgressViewDetails())
+                              ? Get.to(
+                                  () => InProgressViewDetails(
+                                    photoUrl: userPhoto,
+                                    userName: userName,
+                                    taskTitle: task.title,
+                                    timeAgo: controller.getTimeAgo(
+                                      task.createdAt,
+                                    ),
+                                    price: task.budget.toString(),
+                                    location: task.location,
+                                  ),
+                                )
                               : Get.to(
                                   () => Cleanmysolarpanels(
                                     taskId: task.id,

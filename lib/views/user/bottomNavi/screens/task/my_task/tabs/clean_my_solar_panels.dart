@@ -69,7 +69,7 @@ class Cleanmysolarpanels extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomAppBar(
-                      titleText: appBarTitle ?? "Clean my Solar Panels",
+                      titleText: taskTitle ?? "Clean my Solar Panels",
                       // titleFontSize: 16,
                       // titleFontWeight: FontVariant.semiBold,
                     ),

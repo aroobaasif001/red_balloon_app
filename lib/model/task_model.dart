@@ -9,6 +9,7 @@ class TaskModel {
   final String? imageUrl;
   final DateTime createdAt;
   final String status;
+  final String? acceptedOfferUid; // 🔥 Track which user's offer was accepted
 
   TaskModel({
     this.id,
@@ -21,6 +22,7 @@ class TaskModel {
     this.imageUrl,
     required this.createdAt,
     this.status = 'active',
+    this.acceptedOfferUid, // 🔥 Optional field
   });
 
   Map<String, dynamic> toJson() {
@@ -34,6 +36,7 @@ class TaskModel {
       'imageUrl': imageUrl,
       'createdAt': createdAt.toIso8601String(),
       'status': status,
+      'acceptedOfferUid': acceptedOfferUid, // 🔥 Include in JSON
     };
   }
 
@@ -51,6 +54,7 @@ class TaskModel {
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
       status: json['status'] ?? 'active',
+      acceptedOfferUid: json['acceptedOfferUid'], // 🔥 Parse from JSON
     );
   }
 }
