@@ -38,6 +38,7 @@ class TaskDetailController extends GetxController {
     required String taskOwnerUid,
     required String taskOwnerName,
     String? taskOwnerPhoto,
+    double? taskBudget,
   }) async {
     try {
       // Validate price input
@@ -100,6 +101,7 @@ class TaskDetailController extends GetxController {
       final success = await _offerService.submitOffer(
         taskId: taskId,
         offerPrice: offerPrice,
+        taskBudget: taskBudget ?? 0.0,
         taskDetails: taskDetails,
         taskOwnerUid: taskOwnerUid,
         taskOwnerName: taskOwnerName,

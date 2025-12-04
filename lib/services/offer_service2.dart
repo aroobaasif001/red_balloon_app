@@ -15,6 +15,7 @@ class OfferService2 {
   Future<bool> submitOffer({
     required String taskId,
     required double offerPrice,
+    required double taskBudget,
     required Map<String, dynamic> taskDetails,
     required String taskOwnerUid,
     required String taskOwnerName,
@@ -32,28 +33,39 @@ class OfferService2 {
       final offerRef = offersCollection.doc();
       final offerId = offerRef.id;
 
+      // Structure the offer data according to OfferModel
       final offerData = {
         'offerId': offerId,
-        'taskId': taskId,
-        'offerPrice': offerPrice,
-        'taskDetails': taskDetails,
-        'taskOwnerUid': taskOwnerUid,
-        'taskOwnerName': taskOwnerName,
-        'taskOwnerPhoto': taskOwnerPhoto,
+        'taskId': taskId, // taskId at root level as per OfferModel
+        'offerPrice': offerPrice.toString(),
         'offeringUserUid': currentUserId,
         'offeringUserName': offeringUserName,
         'offeringUserPhoto': offeringUserPhoto,
         'status': 'pending',
         'createdAt': FieldValue.serverTimestamp(),
+        // All task details nested as per OfferModel.toJson()
+        'taskDetails': {
+          'taskId': taskId,
+          'title': taskDetails['title'] ?? '',
+          'description': taskDetails['description'] ?? '',
+          'taskType': taskDetails['taskType'] ?? '',
+          'budget': taskBudget,
+          'taskOwnerUid': taskOwnerUid,
+          'taskOwnerName': taskOwnerName,
+          'taskOwnerPhoto': taskOwnerPhoto,
+          if (taskDetails['image'] != null) 'image': taskDetails['image'],
+          if (taskDetails['location'] != null) 'location': taskDetails['location'],
+        },
+        'timeAgo': taskDetails['timeAgo'] ?? '',
       };
 
       // Save to Firestore
       await offerRef.set(offerData);
 
-      print('Offer submitted successfully with ID: $offerId');
+      print('✅ Offer submitted successfully with ID: $offerId');
       return true;
     } catch (e) {
-      print('Error submitting offer: $e');
+      print('❌ Error submitting offer: $e');
       return false;
     }
   }
