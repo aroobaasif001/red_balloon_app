@@ -2,6 +2,7 @@ class UserModel {
   final String uid;
   final String displayName;
   final String email;
+  final String? userId; // 🔥 Added userId field (RB-001 format)
   final String? phoneNumber;
   final String? photoURL;
   final String? city;
@@ -14,6 +15,7 @@ class UserModel {
     required this.uid,
     required this.displayName,
     required this.email,
+    this.userId, // 🔥 Added userId parameter
     this.phoneNumber,
     this.photoURL,
     this.city,
@@ -28,6 +30,7 @@ class UserModel {
       uid: json['uid'] ?? '',
       displayName: json['displayName'] ?? '',
       email: json['email'] ?? '', 
+      userId: json['userId'], // 🔥 Parse userId
       phoneNumber: json['phoneNumber'],
       photoURL: json['photoURL'],
       city: json['city'],
@@ -47,6 +50,7 @@ class UserModel {
       'uid': uid,
       'displayName': displayName,
       'email': email,
+      'userId': userId, // 🔥 Include userId
       'phoneNumber': phoneNumber,
       'photoURL': photoURL,
       'city': city,

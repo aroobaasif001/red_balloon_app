@@ -9,6 +9,7 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/
 
 import '../../post_new_task/post_new_task_screen.dart';
 import 'clean_my_solar_panels.dart';
+import 'task_in_progress_screen.dart'; // 🔥 Import TaskInProgressScreen
 
 class AllTaskTab extends StatelessWidget {
   const AllTaskTab({super.key});
@@ -85,6 +86,9 @@ class AllTaskTab extends StatelessWidget {
               // Show list of tasks
               return Column(
                 children: controller.myTasks.map((task) {
+                  // 🔥 Check if task is in progress
+                  final isInProgress = task.status.toLowerCase() == 'in progress';
+                  
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 15),
                     child: CustomMyTaskCard(
@@ -99,13 +103,17 @@ class AllTaskTab extends StatelessWidget {
                           task.imageUrl != null && task.imageUrl!.isNotEmpty,
                       distance: '2.5 km away',
                       taskType: task.taskType, // 🔥 Pass taskType
+                      btnText: isInProgress ? 'In Progress' : 'View Details', // 🔥 Dynamic button text
                       onEdit: () {
                         Get.to(() => PostNewTaskScreen());
                       },
                       onViewDetails: () {
-                        Get.to(
-                          () => TaskDetailsScreen(task: task),
-                        ); // 🔥 Pass task object
+                        // 🔥 Navigate based on task status
+                        if (isInProgress) {
+                          Get.to(() => TaskInProgressScreen());
+                        } else {
+                          Get.to(() => TaskDetailsScreen(task: task));
+                        }
                       },
                       showButton: true,
                     ),
@@ -117,6 +125,7 @@ class AllTaskTab extends StatelessWidget {
             const SizedBox(height: 26),
 
             // ==================== TASKS NEAR ME SECTION ====================
+
             CustomText(
               'Tasks Near Me',
               fontSize: 22,

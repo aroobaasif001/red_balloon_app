@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
@@ -1624,6 +1625,166 @@ class DialogHelpers {
     );
   }
 
+  /// ===================================================
+  /// SHOW OFFER CONFIRMATION DIALOG (Before Accept)
+  /// ===================================================
+  static void showOfferConfirmationDialog({
+    required BuildContext context,
+    required String offerId,
+    required String taskId, // 🔥 Added taskId parameter
+    required VoidCallback onAccepted,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.topCenter,
+            children: [
+              // ================= WHITE CARD =================
+              CustomContainer(
+                padding: const EdgeInsets.only(
+                  top: 80,
+                  left: 25,
+                  right: 25,
+                  bottom: 25,
+                ),
+                conColor: taskstatus2,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // CONFIRMATION TEXT
+                    const CustomText(
+                      "Are you sure you want to\naccept this offer",
+                      fontSize: 16,
+                      fontWeight: FontVariant.medium,
+                      textAlign: TextAlign.center,
+                      color: blackColor,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // ================= BUTTONS ROW =================
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // CANCEL BUTTON
+                        CustomButton(
+                          label: "Cancel",
+                          onPressed: () {
+                            Get.back(); // Just close dialog
+                          },
+                          height: 52,
+                          width: 120,
+                          bgColor: whiteColor,
+                          textColor: redColor,
+                          borderRadius: BorderRadius.circular(14),
+                          fontSize: 16,
+                          fontWeight: FontVariant.semiBold,
+                          border: Border.all(color: redColor, width: 2),
+                        ),
+
+                        const SizedBox(width: 15),
+
+                        // CONTINUE BUTTON
+                        CustomButton(
+                          label: "Continue",
+                          onPressed: () async {
+                            Get.back(); // Close confirmation dialog
+
+                            // Update offer status to 'accepted' in Firestore
+                            try {
+                              // Update offer status
+                              await FirebaseFirestore.instance
+                                  .collection('offers')
+                                  .doc(offerId)
+                                  .update({'status': 'accepted'});
+
+                              print('✅ Offer $offerId status updated to accepted');
+
+                              // 🔥 Update task status to 'in progress'
+                              await FirebaseFirestore.instance
+                                  .collection('tasks')
+                                  .doc(taskId)
+                                  .update({'status': 'in progress'});
+
+                              print('✅ Task $taskId status updated to in progress');
+
+                              // Call the callback
+                              onAccepted();
+
+                              // 🔥 Close confirmation dialog first
+                              Get.back(); 
+                              
+
+                              
+                              // Close task details screen and navigate
+                              Get.back(); // Close task details screen
+                              Get.back(); // Close task details screen
+                              Get.back(); // Close task details screen
+                              Get.to(() => TaskInProgressScreen());
+
+
+                              // Show snackbar
+                              Get.snackbar(
+                                "Success",
+                                "Offer accepted successfully!",
+                                snackPosition: SnackPosition.TOP,
+                                backgroundColor: Color(0xffDA3331),
+                                colorText: Colors.white,
+                                borderRadius: 10,
+                                margin: EdgeInsets.all(12),
+                                duration: Duration(seconds: 2),
+                                icon: Icon(Icons.check_circle, color: Colors.white),
+                              );
+
+
+                            } catch (e) {
+                              print('❌ Error updating offer/task status: $e');
+                            }
+                          },
+                          height: 52,
+                          width: 120,
+                          bgColor: redColor,
+                          textColor: whiteColor,
+                          borderRadius: BorderRadius.circular(14),
+                          fontSize: 16,
+                          fontWeight: FontVariant.semiBold,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // ================= RED CHECK ICON =================
+              Positioned(
+                top: -60,
+                child: Image.asset(
+                  'assets/icons/check.png',
+                  width: 130,
+                  height: 130,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   static void showOfferAcceptedDialog({
     required BuildContext context,
     String message = "Offer accepted successfully",
@@ -1673,7 +1834,7 @@ class DialogHelpers {
 
                     const SizedBox(height: 10),
 
-                    // ================= CONTINUE BUTTON =================
+                    // ================= CONTINUE BUTTON ================= //
                     CustomButton(
                       label: buttonText,
                       onPressed: () {

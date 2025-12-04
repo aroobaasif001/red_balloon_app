@@ -1,0 +1,151 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:red_balloon_app/model/task_model.dart';
+import 'package:red_balloon_app/model/offer_model.dart';
+import 'package:red_balloon_app/model/user_model.dart';
+import 'package:red_balloon_app/services/task_service.dart';
+import 'package:red_balloon_app/services/offer_service.dart';
+import 'package:red_balloon_app/services/user_service.dart';
+
+class TaskInProgressController extends GetxController {
+  final TaskService _taskService = TaskService();
+  final OfferService _offerService = OfferService();
+  final UserService _userService = UserService();
+
+  // Observables
+  var isLoading = true.obs;
+  Rx<TaskModel?> task = Rx<TaskModel?>(null);
+  Rx<OfferModel?> acceptedOffer = Rx<OfferModel?>(null);
+  Rx<UserModel?> helperUser = Rx<UserModel?>(null);
+  var helperStats = <String, dynamic>{}.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchInProgressTask();
+  }
+
+  /// Fetch the first in-progress task for current user
+  Future<void> fetchInProgressTask() async {
+    try {
+      isLoading.value = true;
+
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        print('❌ No user logged in');
+        isLoading.value = false;
+        return;
+      }
+
+      // Get all tasks with 'in progress' status for current user
+      final tasksSnapshot = await FirebaseFirestore.instance
+          .collection('tasks')
+          .where('uid', isEqualTo: currentUser.uid)
+          .where('status', isEqualTo: 'in progress')
+          .limit(1)
+          .get();
+
+      if (tasksSnapshot.docs.isEmpty) {
+        print('❌ No in-progress tasks found');
+        isLoading.value = false;
+        return;
+      }
+
+      // Parse task
+      final taskDoc = tasksSnapshot.docs.first;
+      task.value = TaskModel.fromJson(
+        taskDoc.data(),
+        taskDoc.id, // 🔥 Pass docId as second parameter
+      );
+
+      print('✅ Found in-progress task: ${task.value?.title}');
+
+      // Fetch accepted offer for this task
+      await fetchAcceptedOffer(taskDoc.id);
+
+      isLoading.value = false;
+    } catch (e) {
+      print('❌ Error fetching in-progress task: $e');
+      isLoading.value = false;
+    }
+  }
+
+  /// Fetch the accepted offer for the task
+  Future<void> fetchAcceptedOffer(String taskId) async {
+    try {
+      final offersSnapshot = await FirebaseFirestore.instance
+          .collection('offers')
+          .where('taskId', isEqualTo: taskId)
+          .where('status', isEqualTo: 'accepted')
+          .limit(1)
+          .get();
+
+      if (offersSnapshot.docs.isEmpty) {
+        print('❌ No accepted offer found for task');
+        return;
+      }
+
+      final offerDoc = offersSnapshot.docs.first;
+      acceptedOffer.value = OfferModel.fromJson(
+        offerDoc.data(),
+        offerDoc.id, // 🔥 Pass docId as second parameter
+      );
+
+      print('✅ Found accepted offer from: ${acceptedOffer.value?.offeringUserName}');
+
+      // Fetch helper user details
+      if (acceptedOffer.value?.offeringUserUid != null) {
+        await fetchHelperDetails(acceptedOffer.value!.offeringUserUid);
+      }
+    } catch (e) {
+      print('❌ Error fetching accepted offer: $e');
+    }
+  }
+
+  /// Fetch helper user details and stats
+  Future<void> fetchHelperDetails(String helperUid) async {
+    try {
+      helperUser.value = await _userService.getUserByUid(helperUid);
+      helperStats.value = await _userService.getUserStatistics(helperUid);
+
+      print('✅ Fetched helper details: ${helperUser.value?.displayName}');
+    } catch (e) {
+      print('❌ Error fetching helper details: $e');
+    }
+  }
+
+  /// Format budget
+  String formatBudget(double? budget) {
+    if (budget == null) return 'SAR 0';
+    return 'SAR ${budget.toStringAsFixed(0)}';
+  }
+
+  /// Get time ago
+  String getTimeAgo(DateTime? dateTime) {
+    if (dateTime == null) return 'Unknown';
+
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} mins ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+    } else {
+      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+    }
+  }
+
+  /// Get initials from name
+  String getInitials(String? name) {
+    if (name == null || name.isEmpty) return 'U';
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return name[0].toUpperCase();
+  }
+}

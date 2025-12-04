@@ -38,10 +38,14 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
   }
 
   Future<void> _fetchOffers() async {
+    if (!mounted) return; // 🔥 Check if widget is still mounted
+    
     setState(() => isLoading = true);
     print('🔍 TaskDetails2Screen: Fetching offers for Task ID: ${widget.task.id}');
     
     final fetchedOffers = await _offerService.getOffersForTask(widget.task.id ?? '');
+    
+    if (!mounted) return; // 🔥 Check again before setState
     
     setState(() {
       offers = fetchedOffers;
@@ -245,7 +249,16 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                       }
                     },
                     onAccept: () {
-                      DialogHelpers.showOfferAcceptedDialog(context: context);
+                      // 🔥 Show confirmation dialog
+                      DialogHelpers.showOfferConfirmationDialog(
+                        context: context,
+                        offerId: offer.offerId,
+                        taskId: widget.task.id ?? '', // 🔥 Pass task ID
+                        onAccepted: () {
+                          // Refresh offers list after acceptance
+                          _fetchOffers();
+                        },
+                      );
                     },
                   );
                 }).toList(),

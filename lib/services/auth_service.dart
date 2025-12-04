@@ -158,6 +158,42 @@ class AuthService {
   }
 
 
+  // Generate unique userId (RB-001, RB-002, etc.)
+  Future<String> _generateUserId() async {
+    try {
+      // Get all users to find the highest userId number
+      final snapshot = await usersCollection.get();
+      
+      int maxNumber = 0;
+      
+      for (var doc in snapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>?;
+        if (data != null && data.containsKey('userId')) {
+          final userId = data['userId'] as String;
+          // Extract number from "RB-001" format
+          if (userId.startsWith('RB-')) {
+            final numberStr = userId.substring(3); // Remove "RB-"
+            final number = int.tryParse(numberStr) ?? 0;
+            if (number > maxNumber) {
+              maxNumber = number;
+            }
+          }
+        }
+      }
+      
+      // Increment and format as RB-XXX
+      final nextNumber = maxNumber + 1;
+      final userId = 'RB-${nextNumber.toString().padLeft(3, '0')}';
+      
+      print('🔥 Generated userId: $userId');
+      return userId;
+    } catch (e) {
+      print('❌ Error generating userId: $e');
+      // Fallback to RB-001 if error
+      return 'RB-001';
+    }
+  }
+
   // Create or update user document
   Future<void> saveUserData({
     required String uid,
@@ -167,6 +203,10 @@ class AuthService {
     String? photoURL,
   }) async {
     try {
+      // Check if user already exists
+      final userDoc = await usersCollection.doc(uid).get();
+      final isNewUser = !userDoc.exists;
+      
       final userData = {
         'uid': uid,
         'email': email,
@@ -181,6 +221,13 @@ class AuthService {
 
       if (photoURL != null && photoURL.isNotEmpty) {
         userData['photoURL'] = photoURL;
+      }
+
+      // 🔥 Generate and assign userId for new users only
+      if (isNewUser) {
+        final userId = await _generateUserId();
+        userData['userId'] = userId;
+        print('✅ Assigned userId: $userId to new user: $uid');
       }
 
       // Use set with merge to create or update the document
