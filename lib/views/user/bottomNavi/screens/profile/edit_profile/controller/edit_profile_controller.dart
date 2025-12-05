@@ -28,20 +28,52 @@ class EditProfileController extends GetxController {
 
   // List of country codes
   final List<String> countryCodes = [
-    '+1',    // USA/Canada
-    '+44',   // UK
+    // Asia
     '+91',   // India
     '+92',   // Pakistan
-    '+94',   // Saudi Arabia
+    '+94',   // Sri Lanka
     '+971',  // UAE
+    '+966',  // Saudi Arabia
     '+86',   // China
     '+81',   // Japan
+    '+880',  // Bangladesh
+    '+977',  // Nepal
+    '+93',   // Afghanistan
+    '+975',  // Bhutan
+    '+960',  // Maldives
+    '+95',   // Myanmar
+    '+66',   // Thailand
+    '+84',   // Vietnam
+    '+63',   // Philippines
+    '+62',   // Indonesia
+    '+60',   // Malaysia
+    '+65',   // Singapore
+    '+82',   // South Korea
+    '+886',  // Taiwan
+    '+852',  // Hong Kong
+    '+98',   // Iran
+    '+964',  // Iraq
+    '+962',  // Jordan
+    '+965',  // Kuwait
+    '+961',  // Lebanon
+    '+968',  // Oman
+    '+974',  // Qatar
+    '+973',  // Bahrain
+    '+967',  // Yemen
+    '+90',   // Turkey
+    '+972',  // Israel
+    // North America
+    '+1',    // USA/Canada
+    // Europe
+    '+44',   // UK
     '+33',   // France
     '+49',   // Germany
     '+39',   // Italy
     '+34',   // Spain
+    // Oceania
     '+61',   // Australia
     '+64',   // New Zealand
+    // Africa
     '+27',   // South Africa
   ];
 

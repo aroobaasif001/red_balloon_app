@@ -133,6 +133,7 @@ class PostNewTaskScreen extends StatelessWidget {
 
               // ---------------- Budget ----------------
               CustomTextField(
+                keyboardType: TextInputType.phone,
                 controller: controller.taskBudget, // ADD THIS
                 labelIcon: 'assets/icons/hugeicons_coins-yen.png',
                 label: 'Task Budget',

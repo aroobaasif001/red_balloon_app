@@ -110,7 +110,6 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
                 const SizedBox(width: 7),
                 Expanded(
                   child: TextField(
-                    cursorColor: blackColor,
                     controller: _priceController,
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.left,

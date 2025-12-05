@@ -105,7 +105,7 @@ class WalletBalanceCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CustomText(
-                        'Minimum top-up: SAR 15',
+                        'Minimum top-up: SAR 25',
                         fontWeight: FontVariant.bold,
                         fontSize: 12,
                         color: walletPrimaryColor,

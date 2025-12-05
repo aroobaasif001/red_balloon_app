@@ -1,58 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/in_progress_view_details.dart';
 
-import '../../../../../../../custom_widgets/customtext.dart';
 import '../../post_new_task/post_new_task_screen.dart';
-import 'in_progress_view_details.dart';
+import 'clean_my_solar_panels.dart';
 
-class ActiveTasksTab extends StatelessWidget {
-  const ActiveTasksTab({super.key});
+class ActiveTab extends StatelessWidget {
+  const ActiveTab({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 15),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0),
-            // child: Align(
-            //   alignment: Alignment.bottomLeft,
-            //   child: CustomText(
-            //     'My Tasks',
-            //     fontSize: 22,
-            //     fontWeight: FontVariant.bold,
-            //   ),
-            // ),
+          CustomMyTaskCard(
+            title: "Help needed move furniture",
+            amount: "SAR 500",
+            status: "Not accepted",
+            postedTime: "2 hours ago",
+            image: "assets/images/sofa.png",
+            btnText: 'In Progress',
+            // type: 'Offline Task',
+            onEdit: () {},
+            onViewDetails: () {
+              Get.to(() => InProgressViewDetails());
+            },
+            showButton: true,
           ),
-          SizedBox(height: 15),
-          ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            itemCount: 3,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 15),
-                child: CustomMyTaskCard(
-                  title: "Help needed move furniture",
-                  amount: "SAR 500",
-                  status: "Not accepted",
-                  postedTime: "Posted 2 hours ago",
-                  image: "assets/images/sofa.png",
+          SizedBox(height: 10),
+          CustomMyTaskCard(
+            title: "Help needed move furniture",
+            amount: "SAR 500",
 
-                  showType: false,
-                  showButton: true,
-                  btnText: 'In Progress',
-
-                  onViewDetails: () {
-                    Get.to(() => InProgressViewDetails());
-                  },
-                  onEdit: () {
-                    Get.to(() => PostNewTaskScreen());
-                  },
-                ),
-              );
+            // type: 'Offline Task',
+            status: "Not accepted",
+            postedTime: "2 hours ago",
+            image: "assets/images/sofa.png",
+            onEdit: () {
+              Get.to(() => PostNewTaskScreen());
+            },
+            showButton: true,
+            onViewDetails: () {
+              Get.to(() => Cleanmysolarpanels(taskType: 'Offline Task'));
             },
           ),
           SizedBox(height: 140),

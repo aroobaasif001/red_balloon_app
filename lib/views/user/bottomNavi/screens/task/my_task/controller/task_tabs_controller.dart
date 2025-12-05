@@ -12,14 +12,13 @@ class TaskTabsController extends GetxController
   void onInit() {
     super.onInit();
 
-    // 4 tabs
-    tabController = TabController(length: 2, vsync: this);
+    // 3 tabs
+    tabController = TabController(length: 3, vsync: this);
 
-    // Sync Flutter TabController → GetX variable
+    // Sync Flutter TabController → GetX variable (immediate update on swipe)
     tabController.addListener(() {
-      if (tabController.indexIsChanging == false) {
-        selectedTab.value = tabController.index;
-      }
+      // Update on every animation frame for instant feedback
+      selectedTab.value = tabController.index;
     });
   }
 

@@ -8,7 +8,6 @@ import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../../../../custom_widgets/wallet_balance_card.dart';
 import '../controller/add_funds_controller.dart';
-import '../widgets/custom_amount_input.dart';
 import '../widgets/info_card.dart';
 import '../widgets/predefined_amount_buttons.dart';
 
@@ -66,13 +65,13 @@ class AddFunds extends StatelessWidget {
                   customAmountController: customAmountController,
                 ),
 
-                const SizedBox(height: 16),
-
-                // Custom Amount Input
-                CustomAmountInput(
-                  controller: controller,
-                  customAmountController: customAmountController,
-                ),
+                // const SizedBox(height: 16),
+                //
+                // // Custom Amount Input
+                // CustomAmountInput(
+                //   controller: controller,
+                //   customAmountController: customAmountController,
+                // ),
 
                 // Info Card
                 InfoCard(

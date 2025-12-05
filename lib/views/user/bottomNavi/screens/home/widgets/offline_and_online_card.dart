@@ -65,6 +65,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
             ],
             child: Center(child: Image.asset(image)),
           ),
+          SizedBox(height: 7),
 
           CustomContainer(
             padding: const EdgeInsets.symmetric(horizontal: 16),
