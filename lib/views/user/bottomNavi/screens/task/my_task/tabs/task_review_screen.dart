@@ -6,13 +6,35 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../../../../../utils/dialog_helpers.dart';
+import '../controller/task_review_controller.dart';
 import 'leave_feedback_screen.dart';
 
 class TaskReviewScreen extends StatelessWidget {
-  const TaskReviewScreen({super.key});
+  final String? taskId;
+  final String? proofId;
+  
+  const TaskReviewScreen({super.key, this.taskId, this.proofId});
 
   @override
   Widget build(BuildContext context) {
+    // 🔥 Use tag to persist controller per task
+    final String controllerTag = 'task_review_${taskId ?? 'default'}';
+    
+    // Try to find existing controller, or create new one with permanent flag
+    TaskReviewController controller;
+    
+    if (Get.isRegistered<TaskReviewController>(tag: controllerTag)) {
+      controller = Get.find<TaskReviewController>(tag: controllerTag);
+      print('🔥 Reusing existing controller for $controllerTag');
+    } else {
+      controller = Get.put(
+        TaskReviewController(),
+        tag: controllerTag,
+        permanent: true, // 🔥 Keep in memory even when screen disposed
+      );
+      print('🔥 Created new controller for $controllerTag');
+    }
+    
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -108,20 +130,20 @@ class TaskReviewScreen extends StatelessWidget {
                   ),
 
                   /// TIMER — Now aligned perfectly
-                  CustomContainer(
+                  Obx(() => CustomContainer(
                     height: 72,
                     width: 72,
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(width: 3, color: redColor),
                     child: Center(
                       child: CustomText(
-                        "02:00",
-                        fontSize: 18,
-                        fontWeight: FontVariant.bold,
-                        color: redColor,
-                      ),
+                          controller.formattedTime, // 🔥 Dynamic timer
+                          fontSize: 18,
+                          fontWeight: FontVariant.bold,
+                          color: redColor,
+                        ),
                     ),
-                  ),
+                  )),
                 ],
               ),
             ),
@@ -329,8 +351,13 @@ class TaskReviewScreen extends StatelessWidget {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        /// REJECT → Support BottomSheet
-                        DialogHelpers().showRejectStep1Dialog(context);
+                        /// 🔥 Show existing rejection dialog
+                        DialogHelpers().showRejectStep1Dialog(
+                          context,
+                          controller: controller,
+                          taskId: taskId,
+                          proofId: proofId,
+                        );
                       },
                       child: CustomContainer(
                         height: 52,
@@ -365,10 +392,16 @@ class TaskReviewScreen extends StatelessWidget {
                   /// Accept
                   Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        DialogHelpers().showApproveCompletionDialog(
-                          context: context,
+                      onTap: () async {
+                        /// 🔥 Accept proof via controller
+                        await controller.acceptProof(
+                          taskId: taskId ?? '',
+                          proofId: proofId ?? '',
                         );
+                        
+                        // Navigate back to task list
+                        Get.back(); // Close TaskReviewScreen
+                        Get.back(); // Go to task list
                       },
                       child: CustomContainer(
                         height: 52,

@@ -90,7 +90,12 @@ class DialogHelpers {
     );
   }
 
-  void showRejectStep1Dialog(BuildContext context) {
+  void showRejectStep1Dialog(
+    BuildContext context, {
+    dynamic controller,
+    String? taskId,
+    String? proofId,
+  }) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -139,7 +144,12 @@ class DialogHelpers {
                     /// NEXT BUTTON
                     InkWell(
                       onTap: () {
-                        DialogHelpers().showRejectStep2Dialog(context);
+                        DialogHelpers().showRejectStep2Dialog(
+                          context,
+                          controller: controller,
+                          taskId: taskId,
+                          proofId: proofId,
+                        );
                       },
                       child: CustomContainer(
                         height: 48,
@@ -196,7 +206,12 @@ class DialogHelpers {
     );
   }
 
-  void showRejectStep2Dialog(BuildContext context) {
+  void showRejectStep2Dialog(
+    BuildContext context, {
+    dynamic controller,
+    String? taskId,
+    String? proofId,
+  }) {
     int selected = 0;
 
     showDialog(
@@ -209,6 +224,7 @@ class DialogHelpers {
               "Work not completed",
               "Communication issue",
               "Task was ignored",
+              "Others", // 🔥 Added 4th option
             ];
 
             return Dialog(
@@ -280,9 +296,30 @@ class DialogHelpers {
                           width: 150,
                           fontSize: 14,
                           label: 'Submit Rejection',
-                          onPressed: () {
-                            Get.back();
-                            DialogHelpers().showRejectionReasonSheet(context);
+                          onPressed: () async {
+                            final selectedReason = reasons[selected];
+                            
+                            // 🔥 If "Others" selected, show bottom sheet
+                            if (selectedReason == "Others") {
+                              Get.back(); // Close step2 dialog
+                              DialogHelpers().showRejectionReasonSheet(
+                                context,
+                                controller: controller,
+                                taskId: taskId ?? '',
+                                proofId: proofId ?? '',
+                              );
+                            } else {
+                              // 🔥 Submit directly with selected reason
+                              if (controller != null) {
+                                controller.selectedRejectionReason.value = selectedReason;
+                                Get.back(); // Close dialog
+                                Get.back(); // Close step1 dialog
+                                await controller.submitRejection(
+                                  taskId: taskId ?? '',
+                                  proofId: proofId ?? '',
+                                );
+                              }
+                            }
                           },
                         ),
                       ],
@@ -1323,7 +1360,12 @@ class DialogHelpers {
     );
   }
 
-  void showRejectionReasonSheet(BuildContext context) {
+  void showRejectionReasonSheet(
+    BuildContext context, {
+    dynamic controller,
+    String? taskId,
+    String? proofId,
+  }) {
     TextEditingController msgController = TextEditingController();
     showModalBottomSheet(
       context: context,
@@ -1338,9 +1380,9 @@ class DialogHelpers {
           initialChildSize: 0.75,
           minChildSize: 0.50,
           maxChildSize: 0.95,
-          builder: (_, controller) {
+          builder: (_, scrollController) {
             return SingleChildScrollView(
-              controller: controller,
+              controller: scrollController,
               padding: EdgeInsets.only(
                 left: 20,
                 right: 20,
@@ -1388,6 +1430,7 @@ class DialogHelpers {
                     width: double.infinity,
                     child: TextField(
                       controller: msgController,
+                      maxLength: 150, // 🔥 150 character limit
                       maxLines: null,
                       expands: true,
                       style: const TextStyle(fontSize: 15, color: blackColor),
@@ -1395,6 +1438,7 @@ class DialogHelpers {
                         border: InputBorder.none,
                         hintText: "Type your message...",
                         hintStyle: TextStyle(color: greyColor, fontSize: 14),
+                        counterText: "", // Hide counter
                       ),
                     ),
                   ),
@@ -1404,10 +1448,28 @@ class DialogHelpers {
                   /// -------- BUTTON --------
                   CustomButton(
                     label: "Continue",
-                    onPressed: () {
-                      Get.back();
-                      Get.back();
-                      DialogHelpers.showReportSubmittedDialog(context: context);
+                    onPressed: () async {
+                      if (msgController.text.trim().isEmpty) {
+                        Get.snackbar('Error', 'Please enter a reason');
+                        return;
+                      }
+
+                      // 🔥 Save custom reason to controller
+                      if (controller != null) {
+                        controller.selectedRejectionReason.value = 'Others'; // 🔥 Set to Others
+                        controller.customRejectionReason.value = msgController.text.trim();
+                        
+                        // 🔥 Close dialogs first, then submit
+                        Get.back(); // Close bottom sheet
+                        Get.back(); // Close step2 dialog
+                        Get.back(); // Close step1 dialog
+                        
+                        // Submit rejection with custom reason
+                        await controller.submitRejection(
+                          taskId: taskId ?? '',
+                          proofId: proofId ?? '',
+                        );
+                      }
                     },
                     height: 51,
                     width: 233,
@@ -2559,7 +2621,9 @@ class DialogHelpers {
           taskOwnerPhoto: taskOwnerPhoto,
           taskBudget: taskBudget,
         );
-      },
+
+      }
     );
   }
-}
+  }
+
