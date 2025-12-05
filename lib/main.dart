@@ -1,6 +1,7 @@
 // import 'package:device_preview/device_preview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,10 +29,18 @@ class MyApp extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     return GetMaterialApp(
-      theme: ThemeData(scaffoldBackgroundColor: whiteColor),
+      theme: ThemeData(
+        scaffoldBackgroundColor: whiteColor,
+
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.red,              // Cursor ka color
+          selectionColor: Colors.grey,      // Select ki hui text ka background
+          selectionHandleColor: Colors.red,       // Handles ka color
+        ),
+      ),
+
       debugShowCheckedModeBanner: false,
       home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
-      // home: OnboardingScreen(),
     );
   }
 }
