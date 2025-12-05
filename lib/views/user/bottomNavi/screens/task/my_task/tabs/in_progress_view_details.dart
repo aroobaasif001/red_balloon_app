@@ -11,6 +11,7 @@ import '../widgets/build_status_card.dart';
 import '../widgets/build_task_summary_card.dart';
 
 class InProgressViewDetails extends StatelessWidget {
+  final String? taskId;
   final String? taskTitle;
   final String? price;
   final String? timeAgo;
@@ -19,6 +20,7 @@ class InProgressViewDetails extends StatelessWidget {
   final String? location;
   const InProgressViewDetails({
     super.key,
+    this.taskId,
     this.userName,
     this.photoUrl,
     this.timeAgo,
@@ -64,7 +66,13 @@ class InProgressViewDetails extends StatelessWidget {
                 ),
               ),
             ),
-            buildBottomUploadBar(context, controller),
+            buildBottomUploadBar(
+              context,
+              controller,
+              taskId: taskId,
+              taskTitle: taskTitle,
+              price: price,
+            ),
           ],
         ),
       ),

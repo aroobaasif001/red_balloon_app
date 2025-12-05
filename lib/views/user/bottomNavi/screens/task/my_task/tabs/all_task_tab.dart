@@ -267,6 +267,7 @@ class AllTaskTab extends StatelessWidget {
                         isAccepted
                             ? Get.to(
                                 () => InProgressViewDetails(
+                                  taskId: task.id,
                                   timeAgo: controller.getTimeAgo(
                                     task.createdAt,
                                   ),

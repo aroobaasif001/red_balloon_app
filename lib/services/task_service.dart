@@ -207,4 +207,73 @@ class TaskService {
             .map((doc) => TaskModel.fromJson(doc.data() as Map<String, dynamic>, doc.id))
             .toList());
   }
+
+  /// Upload proof image to Firebase Storage
+  Future<String?> uploadProofImage(File imageFile, String taskId, String imageType) async {
+    try {
+      if (currentUserId == null) {
+        print('User not authenticated');
+        return null;
+      }
+
+      final fileName = '${imageType}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final ref = _storage.ref().child('task_proofs/$taskId/$fileName');
+
+      await ref.putFile(imageFile);
+      final downloadUrl = await ref.getDownloadURL();
+
+      print('Proof image uploaded successfully: $downloadUrl');
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading proof image: $e');
+      return null;
+    }
+  }
+
+  /// Submit task proof to Firestore
+  Future<String?> submitTaskProof({
+    required String taskId,
+    required String userId,
+    required String username,
+    String? userPhotoUrl,
+    String? beforePhotoUrl,
+    String? afterPhotoUrl,
+    String? note,
+    required String taskTitle,
+    required String taskPrice,
+  }) async {
+    try {
+      if (currentUserId == null) {
+        print('User not authenticated');
+        return null;
+      }
+
+      // Create proof document
+      final proofRef = _firestore.collection('task_proofs').doc();
+      final proofId = proofRef.id;
+
+      final proofData = {
+        'taskId': taskId,
+        'userId': userId,
+        'username': username,
+        'userPhotoUrl': userPhotoUrl,
+        'beforePhotoUrl': beforePhotoUrl,
+        'afterPhotoUrl': afterPhotoUrl,
+        'note': note,
+        'submittedAt': DateTime.now().toIso8601String(),
+        'taskTitle': taskTitle,
+        'taskPrice': taskPrice,
+      };
+
+      // Save to Firestore
+      await proofRef.set(proofData);
+
+      print('Task proof submitted successfully with ID: $proofId');
+      return proofId;
+    } catch (e) {
+      print('Error submitting task proof: $e');
+      rethrow;
+    }
+  }
 }
+

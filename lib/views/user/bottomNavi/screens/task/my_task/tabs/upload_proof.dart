@@ -13,11 +13,27 @@ import '../widgets/build_submit_button.dart';
 import '../widgets/build_task_card.dart';
 
 class UploadProof extends StatelessWidget {
-  const UploadProof({super.key});
+  final String taskId;
+  final String taskTitle;
+  final String price;
+
+  const UploadProof({
+    super.key,
+    required this.taskId,
+    required this.taskTitle,
+    required this.price,
+  });
 
   @override
   Widget build(BuildContext context) {
     final UploadProofController controller = Get.put(UploadProofController());
+    
+    // Initialize controller with task data
+    controller.initializeTaskData(
+      id: taskId,
+      title: taskTitle,
+      price: price,
+    );
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -43,7 +59,7 @@ class UploadProof extends StatelessWidget {
               const SizedBox(height: 20),
               buildAddPhotoBox(),
               const SizedBox(height: 16),
-              buildCameraGalleryRow(),
+              buildCameraGalleryRow(controller),
               const SizedBox(height: 24),
               const CustomText(
                 'Add a note (optional)',

@@ -11,8 +11,11 @@ import '../tabs/upload_proof.dart';
 /// BOTTOM BAR: helper text + Upload Proof button
 Widget buildBottomUploadBar(
   BuildContext context,
-  InProgressTaskController controller,
-) {
+  InProgressTaskController controller, {
+  String? taskId,
+  String? taskTitle,
+  String? price,
+}) {
   return CustomContainer(
     padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
     conColor: whiteColor,
@@ -33,7 +36,11 @@ Widget buildBottomUploadBar(
         InkWell(
           onTap: () {
             controller.isSubmitted == false
-                ? Get.to(() => UploadProof())
+                ? Get.to(() => UploadProof(
+                      taskId: taskId ?? '',
+                      taskTitle: taskTitle ?? 'Task',
+                      price: price ?? '0',
+                    ))
                 : Get.to(() => LeaveFeedback());
           },
           child: CustomContainer(

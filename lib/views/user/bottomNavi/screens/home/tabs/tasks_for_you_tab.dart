@@ -218,6 +218,7 @@ class TasksForYouTab extends StatelessWidget {
                           isInProgress
                               ? Get.to(
                                   () => InProgressViewDetails(
+                                    taskId: task.id,
                                     photoUrl: userPhoto,
                                     userName: userName,
                                     taskTitle: task.title,
