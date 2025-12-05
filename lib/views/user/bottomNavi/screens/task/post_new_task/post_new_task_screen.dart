@@ -87,11 +87,49 @@ class PostNewTaskScreen extends StatelessWidget {
               SizedBox(height: 38),
 
               // ---------------- Task Title ----------------
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Row(
+                      children: [
+                        Image(
+                          image: AssetImage('assets/icons/pen-line.png'),
+                          height: 20,
+                        ),
+                        SizedBox(width: 10),
+                        CustomText(
+                          'Task Title',
+                          fontSize: 20,
+                          fontWeight: FontVariant.semiBold,
+                        ),
+                      ],
+                    ),
+                  ),
+                  GetBuilder<PostNewTaskController>(
+                    builder: (controller) {
+                      return Obx(
+                        () => CustomText(
+                          '${controller.titleLength.value}/25',
+                          fontSize: 12,
+                          color: controller.titleLength.value > 25
+                              ? redColor
+                              : blackLightColor.withOpacity(0.6),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
               CustomTextField(
-                controller: controller.taskTitle, // ADD THIS
-                labelIcon: 'assets/icons/pen-line.png',
-                label: 'Task Title',
+                controller: controller.taskTitle,
+                maxLength: 25,
                 hintText: 'What do you need help with?',
+                onChanged: (value) {
+                  controller.titleLength.value = value.length;
+                },
               ),
               Obx(
                 () => controller.titleError.isNotEmpty
@@ -109,12 +147,50 @@ class PostNewTaskScreen extends StatelessWidget {
               SizedBox(height: 17),
 
               // ---------------- Description ----------------
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Row(
+                      children: [
+                        Image(
+                          image: AssetImage('assets/icons/icon-park-solid.png'),
+                          height: 20,
+                        ),
+                        SizedBox(width: 10),
+                        CustomText(
+                          'Description',
+                          fontSize: 20,
+                          fontWeight: FontVariant.semiBold,
+                        ),
+                      ],
+                    ),
+                  ),
+                  GetBuilder<PostNewTaskController>(
+                    builder: (controller) {
+                      return Obx(
+                        () => CustomText(
+                          '${controller.descriptionLength.value}/100',
+                          fontSize: 12,
+                          color: controller.descriptionLength.value > 100
+                              ? redColor
+                              : blackLightColor.withOpacity(0.6),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
               CustomTextField(
-                controller: controller.taskDescription, // ADD THIS
+                controller: controller.taskDescription,
                 maxLines: 5,
-                labelIcon: 'assets/icons/icon-park-solid.png',
-                label: 'Description',
+                maxLength: 100,
                 hintText: 'Provide more details about your task...',
+                onChanged: (value) {
+                  controller.descriptionLength.value = value.length;
+                },
               ),
               Obx(
                 () => controller.descriptionError.isNotEmpty
@@ -132,11 +208,46 @@ class PostNewTaskScreen extends StatelessWidget {
               SizedBox(height: 34),
 
               // ---------------- Budget ----------------
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Row(
+                      children: [
+                        Image(
+                          image: AssetImage('assets/icons/hugeicons_coins-yen.png'),
+                          height: 20,
+                        ),
+                        SizedBox(width: 10),
+                        CustomText(
+                          'Task Budget',
+                          fontSize: 20,
+                          fontWeight: FontVariant.semiBold,
+                        ),
+                      ],
+                    ),
+                  ),
+                  GetBuilder<PostNewTaskController>(
+                    builder: (controller) {
+                      return Obx(
+                        () => CustomText(
+                          '${controller.budgetLength.value}/5',
+                          fontSize: 12,
+                          color: controller.budgetLength.value > 5
+                              ? redColor
+                              : blackLightColor.withOpacity(0.6),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
               CustomTextField(
-                keyboardType: TextInputType.phone,
-                controller: controller.taskBudget, // ADD THIS
-                labelIcon: 'assets/icons/hugeicons_coins-yen.png',
-                label: 'Task Budget',
+                keyboardType: TextInputType.number,
+                controller: controller.taskBudget,
+                maxLength: 5,
                 prefixWidget: CustomText(
                   'SAR',
                   fontSize: 13,
@@ -154,6 +265,9 @@ class PostNewTaskScreen extends StatelessWidget {
                   ),
                 ),
                 hintText: '15',
+                onChanged: (value) {
+                  controller.budgetLength.value = value.length;
+                },
               ),
               Obx(
                 () => controller.budgetError.isNotEmpty
@@ -175,10 +289,48 @@ class PostNewTaskScreen extends StatelessWidget {
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: Row(
+                                  children: [
+                                    Image(
+                                      image: AssetImage('assets/icons/location.png'),
+                                      height: 20,
+                                    ),
+                                    SizedBox(width: 10),
+                                    CustomText(
+                                      'Location',
+                                      fontSize: 20,
+                                      fontWeight: FontVariant.semiBold,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              GetBuilder<PostNewTaskController>(
+                                builder: (controller) {
+                                  return Obx(
+                                    () => CustomText(
+                                      '${controller.locationLength.value}/50',
+                                      fontSize: 12,
+                                      color: controller.locationLength.value > 50
+                                          ? redColor
+                                          : blackLightColor.withOpacity(0.6),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
                           CustomTextField(
                             controller: controller.location,
-                            labelIcon: 'assets/icons/location.png',
-                            label: 'Location',
+                            maxLength: 50,
+                            onChanged: (value) {
+                              controller.locationLength.value = value.length;
+                            },
                           ),
 
                           // Error text

@@ -134,11 +134,26 @@ class EditProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // NAME
-                  const CustomText(
-                    'Full Name',
-                    fontSize: 14,
-                    color: blackLightColor,
-                    fontWeight: FontVariant.regular,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const CustomText(
+                        'Full Name',
+                        fontSize: 14,
+                        color: blackLightColor,
+                        fontWeight: FontVariant.regular,
+                      ),
+                      Obx(
+                        () => CustomText(
+                          '${controller.displayNameLength.value}/25',
+                          fontSize: 12,
+                          color: controller.displayNameLength.value > 25
+                              ? redColor
+                              : blackLightColor.withOpacity(0.6),
+                          fontWeight: FontVariant.regular,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Obx(
@@ -146,6 +161,7 @@ class EditProfileScreen extends StatelessWidget {
                       hint: 'Enter your name',
                       controller: controller.displayNameController,
                       keyboardType: TextInputType.name,
+                      maxLength: 25,
                       errorText: controller.displayNameError.value,
                       onChanged: (value) =>
                           controller.validateDisplayName(value),
@@ -161,19 +177,61 @@ class EditProfileScreen extends StatelessWidget {
                     fontWeight: FontVariant.regular,
                   ),
                   const SizedBox(height: 4),
-                  RBInputField(
-                    hint: 'RB-102',
-                    controller: TextEditingController(text: 'RB-102'),
-                    enabled: false,
+                  Obx(
+                    () => Container(
+                      height: 52,
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      decoration: BoxDecoration(
+                        color: rbcolor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: bordercol, width: 1),
+                      ),
+                      child: Row(
+                        children: [
+                          // Fixed RB- prefix
+                          CustomText(
+                            'RB-',
+                            fontSize: 15,
+                            color: blackLightColor.withOpacity(0.6),
+                            fontWeight: FontVariant.semiBold,
+                          ),
+                          SizedBox(width: 4),
+                          // Editable part (displayed as non-editable)
+                          Expanded(
+                            child: CustomText(
+                              controller.userId.value.replaceFirst('RB-', ''),
+                              fontSize: 15,
+                              color: blackLightColor.withOpacity(0.6),
+                              fontWeight: FontVariant.regular,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 15),
 
                   // CITY
-                  const CustomText(
-                    'City',
-                    fontSize: 14,
-                    color: blackLightColor,
-                    fontWeight: FontVariant.regular,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const CustomText(
+                        'City',
+                        fontSize: 14,
+                        color: blackLightColor,
+                        fontWeight: FontVariant.regular,
+                      ),
+                      Obx(
+                        () => CustomText(
+                          '${controller.cityLength.value}/50',
+                          fontSize: 12,
+                          color: controller.cityLength.value > 50
+                              ? redColor
+                              : blackLightColor.withOpacity(0.6),
+                          fontWeight: FontVariant.regular,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Obx(
@@ -181,6 +239,7 @@ class EditProfileScreen extends StatelessWidget {
                       hint: 'Enter your city',
                       controller: controller.cityController,
                       keyboardType: TextInputType.text,
+                      maxLength: 50,
                       errorText: controller.cityError.value,
                       onChanged: (value) => controller.validateCity(value),
                     ),
@@ -188,11 +247,26 @@ class EditProfileScreen extends StatelessWidget {
                   const SizedBox(height: 15),
 
                   // COUNTRY
-                  const CustomText(
-                    'Country',
-                    fontSize: 14,
-                    color: blackLightColor,
-                    fontWeight: FontVariant.regular,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const CustomText(
+                        'Country',
+                        fontSize: 14,
+                        color: blackLightColor,
+                        fontWeight: FontVariant.regular,
+                      ),
+                      Obx(
+                        () => CustomText(
+                          '${controller.countryLength.value}/50',
+                          fontSize: 12,
+                          color: controller.countryLength.value > 50
+                              ? redColor
+                              : blackLightColor.withOpacity(0.6),
+                          fontWeight: FontVariant.regular,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Obx(
@@ -200,6 +274,7 @@ class EditProfileScreen extends StatelessWidget {
                       hint: 'Enter your country',
                       controller: controller.countryController,
                       keyboardType: TextInputType.text,
+                      maxLength: 50,
                       errorText: controller.countryError.value,
                       onChanged: (value) => controller.validateCountry(value),
                       prefix: Image.asset(
@@ -212,11 +287,31 @@ class EditProfileScreen extends StatelessWidget {
                   const SizedBox(height: 15),
 
                   // PHONE
-                  const CustomText(
-                    'Phone Number',
-                    fontSize: 14,
-                    color: blackLightColor,
-                    fontWeight: FontVariant.regular,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const CustomText(
+                        'Phone Number',
+                        fontSize: 14,
+                        color: blackLightColor,
+                        fontWeight: FontVariant.regular,
+                      ),
+                      Obx(
+                        () {
+                          final expectedLength = controller.getExpectedPhoneLength(
+                            controller.selectedCountryCode.value,
+                          );
+                          return CustomText(
+                            '${controller.phoneLength.value}/${expectedLength.max}',
+                            fontSize: 12,
+                            color: controller.phoneLength.value > expectedLength.max
+                                ? redColor
+                                : blackLightColor.withOpacity(0.6),
+                            fontWeight: FontVariant.regular,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                   SizedBox(height: 4),
 
@@ -236,19 +331,36 @@ class EditProfileScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   const SizedBox(height: 15),
 
+
                   // WORK EXPERIENCE
-                  const CustomText(
-                    'Work Experience',
-                    fontSize: 14,
-                    color: blackLightColor,
-                    fontWeight: FontVariant.regular,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const CustomText(
+                        'Work Experience',
+                        fontSize: 14,
+                        color: blackLightColor,
+                        fontWeight: FontVariant.regular,
+                      ),
+                      Obx(
+                        () => CustomText(
+                          '${controller.workExperienceLength.value}/50',
+                          fontSize: 12,
+                          color: controller.workExperienceLength.value > 50
+                              ? redColor
+                              : blackLightColor.withOpacity(0.6),
+                          fontWeight: FontVariant.regular,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Obx(
                     () => RBInputField(
-                      hint: 'Tell us about your experience (optional)',
+                      hint: 'Tell us about your experience',
                       controller: controller.workExperienceController,
-                      maxLines: 5,
+                      maxLines: 3,
+                      maxLength: 50,
                       keyboardType: TextInputType.multiline,
                       errorText: controller.workExperienceError.value,
                       onChanged: (value) =>
@@ -267,12 +379,7 @@ class EditProfileScreen extends StatelessWidget {
                 onPressed: controller.isLoading.value
                     ? null
                     : () async {
-                        final success = await controller.updateProfile();
-                        if (success) {
-                          Future.delayed(Duration(seconds: 1), () {
-                            Get.back();
-                          });
-                        }
+                        await controller.updateProfile();
                       },
                 bgColor: redColor,
                 height: 52,

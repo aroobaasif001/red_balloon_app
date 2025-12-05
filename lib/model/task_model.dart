@@ -1,6 +1,7 @@
 class TaskModel {
   final String? id;
   final String uid;
+  final String? userId; // User's custom ID (RB-XXXXX)
   final String taskType;
   final String title;
   final String description;
@@ -14,6 +15,7 @@ class TaskModel {
   TaskModel({
     this.id,
     required this.uid,
+    this.userId,
     required this.taskType,
     required this.title,
     required this.description,
@@ -28,6 +30,7 @@ class TaskModel {
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
+      'userId': userId,
       'taskType': taskType,
       'title': title,
       'description': description,
@@ -44,6 +47,7 @@ class TaskModel {
     return TaskModel(
       id: docId,
       uid: json['uid'] ?? '',
+      userId: json['userId'],
       taskType: json['taskType'] ?? '',
       title: json['title'] ?? '',
       description: json['description'] ?? '',

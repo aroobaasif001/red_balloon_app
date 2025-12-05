@@ -18,8 +18,8 @@ class TasksForYouTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = Get.size.width;
-    final screenHeight = Get.size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     // 🔥 Calculate card width for 2 columns with proper spacing
     final horizontalPadding = 15.0 * 2; // left and right padding
@@ -30,7 +30,7 @@ class TasksForYouTab extends StatelessWidget {
     // This formula automatically adjusts for ANY device size
     // Formula: cardWidth / (screenHeight * factor)
     // Lower factor = taller cards, Higher factor = shorter cards
-    final responsiveAspectRatio = cardWidth / (screenHeight * 0.32);
+    final responsiveAspectRatio = cardWidth / (screenHeight * 0.34);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

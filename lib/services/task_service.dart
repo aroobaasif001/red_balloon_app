@@ -44,6 +44,7 @@ class TaskService {
     required String description,
     required double budget,
     String? location,
+    String? userId,
     File? imageFile,
   }) async {
     try {
@@ -66,6 +67,7 @@ class TaskService {
       final task = TaskModel(
         id: taskId,
         uid: currentUserId!,
+        userId: userId,
         taskType: taskType,
         title: title,
         description: description,

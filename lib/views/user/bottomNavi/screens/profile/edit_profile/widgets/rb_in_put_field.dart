@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../../../../utils/colors.dart';
 
 class RBInputField extends StatelessWidget {
   final String? hint;
   final int maxLines;
+  final int? maxLength;
   final Widget? prefix;
   final TextEditingController? controller;
   final bool enabled;
@@ -19,6 +21,7 @@ class RBInputField extends StatelessWidget {
     this.controller,
     this.enabled = true,
     this.maxLines = 1,
+    this.maxLength,
     this.keyboardType = TextInputType.text,
     this.errorText,
     this.onChanged,
@@ -62,6 +65,10 @@ class RBInputField extends StatelessWidget {
                   controller: controller,
                   enabled: enabled,
                   maxLines: maxLines,
+                  maxLength: maxLength,
+                  maxLengthEnforcement: maxLength != null
+                      ? MaxLengthEnforcement.enforced
+                      : MaxLengthEnforcement.none,
                   keyboardType: keyboardType,
                   onChanged: onChanged,
                   style: const TextStyle(
@@ -71,6 +78,7 @@ class RBInputField extends StatelessWidget {
                   decoration: InputDecoration(
                     isCollapsed: true, // Better alignment
                     border: InputBorder.none,
+                    counterText: '', // Hide default counter
                     hintText: hint,
                     hintStyle: TextStyle(
                       color: balanceconbgColor,

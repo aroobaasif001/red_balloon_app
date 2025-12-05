@@ -58,25 +58,43 @@ class ProfileScreen extends StatelessWidget {
                 return Column(
                   children: [
                     // Profile Card
-                    ProfileCard(
-                      avatarInitials: initials,
-                      photoURL: photoURL,
-                      userName: displayName,
-                      location: 'Riyadh, Saudi Arabia',
-                      verificationLabel: 'Verified Requester',
-                      loyaltyPoints: 'Your Loyalty Points: 05',
-                      avatarColor: redColor,
-                      containerColor: white2Color,
-                      shadowColor: walletBlackColor,
-                      shadowOpacity: 0.25,
-                      shadowBlur: 4,
-                      avatarSize: 100,
-                      namefontSize: 22,
-                      locationFontSize: 14,
-                      onAvatarTap: () {
-                        // Handle avatar tap
-                      },
-                    ),
+                    Obx(() {
+                      // Build location string from city and country
+                      String? locationText;
+                      final city = authController.userCity.value;
+                      final country = authController.userCountry.value;
+                      
+                      if (city.isNotEmpty && country.isNotEmpty) {
+                        locationText = '$city, $country';
+                      } else if (city.isNotEmpty) {
+                        locationText = city;
+                      } else if (country.isNotEmpty) {
+                        locationText = country;
+                      }
+                      
+                      return ProfileCard(
+                        avatarInitials: initials,
+                        photoURL: photoURL,
+                        userName: displayName,
+                        location: locationText,
+                        phoneNumber: authController.userPhone.value.isNotEmpty 
+                            ? authController.userPhone.value 
+                            : null,
+                        verificationLabel: 'Verified Requester',
+                        loyaltyPoints: 'Your Loyalty Points: 05',
+                        avatarColor: redColor,
+                        containerColor: white2Color,
+                        shadowColor: walletBlackColor,
+                        shadowOpacity: 0.25,
+                        shadowBlur: 4,
+                        avatarSize: 100,
+                        namefontSize: 22,
+                        locationFontSize: 14,
+                        onAvatarTap: () {
+                          // Handle avatar tap
+                        },
+                      );
+                    }),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -32,6 +32,7 @@ final border;
   final TextStyle? labelTextStyle;
 
   final int? maxLines;
+  final int? maxLength;
 
   // ⭐ Optional Suffix / Prefix Widgets
   final Widget? suffixWidget;
@@ -63,6 +64,7 @@ final borderColor;
     this.labelMargin = const EdgeInsets.only(left: 8, bottom: 10),
     this.labelTextStyle,
     this.maxLines,
+    this.maxLength,
     this.hintWidget,
     this.suffixWidget,
     this.prefixWidget,
@@ -131,6 +133,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
             controller: widget.controller,
             obscureText: widget.isPassword ? _obscure : false,
             maxLines: widget.maxLines,
+            maxLength: widget.maxLength,
+            maxLengthEnforcement: widget.maxLength != null
+                ? MaxLengthEnforcement.enforced
+                : MaxLengthEnforcement.none,
             onChanged: widget.onChanged,
             onSubmitted: widget.onSubmitted,
             keyboardType: widget.keyboardType,

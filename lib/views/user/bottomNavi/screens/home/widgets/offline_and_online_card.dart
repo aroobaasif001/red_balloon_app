@@ -65,8 +65,8 @@ class OfflineAndOnlineCard extends StatelessWidget {
             ],
             child: Center(child: Image.asset(image)),
           ),
-          SizedBox(height: 7),
 
+          SizedBox(height: 7),
           CustomContainer(
             padding: const EdgeInsets.symmetric(horizontal: 16),
 
@@ -85,7 +85,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
                               title,
                               fontSize: 13,
                               fontWeight: FontVariant.bold,
-                              maxLines: 2,
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -122,7 +122,9 @@ class OfflineAndOnlineCard extends StatelessWidget {
                                 children: [
                                   Flexible(
                                     child: CustomText(
-                                      distance != null ? " • ${timeAgo}" : timeAgo,
+                                      distance != null
+                                          ? " • ${timeAgo}"
+                                          : timeAgo,
                                       fontSize: 11,
                                       fontWeight: FontVariant.regular,
                                       color: grey5Color,

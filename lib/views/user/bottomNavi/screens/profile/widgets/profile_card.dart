@@ -8,6 +8,7 @@ class ProfileCard extends StatelessWidget {
   final String? photoURL;
   final String? userName;
   final String? location;
+  final String? phoneNumber;
   final String? verificationLabel;
   final String? loyaltyPoints;
   final Color? avatarColor;
@@ -27,7 +28,8 @@ class ProfileCard extends StatelessWidget {
     this.avatarInitials = 'RB',
     this.photoURL,
     this.userName = 'Saad Sajid',
-    this.location = 'Riyadh, Saudi Arabia',
+    this.location,
+    this.phoneNumber,
     this.verificationLabel = 'Verified',
     this.loyaltyPoints = 'Your Loyalty Points: 05',
     this.avatarColor,
@@ -188,42 +190,45 @@ class ProfileCard extends StatelessWidget {
               ),
               SizedBox(height: 5),
 
-              /// LOCATION ROW
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.location_on, size: 19, color: redColor),
+              /// LOCATION ROW (only show if location is not empty)
+              if (location != null && location!.isNotEmpty)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.location_on, size: 19, color: redColor),
 
-                  /// Make ONLY text flexible
-                  CustomText(
-                    location ?? 'Riyadh, Saudi Arabia',
-                    fontSize: locationFontSize ?? 12,
-                    fontWeight: FontVariant.regular,
-                    color: lastTextColor,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+                    /// Make ONLY text flexible
+                    CustomText(
+                      location!,
+                      fontSize: locationFontSize ?? 12,
+                      fontWeight: FontVariant.regular,
+                      color: lastTextColor,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
             ],
           ),
 
           const SizedBox(height: 2),
 
-          // Loyalty Points
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.phone, size: 19, color: redColor),
-              CustomText(
-                '  +1 (234) 567-890',
-                fontSize: 12,
-                fontWeight: FontVariant.medium,
-                color: grey4Color,
-              ),
-            ],
-          ),
-          const SizedBox(height: 5),
+          // Phone Number (only show if phoneNumber is not empty)
+          if (phoneNumber != null && phoneNumber!.isNotEmpty)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.phone, size: 19, color: redColor),
+                CustomText(
+                  '  $phoneNumber',
+                  fontSize: 12,
+                  fontWeight: FontVariant.medium,
+                  color: grey4Color,
+                ),
+              ],
+            ),
+          if (phoneNumber != null && phoneNumber!.isNotEmpty)
+            const SizedBox(height: 5),
           // Loyalty Points
           CustomText(
             'Posted Tasks: 09',

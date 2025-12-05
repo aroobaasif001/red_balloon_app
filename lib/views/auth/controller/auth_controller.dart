@@ -10,6 +10,11 @@ class AuthController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var currentUser = Rxn<AuthModel>();
+  
+  // User profile data
+  var userPhone = ''.obs;
+  var userCity = ''.obs;
+  var userCountry = ''.obs;
 
   @override
   void onInit() {
@@ -22,6 +27,7 @@ class AuthController extends GetxController {
     final user = _authService.getCurrentUserModel();
     if (user != null) {
       currentUser.value = user;
+      fetchUserProfileData(); // Fetch additional profile data
     }
   }
 
@@ -31,10 +37,36 @@ class AuthController extends GetxController {
       final user = _authService.getCurrentUserModel();
       if (user != null) {
         currentUser.value = user;
+        await fetchUserProfileData(); // Fetch additional profile data
         update(); // Notify GetBuilder listeners
       }
     } catch (e) {
       print('Error refreshing user: $e');
+    }
+  }
+
+  // Fetch user profile data from Firestore
+  Future<void> fetchUserProfileData() async {
+    try {
+      final user = _authService.getCurrentUserModel();
+      if (user != null) {
+        final userData = await _authService.getUserData(user.uid);
+        if (userData != null) {
+          // Parse phone number
+          final phoneNumber = userData['phoneNumber'] ?? '';
+          if (phoneNumber.isNotEmpty) {
+            userPhone.value = phoneNumber;
+          } else {
+            userPhone.value = '';
+          }
+          
+          // Get city and country
+          userCity.value = userData['city'] ?? '';
+          userCountry.value = userData['country'] ?? '';
+        }
+      }
+    } catch (e) {
+      print('Error fetching user profile data: $e');
     }
   }
 

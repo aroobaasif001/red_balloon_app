@@ -11,13 +11,17 @@ class EditProfileController extends GetxController {
 
   // Text controllers
   late TextEditingController displayNameController;
+  late TextEditingController userIdController;
   late TextEditingController cityController;
   late TextEditingController countryController;
   late TextEditingController phoneController;
   late TextEditingController workExperienceController;
 
+  // User ID from database
+  RxString userId = ''.obs;
+
   // Country code
-  RxString selectedCountryCode = '+1'.obs;
+  RxString selectedCountryCode = '+966'.obs;
 
   // Error messages
   RxString displayNameError = ''.obs;
@@ -26,55 +30,61 @@ class EditProfileController extends GetxController {
   RxString phoneError = ''.obs;
   RxString workExperienceError = ''.obs;
 
+  // Character counts (observable for real-time UI updates)
+  RxInt displayNameLength = 0.obs;
+  RxInt cityLength = 0.obs;
+  RxInt countryLength = 0.obs;
+  RxInt phoneLength = 0.obs;
+  RxInt workExperienceLength = 0.obs;
+
   // List of country codes
   final List<String> countryCodes = [
     // Asia
-    '+91',   // India
-    '+92',   // Pakistan
-    '+94',   // Sri Lanka
-    '+971',  // UAE
-    '+966',  // Saudi Arabia
-    '+86',   // China
-    '+81',   // Japan
-    '+880',  // Bangladesh
-    '+977',  // Nepal
-    '+93',   // Afghanistan
-    '+975',  // Bhutan
-    '+960',  // Maldives
-    '+95',   // Myanmar
-    '+66',   // Thailand
-    '+84',   // Vietnam
-    '+63',   // Philippines
-    '+62',   // Indonesia
-    '+60',   // Malaysia
-    '+65',   // Singapore
-    '+82',   // South Korea
-    '+886',  // Taiwan
-    '+852',  // Hong Kong
-    '+98',   // Iran
-    '+964',  // Iraq
-    '+962',  // Jordan
-    '+965',  // Kuwait
-    '+961',  // Lebanon
-    '+968',  // Oman
-    '+974',  // Qatar
-    '+973',  // Bahrain
-    '+967',  // Yemen
-    '+90',   // Turkey
-    '+972',  // Israel
+    '+91', // India
+    '+92', // Pakistan
+    '+94', // Sri Lanka
+    '+971', // UAE
+    '+966', // Saudi Arabia
+    '+86', // China
+    '+81', // Japan
+    '+880', // Bangladesh
+    '+977', // Nepal
+    '+93', // Afghanistan
+    '+975', // Bhutan
+    '+960', // Maldives
+    '+95', // Myanmar
+    '+66', // Thailand
+    '+84', // Vietnam
+    '+63', // Philippines
+    '+62', // Indonesia
+    '+60', // Malaysia
+    '+65', // Singapore
+    '+82', // South Korea
+    '+886', // Taiwan
+    '+852', // Hong Kong
+    '+98', // Iran
+    '+964', // Iraq
+    '+962', // Jordan
+    '+965', // Kuwait
+    '+961', // Lebanon
+    '+968', // Oman
+    '+974', // Qatar
+    '+973', // Bahrain
+    '+967', // Yemen
+    '+90', // Turkey
     // North America
-    '+1',    // USA/Canada
+    '+1', // USA/Canada
     // Europe
-    '+44',   // UK
-    '+33',   // France
-    '+49',   // Germany
-    '+39',   // Italy
-    '+34',   // Spain
+    '+44', // UK
+    '+33', // France
+    '+49', // Germany
+    '+39', // Italy
+    '+34', // Spain
     // Oceania
-    '+61',   // Australia
-    '+64',   // New Zealand
+    '+61', // Australia
+    '+64', // New Zealand
     // Africa
-    '+27',   // South Africa
+    '+27', // South Africa
   ];
 
   // Image file
@@ -98,6 +108,7 @@ class EditProfileController extends GetxController {
 
   void _initializeControllers() {
     displayNameController = TextEditingController();
+    userIdController = TextEditingController();
     cityController = TextEditingController();
     countryController = TextEditingController();
     phoneController = TextEditingController();
@@ -108,15 +119,25 @@ class EditProfileController extends GetxController {
     final currentUser = _authService.getCurrentUserModel();
     if (currentUser != null) {
       displayNameController.text = currentUser.displayName ?? '';
+      displayNameLength.value = displayNameController.text.length;
       imagePreviewUrl.value = currentUser.photoURL ?? '';
 
       // Load additional profile data from Firestore
       final userData = await _authService.getUserData(currentUser.uid);
       if (userData != null) {
+        // Get userId from database
+        userId.value = userData['userId'] ?? 'RB-00000';
+        userIdController.text = userId.value;
+
         cityController.text = userData['city'] ?? '';
+        cityLength.value = cityController.text.length;
+
         countryController.text = userData['country'] ?? '';
+        countryLength.value = countryController.text.length;
+
         workExperienceController.text = userData['workExperience'] ?? '';
-        
+        workExperienceLength.value = workExperienceController.text.length;
+
         // Parse phone number with country code
         final phoneNumber = userData['phoneNumber'] ?? '';
         if (phoneNumber.isNotEmpty) {
@@ -125,9 +146,15 @@ class EditProfileController extends GetxController {
           if (match != null) {
             selectedCountryCode.value = match.group(1) ?? '+1';
             phoneController.text = match.group(2) ?? '';
+            phoneLength.value = phoneController.text
+                .replaceAll(RegExp(r'[^\d]'), '')
+                .length;
           } else {
             phoneController.text = phoneNumber;
-            selectedCountryCode.value = '+1';
+            phoneLength.value = phoneController.text
+                .replaceAll(RegExp(r'[^\d]'), '')
+                .length;
+            selectedCountryCode.value = '+966';
           }
         }
       }
@@ -172,21 +199,22 @@ class EditProfileController extends GetxController {
   // Validation methods
   bool validateDisplayName(String value) {
     final trimmed = value.trim();
+    displayNameLength.value = value.length; // Update character count
+
     if (trimmed.isEmpty) {
-      displayNameError.value = "Display name is required";
+      displayNameError.value = "Full name is required";
       return false;
     }
     if (trimmed.length < 2) {
-      displayNameError.value = "Display name must be at least 2 characters";
+      displayNameError.value = "Full name must be at least 2 characters";
       return false;
     }
-    if (trimmed.length > 50) {
-      displayNameError.value = "Display name must not exceed 50 characters";
+    if (trimmed.length > 25) {
+      displayNameError.value = "Full name must not exceed 25 characters";
       return false;
     }
     if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(trimmed)) {
-      displayNameError.value =
-          "Display name can only contain letters and spaces";
+      displayNameError.value = "Only letters (a-z, A-Z) and spaces allowed";
       return false;
     }
     displayNameError.value = "";
@@ -195,6 +223,8 @@ class EditProfileController extends GetxController {
 
   bool validateCity(String value) {
     final trimmed = value.trim();
+    cityLength.value = value.length; // Update character count
+
     if (trimmed.isEmpty) {
       cityError.value = "City is required";
       return false;
@@ -207,12 +237,18 @@ class EditProfileController extends GetxController {
       cityError.value = "City must not exceed 50 characters";
       return false;
     }
+    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(trimmed)) {
+      cityError.value = "Only letters (a-z, A-Z) and spaces allowed";
+      return false;
+    }
     cityError.value = "";
     return true;
   }
 
   bool validateCountry(String value) {
     final trimmed = value.trim();
+    countryLength.value = value.length; // Update character count
+
     if (trimmed.isEmpty) {
       countryError.value = "Country is required";
       return false;
@@ -225,35 +261,156 @@ class EditProfileController extends GetxController {
       countryError.value = "Country must not exceed 50 characters";
       return false;
     }
+    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(trimmed)) {
+      countryError.value = "Only letters (a-z, A-Z) and spaces allowed";
+      return false;
+    }
     countryError.value = "";
     return true;
   }
 
   bool validatePhone(String value) {
     final trimmed = value.trim();
+    // Update character count (only digits)
+    phoneLength.value = trimmed.replaceAll(RegExp(r'[^\d]'), '').length;
+
     if (trimmed.isEmpty) {
       phoneError.value = "Phone number is required";
       return false;
     }
     // Remove all non-digit characters for validation
     final digitsOnly = trimmed.replaceAll(RegExp(r'[^\d]'), '');
-    if (digitsOnly.length < 7) {
-      phoneError.value = "Phone number must have at least 7 digits";
+
+    // Dynamic validation based on country code
+    final expectedLength = getExpectedPhoneLength(selectedCountryCode.value);
+
+    if (digitsOnly.length < expectedLength.min) {
+      phoneError.value =
+          "Phone number must have at least ${expectedLength.min} digits";
       return false;
     }
-    if (digitsOnly.length > 15) {
-      phoneError.value = "Phone number must not exceed 15 digits";
+    if (digitsOnly.length > expectedLength.max) {
+      phoneError.value =
+          "Phone number must not exceed ${expectedLength.max} digits";
       return false;
     }
     phoneError.value = "";
     return true;
   }
 
+  // Helper to get expected phone length for country code
+  ({int min, int max}) getExpectedPhoneLength(String code) {
+    switch (code) {
+      // Asia
+      case '+91':
+        return (min: 10, max: 10); // India
+      case '+92':
+        return (min: 10, max: 10); // Pakistan
+      case '+94':
+        return (min: 9, max: 9); // Sri Lanka
+      case '+971':
+        return (min: 9, max: 9); // UAE
+      case '+966':
+        return (min: 9, max: 9); // Saudi Arabia
+      case '+86':
+        return (min: 11, max: 11); // China
+      case '+81':
+        return (min: 10, max: 10); // Japan
+      case '+880':
+        return (min: 10, max: 10); // Bangladesh
+      case '+977':
+        return (min: 10, max: 10); // Nepal
+      case '+93':
+        return (min: 9, max: 9); // Afghanistan
+      case '+975':
+        return (min: 8, max: 8); // Bhutan
+      case '+960':
+        return (min: 7, max: 7); // Maldives
+      case '+95':
+        return (min: 9, max: 9); // Myanmar
+      case '+66':
+        return (min: 9, max: 9); // Thailand
+      case '+84':
+        return (min: 10, max: 10); // Vietnam
+      case '+63':
+        return (min: 10, max: 10); // Philippines
+      case '+62':
+        return (min: 11, max: 11); // Indonesia
+      case '+60':
+        return (min: 10, max: 10); // Malaysia
+      case '+65':
+        return (min: 8, max: 8); // Singapore
+      case '+82':
+        return (min: 10, max: 10); // South Korea
+      case '+886':
+        return (min: 9, max: 9); // Taiwan
+      case '+852':
+        return (min: 8, max: 8); // Hong Kong
+      case '+98':
+        return (min: 10, max: 10); // Iran
+      case '+964':
+        return (min: 10, max: 10); // Iraq
+      case '+962':
+        return (min: 9, max: 9); // Jordan
+      case '+965':
+        return (min: 8, max: 8); // Kuwait
+      case '+961':
+        return (min: 8, max: 8); // Lebanon
+      case '+968':
+        return (min: 8, max: 8); // Oman
+      case '+974':
+        return (min: 8, max: 8); // Qatar
+      case '+973':
+        return (min: 8, max: 8); // Bahrain
+      case '+967':
+        return (min: 9, max: 9); // Yemen
+      case '+90':
+        return (min: 10, max: 10); // Turkey
+      // North America
+      case '+1':
+        return (min: 10, max: 10); // USA/Canada
+      // Europe
+      case '+44':
+        return (min: 10, max: 10); // UK
+      case '+33':
+        return (min: 9, max: 9); // France
+      case '+49':
+        return (min: 11, max: 11); // Germany
+      case '+39':
+        return (min: 10, max: 10); // Italy
+      case '+34':
+        return (min: 9, max: 9); // Spain
+      // Oceania
+      case '+61':
+        return (min: 9, max: 9); // Australia
+      case '+64':
+        return (min: 9, max: 9); // New Zealand
+      // Africa
+      case '+27':
+        return (min: 9, max: 9); // South Africa
+      default:
+        return (min: 7, max: 15); // Default
+    }
+  }
+
   bool validateWorkExperience(String value) {
     final trimmed = value.trim();
-    if (trimmed.isNotEmpty && trimmed.length > 500) {
+    workExperienceLength.value = value.length; // Update character count
+
+    // Optional field - only validate if not empty
+    if (trimmed.isEmpty) {
+      workExperienceError.value = "";
+      return true; // Valid if empty
+    }
+    
+    if (trimmed.length < 10) {
       workExperienceError.value =
-          "Work experience must not exceed 500 characters";
+          "Work experience must be at least 10 characters";
+      return false;
+    }
+    if (trimmed.length > 50) {
+      workExperienceError.value =
+          "Work experience must not exceed 50 characters";
       return false;
     }
     workExperienceError.value = "";
@@ -301,7 +458,7 @@ class EditProfileController extends GetxController {
       // Validate all fields
       if (!validateAllFields()) {
         isLoading.value = false;
-        Get.snackbar("Error", "Please fix the errors in the form");
+        Get.snackbar("Error", "Please fill all the required fields");
         return false;
       }
 
@@ -311,7 +468,7 @@ class EditProfileController extends GetxController {
       final phone = phoneController.text.trim();
       final workExperience = workExperienceController.text.trim();
       final countryCode = selectedCountryCode.value;
-      
+
       // Combine country code with phone number
       final fullPhoneNumber = '$countryCode $phone';
 
@@ -358,8 +515,16 @@ class EditProfileController extends GetxController {
         final authController = Get.find<AuthController>();
         await authController.refreshCurrentUser();
 
+        Get.back();
+
         isLoading.value = false;
         Get.snackbar("Success", "Profile updated successfully");
+
+        // Navigate back after successful update
+        Future.delayed(Duration(milliseconds: 1500), () {
+          Get.back();
+        });
+
         return true;
       }
 
@@ -376,6 +541,7 @@ class EditProfileController extends GetxController {
   @override
   void onClose() {
     displayNameController.dispose();
+    userIdController.dispose();
     cityController.dispose();
     countryController.dispose();
     phoneController.dispose();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../../utils/colors.dart';
@@ -115,11 +116,14 @@ class RBPhoneField extends StatelessWidget {
                 child: TextField(
                   controller: controller,
                   keyboardType: TextInputType.phone,
+                  maxLength: _getMaxPhoneLength(countryCode ?? '+1'),
+                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   onChanged: onChanged,
                   style: const TextStyle(fontSize: 15, color: blackLightColor),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     isCollapsed: true,
+                    counterText: '', // Hide default counter
                     hintText: _getPhoneHint(countryCode ?? '+1'),
                     hintStyle: TextStyle(
                       fontSize: 15,
@@ -216,8 +220,6 @@ class RBPhoneField extends StatelessWidget {
         return '🇾🇪'; // Yemen
       case '+90':
         return '🇹🇷'; // Turkey
-      case '+972':
-        return '🇮🇱'; // Israel
       // North America
       case '+1':
         return '🇺🇸'; // USA/Canada
@@ -242,6 +244,54 @@ class RBPhoneField extends StatelessWidget {
         return '🇿🇦'; // South Africa
       default:
         return '🌍'; // Default globe icon
+    }
+  }
+
+  // Helper function to get max phone length based on country code
+  int _getMaxPhoneLength(String countryCode) {
+    switch (countryCode) {
+      case '+91': return 10; // India
+      case '+92': return 10; // Pakistan
+      case '+94': return 9;  // Sri Lanka
+      case '+971': return 9; // UAE
+      case '+966': return 9; // Saudi Arabia
+      case '+86': return 11; // China
+      case '+81': return 10; // Japan
+      case '+880': return 10; // Bangladesh
+      case '+977': return 10; // Nepal
+      case '+93': return 9;  // Afghanistan
+      case '+975': return 8;  // Bhutan
+      case '+960': return 7;  // Maldives
+      case '+95': return 9;   // Myanmar
+      case '+66': return 9;   // Thailand
+      case '+84': return 10;  // Vietnam
+      case '+63': return 10;  // Philippines
+      case '+62': return 11;  // Indonesia
+      case '+60': return 10;  // Malaysia
+      case '+65': return 8;   // Singapore
+      case '+82': return 10;  // South Korea
+      case '+886': return 9;  // Taiwan
+      case '+852': return 8;  // Hong Kong
+      case '+98': return 10;  // Iran
+      case '+964': return 10; // Iraq
+      case '+962': return 9;  // Jordan
+      case '+965': return 8;  // Kuwait
+      case '+961': return 8;  // Lebanon
+      case '+968': return 8;  // Oman
+      case '+974': return 8;  // Qatar
+      case '+973': return 8;  // Bahrain
+      case '+967': return 9;  // Yemen
+      case '+90': return 10;  // Turkey
+      case '+1': return 10;   // USA/Canada
+      case '+44': return 10;  // UK
+      case '+33': return 9;   // France
+      case '+49': return 11;  // Germany
+      case '+39': return 10;  // Italy
+      case '+34': return 9;   // Spain
+      case '+61': return 9;   // Australia
+      case '+64': return 9;   // New Zealand
+      case '+27': return 9;   // South Africa
+      default: return 15;     // Default
     }
   }
 
@@ -313,8 +363,6 @@ class RBPhoneField extends StatelessWidget {
         return '712 345 678'; // Yemen (9 digits)
       case '+90':
         return '531 234 5678'; // Turkey (10 digits)
-      case '+972':
-        return '50 123 4567'; // Israel (9 digits)
       // North America
       case '+1':
         return '(555) 123-4567'; // USA/Canada (10 digits)

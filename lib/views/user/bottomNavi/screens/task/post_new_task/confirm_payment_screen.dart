@@ -59,10 +59,15 @@ class ConfirmPaymentScreen extends StatelessWidget {
                         fontSize: 18,
                         fontWeight: FontVariant.medium,
                       ),
-                      CustomText(
-                        'SAR 100',
-                        fontSize: 26,
-                        fontWeight: FontVariant.bold,
+                      GetBuilder<PostNewTaskController>(
+                        builder: (controller) {
+                          final budget = controller.taskBudget.text.trim();
+                          return CustomText(
+                            'SAR ${budget.isEmpty ? "0" : budget}',
+                            fontSize: 26,
+                            fontWeight: FontVariant.bold,
+                          );
+                        },
                       ),
                     ],
                   ),
