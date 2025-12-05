@@ -6,6 +6,7 @@ import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/clean_my_solar_panels.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_screen/validation_screen.dart';
 
 import '../../post_new_task/post_new_task_screen.dart';
 
@@ -90,15 +91,25 @@ class HistoryTab extends StatelessWidget {
                       showButton: true,
                       btnText: task.status.toLowerCase() == 'completed' 
                           ? 'Completed' 
-                          : 'Cancelled',
-                      buttonColor: const Color(0xFFEF9A9A), // 🔥 Light pink/salmon color
-                      isButtonEnabled: false, // 🔥 Disable button for history
+                          : task.status.toLowerCase() == 'rejected'
+                              ? 'Validation'
+                              : 'Cancelled',
+                      buttonColor: task.status.toLowerCase() == 'rejected'
+                          ? redColor // 🔥 Red for rejected tasks
+                          : const Color(0xFFEF9A9A), // Light pink/salmon for others
+                      isButtonEnabled: task.status.toLowerCase() == 'rejected', // 🔥 Enable for rejected
                       showType: false,
                       onViewDetails: () {
-                        Get.to(() => TaskDetailsScreen(task: task)); // 🔥 Pass real task
+                        Get.to(() => ValidationScreen());
                       },
                       onEdit: () {
-                        Get.to(() => PostNewTaskScreen());
+                        // 🔥 For rejected tasks, show validation details
+                        if (task.status.toLowerCase() == 'rejected') {
+                          // TODO: Navigate to validation details screen
+                          Get.snackbar('Validation', 'View validation details for ${task.title}');
+                        } else {
+                          Get.to(() => PostNewTaskScreen());
+                        }
                       },
                     ),
                   );
