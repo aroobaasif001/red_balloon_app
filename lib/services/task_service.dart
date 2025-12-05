@@ -147,6 +147,20 @@ class TaskService {
     }
   }
 
+  /// Get task by ID
+  Future<Map<String, dynamic>?> getTaskById(String taskId) async {
+    try {
+      final doc = await tasksCollection.doc(taskId).get();
+      if (doc.exists) {
+        return doc.data() as Map<String, dynamic>?;
+      }
+      return null;
+    } catch (e) {
+      print('Error getting task by ID: $e');
+      return null;
+    }
+  }
+
   /// Get current user's tasks
   Future<List<TaskModel>> getCurrentUserTasks() async {
     if (currentUserId == null) return [];
