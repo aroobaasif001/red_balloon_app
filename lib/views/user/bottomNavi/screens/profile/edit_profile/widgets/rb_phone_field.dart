@@ -120,7 +120,7 @@ class RBPhoneField extends StatelessWidget {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     isCollapsed: true,
-                    hintText: "+966 50 123 4567",
+                    hintText: _getPhoneHint(countryCode ?? '+1'),
                     hintStyle: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w100,
@@ -242,6 +242,103 @@ class RBPhoneField extends StatelessWidget {
         return '🇿🇦'; // South Africa
       default:
         return '🌍'; // Default globe icon
+    }
+  }
+
+  // Helper function to get phone hint based on country code
+  String _getPhoneHint(String countryCode) {
+    switch (countryCode) {
+      // Asia
+      case '+91':
+        return '98765 43210'; // India (10 digits)
+      case '+92':
+        return '300 1234567'; // Pakistan (10 digits)
+      case '+94':
+        return '77 123 4567'; // Sri Lanka (9 digits)
+      case '+971':
+        return '50 123 4567'; // UAE (9 digits)
+      case '+966':
+        return '50 123 4567'; // Saudi Arabia (9 digits)
+      case '+86':
+        return '138 0013 8000'; // China (11 digits)
+      case '+81':
+        return '90 1234 5678'; // Japan (10 digits)
+      case '+880':
+        return '1812 345678'; // Bangladesh (10 digits)
+      case '+977':
+        return '98 1234 5678'; // Nepal (10 digits)
+      case '+93':
+        return '70 123 4567'; // Afghanistan (9 digits)
+      case '+975':
+        return '17 12 34 56'; // Bhutan (8 digits)
+      case '+960':
+        return '771 2345'; // Maldives (7 digits)
+      case '+95':
+        return '9 123 456 789'; // Myanmar (9-10 digits)
+      case '+66':
+        return '81 234 5678'; // Thailand (9 digits)
+      case '+84':
+        return '91 234 5678'; // Vietnam (9 digits)
+      case '+63':
+        return '917 123 4567'; // Philippines (10 digits)
+      case '+62':
+        return '812 3456 7890'; // Indonesia (10-11 digits)
+      case '+60':
+        return '12 345 6789'; // Malaysia (9-10 digits)
+      case '+65':
+        return '8123 4567'; // Singapore (8 digits)
+      case '+82':
+        return '10 1234 5678'; // South Korea (10 digits)
+      case '+886':
+        return '912 345 678'; // Taiwan (9 digits)
+      case '+852':
+        return '5123 4567'; // Hong Kong (8 digits)
+      case '+98':
+        return '912 345 6789'; // Iran (10 digits)
+      case '+964':
+        return '790 123 4567'; // Iraq (10 digits)
+      case '+962':
+        return '79 123 4567'; // Jordan (9 digits)
+      case '+965':
+        return '5123 4567'; // Kuwait (8 digits)
+      case '+961':
+        return '71 123 456'; // Lebanon (8 digits)
+      case '+968':
+        return '9123 4567'; // Oman (8 digits)
+      case '+974':
+        return '3312 3456'; // Qatar (8 digits)
+      case '+973':
+        return '3612 3456'; // Bahrain (8 digits)
+      case '+967':
+        return '712 345 678'; // Yemen (9 digits)
+      case '+90':
+        return '531 234 5678'; // Turkey (10 digits)
+      case '+972':
+        return '50 123 4567'; // Israel (9 digits)
+      // North America
+      case '+1':
+        return '(555) 123-4567'; // USA/Canada (10 digits)
+      // Europe
+      case '+44':
+        return '7400 123456'; // UK (10 digits)
+      case '+33':
+        return '6 12 34 56 78'; // France (9 digits)
+      case '+49':
+        return '151 2345678'; // Germany (10-11 digits)
+      case '+39':
+        return '312 345 6789'; // Italy (10 digits)
+      case '+34':
+        return '612 34 56 78'; // Spain (9 digits)
+      // Oceania
+      case '+61':
+        return '412 345 678'; // Australia (9 digits)
+      case '+64':
+        return '21 123 4567'; // New Zealand (9 digits)
+      // Africa
+      case '+27':
+        return '71 123 4567'; // South Africa (9 digits)
+      default:
+        return '123 456 7890'; // Default
     }
   }
 }
