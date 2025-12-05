@@ -21,6 +21,7 @@ class AllTaskTab extends StatelessWidget {
     final TasksController controller = Get.put(TasksController());
 
     return RefreshIndicator(
+      color: Colors.red,
       onRefresh: () => controller.refreshTasks(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -38,7 +39,7 @@ class AllTaskTab extends StatelessWidget {
                 return const Center(
                   child: Padding(
                     padding: EdgeInsets.all(20.0),
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(color: Colors.red,),
                   ),
                 );
               }
@@ -142,7 +143,7 @@ class AllTaskTab extends StatelessWidget {
                 return const Center(
                   child: Padding(
                     padding: EdgeInsets.all(20.0),
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(color: Colors.red,),
                   ),
                 );
               }

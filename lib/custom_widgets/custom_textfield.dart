@@ -141,6 +141,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             autocorrect: widget.autocorrect ?? !widget.isPassword,
             enableSuggestions: widget.enableSuggestions ?? !widget.isPassword,
             keyboardAppearance: widget.keyboardAppearance,
+            cursorColor: Colors.red,
             style: const TextStyle(
               color: blackColor,
               fontSize: 13,
