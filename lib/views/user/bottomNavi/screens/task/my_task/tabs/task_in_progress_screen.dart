@@ -261,7 +261,7 @@ class TaskInProgressScreen extends StatelessWidget {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  Get.to(() => TaskReviewScreen());
+                                  // Get.to(() => TaskReviewScreen());
                                 },
                                 child: CustomContainer(
                                   height: 45,
@@ -477,6 +477,29 @@ class TaskInProgressScreen extends StatelessWidget {
                       fontSize: 14,
                       color: blackColor,
                     ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// ------------------ REVIEW PROOF BUTTON ------------------
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: CustomButton(
+                    label: "Review Proof",
+                    onPressed: controller.hasProof.value
+                        ? () {
+                            Get.to(() => TaskReviewScreen(
+                              taskId: controller.task.value?.id,
+                              proofId: controller.proofId.value,
+                            ));
+                          }
+                        : null, // 🔥 Disabled when no proof
+                    bgColor: controller.hasProof.value
+                        ? redColor
+                        : Colors.grey, // 🔥 Grey when disabled
+                    textColor: whiteColor,
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
 

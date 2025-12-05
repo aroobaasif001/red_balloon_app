@@ -19,6 +19,8 @@ class TaskInProgressController extends GetxController {
   Rx<OfferModel?> acceptedOffer = Rx<OfferModel?>(null);
   Rx<UserModel?> helperUser = Rx<UserModel?>(null);
   var helperStats = <String, dynamic>{}.obs;
+  var hasProof = false.obs; // 🔥 Track if proof exists
+  var proofId = ''.obs; // 🔥 Store proof ID
 
   // 🔥 Optional task ID to fetch specific task
   final String? taskId;
@@ -89,6 +91,9 @@ class TaskInProgressController extends GetxController {
 
       // Fetch accepted offer for this task
       await fetchAcceptedOffer(task.value!.id!);
+
+      // 🔥 Check if proof exists for this task
+      await checkForProof(task.value!.id!);
 
       isLoading.value = false;
     } catch (e) {
@@ -173,5 +178,28 @@ class TaskInProgressController extends GetxController {
       return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     }
     return name[0].toUpperCase();
+  }
+
+  /// 🔥 Check if proof exists for this task
+  Future<void> checkForProof(String taskId) async {
+    try {
+      final proofSnapshot = await FirebaseFirestore.instance
+          .collection('task_proofs')
+          .where('taskId', isEqualTo: taskId)
+          .limit(1)
+          .get();
+
+      hasProof.value = proofSnapshot.docs.isNotEmpty;
+      
+      if (hasProof.value) {
+        proofId.value = proofSnapshot.docs.first.id; // 🔥 Store proof ID
+        print('✅ Proof found for task: $taskId, proofId: ${proofId.value}');
+      } else {
+        print('❌ No proof found for task: $taskId');
+      }
+    } catch (e) {
+      print('❌ Error checking for proof: $e');
+      hasProof.value = false;
+    }
   }
 }
