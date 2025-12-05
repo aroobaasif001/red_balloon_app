@@ -137,17 +137,22 @@ class ProfileCard extends StatelessWidget {
             color: textColor2,
           ),
           const SizedBox(height: 12),
-          CustomText(
-            'Rating',
-            fontSize: 16,
-            fontWeight: FontVariant.bold,
-            color: textColor2,
-          ),
-          CustomText(
-            '(4.9)',
-            fontSize: 16,
-            fontWeight: FontVariant.bold,
-            color: textColor2,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomText(
+                'Rating',
+                fontSize: 16,
+                fontWeight: FontVariant.bold,
+                color: textColor2,
+              ),
+              CustomText(
+                ' - (4.9)',
+                fontSize: 16,
+                fontWeight: FontVariant.bold,
+                color: textColor2,
+              ),
+            ],
           ),
           const SizedBox(height: 13),
           // Location
@@ -207,6 +212,20 @@ class ProfileCard extends StatelessWidget {
 
           const SizedBox(height: 12),
 
+          // Loyalty Points
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.phone, size: 19, color: redColor),
+              CustomText(
+                '  +1 (234) 567-890',
+                fontSize: 12,
+                fontWeight: FontVariant.medium,
+                color: grey4Color,
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
           // Loyalty Points
           CustomText(
             'Posted Tasks: 09',

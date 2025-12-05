@@ -26,7 +26,14 @@ class MyApp extends StatelessWidget {
     // final user = FirebaseAuth.instance.currentUser;
 
     return GetMaterialApp(
-      theme: ThemeData(scaffoldBackgroundColor: whiteColor),
+      theme: ThemeData(
+        scaffoldBackgroundColor: whiteColor,
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: redColor,
+          selectionColor: redColor.withOpacity(0.3),
+          selectionHandleColor: redColor,
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       // home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
       home: OnboardingScreen(),

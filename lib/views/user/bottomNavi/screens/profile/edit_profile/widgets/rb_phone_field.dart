@@ -44,6 +44,7 @@ class RBPhoneField extends StatelessWidget {
             children: [
               // ---------------- LEFT SIDE WHITE CAPSULE WITH DROPDOWN ----------------
               PopupMenuButton<String>(
+                color: whiteColor, // Set dropdown background to white
                 onSelected: (value) {
                   onCountryCodeChanged?.call(value);
                 },
@@ -51,11 +52,20 @@ class RBPhoneField extends StatelessWidget {
                   return (countryCodes ?? ['+1', '+44', '+91', '+92', '+94', '+971'])
                       .map((code) => PopupMenuItem<String>(
                             value: code,
-                            child: CustomText(
-                              code,
-                              fontSize: 12,
-                              fontWeight: FontVariant.regular,
-                              color: blackColor,
+                            child: Row(
+                              children: [
+                                Text(
+                                  _getCountryFlag(code),
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                SizedBox(width: 8),
+                                CustomText(
+                                  code,
+                                  fontSize: 12,
+                                  fontWeight: FontVariant.regular,
+                                  color: blackColor,
+                                ),
+                              ],
                             ),
                           ))
                       .toList();
@@ -69,6 +79,14 @@ class RBPhoneField extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
+                      // Country flag
+                      Text(
+                        _getCountryFlag(countryCode ?? '+1'),
+                        style: TextStyle(fontSize: 16),
+                      ),
+
+                      const SizedBox(width: 6),
+
                       // dropdown arrow
                       Image.asset(
                         "assets/icons/dropdown9.png",
@@ -128,5 +146,102 @@ class RBPhoneField extends StatelessWidget {
           ),
       ],
     );
+  }
+
+  // Helper function to get country flag emoji based on country code
+  String _getCountryFlag(String countryCode) {
+    switch (countryCode) {
+      // Asia
+      case '+91':
+        return '🇮🇳'; // India
+      case '+92':
+        return '🇵🇰'; // Pakistan
+      case '+94':
+        return '🇱🇰'; // Sri Lanka
+      case '+971':
+        return '🇦🇪'; // UAE
+      case '+966':
+        return '🇸🇦'; // Saudi Arabia
+      case '+86':
+        return '🇨🇳'; // China
+      case '+81':
+        return '🇯🇵'; // Japan
+      case '+880':
+        return '🇧🇩'; // Bangladesh
+      case '+977':
+        return '🇳🇵'; // Nepal
+      case '+93':
+        return '🇦🇫'; // Afghanistan
+      case '+975':
+        return '🇧🇹'; // Bhutan
+      case '+960':
+        return '🇲🇻'; // Maldives
+      case '+95':
+        return '🇲🇲'; // Myanmar
+      case '+66':
+        return '🇹🇭'; // Thailand
+      case '+84':
+        return '🇻🇳'; // Vietnam
+      case '+63':
+        return '🇵🇭'; // Philippines
+      case '+62':
+        return '🇮🇩'; // Indonesia
+      case '+60':
+        return '🇲🇾'; // Malaysia
+      case '+65':
+        return '🇸🇬'; // Singapore
+      case '+82':
+        return '🇰🇷'; // South Korea
+      case '+886':
+        return '🇹🇼'; // Taiwan
+      case '+852':
+        return '🇭🇰'; // Hong Kong
+      case '+98':
+        return '🇮🇷'; // Iran
+      case '+964':
+        return '🇮🇶'; // Iraq
+      case '+962':
+        return '🇯🇴'; // Jordan
+      case '+965':
+        return '🇰🇼'; // Kuwait
+      case '+961':
+        return '🇱🇧'; // Lebanon
+      case '+968':
+        return '🇴🇲'; // Oman
+      case '+974':
+        return '🇶🇦'; // Qatar
+      case '+973':
+        return '🇧🇭'; // Bahrain
+      case '+967':
+        return '🇾🇪'; // Yemen
+      case '+90':
+        return '🇹🇷'; // Turkey
+      case '+972':
+        return '🇮🇱'; // Israel
+      // North America
+      case '+1':
+        return '🇺🇸'; // USA/Canada
+      // Europe
+      case '+44':
+        return '🇬🇧'; // UK
+      case '+33':
+        return '🇫🇷'; // France
+      case '+49':
+        return '🇩🇪'; // Germany
+      case '+39':
+        return '🇮🇹'; // Italy
+      case '+34':
+        return '🇪🇸'; // Spain
+      // Oceania
+      case '+61':
+        return '🇦🇺'; // Australia
+      case '+64':
+        return '🇳🇿'; // New Zealand
+      // Africa
+      case '+27':
+        return '🇿🇦'; // South Africa
+      default:
+        return '🌍'; // Default globe icon
+    }
   }
 }

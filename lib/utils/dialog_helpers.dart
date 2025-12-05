@@ -208,6 +208,7 @@ class DialogHelpers {
               "Work not completed",
               "Communication issue",
               "Task was ignored",
+              "Others",
             ];
 
             return Dialog(
@@ -281,7 +282,14 @@ class DialogHelpers {
                           label: 'Submit Rejection',
                           onPressed: () {
                             Get.back();
-                            DialogHelpers().showRejectionReasonSheet(context);
+                            if (selected == 3) {
+                              DialogHelpers().showRejectionReasonSheet(context);
+                            } else {
+                              Get.back();
+                              DialogHelpers.showReportSubmittedDialog(
+                                context: context,
+                              );
+                            }
                           },
                         ),
                       ],

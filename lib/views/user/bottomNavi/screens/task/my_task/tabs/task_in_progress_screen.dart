@@ -18,7 +18,7 @@ class TaskInProgressScreen extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor:whiteColor,
+        backgroundColor: whiteColor,
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +77,7 @@ class TaskInProgressScreen extends StatelessWidget {
                         text: "(3.2 km away)",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          color:blackColor,
+                          color: blackColor,
                         ),
                       ),
                     ],
@@ -115,7 +115,7 @@ class TaskInProgressScreen extends StatelessWidget {
                 child: CustomContainer(
                   padding: const EdgeInsets.all(20),
                   borderRadius: BorderRadius.circular(16),
-                  conColor:whiteColor,
+                  conColor: whiteColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.20),
@@ -151,7 +151,7 @@ class TaskInProgressScreen extends StatelessWidget {
                                 children: [
                                   const Icon(
                                     Icons.star,
-                                    color:orangecolor,
+                                    color: orangecolor,
                                     size: 16,
                                   ),
                                   const SizedBox(width: 4),
@@ -180,10 +180,7 @@ class TaskInProgressScreen extends StatelessWidget {
                               child: CustomContainer(
                                 height: 45,
                                 borderRadius: BorderRadius.circular(30),
-                                border: Border.all(
-                                  color: redColor,
-                                  width: 1.5,
-                                ),
+                                border: Border.all(color: redColor, width: 1.5),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.04),
@@ -212,8 +209,7 @@ class TaskInProgressScreen extends StatelessWidget {
                                           fontWeight: FontVariant.semiBold,
                                           color: redColor,
                                         ),
-                                      )
-
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -226,9 +222,7 @@ class TaskInProgressScreen extends StatelessWidget {
                           /// CALL BUTTON — CLICKABLE
                           Expanded(
                             child: GestureDetector(
-                              onTap: () {
-                                Get.to(() => TaskReviewScreen());
-                              },
+                              onTap: () {},
                               child: CustomContainer(
                                 height: 45,
                                 borderRadius: BorderRadius.circular(30),
@@ -253,7 +247,7 @@ class TaskInProgressScreen extends StatelessWidget {
                                       CustomText(
                                         "Call",
                                         fontWeight: FontVariant.semiBold,
-                                        color:whiteColor,
+                                        color: whiteColor,
                                       ),
                                     ],
                                   ),
@@ -276,7 +270,7 @@ class TaskInProgressScreen extends StatelessWidget {
                 child: CustomContainer(
                   padding: const EdgeInsets.all(18),
                   borderRadius: BorderRadius.circular(16),
-                  conColor:whiteColor,
+                  conColor: whiteColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.20),
@@ -298,7 +292,7 @@ class TaskInProgressScreen extends StatelessWidget {
                                 CustomText(
                                   "Task:",
                                   fontWeight: FontVariant.bold,
-                                  color:blackColor,
+                                  color: blackColor,
                                 ),
                                 SizedBox(width: 3),
                                 Expanded(
@@ -441,12 +435,27 @@ class TaskInProgressScreen extends StatelessWidget {
                   child: CustomText(
                     "Once the helper marks this task as completed, you’ll be asked to review and confirm within 2 minutes.",
                     fontSize: 14,
-                    color:blackColor,
+                    color: blackColor,
                   ),
                 ),
               ),
 
               const SizedBox(height: 20),
+
+              /// ------------------ REQUEST HELP BUTTON ------------------
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: CustomButton(
+                  label: "View Proof",
+                  onPressed: () {
+                    Get.to(() => TaskReviewScreen());
+                  },
+                  bgColor: redColor,
+                  textColor: whiteColor,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              const SizedBox(height: 8),
 
               /// ------------------ REQUEST HELP BUTTON ------------------
               Padding(
@@ -478,7 +487,7 @@ class TaskInProgressScreen extends StatelessWidget {
                           TextSpan(
                             text: "ETA: 10 mins",
                             style: TextStyle(
-                              color:blackColor,
+                              color: blackColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

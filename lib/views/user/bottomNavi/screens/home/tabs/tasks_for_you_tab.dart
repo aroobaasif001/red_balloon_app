@@ -13,11 +13,11 @@ class TasksForYouTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = Get.size.height;
-    final screenWidth = Get.size.width;
-
-    // Calculate responsive aspect ratio based on device dimensions
-    final responsiveAspectRatio = screenWidth / (screenHeight * 0.8);
+    // Calculate responsive aspect ratio using MediaQuery
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final responsiveAspectRatio =
+        (screenWidth / 2 - 21) / (screenHeight * 0.33);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
