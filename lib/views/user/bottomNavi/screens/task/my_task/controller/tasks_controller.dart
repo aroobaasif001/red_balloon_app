@@ -139,7 +139,7 @@ class TasksController extends GetxController {
       // Filter to show only completed or cancelled tasks
       historyTasks.value = allUserTasks.where((task) {
         final status = task.status.toLowerCase();
-        final isHistory = status == 'completed' || status == 'cancelled';
+        final isHistory = status == 'completed' || status == 'cancelled' || status == 'rejected';
         print('  Task: "${task.title}" | Status: ${task.status} | Is History: $isHistory');
         return isHistory;
       }).toList();

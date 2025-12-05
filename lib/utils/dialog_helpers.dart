@@ -307,13 +307,18 @@ class DialogHelpers {
                                 controller: controller,
                                 taskId: taskId ?? '',
                                 proofId: proofId ?? '',
-                              );
+                              )
+;
                             } else {
                               // 🔥 Submit directly with selected reason
                               if (controller != null) {
                                 controller.selectedRejectionReason.value = selectedReason;
-                                Get.back(); // Close dialog
-                                Get.back(); // Close step1 dialog
+                                
+                                // Close dialogs
+                                Navigator.of(context).pop(); // Close step2 dialog
+                                Navigator.of(context).pop(); // Close step1 dialog
+                                
+                                // Submit (navigation handled by callback)
                                 await controller.submitRejection(
                                   taskId: taskId ?? '',
                                   proofId: proofId ?? '',
@@ -1456,15 +1461,15 @@ class DialogHelpers {
 
                       // 🔥 Save custom reason to controller
                       if (controller != null) {
-                        controller.selectedRejectionReason.value = 'Others'; // 🔥 Set to Others
+                        controller.selectedRejectionReason.value = 'Others';
                         controller.customRejectionReason.value = msgController.text.trim();
                         
-                        // 🔥 Close dialogs first, then submit
-                        Get.back(); // Close bottom sheet
-                        Get.back(); // Close step2 dialog
-                        Get.back(); // Close step1 dialog
+                        // Close dialogs
+                        Navigator.of(context).pop(); // Close bottom sheet
+                        Navigator.of(context).pop(); // Close step2 dialog
+                        Navigator.of(context).pop(); // Close step1 dialog
                         
-                        // Submit rejection with custom reason
+                        // Submit (navigation handled by callback)
                         await controller.submitRejection(
                           taskId: taskId ?? '',
                           proofId: proofId ?? '',

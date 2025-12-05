@@ -7,6 +7,7 @@ import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../controller/task_review_controller.dart';
+import '../controller/task_tabs_controller.dart';
 import 'leave_feedback_screen.dart';
 
 class TaskReviewScreen extends StatelessWidget {
@@ -33,15 +34,37 @@ class TaskReviewScreen extends StatelessWidget {
         permanent: true, // 🔥 Keep in memory even when screen disposed
       );
       print('🔥 Created new controller for $controllerTag');
+      
+      // 🔥 Fetch data when controller is first created
+      if (taskId != null && proofId != null) {
+        controller.fetchTaskAndProofData(taskId: taskId!, proofId: proofId!);
+      }
     }
+    
+    // 🔥 Set navigation callback
+    controller.onSubmissionComplete = () {
+      // Navigate back twice
+      Navigator.of(context).pop(); // Close TaskReviewScreen
+      Navigator.of(context).pop(); // Close TaskInProgressScreen
+      
+      // Switch to History tab (index 2)
+      try {
+        final taskTabsController = Get.find<TaskTabsController>();
+        taskTabsController.changeTab(2); // History tab
+      } catch (e) {
+        print('❌ Could not switch to History tab: $e');
+      }
+    };
     
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: whiteColor,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        body: Stack(
           children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             /// ---------------- APP BAR ----------------
             CustomAppBar1(title: 'Task Review', showRightImage: false),
 
@@ -50,11 +73,13 @@ class TaskReviewScreen extends StatelessWidget {
             /// ---------------- TITLE ----------------
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: CustomText(
-                "Help Move Furniture",
+              child: Obx(() => CustomText(
+                controller.taskTitle.value.isEmpty 
+                    ? "Loading..." 
+                    : controller.taskTitle.value,
                 fontWeight: FontVariant.bold,
                 fontSize: 18,
-              ),
+              )),
             ),
             const SizedBox(height: 13),
 
@@ -76,12 +101,14 @@ class TaskReviewScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(100),
                           conColor: redColor.withOpacity(0.1),
                           child: Center(
-                            child: CustomText(
-                              "A",
+                            child: Obx(() => CustomText(
+                              controller.helperInitial.value.isEmpty 
+                                  ? "?" 
+                                  : controller.helperInitial.value,
                               fontSize: 22,
                               fontWeight: FontVariant.bold,
                               color: redColor,
-                            ),
+                            )),
                           ),
                         ),
 
@@ -92,11 +119,13 @@ class TaskReviewScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CustomText(
-                              "Ahmed Al-Rashid",
+                            Obx(() => CustomText(
+                              controller.helperName.value.isEmpty 
+                                  ? "Loading..." 
+                                  : controller.helperName.value,
                               fontSize: 16,
                               fontWeight: FontVariant.bold,
-                            ),
+                            )),
                             const SizedBox(height: 6),
 
                             CustomContainer(
@@ -160,21 +189,25 @@ class TaskReviewScreen extends StatelessWidget {
                     color: greyColor,
                   ),
                   const SizedBox(width: 4),
-                  CustomText(
-                    "Riyadh",
+                  Obx(() => CustomText(
+                    controller.location.value.isEmpty 
+                        ? "Unknown" 
+                        : controller.location.value,
                     fontSize: 12,
                     fontWeight: FontVariant.regular,
                     color: timeColor,
-                  ),
+                  )),
                   const SizedBox(width: 20),
                   const Icon(Icons.access_time, size: 18, color: greyColor),
                   const SizedBox(width: 4),
-                  CustomText(
-                    "Submitted 2 min ago",
+                  Obx(() => CustomText(
+                    controller.submittedTime.value.isEmpty 
+                        ? "Just now" 
+                        : "Submitted ${controller.submittedTime.value}",
                     fontSize: 12,
                     color: timeColor,
                     fontWeight: FontVariant.regular,
-                  ),
+                  )),
                 ],
               ),
             ),
@@ -206,12 +239,31 @@ class TaskReviewScreen extends StatelessWidget {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              "assets/images/homedetail.png",
-                              height: 150,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
+                            child: Obx(() => controller.beforeImageUrl.value.isEmpty
+                                ? Image.asset(
+                                    "assets/images/homedetail.png",
+                                    height: 150,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.network(
+                                    controller.beforeImageUrl.value,
+                                    height: 150,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(child: CircularProgressIndicator());
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        "assets/images/homedetail.png",
+                                        height: 150,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  )),
                           ),
 
                           /// BEFORE TAG
@@ -264,12 +316,31 @@ class TaskReviewScreen extends StatelessWidget {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              "assets/images/homedetail.png",
-                              height: 150,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
+                            child: Obx(() => controller.afterImageUrl.value.isEmpty
+                                ? Image.asset(
+                                    "assets/images/homedetail.png",
+                                    height: 150,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.network(
+                                    controller.afterImageUrl.value,
+                                    height: 150,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(child: CircularProgressIndicator());
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        "assets/images/homedetail.png",
+                                        height: 150,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  )),
                           ),
 
                           /// AFTER TAG
@@ -300,7 +371,7 @@ class TaskReviewScreen extends StatelessWidget {
             ),
             const SizedBox(height: 40),
 
-            /// ---------------- DESCRIPTION BOX ----------------
+            /// ---------------- DESCRIPTION BOX ---------------- ///
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: CustomContainer(
@@ -393,15 +464,11 @@ class TaskReviewScreen extends StatelessWidget {
                   Expanded(
                     child: GestureDetector(
                       onTap: () async {
-                        /// 🔥 Accept proof via controller
+                        /// 🔥 Accept proof (navigation handled by callback)
                         await controller.acceptProof(
                           taskId: taskId ?? '',
                           proofId: proofId ?? '',
                         );
-                        
-                        // Navigate back to task list
-                        Get.back(); // Close TaskReviewScreen
-                        Get.back(); // Go to task list
                       },
                       child: CustomContainer(
                         height: 52,
@@ -445,6 +512,32 @@ class TaskReviewScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 30),
+          ],
+            ),
+            
+            // 🔥 Loading overlay
+            Obx(() => controller.isSubmitting.value
+                ? Container(
+                    color: Colors.black.withOpacity(0.5),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                          ),
+                          SizedBox(height: 16),
+                          // CustomText(
+                          //   'Processing...',
+                          //   color: whiteColor,
+                          //   fontSize: 16,
+                          //   fontWeight: FontVariant.semiBold,
+                          // ),
+                        ],
+                      ),
+                    ),
+                  )
+                : SizedBox.shrink()),
           ],
         ),
       ),

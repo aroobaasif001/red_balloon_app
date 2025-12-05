@@ -19,6 +19,20 @@ class TaskReviewController extends GetxController {
     'Others',
   ];
 
+  // 🔥 Task and proof data
+  var isLoading = true.obs;
+  var isSubmitting = false.obs; // 🔥 Loading state for submission
+  var taskTitle = ''.obs;
+  var helperName = ''.obs;
+  var helperInitial = ''.obs;
+  var location = ''.obs;
+  var submittedTime = ''.obs;
+  var beforeImageUrl = ''.obs;
+  var afterImageUrl = ''.obs;
+
+  // 🔥 Callback for navigation after submission
+  Function()? onSubmissionComplete;
+
   @override
   void onInit() {
     super.onInit();
@@ -70,9 +84,12 @@ class TaskReviewController extends GetxController {
     required String proofId,
   }) async {
     try {
+      isSubmitting.value = true; // 🔥 Show loading
+      
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser == null) {
         print('❌ No user logged in');
+        isSubmitting.value = false;
         return;
       }
 
@@ -94,6 +111,8 @@ class TaskReviewController extends GetxController {
         'rejectedBy': currentUser.uid,
         'rejectedAt': FieldValue.serverTimestamp(),
         'status': 'rejected',
+        'beforePhotoUrl': beforeImageUrl.value, // 🔥 Add before image
+        'afterPhotoUrl': afterImageUrl.value,   // 🔥 Add after image
       });
 
       print('✅ Added to validations collection');
@@ -118,11 +137,18 @@ class TaskReviewController extends GetxController {
         'Success',
         'Rejection submitted successfully',
         snackPosition: SnackPosition.TOP,
+        duration: Duration(seconds: 2),
       );
 
-      // Navigation handled by caller
+      // 🔥 Trigger navigation callback
+      if (onSubmissionComplete != null) {
+        await Future.delayed(Duration(milliseconds: 500));
+        isSubmitting.value = false; // 🔥 Hide loading
+        onSubmissionComplete!();
+      }
     } catch (e) {
       print('❌ Error submitting rejection: $e');
+      isSubmitting.value = false; // 🔥 Hide loading on error
       Get.snackbar('Error', 'Failed to submit rejection');
     }
   }
@@ -133,6 +159,8 @@ class TaskReviewController extends GetxController {
     required String proofId,
   }) async {
     try {
+      isSubmitting.value = true; // 🔥 Show loading
+      
       // Update task status to completed
       await FirebaseFirestore.instance
           .collection('tasks')
@@ -151,12 +179,109 @@ class TaskReviewController extends GetxController {
         'Success',
         'Proof accepted successfully',
         snackPosition: SnackPosition.TOP,
+        duration: Duration(seconds: 2),
       );
 
-      // Navigation handled by caller
+      // 🔥 Trigger navigation callback
+      if (onSubmissionComplete != null) {
+        await Future.delayed(Duration(milliseconds: 500));
+        isSubmitting.value = false; // 🔥 Hide loading
+        onSubmissionComplete!();
+      }
     } catch (e) {
       print('❌ Error accepting proof: $e');
+      isSubmitting.value = false; // 🔥 Hide loading on error
       Get.snackbar('Error', 'Failed to accept proof');
+    }
+  }
+
+  /// 🔥 Fetch task and proof data
+  Future<void> fetchTaskAndProofData({
+    required String taskId,
+    required String proofId,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      // 1. Fetch task details
+      final taskDoc = await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(taskId)
+          .get();
+
+      if (taskDoc.exists) {
+        final taskData = taskDoc.data()!;
+        taskTitle.value = taskData['title'] ?? 'No Title';
+        location.value = taskData['location'] ?? 'Unknown';
+
+        // 2. Fetch helper details from accepted offer
+        final offersQuery = await FirebaseFirestore.instance
+            .collection('offers')
+            .where('taskId', isEqualTo: taskId)
+            .where('status', isEqualTo: 'accepted')
+            .limit(1)
+            .get();
+
+        if (offersQuery.docs.isNotEmpty) {
+          final offerData = offersQuery.docs.first.data();
+          helperName.value = offerData['offeringUserName'] ?? 'Unknown Helper';
+          
+          // Get first letter for initial
+          if (helperName.value.isNotEmpty && helperName.value != 'Unknown Helper') {
+            helperInitial.value = helperName.value[0].toUpperCase();
+          } else {
+            helperInitial.value = 'U';
+          }
+        }
+      }
+
+      // 3. Fetch proof details
+      final proofDoc = await FirebaseFirestore.instance
+          .collection('task_proofs')
+          .doc(proofId)
+          .get();
+
+      if (proofDoc.exists) {
+        final proofData = proofDoc.data()!;
+        beforeImageUrl.value = proofData['beforePhotoUrl'] ?? '';
+        afterImageUrl.value = proofData['afterPhotoUrl'] ?? '';
+        
+        // Calculate submitted time
+        try {
+          final dynamic submittedAtData = proofData['submittedAt'];
+          if (submittedAtData != null) {
+            DateTime submittedDate;
+            
+            // Handle both Timestamp and String types
+            if (submittedAtData is Timestamp) {
+              submittedDate = submittedAtData.toDate();
+            } else if (submittedAtData is String) {
+              submittedDate = DateTime.parse(submittedAtData);
+            } else {
+              submittedDate = DateTime.now();
+            }
+            
+            final Duration difference = DateTime.now().difference(submittedDate);
+            
+            if (difference.inMinutes < 60) {
+              submittedTime.value = '${difference.inMinutes} min ago';
+            } else if (difference.inHours < 24) {
+              submittedTime.value = '${difference.inHours} hours ago';
+            } else {
+              submittedTime.value = '${difference.inDays} days ago';
+            }
+          }
+        } catch (e) {
+          print('❌ Error parsing submittedAt: $e');
+          submittedTime.value = 'Just now';
+        }
+      }
+
+      isLoading.value = false;
+      print('✅ Task and proof data loaded successfully');
+    } catch (e) {
+      print('❌ Error fetching task and proof data: $e');
+      isLoading.value = false;
     }
   }
 }
