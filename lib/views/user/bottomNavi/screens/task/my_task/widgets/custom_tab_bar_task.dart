@@ -6,12 +6,14 @@ import 'package:red_balloon_app/utils/colors.dart';
 class CustomTabBarTask extends StatelessWidget {
   final int selectedIndex;
   final VoidCallback onPostedByMeTap;
+  final VoidCallback onTasksNearMeTap;
   final VoidCallback onInProgressTap;
 
   const CustomTabBarTask({
     super.key,
     required this.selectedIndex,
     required this.onPostedByMeTap,
+    required this.onTasksNearMeTap,
     required this.onInProgressTap,
   });
 
@@ -28,17 +30,22 @@ class CustomTabBarTask extends StatelessWidget {
           //   onTap: onAllTasksTap,
           // ),
           // const SizedBox(width: 10),
-
           _tabItem(
-            label: "ACTIVE TASKS",
+            label: "My TASKS",
             isSelected: selectedIndex == 0,
             onTap: onPostedByMeTap,
+          ),
+          const SizedBox(width: 10),
+          _tabItem(
+            label: "TASKS NEAR ME",
+            isSelected: selectedIndex == 1,
+            onTap: onTasksNearMeTap,
           ),
           const SizedBox(width: 10),
 
           _tabItem(
             label: "HISTORY",
-            isSelected: selectedIndex == 1,
+            isSelected: selectedIndex == 2,
             onTap: onInProgressTap,
           ),
         ],
@@ -60,7 +67,7 @@ class CustomTabBarTask extends StatelessWidget {
 
         child: CustomText(
           label,
-          color: isSelected ?whiteColor :blackColor,
+          color: isSelected ? whiteColor : blackColor,
           fontWeight: FontVariant.semiBold,
           fontSize: 14,
         ),

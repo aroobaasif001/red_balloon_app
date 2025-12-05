@@ -46,23 +46,23 @@ class StatCard extends StatelessWidget {
                 ),
               ),
 
-              Row(
-                children: [
-                  CustomText(
-                    'SAR',
-                    fontSize: 18,
-                    fontWeight: FontVariant.regular,
-                    color: blackColor,
-                  ),
-                  const SizedBox(width: 6),
-                  CustomText(
-                    number,
-                    fontSize: 18,
-                    fontWeight: FontVariant.regular,
-                    color: blackColor,
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     CustomText(
+              //       'SAR',
+              //       fontSize: 18,
+              //       fontWeight: FontVariant.regular,
+              //       color: blackColor,
+              //     ),
+              //     const SizedBox(width: 6),
+              //     CustomText(
+              //       number,
+              //       fontSize: 18,
+              //       fontWeight: FontVariant.regular,
+              //       color: blackColor,
+              //     ),
+              //   ],
+              // ),
             ],
           ),
 
@@ -84,23 +84,23 @@ class StatCard extends StatelessWidget {
                 ),
               ),
 
-              Row(
-                children: [
-                  CustomText(
-                    "SAR", // <-- CHANGE HERE
-                    fontSize: 18,
-                    fontWeight: FontVariant.regular,
-                    color: blackColor,
-                  ),
-                  const SizedBox(width: 6),
-                  CustomText(
-                    "100", // <-- CHANGE HERE
-                    fontSize: 18,
-                    fontWeight: FontVariant.regular,
-                    color: blackColor,
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     CustomText(
+              //       "SAR", // <-- CHANGE HERE
+              //       fontSize: 18,
+              //       fontWeight: FontVariant.regular,
+              //       color: blackColor,
+              //     ),
+              //     const SizedBox(width: 6),
+              //     CustomText(
+              //       "100", // <-- CHANGE HERE
+              //       fontSize: 18,
+              //       fontWeight: FontVariant.regular,
+              //       color: blackColor,
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ],

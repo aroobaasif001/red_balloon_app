@@ -1,16 +1,12 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
-import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/edit_profile/widgets/rb_in_put_field.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/edit_profile/widgets/rb_phone_field.dart';
 
-import '../../../../../../utils/dialog_helpers.dart';
 import 'controller/edit_profile_controller.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -58,15 +54,16 @@ class EditProfileScreen extends StatelessWidget {
                                       : Image.network(
                                           controller.imagePreviewUrl.value,
                                           fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) {
-                                            return Center(
-                                              child: Icon(
-                                                Icons.person,
-                                                size: 60,
-                                                color: whiteColor,
-                                              ),
-                                            );
-                                          },
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                                return Center(
+                                                  child: Icon(
+                                                    Icons.person,
+                                                    size: 60,
+                                                    color: whiteColor,
+                                                  ),
+                                                );
+                                              },
                                         ),
                                 )
                               : Center(
@@ -150,7 +147,8 @@ class EditProfileScreen extends StatelessWidget {
                       controller: controller.displayNameController,
                       keyboardType: TextInputType.name,
                       errorText: controller.displayNameError.value,
-                      onChanged: (value) => controller.validateDisplayName(value),
+                      onChanged: (value) =>
+                          controller.validateDisplayName(value),
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -253,7 +251,8 @@ class EditProfileScreen extends StatelessWidget {
                       maxLines: 5,
                       keyboardType: TextInputType.multiline,
                       errorText: controller.workExperienceError.value,
-                      onChanged: (value) => controller.validateWorkExperience(value),
+                      onChanged: (value) =>
+                          controller.validateWorkExperience(value),
                     ),
                   ),
                 ],
@@ -262,7 +261,9 @@ class EditProfileScreen extends StatelessWidget {
             const SizedBox(height: 40),
             Obx(
               () => CustomButton(
-                label: controller.isLoading.value ? 'Saving...' : 'Save Changes',
+                label: controller.isLoading.value
+                    ? 'Saving...'
+                    : 'Save Changes',
                 onPressed: controller.isLoading.value
                     ? null
                     : () async {

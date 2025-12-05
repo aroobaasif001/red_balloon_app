@@ -9,12 +9,14 @@ class StoreItemCard extends StatelessWidget {
   final String title;
   final String image;
   final int price;
+  final bool isOwned;
 
   const StoreItemCard({
     super.key,
     required this.title,
     required this.price,
     required this.image,
+    this.isOwned = false,
   });
 
   @override
@@ -86,10 +88,10 @@ class StoreItemCard extends StatelessWidget {
               width: 111,
               padding: const EdgeInsets.symmetric(vertical: 8),
               borderRadius: BorderRadius.circular(8),
-              conColor: redColor,
+              conColor: isOwned == false ? redColor : greyColor,
               alignment: Alignment.center,
-              child: const CustomText(
-                "Buy",
+              child: CustomText(
+                isOwned == false ? "Buy" : "Owned",
                 fontSize: 14,
                 fontWeight: FontVariant.bold,
                 color: whiteColor,

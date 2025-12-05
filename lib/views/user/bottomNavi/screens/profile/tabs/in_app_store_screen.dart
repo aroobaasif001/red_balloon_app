@@ -10,6 +10,11 @@ class InAppStoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate responsive aspect ratio using MediaQuery
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final childAspectRatio = (screenWidth / 2 - 21) / (screenHeight * 0.25);
+
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -41,18 +46,20 @@ class InAppStoreScreen extends StatelessWidget {
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    childAspectRatio: 0.90,
+                    childAspectRatio: childAspectRatio,
                     children: const [
                       StoreItemCard(
                         title: "Elite Tasker",
                         price: 50,
                         image: 'assets/icons/image 51.png',
+                        isOwned: true,
                       ),
 
                       StoreItemCard(
                         title: "Pro Performer",
                         price: 100,
                         image: 'assets/icons/image 49.png',
+                        isOwned: true,
                       ),
 
                       StoreItemCard(
