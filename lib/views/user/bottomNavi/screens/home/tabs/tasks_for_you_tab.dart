@@ -17,7 +17,7 @@ class TasksForYouTab extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final responsiveAspectRatio =
-        (screenWidth / 2 - 21) / (screenHeight * 0.33);
+        (screenWidth / 2 - 21) / (screenHeight * 0.22);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

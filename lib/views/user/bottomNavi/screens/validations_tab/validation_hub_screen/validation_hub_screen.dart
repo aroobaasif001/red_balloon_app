@@ -63,44 +63,44 @@ class ValidationHubScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         /// BEFORE & AFTER IMAGES
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CustomContainer(
-                                height: 120,
-                                conColor: redColor.withOpacity(0.4),
-                                borderRadius: BorderRadius.circular(16),
-                                alignment: Alignment.bottomCenter,
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: const CustomText(
-                                  "BEFORE",
-                                  fontWeight: FontVariant.semiBold,
-                                  fontSize: 12,
-                                  color: blackColor,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-
-                            Expanded(
-                              child: CustomContainer(
-                                height: 120,
-                                conColor: redColor.withOpacity(0.4),
-                                borderRadius: BorderRadius.circular(16),
-                                alignment: Alignment.bottomCenter,
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: const CustomText(
-                                  "AFTER",
-                                  fontWeight: FontVariant.semiBold,
-                                  fontSize: 12,
-                                  color: blackColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 20),
+                        // Row(
+                        //   children: [
+                        //     Expanded(
+                        //       child: CustomContainer(
+                        //         height: 120,
+                        //         conColor: redColor.withOpacity(0.4),
+                        //         borderRadius: BorderRadius.circular(16),
+                        //         alignment: Alignment.bottomCenter,
+                        //         padding: const EdgeInsets.only(bottom: 8),
+                        //         child: const CustomText(
+                        //           "BEFORE",
+                        //           fontWeight: FontVariant.semiBold,
+                        //           fontSize: 12,
+                        //           color: blackColor,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     const SizedBox(width: 10),
+                        //
+                        //     Expanded(
+                        //       child: CustomContainer(
+                        //         height: 120,
+                        //         conColor: redColor.withOpacity(0.4),
+                        //         borderRadius: BorderRadius.circular(16),
+                        //         alignment: Alignment.bottomCenter,
+                        //         padding: const EdgeInsets.only(bottom: 8),
+                        //         child: const CustomText(
+                        //           "AFTER",
+                        //           fontWeight: FontVariant.semiBold,
+                        //           fontSize: 12,
+                        //           color: blackColor,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        //
+                        // const SizedBox(height: 20),
 
                         /// TITLE + BADGE
                         Row(
@@ -134,8 +134,8 @@ class ValidationHubScreen extends StatelessWidget {
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 9,
+                                // horizontal: 8,
+                                // vertical: 9,
                               ),
                               decoration: BoxDecoration(
                                 color: walletCardBgColor,
@@ -143,30 +143,42 @@ class ValidationHubScreen extends StatelessWidget {
                                   7,
                                 ), // FULL ROUND
                               ),
-                              child: Row(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: const [
-                                  Image(
-                                    image: AssetImage(
-                                      "assets/icons/timer99.png",
-                                    ),
-                                    height: 20,
-                                  ),
-                                  SizedBox(width: 8),
+                                  // Image(
+                                  //   image: AssetImage(
+                                  //     "assets/icons/timer99.png",
+                                  //   ),
+                                  //   height: 20,
+                                  // ),
+                                  // SizedBox(width: 8),
                                   CustomText(
                                     "15 min left to validate",
                                     fontSize: 12,
-                                    fontWeight: FontVariant.medium,
-                                    color: blackColor,
+                                    fontWeight: FontVariant.regular,
+                                    color: txColor,
+                                  ),
+                                  SizedBox(height: 7),
+                                  CustomText(
+                                    "Started at 09:15 PM",
+                                    fontSize: 12,
+                                    fontWeight: FontVariant.regular,
+                                    color: txColor,
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 50),
 
                             Expanded(
                               child: CustomButton(
                                 label: "Review Proof",
+                                trailing: Icon(
+                                  Icons.arrow_right_alt_sharp,
+                                  color: redColor,
+                                ),
                                 onPressed: () {
                                   Get.to(() => ValidationScreen());
                                 },
@@ -175,7 +187,8 @@ class ValidationHubScreen extends StatelessWidget {
                                 fontSize: 14,
                                 fontWeight: FontVariant.bold,
                                 borderRadius: BorderRadius.circular(14),
-                                bgColor: redColor,
+                                bgColor: white2Color,
+                                textColor: redColor,
                               ),
                             ),
                           ],
