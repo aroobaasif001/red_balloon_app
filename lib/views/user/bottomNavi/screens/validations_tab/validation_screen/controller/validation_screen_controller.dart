@@ -22,6 +22,7 @@ class ValidationScreenController extends GetxController {
   var votesNeeded = 0.obs;
   var isTaskOwner = false.obs; // 🔥 Check if current user owns the task
   var hasVoted = false.obs; // 🔥 Check if user already voted
+  var isProofSubmitter = false.obs; // 🔥 Check if current user submitted the proof
   
   // 🔥 Timer observables
   var remainingTime = '15:00'.obs; // Display format MM:SS
@@ -46,6 +47,7 @@ class ValidationScreenController extends GetxController {
     required String validationUserId,
     required String validationBeforePhoto,
     required String validationAfterPhoto,
+    String? proofId, // 🔥 Added proofId parameter
   }) async {
     try {
       isLoading.value = true;
@@ -72,6 +74,11 @@ class ValidationScreenController extends GetxController {
         print('🔍 Task Owner: $taskOwnerId');
         print('🔍 Is Task Owner: ${isTaskOwner.value}');
         
+        // 🔥 Fetch proof submitter userId from task_proofs
+        if (proofId != null && proofId.isNotEmpty) {
+          await _fetchProofSubmitterUserId(proofId, currentUserId);
+        }
+        
         // 🔥 Fetch voting data from voting collection
         await _fetchVotingData(validationTaskId);
       }
@@ -81,6 +88,26 @@ class ValidationScreenController extends GetxController {
       print('❌ Error fetching task details: $e');
       isLoading.value = false;
       Get.snackbar('Error', 'Failed to load task details');
+    }
+  }
+
+  /// Fetch proof submitter's userId from task_proofs collection
+  Future<void> _fetchProofSubmitterUserId(String proofId, String? currentUserId) async {
+    try {
+      final proofDoc = await _firestore.collection('task_proofs').doc(proofId).get();
+      
+      if (proofDoc.exists) {
+        final proofData = proofDoc.data()!;
+        final proofSubmitterUserId = proofData['userId']; // UID of proof submitter
+        
+        // Check if current user is the proof submitter
+        isProofSubmitter.value = (currentUserId == proofSubmitterUserId);
+        
+        print('🔍 Proof Submitter: $proofSubmitterUserId');
+        print('🔍 Is Proof Submitter: ${isProofSubmitter.value}');
+      }
+    } catch (e) {
+      print('❌ Error fetching proof submitter data: $e');
     }
   }
 
@@ -296,6 +323,12 @@ class ValidationScreenController extends GetxController {
       // Check if user is task owner
       if (isTaskOwner.value) {
         Get.snackbar('Not Allowed', 'You cannot vote on your own task');
+        return;
+      }
+
+      // 🔥 Check if user is proof submitter
+      if (isProofSubmitter.value) {
+        Get.snackbar('Not Allowed', 'You cannot vote on your own proof');
         return;
       }
 

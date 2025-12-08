@@ -14,6 +14,7 @@ class ValidationScreen extends StatefulWidget {
   final String? userId;
   final String? beforePhotoUrl;
   final String? afterPhotoUrl;
+  final String? proofId; // 🔥 Added proofId parameter
   
   const ValidationScreen({
     super.key, 
@@ -22,6 +23,7 @@ class ValidationScreen extends StatefulWidget {
     this.userId,
     this.beforePhotoUrl,
     this.afterPhotoUrl,
+    this.proofId, // 🔥 Added to constructor
   });
 
   @override
@@ -46,6 +48,7 @@ class _ValidationScreenState extends State<ValidationScreen> {
         validationUserId: widget.userId ?? 'RB-00000',
         validationBeforePhoto: widget.beforePhotoUrl ?? '',
         validationAfterPhoto: widget.afterPhotoUrl ?? '',
+        proofId: widget.proofId, // 🔥 Pass proofId to controller
       );
     }
   }
@@ -326,8 +329,8 @@ class _ValidationScreenState extends State<ValidationScreen> {
 
             /// TAB CONTENT (NO EXPANDED INSIDE SCROLL)
             selectedTab == 0
-                ? BeforeTab(isTask: controller.isTaskOwner.value)
-                : AfterTab(isTask: controller.isTaskOwner.value),
+                ? BeforeTab(isTask: controller.isTaskOwner.value || controller.isProofSubmitter.value)
+                : AfterTab(isTask: controller.isTaskOwner.value || controller.isProofSubmitter.value),
 
             const SizedBox(height: 40),
           ],

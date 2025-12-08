@@ -214,6 +214,7 @@ class ValidationHubScreen extends StatelessWidget {
                                         userId: validation['userId'],
                                         beforePhotoUrl: validation['beforePhotoUrl'],
                                         afterPhotoUrl: validation['afterPhotoUrl'],
+                                        proofId: validation['proofId'],
                                       ));
                                     },
                                     height: 40,
