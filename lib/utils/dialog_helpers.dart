@@ -298,7 +298,7 @@ class DialogHelpers {
                           label: 'Submit Rejection',
                           onPressed: () async {
                             final selectedReason = reasons[selected];
-                            
+
                             // 🔥 If "Others" selected, show bottom sheet
                             if (selectedReason == "Others") {
                               Get.back(); // Close step2 dialog
@@ -307,17 +307,21 @@ class DialogHelpers {
                                 controller: controller,
                                 taskId: taskId ?? '',
                                 proofId: proofId ?? '',
-                              )
-;
+                              );
                             } else {
                               // 🔥 Submit directly with selected reason
                               if (controller != null) {
-                                controller.selectedRejectionReason.value = selectedReason;
-                                
+                                controller.selectedRejectionReason.value =
+                                    selectedReason;
+
                                 // Close dialogs
-                                Navigator.of(context).pop(); // Close step2 dialog
-                                Navigator.of(context).pop(); // Close step1 dialog
-                                
+                                Navigator.of(
+                                  context,
+                                ).pop(); // Close step2 dialog
+                                Navigator.of(
+                                  context,
+                                ).pop(); // Close step1 dialog
+
                                 // Submit (navigation handled by callback)
                                 await controller.submitRejection(
                                   taskId: taskId ?? '',
@@ -1462,12 +1466,14 @@ class DialogHelpers {
                       // 🔥 Save custom reason to controller
                       if (controller != null) {
                         controller.selectedRejectionReason.value = 'Others';
-                        controller.customRejectionReason.value = msgController.text.trim();
-                        
+                        controller.customRejectionReason.value = msgController
+                            .text
+                            .trim();
+
                         // Close dialogs
                         Navigator.of(context).pop(); // Close step2 dialog
                         Navigator.of(context).pop(); // Close step1 dialog
-                        
+
                         // Submit (navigation handled by callback)
                         await controller.submitRejection(
                           taskId: taskId ?? '',
@@ -1778,7 +1784,8 @@ class DialogHelpers {
                                   .doc(offerId)
                                   .get();
 
-                              final offeringUserUid = offerDoc.data()?['offeringUserUid'] ?? '';
+                              final offeringUserUid =
+                                  offerDoc.data()?['offeringUserUid'] ?? '';
 
                               // Update offer status
                               await FirebaseFirestore.instance
@@ -1786,7 +1793,9 @@ class DialogHelpers {
                                   .doc(offerId)
                                   .update({'status': 'accepted'});
 
-                              print('✅ Offer $offerId status updated to accepted');
+                              print(
+                                '✅ Offer $offerId status updated to accepted',
+                              );
 
                               // 🔥 Update task status to 'in progress' and store offeringUserUid
                               await FirebaseFirestore.instance
@@ -1794,22 +1803,27 @@ class DialogHelpers {
                                   .doc(taskId)
                                   .update({
                                     'status': 'in progress',
-                                    'acceptedOfferUid': offeringUserUid, // 🔥 Store helper's UID
+                                    'acceptedOfferUid':
+                                        offeringUserUid, // 🔥 Store helper's UID
                                   });
 
-                              print('✅ Task $taskId status updated to in progress with acceptedOfferUid: $offeringUserUid');
+                              print(
+                                '✅ Task $taskId status updated to in progress with acceptedOfferUid: $offeringUserUid',
+                              );
 
                               // Call the callback
                               onAccepted();
 
                               // 🔥 Close confirmation dialog first
-                              Get.back(); 
-                              
+                              Get.back();
+
                               // Close task details screen and navigate
                               Get.back(); // Close task details screen
-                              
+
                               // 🔥 Navigate to TaskInProgressScreen with specific taskId
-                              Get.to(() => TaskInProgressScreen(taskId: taskId));
+                              Get.to(
+                                () => TaskInProgressScreen(taskId: taskId),
+                              );
 
                               // Show snackbar
                               Get.snackbar(
@@ -1821,10 +1835,11 @@ class DialogHelpers {
                                 borderRadius: 10,
                                 margin: EdgeInsets.all(12),
                                 duration: Duration(seconds: 2),
-                                icon: Icon(Icons.check_circle, color: Colors.white),
+                                icon: Icon(
+                                  Icons.check_circle,
+                                  color: Colors.white,
+                                ),
                               );
-
-
                             } catch (e) {
                               print('❌ Error updating offer/task status: $e');
                             }
@@ -2625,8 +2640,7 @@ class DialogHelpers {
           taskOwnerPhoto: taskOwnerPhoto,
           taskBudget: taskBudget,
         );
-
-      }
+      },
     );
   }
 
@@ -2755,11 +2769,7 @@ class DialogHelpers {
                   conColor: redColor,
                   shape: BoxShape.circle,
                   child: const Center(
-                    child: Icon(
-                      Icons.how_to_vote,
-                      size: 60,
-                      color: whiteColor,
-                    ),
+                    child: Icon(Icons.how_to_vote, size: 60, color: whiteColor),
                   ),
                 ),
               ),
@@ -2769,5 +2779,4 @@ class DialogHelpers {
       },
     );
   }
-  }
-
+}
