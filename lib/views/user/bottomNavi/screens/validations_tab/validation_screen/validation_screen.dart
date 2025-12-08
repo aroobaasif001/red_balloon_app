@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_screen/controller/validation_screen_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_screen/tabs/AfterTab.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_screen/tabs/BeforeTab.dart';
 
 class ValidationScreen extends StatefulWidget {
   final bool isTask;
-  const ValidationScreen({super.key, this.isTask = false});
+  final String? taskId;
+  final String? userId;
+  final String? beforePhotoUrl;
+  final String? afterPhotoUrl;
+  
+  const ValidationScreen({
+    super.key, 
+    this.isTask = false,
+    this.taskId,
+    this.userId,
+    this.beforePhotoUrl,
+    this.afterPhotoUrl,
+  });
 
   @override
   State<ValidationScreen> createState() => _ValidationScreenState();
@@ -16,11 +30,38 @@ class ValidationScreen extends StatefulWidget {
 
 class _ValidationScreenState extends State<ValidationScreen> {
   int selectedTab = 0; // 0 = BEFORE, 1 = AFTER
+  late final ValidationScreenController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Initialize controller
+    controller = Get.put(ValidationScreenController());
+    
+    // Fetch task details if data is provided
+    if (widget.taskId != null) {
+      controller.fetchTaskDetails(
+        validationTaskId: widget.taskId!,
+        validationUserId: widget.userId ?? 'RB-00000',
+        validationBeforePhoto: widget.beforePhotoUrl ?? '',
+        validationAfterPhoto: widget.afterPhotoUrl ?? '',
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: Obx(() {
+        // Show loading indicator
+        if (controller.isLoading.value) {
+          return Center(
+            child: CircularProgressIndicator(color: redColor),
+          );
+        }
+        
+        return SingleChildScrollView(
         // ✅ SCROLLABLE ADDED
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -45,40 +86,38 @@ class _ValidationScreenState extends State<ValidationScreen> {
                 children: [
                   /// PROFILE + TITLE + TIMER (RIGHT SIDE)
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// LEFT — IMAGE + TEXT
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundImage: AssetImage(
-                              "assets/images/prof.png",
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomText(
-                                "Help Move Furniture",
-                                fontSize: 18,
-                                fontWeight: FontVariant.bold,
-                                color: blackColor,
-                              ),
-                              const SizedBox(height: 2),
-                              CustomText(
-                                "RB - 402",
-                                fontSize: 14,
-                                fontWeight: FontVariant.medium,
-                                color: rbtxColor,
-                              ),
-                            ],
-                          ),
-                        ],
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage(
+                          "assets/images/prof.png",
+                        ),
                       ),
-
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(
+                              controller.taskTitle.value,
+                              fontSize: 18,
+                              fontWeight: FontVariant.bold,
+                              color: blackColor,
+                              maxLines: null,                 // unlimited lines allow
+                              overflow: TextOverflow.visible, // next line wrap
+                            ),
+                            const SizedBox(height: 2),
+                            CustomText(
+                              controller.userId.value,
+                              fontSize: 14,
+                              fontWeight: FontVariant.medium,
+                              color: rbtxColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
                       /// RIGHT — TIMER (EXACT LIKE YOUR IMAGE)
                       CustomContainer(
                         width: 55,
@@ -94,8 +133,10 @@ class _ValidationScreenState extends State<ValidationScreen> {
                           color: redColor,
                         ),
                       ),
+
                     ],
                   ),
+
 
                   const SizedBox(height: 35),
 
@@ -109,9 +150,7 @@ class _ValidationScreenState extends State<ValidationScreen> {
                   const SizedBox(height: 10),
 
                   CustomText(
-                    "Need help moving furniture from my apartment to a new location. "
-                    "Items include a sofa, dining table, and several boxes. "
-                    "Helper should have a truck or van. Estimated time: 3 hours.",
+                    controller.taskDescription.value,
                     fontSize: 15,
                     fontWeight: FontVariant.regular,
                     color: blackColor,
@@ -182,8 +221,8 @@ class _ValidationScreenState extends State<ValidationScreen> {
                                   color: redColor,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const CustomText(
-                                  "03 Votes Received",
+                                child: CustomText(
+                                  "${controller.votesReceived.value.toString().padLeft(2, '0')} Votes Received",
                                   fontSize: 14,
                                   fontWeight: FontVariant.bold,
                                   color: whiteColor,
@@ -199,8 +238,8 @@ class _ValidationScreenState extends State<ValidationScreen> {
                                   color: redColor,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const CustomText(
-                                  "09 Votes Needed",
+                                child: CustomText(
+                                  "${controller.votesNeeded.value.toString().padLeft(2, '0')} Votes Needed",
                                   fontSize: 14,
                                   fontWeight: FontVariant.bold,
                                   color: whiteColor,
@@ -287,13 +326,14 @@ class _ValidationScreenState extends State<ValidationScreen> {
 
             /// TAB CONTENT (NO EXPANDED INSIDE SCROLL)
             selectedTab == 0
-                ? BeforeTab(isTask: widget.isTask)
-                : AfterTab(isTask: widget.isTask),
+                ? BeforeTab(isTask: controller.isTaskOwner.value)
+                : AfterTab(isTask: controller.isTaskOwner.value),
 
             const SizedBox(height: 40),
           ],
         ),
-      ),
+      );
+      }), // Close Obx
     );
   }
 }

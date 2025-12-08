@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -99,8 +100,50 @@ class HistoryTab extends StatelessWidget {
                           : const Color(0xFFEF9A9A), // Light pink/salmon for others
                       isButtonEnabled: task.status.toLowerCase() == 'rejected', // 🔥 Enable for rejected
                       showType: false,
-                      onViewDetails: () {
-                        Get.to(() => ValidationScreen());
+                      onViewDetails: () async {
+                        // 🔥 For rejected tasks, fetch validation data and navigate
+                        if (task.status.toLowerCase() == 'rejected') {
+                          try {
+                            // Fetch validation data from validations collection
+                            final validationSnapshot = await FirebaseFirestore.instance
+                                .collection('validations')
+                                .where('taskId', isEqualTo: task.id)
+                                .limit(1)
+                                .get();
+                            
+                            if (validationSnapshot.docs.isNotEmpty) {
+                              final validationData = validationSnapshot.docs.first.data();
+                              
+                              // Fetch userId from users collection using rejectedBy
+                              String userId = 'RB-00000';
+                              final rejectedBy = validationData['rejectedBy'];
+                              if (rejectedBy != null && rejectedBy.isNotEmpty) {
+                                final userDoc = await FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(rejectedBy)
+                                    .get();
+                                if (userDoc.exists) {
+                                  userId = userDoc.data()?['userId'] ?? 'RB-00000';
+                                }
+                              }
+                              
+                              // Navigate with validation data
+                              Get.to(() => ValidationScreen(
+                                taskId: task.id,
+                                userId: userId,
+                                beforePhotoUrl: validationData['beforePhotoUrl'] ?? '',
+                                afterPhotoUrl: validationData['afterPhotoUrl'] ?? '',
+                              ));
+                            } else {
+                              Get.snackbar('Error', 'Validation data not found');
+                            }
+                          } catch (e) {
+                            print('❌ Error fetching validation data: $e');
+                            Get.snackbar('Error', 'Failed to load validation details');
+                          }
+                        } else {
+                          Get.to(() => TaskDetailsScreen(task: task));
+                        }
                       },
                       onEdit: () {
                         // 🔥 For rejected tasks, show validation details
