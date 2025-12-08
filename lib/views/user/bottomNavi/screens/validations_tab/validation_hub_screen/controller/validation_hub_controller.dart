@@ -20,7 +20,11 @@ class ValidationHubController extends GetxController {
     try {
       isLoading.value = true;
 
-      final snapshot = await _firestore.collection('validations').get();
+      // 🔥 Only fetch validations where isVotingCompleted is false
+      final snapshot = await _firestore
+          .collection('validations')
+          .where('isVotingCompleted', isEqualTo: false)
+          .get();
 
       final List<Map<String, dynamic>> fetchedValidations = [];
 
