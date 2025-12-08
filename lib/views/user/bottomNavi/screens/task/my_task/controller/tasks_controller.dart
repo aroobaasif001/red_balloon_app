@@ -168,10 +168,10 @@ class TasksController extends GetxController {
         print('  Task: "${task.title}" | UID: ${task.uid} | Status: ${task.status} | Match: ${task.uid == currentUserId}');
       }
       
-      // Filter to show only active tasks (not completed or cancelled)
+      // Filter to show only active tasks (not completed, cancelled, or rejected)
       myTasks.value = tasks.where((task) {
         final status = task.status.toLowerCase();
-        return status != 'completed' && status != 'cancelled';
+        return status != 'completed' && status != 'cancelled' && status != 'rejected';
       }).toList();
       
       print('✅ My Tasks Count (Active only): ${myTasks.length}');

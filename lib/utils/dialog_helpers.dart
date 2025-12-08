@@ -298,7 +298,7 @@ class DialogHelpers {
                           label: 'Submit Rejection',
                           onPressed: () async {
                             final selectedReason = reasons[selected];
-
+                            
                             // 🔥 If "Others" selected, show bottom sheet
                             if (selectedReason == "Others") {
                               Get.back(); // Close step2 dialog
@@ -307,21 +307,17 @@ class DialogHelpers {
                                 controller: controller,
                                 taskId: taskId ?? '',
                                 proofId: proofId ?? '',
-                              );
+                              )
+;
                             } else {
                               // 🔥 Submit directly with selected reason
                               if (controller != null) {
-                                controller.selectedRejectionReason.value =
-                                    selectedReason;
-
+                                controller.selectedRejectionReason.value = selectedReason;
+                                
                                 // Close dialogs
-                                Navigator.of(
-                                  context,
-                                ).pop(); // Close step2 dialog
-                                Navigator.of(
-                                  context,
-                                ).pop(); // Close step1 dialog
-
+                                Navigator.of(context).pop(); // Close step2 dialog
+                                Navigator.of(context).pop(); // Close step1 dialog
+                                
                                 // Submit (navigation handled by callback)
                                 await controller.submitRejection(
                                   taskId: taskId ?? '',
@@ -1466,15 +1462,12 @@ class DialogHelpers {
                       // 🔥 Save custom reason to controller
                       if (controller != null) {
                         controller.selectedRejectionReason.value = 'Others';
-                        controller.customRejectionReason.value = msgController
-                            .text
-                            .trim();
-
+                        controller.customRejectionReason.value = msgController.text.trim();
+                        
                         // Close dialogs
-                        Navigator.of(context).pop(); // Close bottom sheet
                         Navigator.of(context).pop(); // Close step2 dialog
                         Navigator.of(context).pop(); // Close step1 dialog
-
+                        
                         // Submit (navigation handled by callback)
                         await controller.submitRejection(
                           taskId: taskId ?? '',
@@ -1785,8 +1778,7 @@ class DialogHelpers {
                                   .doc(offerId)
                                   .get();
 
-                              final offeringUserUid =
-                                  offerDoc.data()?['offeringUserUid'] ?? '';
+                              final offeringUserUid = offerDoc.data()?['offeringUserUid'] ?? '';
 
                               // Update offer status
                               await FirebaseFirestore.instance
@@ -1794,9 +1786,7 @@ class DialogHelpers {
                                   .doc(offerId)
                                   .update({'status': 'accepted'});
 
-                              print(
-                                '✅ Offer $offerId status updated to accepted',
-                              );
+                              print('✅ Offer $offerId status updated to accepted');
 
                               // 🔥 Update task status to 'in progress' and store offeringUserUid
                               await FirebaseFirestore.instance
@@ -1804,27 +1794,22 @@ class DialogHelpers {
                                   .doc(taskId)
                                   .update({
                                     'status': 'in progress',
-                                    'acceptedOfferUid':
-                                        offeringUserUid, // 🔥 Store helper's UID
+                                    'acceptedOfferUid': offeringUserUid, // 🔥 Store helper's UID
                                   });
 
-                              print(
-                                '✅ Task $taskId status updated to in progress with acceptedOfferUid: $offeringUserUid',
-                              );
+                              print('✅ Task $taskId status updated to in progress with acceptedOfferUid: $offeringUserUid');
 
                               // Call the callback
                               onAccepted();
 
                               // 🔥 Close confirmation dialog first
-                              Get.back();
-
+                              Get.back(); 
+                              
                               // Close task details screen and navigate
                               Get.back(); // Close task details screen
-
+                              
                               // 🔥 Navigate to TaskInProgressScreen with specific taskId
-                              Get.to(
-                                () => TaskInProgressScreen(taskId: taskId),
-                              );
+                              Get.to(() => TaskInProgressScreen(taskId: taskId));
 
                               // Show snackbar
                               Get.snackbar(
@@ -1836,11 +1821,10 @@ class DialogHelpers {
                                 borderRadius: 10,
                                 margin: EdgeInsets.all(12),
                                 duration: Duration(seconds: 2),
-                                icon: Icon(
-                                  Icons.check_circle,
-                                  color: Colors.white,
-                                ),
+                                icon: Icon(Icons.check_circle, color: Colors.white),
                               );
+
+
                             } catch (e) {
                               print('❌ Error updating offer/task status: $e');
                             }
@@ -2641,7 +2625,149 @@ class DialogHelpers {
           taskOwnerPhoto: taskOwnerPhoto,
           taskBudget: taskBudget,
         );
+
+      }
+    );
+  }
+
+  /// ===================================================
+  /// SHOW VOTE CONFIRMATION DIALOG
+  /// ===================================================
+  static void showVoteConfirmationDialog({
+    required BuildContext context,
+    required String voteType, // 'helper' or 'requester'
+    required Future<void> Function() onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              // MAIN WHITE CARD
+              CustomContainer(
+                padding: const EdgeInsets.only(
+                  top: 90,
+                  left: 25,
+                  right: 25,
+                  bottom: 25,
+                ),
+                conColor: whiteColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.12),
+                    blurRadius: 10,
+                  ),
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // TITLE
+                    const CustomText(
+                      "Confirm Vote",
+                      fontSize: 20,
+                      color: blackColor,
+                      textAlign: TextAlign.center,
+                      fontWeight: FontVariant.bold,
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // MESSAGE
+                    CustomText(
+                      "Are you sure you want to\nvote for ${voteType == 'helper' ? 'Helper' : 'Requester'}?",
+                      fontSize: 16,
+                      color: grey5Color,
+                      textAlign: TextAlign.center,
+                      fontWeight: FontVariant.regular,
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // BUTTONS ROW
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // CANCEL BUTTON
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: fundCardBorderColor,
+                                width: 2,
+                              ),
+                              conColor: hColor.withOpacity(0.10),
+                              child: const CustomText(
+                                "Cancel",
+                                fontSize: 14,
+                                color: redColor,
+                                fontWeight: FontVariant.semiBold,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        // YES BUTTON
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () async {
+                              Navigator.pop(context);
+                              await onConfirm();
+                            },
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              conColor: redColor,
+                              child: const CustomText(
+                                "Yes",
+                                fontSize: 14,
+                                color: whiteColor,
+                                fontWeight: FontVariant.semiBold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // 🔴 TOP CIRCLE WITH VOTE ICON
+              Positioned(
+                top: -70,
+                child: CustomContainer(
+                  width: 140,
+                  height: 140,
+                  conColor: redColor,
+                  shape: BoxShape.circle,
+                  child: const Center(
+                    child: Icon(
+                      Icons.how_to_vote,
+                      size: 60,
+                      color: whiteColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
       },
     );
   }
-}
+  }
+

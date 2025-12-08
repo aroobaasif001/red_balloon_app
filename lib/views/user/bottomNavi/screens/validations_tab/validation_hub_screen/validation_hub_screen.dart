@@ -142,24 +142,28 @@ class ValidationHubScreen extends StatelessWidget {
                             /// TITLE + BADGE
                             Row(
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomText(
-                                      validation['userId'] ?? 'RB-00000',
-                                      fontSize: 18,
-                                      fontWeight: FontVariant.bold,
-                                      fontType: AppFont.montserrat,
-                                      color: blackColor,
-                                    ),
-                                    CustomText(
-                                      validation['taskTitle'] ?? 'No Title',
-                                      fontSize: 16,
-                                      fontWeight: FontVariant.semiBold,
-                                      fontType: AppFont.montserrat,
-                                      color: blackColor,
-                                    ),
-                                  ],
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      CustomText(
+                                        validation['userId'] ?? 'RB-00000',
+                                        fontSize: 18,
+                                        fontWeight: FontVariant.bold,
+                                        fontType: AppFont.montserrat,
+                                        color: blackColor,
+                                      ),
+                                      CustomText(
+                                        validation['taskTitle'] ?? 'No Title',
+                                        fontSize: 16,
+                                        fontWeight: FontVariant.semiBold,
+                                        fontType: AppFont.montserrat,
+                                        color: blackColor,
+                                        maxLines: null,                 // unlimited lines allow
+                                        overflow: TextOverflow.visible, // next line wrap
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -205,7 +209,12 @@ class ValidationHubScreen extends StatelessWidget {
                                   child: CustomButton(
                                     label: "Review Proof",
                                     onPressed: () {
-                                      Get.to(() => ValidationScreen());
+                                      Get.to(() => ValidationScreen(
+                                        taskId: validation['taskId'],
+                                        userId: validation['userId'],
+                                        beforePhotoUrl: validation['beforePhotoUrl'],
+                                        afterPhotoUrl: validation['afterPhotoUrl'],
+                                      ));
                                     },
                                     height: 40,
                                     width: 80,

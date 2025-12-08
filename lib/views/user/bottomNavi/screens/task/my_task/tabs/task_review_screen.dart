@@ -41,9 +41,16 @@ class TaskReviewScreen extends StatelessWidget {
       }
     }
     
+    
     // 🔥 Set navigation callback
     controller.onSubmissionComplete = () {
-      // Navigate back twice
+      // Close all open dialogs/bottom sheets first
+      while (Navigator.of(context).canPop() && 
+             (Get.isDialogOpen == true || Get.isBottomSheetOpen == true)) {
+        Navigator.of(context).pop();
+      }
+      
+      // Navigate back twice (close screens)
       Navigator.of(context).pop(); // Close TaskReviewScreen
       Navigator.of(context).pop(); // Close TaskInProgressScreen
       

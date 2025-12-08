@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_screen/controller/validation_screen_controller.dart';
 
 import '../../../../../../../utils/dialog_helpers.dart';
 
@@ -81,19 +83,23 @@ class AfterTab extends StatelessWidget {
           isTask == false
               ? Row(
                   children: [
-                    /// ❌ SUPPORT USER BUTTON
+                    /// ❌ SUPPORT HELPER BUTTON
                     Flexible(
                       child: CustomButton(
                         label: "Support Helper",
                         height: 50,
-                        fontSize: 14, // slightly smaller = no overflow
+                        fontSize: 14,
                         fontWeight: FontVariant.semiBold,
                         bgColor: redColor,
                         borderRadius: BorderRadius.circular(12),
                         onPressed: () {
-                          DialogHelpers.showPaymentSuccessDialog(
+                          DialogHelpers.showVoteConfirmationDialog(
                             context: context,
-                            showButton: false,
+                            voteType: 'helper',
+                            onConfirm: () async {
+                              final controller = Get.find<ValidationScreenController>();
+                              await controller.submitVote('helper');
+                            },
                           );
                         },
                         leading: const Icon(
@@ -103,25 +109,29 @@ class AfterTab extends StatelessWidget {
                         ),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
-                        ), // prevents overflow
+                        ),
                       ),
                     ),
 
                     const SizedBox(width: 14),
 
-                    /// ✔ SUPPORT PROVIDER BUTTON
+                    /// ✔ SUPPORT REQUESTER BUTTON
                     Flexible(
                       child: CustomButton(
                         label: "Support Requester",
                         height: 50,
-                        fontSize: 14, // same as above
+                        fontSize: 14,
                         fontWeight: FontVariant.semiBold,
                         bgColor: redColor,
                         borderRadius: BorderRadius.circular(12),
                         onPressed: () {
-                          DialogHelpers.showPaymentSuccessDialog(
+                          DialogHelpers.showVoteConfirmationDialog(
                             context: context,
-                            showButton: false,
+                            voteType: 'requester',
+                            onConfirm: () async {
+                              final controller = Get.find<ValidationScreenController>();
+                              await controller.submitVote('requester');
+                            },
                           );
                         },
                         leading: const Icon(
@@ -131,7 +141,7 @@ class AfterTab extends StatelessWidget {
                         ),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
-                        ), // prevents overflow
+                        ),
                       ),
                     ),
                   ],
