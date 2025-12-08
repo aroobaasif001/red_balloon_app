@@ -116,23 +116,22 @@ class OfflineAndOnlineCard extends StatelessWidget {
                             ),
 
                           if (distance == null) const Spacer(),
-                          Flexible(
-                            child: CustomContainer(
-                              child: Row(
-                                children: [
-                                  Flexible(
-                                    child: CustomText(
-                                      distance != null
-                                          ? " • ${timeAgo}"
-                                          : timeAgo,
-                                      fontSize: 11,
-                                      fontWeight: FontVariant.regular,
-                                      color: grey5Color,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                          CustomContainer(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: CustomText(
+                                    distance != null
+                                        ? " • ${timeAgo}"
+                                        : timeAgo,
+                                    fontSize: 11,
+                                    fontWeight: FontVariant.regular,
+                                    color: grey5Color,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

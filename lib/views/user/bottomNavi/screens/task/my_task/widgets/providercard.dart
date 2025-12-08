@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
-import '../../../profile/tabs/messages_screen.dart';
 import '../tabs/chat_screen.dart';
 
 class ProviderCard extends StatelessWidget {
@@ -16,6 +14,7 @@ class ProviderCard extends StatelessWidget {
   final String description;
   final String price;
   final String distance;
+  final String? userPhoto;
 
   final VoidCallback? onViewProfile;
   final VoidCallback? onAccept;
@@ -33,6 +32,7 @@ class ProviderCard extends StatelessWidget {
     this.onViewProfile,
     this.onAccept,
     this.onChat,
+    this.userPhoto,
   });
 
   @override
@@ -40,7 +40,7 @@ class ProviderCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: CustomContainer(
-        conColor:whiteColor,
+        conColor: whiteColor,
         borderRadius: BorderRadius.circular(22),
         padding: const EdgeInsets.all(18),
         boxShadow: [
@@ -64,12 +64,14 @@ class ProviderCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   conColor: redColor.withOpacity(0.12),
                   alignment: Alignment.center,
-                  child: CustomText(
-                    initials,
-                    fontSize: 20,
-                    fontWeight: FontVariant.bold,
-                    color: redColor,
-                  ),
+                  child: userPhoto == null
+                      ? CustomText(
+                          initials,
+                          fontSize: 20,
+                          fontWeight: FontVariant.bold,
+                          color: redColor,
+                        )
+                      : Image.network(userPhoto!),
                 ),
 
                 const SizedBox(width: 14),
@@ -91,7 +93,9 @@ class ProviderCard extends StatelessWidget {
 
                           CustomContainer(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 6),
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
                             conColor: rdBgColor,
                             borderRadius: BorderRadius.circular(10),
                             child: CustomText(
@@ -108,8 +112,7 @@ class ProviderCard extends StatelessWidget {
                       /// RATING ROW
                       Row(
                         children: [
-                          const Icon(Icons.star,
-                              size: 20, color:starcolor),
+                          const Icon(Icons.star, size: 20, color: starcolor),
                           const SizedBox(width: 1),
                           CustomText(
                             rating,
@@ -139,11 +142,7 @@ class ProviderCard extends StatelessWidget {
                               fontSize: 17,
                               fontWeight: FontVariant.bold,
                             ),
-                            CustomText(
-                              distance,
-                              fontSize: 12,
-                              color: redColor,
-                            ),
+                            CustomText(distance, fontSize: 12, color: redColor),
                           ],
                         ),
                       ),
@@ -155,17 +154,15 @@ class ProviderCard extends StatelessWidget {
 
             const SizedBox(height: 10),
             Row(
-          children: [
-            buildButton("View Profile", onViewProfile),
-            buildButton("Accept", onAccept),
-            buildButton("Chat", () {
-              Get.to(() =>  chatScreen(
-              ));
-            }),
+              children: [
+                buildButton("View Profile", onViewProfile),
+                buildButton("Accept", onAccept),
+                buildButton("Chat", () {
+                  Get.to(() => chatScreen());
+                }),
+              ],
+            ),
           ],
-        )
-
-        ],
         ),
       ),
     );

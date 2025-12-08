@@ -21,10 +21,7 @@ class OnboardingScreen extends StatelessWidget {
         : Get.put(AuthController());
     return Scaffold(
       backgroundColor: whiteColor,
-      body: Obx(
-        () => authController.isLoading.value
-            ? const Center(child: CircularProgressIndicator())
-            : CustomContainer(
+      body: CustomContainer(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 image: const DecorationImage(
@@ -51,7 +48,8 @@ class OnboardingScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           if (Platform.isIOS) ...[
-                            SocialButton.apple(
+                            Obx(() => SocialButton.apple(
+                              isLoading: authController.isLoading.value,
                               onPressed: () async {
                                 final user = await authController
                                     .signInWithApple();
@@ -59,10 +57,11 @@ class OnboardingScreen extends StatelessWidget {
                                   Get.off(() => BottomNaviScreen());
                                 }
                               },
-                            ),
+                            )),
                             const SizedBox(height: 12),
                           ],
-                          SocialButton.google(
+                          Obx(() => SocialButton.google(
+                            isLoading: authController.isLoading.value,
                             onPressed: () async {
                               final user = await authController
                                   .signInWithGoogle();
@@ -70,19 +69,7 @@ class OnboardingScreen extends StatelessWidget {
                                 Get.offAll(() => BottomNaviScreen());
                               }
                             },
-                          ),
-                          // const SizedBox(height: 12),
-
-                          // SocialButton.apple(
-                          //   onPressed: () async {
-                          //     // final user = await authController
-                          //     //     .signInWithApple();
-                          //     // if (user != null) {
-                          //     Get.off(() => AdminBottomNaviScreen());
-                          //     // }
-                          //   },
-                          // ),
-                          // const SizedBox(height: 12),
+                          )),
                         ],
                       ),
                     ),
@@ -99,7 +86,6 @@ class OnboardingScreen extends StatelessWidget {
                   ],
                 ),
               ),
-      ),
     );
   }
 }

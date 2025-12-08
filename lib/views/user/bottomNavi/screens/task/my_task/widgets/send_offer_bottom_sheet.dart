@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -50,7 +51,9 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _priceController = TextEditingController(text: "200");
+    _priceController = TextEditingController(
+      text: widget.taskBudget?.toInt().toString(),
+    );
   }
 
   @override
@@ -111,7 +114,9 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
                 Expanded(
                   child: TextField(
                     controller: _priceController,
+                    maxLength: 5,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     textAlign: TextAlign.left,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
@@ -187,16 +192,45 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
       return;
     }
 
-    final offerPrice = double.tryParse(priceText);
+    final offerPrice = int.tryParse(priceText);
     if (offerPrice == null || offerPrice <= 0) {
       Get.snackbar(
         'Error',
-        'Please enter a valid price',
+        'Please enter a valid price (integers only)',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
       return;
+    }
+
+    // Validation: 30% limit check (Minimum 70% of budget)
+    final double budget = widget.taskBudget ?? 0.0;
+    if (budget > 0) {
+      final double minLimit = budget * 0.7; // 70% of budget (30% less)
+      final double maxLimit = budget * 3.0; // 3 times the budget
+
+      if (offerPrice < minLimit) {
+        Get.snackbar(
+          'Invalid Offer',
+          'Offer cannot be less than SAR ${minLimit.toInt()} (70% of budget)',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      if (offerPrice > maxLimit) {
+        Get.snackbar(
+          'Invalid Offer',
+          'Offer cannot be more than SAR ${maxLimit.toInt()} (3x of budget)',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
     }
 
     setState(() => _isSubmitting = true);
@@ -234,7 +268,7 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
       // Submit offer to Firebase
       final success = await _offerService.submitOffer(
         taskId: widget.taskId!,
-        offerPrice: offerPrice,
+        offerPrice: offerPrice.toDouble(),
         taskBudget: widget.taskBudget ?? 0.0,
         taskDetails: taskDetails,
         taskOwnerUid: widget.taskOwnerUid!,
@@ -250,7 +284,7 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
         Get.back(); // Close bottom sheet
         DialogHelpers.showPaymentSuccessDialog(
           context: context,
-          message: 'Your Offer has been sent\nsuccessfully',
+          message: 'Your Offer has been sent successfully',
           showButton: false,
         );
       } else {

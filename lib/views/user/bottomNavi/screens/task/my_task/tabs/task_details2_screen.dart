@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/model/offer_model.dart';
 import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/services/offer_service.dart';
-import 'package:get/get.dart';
 import 'package:red_balloon_app/services/user_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
@@ -39,14 +39,18 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
 
   Future<void> _fetchOffers() async {
     if (!mounted) return; // 🔥 Check if widget is still mounted
-    
+
     setState(() => isLoading = true);
-    print('🔍 TaskDetails2Screen: Fetching offers for Task ID: ${widget.task.id}');
-    
-    final fetchedOffers = await _offerService.getOffersForTask(widget.task.id ?? '');
-    
+    print(
+      '🔍 TaskDetails2Screen: Fetching offers for Task ID: ${widget.task.id}',
+    );
+
+    final fetchedOffers = await _offerService.getOffersForTask(
+      widget.task.id ?? '',
+    );
+
     if (!mounted) return; // 🔥 Check again before setState
-    
+
     setState(() {
       offers = fetchedOffers;
       isLoading = false;
@@ -71,8 +75,11 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
   @override
   Widget build(BuildContext context) {
     // Helper to check if image is network or asset
-    final bool isNetworkImage = widget.task.imageUrl != null && widget.task.imageUrl!.isNotEmpty;
-    final String displayImage = isNetworkImage ? widget.task.imageUrl! : "assets/images/sofa.png";
+    final bool isNetworkImage =
+        widget.task.imageUrl != null && widget.task.imageUrl!.isNotEmpty;
+    final String displayImage = isNetworkImage
+        ? widget.task.imageUrl!
+        : "assets/images/sofa.png";
 
     return SafeArea(
       top: false,
@@ -156,7 +163,9 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                                     ),
                                     const SizedBox(width: 5),
                                     CustomText(
-                                      _getTimeAgo(widget.task.createdAt), // 🔥 Real time
+                                      _getTimeAgo(
+                                        widget.task.createdAt,
+                                      ), // 🔥 Real time
                                       fontSize: 13,
                                       color: walletGrey600Color,
                                     ),
@@ -221,6 +230,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                       : 'U';
 
                   return ProviderCard(
+                    userPhoto: displayImage,
                     initials: initials,
                     name: offer.offeringUserName, // 🔥 Real offering user name
                     id: "RB-452",
@@ -232,17 +242,23 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                     onViewProfile: () async {
                       // 🔥 Fetch user data and navigate to profile screen
                       try {
-                        final user = await _userService.getUserByUid(offer.offeringUserUid);
-                        final stats = await _userService.getUserStatistics(offer.offeringUserUid);
+                        final user = await _userService.getUserByUid(
+                          offer.offeringUserUid,
+                        );
+                        final stats = await _userService.getUserStatistics(
+                          offer.offeringUserUid,
+                        );
 
                         if (user != null) {
-                          Get.to(() => UserProfileScreen(
-                                userName: user.displayName,
-                                userInitials: user.initials,
-                                rating: (stats['rating'] ?? 4.9).toDouble(),
-                                tasksCompleted: stats['tasksCompleted'] ?? 0,
-                                tasksRequested: stats['tasksRequested'] ?? 0,
-                              ));
+                          Get.to(
+                            () => UserProfileScreen(
+                              userName: user.displayName,
+                              userInitials: user.initials,
+                              rating: (stats['rating'] ?? 4.9).toDouble(),
+                              tasksCompleted: stats['tasksCompleted'] ?? 0,
+                              tasksRequested: stats['tasksRequested'] ?? 0,
+                            ),
+                          );
                         }
                       } catch (e) {
                         print('Error loading user profile: $e');

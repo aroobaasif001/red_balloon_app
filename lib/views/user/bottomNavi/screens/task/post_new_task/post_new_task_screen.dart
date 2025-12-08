@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -216,7 +217,9 @@ class PostNewTaskScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Image(
-                          image: AssetImage('assets/icons/hugeicons_coins-yen.png'),
+                          image: AssetImage(
+                            'assets/icons/hugeicons_coins-yen.png',
+                          ),
                           height: 20,
                         ),
                         SizedBox(width: 10),
@@ -245,6 +248,8 @@ class PostNewTaskScreen extends StatelessWidget {
               ),
               SizedBox(height: 10),
               CustomTextField(
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                 keyboardType: TextInputType.number,
                 controller: controller.taskBudget,
                 maxLength: 5,
@@ -297,7 +302,9 @@ class PostNewTaskScreen extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Image(
-                                      image: AssetImage('assets/icons/location.png'),
+                                      image: AssetImage(
+                                        'assets/icons/location.png',
+                                      ),
                                       height: 20,
                                     ),
                                     SizedBox(width: 10),
@@ -315,7 +322,8 @@ class PostNewTaskScreen extends StatelessWidget {
                                     () => CustomText(
                                       '${controller.locationLength.value}/50',
                                       fontSize: 12,
-                                      color: controller.locationLength.value > 50
+                                      color:
+                                          controller.locationLength.value > 50
                                           ? redColor
                                           : blackLightColor.withOpacity(0.6),
                                     ),

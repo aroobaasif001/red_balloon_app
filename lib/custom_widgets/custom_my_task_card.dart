@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -12,13 +11,13 @@ class CustomMyTaskCard extends StatelessWidget {
   final String postedTime;
   final String image;
   final String distance;
-  final bool isNetworkImage; 
+  final bool isNetworkImage;
   final String? taskType; // 🔥 NEW: To check if online or offline
 
   final String? btnText;
   final VoidCallback? onEdit;
   final VoidCallback? onViewDetails;
-  final bool showButton; 
+  final bool showButton;
   final bool showType;
   final String buttonText;
   final Color? buttonColor; // 🔥 NEW: Custom button color
@@ -34,9 +33,9 @@ class CustomMyTaskCard extends StatelessWidget {
     this.onEdit,
     this.btnText,
     this.onViewDetails,
-    this.showButton = false, 
+    this.showButton = false,
     this.distance = '2.5 km away',
-    this.isNetworkImage = false, 
+    this.isNetworkImage = false,
     this.taskType, // 🔥 NEW
     this.showType = true,
     this.buttonText = 'View Details',
@@ -104,7 +103,7 @@ class CustomMyTaskCard extends StatelessWidget {
                             fontWeight: FontVariant.regular,
                           ),
                         ],
-                        
+
                         Expanded(
                           child: CustomContainer(
                             // width: Get.width*0.33, // Removed fixed width to avoid overflow
@@ -181,9 +180,7 @@ class CustomMyTaskCard extends StatelessWidget {
             const SizedBox(height: 9),
             Row(
               children: [
-                if (showType == true) ...[
-                  const SizedBox(width: 70),
-                ],
+                // if (showType == true) ...[const SizedBox(width: 70)],
 
                 /// BUTTON FIX
                 Expanded(
@@ -191,9 +188,13 @@ class CustomMyTaskCard extends StatelessWidget {
                     height: 40,
                     borderRadius: BorderRadius.circular(5),
                     label: btnText ?? 'View Details',
-                    onPressed: isButtonEnabled ? onViewDetails : null, // 🔥 Disable if needed
-                    bgColor: buttonColor ?? redColor, // 🔥 Use custom color or default red
-                    width: showType == true ? 140 : Get.width * 0.8523,
+                    onPressed: isButtonEnabled
+                        ? onViewDetails
+                        : null, // 🔥 Disable if needed
+                    bgColor:
+                        buttonColor ??
+                        redColor, // 🔥 Use custom color or default red
+                    // width: showType == true ? 140 : Get.width * 0.8523,
                     fontSize: 16,
                     fontWeight: FontVariant.semiBold,
                   ),

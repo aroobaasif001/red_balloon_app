@@ -71,6 +71,8 @@ class TaskOwnerTile extends StatelessWidget {
               onTap: () {
                 Get.to(
                   () => UserProfileScreen(
+                    userPhoto: photoUrl,
+                    userId: id,
                     userName: name!,
                     userInitials: '',
                     rating: 0,

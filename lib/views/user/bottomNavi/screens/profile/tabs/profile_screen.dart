@@ -43,6 +43,7 @@ class ProfileScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: GetBuilder<AuthController>(
+              init: AuthController(),
               builder: (authController) {
                 final currentUser = authController.currentUser.value;
                 final displayName = currentUser?.displayName ?? 'User';
@@ -63,7 +64,7 @@ class ProfileScreen extends StatelessWidget {
                       String? locationText;
                       final city = authController.userCity.value;
                       final country = authController.userCountry.value;
-                      
+
                       if (city.isNotEmpty && country.isNotEmpty) {
                         locationText = '$city, $country';
                       } else if (city.isNotEmpty) {
@@ -71,14 +72,14 @@ class ProfileScreen extends StatelessWidget {
                       } else if (country.isNotEmpty) {
                         locationText = country;
                       }
-                      
+
                       return ProfileCard(
                         avatarInitials: initials,
                         photoURL: photoURL,
                         userName: displayName,
                         location: locationText,
-                        phoneNumber: authController.userPhone.value.isNotEmpty 
-                            ? authController.userPhone.value 
+                        phoneNumber: authController.userPhone.value.isNotEmpty
+                            ? authController.userPhone.value
                             : null,
                         verificationLabel: 'Verified Requester',
                         loyaltyPoints: 'Your Loyalty Points: 05',

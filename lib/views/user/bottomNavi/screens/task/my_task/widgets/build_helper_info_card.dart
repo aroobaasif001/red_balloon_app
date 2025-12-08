@@ -14,6 +14,7 @@ Widget buildHelperInfoCard(
   InProgressTaskController controller,
   String? photoUrl,
   String userName,
+  String userId,
 ) {
   return CustomContainer(
     conColor: white2Color,
@@ -38,7 +39,7 @@ Widget buildHelperInfoCard(
                       color: whiteColor,
                     )
                   : ClipRRect(
-                      borderRadius: BorderRadius.circular(22),
+                      borderRadius: BorderRadius.circular(50),
                       child: Image.network(photoUrl),
                     ),
             ),

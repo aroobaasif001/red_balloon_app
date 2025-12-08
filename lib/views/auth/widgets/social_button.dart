@@ -52,6 +52,7 @@ class SocialButton extends StatelessWidget {
     double height = 60,
     bool fullWidth = false,
     double? width,
+    bool isLoading = false,
   }) {
     return SocialButton(
       key: key,
@@ -64,6 +65,7 @@ class SocialButton extends StatelessWidget {
       bgColor: AppColors.textColor, // jo bhi aapka surface color hai
       textColor: blackColor,
       icon: Image.asset('assets/icons/Google.png', width: 30, height: 30),
+      isLoading: isLoading,
     );
   }
 
@@ -73,6 +75,7 @@ class SocialButton extends StatelessWidget {
     double height = 60,
     bool fullWidth = false,
     double? width,
+    bool isLoading = false,
   }) {
     return SocialButton(
       key: key,
@@ -85,21 +88,29 @@ class SocialButton extends StatelessWidget {
       bgColor: blackColor,
       textColor: whiteColor,
       icon: Image.asset('assets/icons/apple.png', width: 30, height: 30),
+      isLoading: isLoading,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final bool enabled = onPressed != null && !isLoading;
-    final Color effectiveText = enabled
+
+    // User requested: "color na change ho" during loading.
+    // So we calculate visual properties based on whether onPressed exists, ignoring isLoading.
+    final bool visuallyEnabled = onPressed != null;
+
+    final Color effectiveText = visuallyEnabled
         ? textColor
         : textColor.withOpacity(0.6);
+
     final Color surface = bgColor ?? white4Color;
 
     final button = MaterialButton(
       onPressed: enabled ? onPressed : null,
       color: surface,
-      disabledColor: surface.withOpacity(0.6),
+      // User requested: "color na change ho". Keep surface color same if loading.
+      disabledColor: isLoading ? surface : surface.withOpacity(0.6),
       elevation: 0,
       padding: EdgeInsets.zero, // inner padding handled below
       minWidth: 0, // 👈 don't force full width
@@ -119,20 +130,28 @@ class SocialButton extends StatelessWidget {
               child: Center(child: icon),
             ),
             // Center label / loader
-            SizedBox(
-              // label area grows naturally; keep layout neat
-              child: isLoading
-                  ? SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          effectiveText,
-                        ),
-                      ),
-                    )
-                  : _buildCenteredLabel(effectiveText),
+            // User requested: "size kam na ho". We use Stack to keep the Text geometry
+            // even when showing loader (by making text transparent).
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                // Hidden text defines the width/height
+                Opacity(
+                  opacity: isLoading ? 0.0 : 1.0,
+                  child: _buildCenteredLabel(effectiveText),
+                ),
+                // Loader overlay
+                if (isLoading)
+                  SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(
+                      color: redColor,
+                      // strokeWidth: 2,
+                      // valueColor: AlwaysStoppedAnimation<Color>(effectiveText),
+                    ),
+                  ),
+              ],
             ),
             // Right spacer to balance left icon width
             SizedBox(width: leftSlotWidth),

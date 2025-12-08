@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:red_balloon_app/model/task_model.dart';
@@ -17,13 +19,122 @@ class TasksController extends GetxController {
   final RxBool isLoadingTasksNearMe = false.obs;
   final RxBool isLoadingHistoryTasks = false.obs; // 🔥 NEW
 
+  // For triggering UI updates
+  RxInt updateTrigger = 0.obs;
+
   @override
   void onInit() {
     super.onInit();
     print('🚀 TasksController initialized');
     print('👤 Current User: ${_auth.currentUser?.uid ?? "NOT LOGGED IN"}');
     print('📧 Email: ${_auth.currentUser?.email ?? "N/A"}');
-    fetchAllTasks();
+    startRealTimeUpdates();
+    startAutoRefreshTimer();
+  }
+
+  @override
+  void onClose() {
+    // Timers are automatically cancelled by GetX
+    super.onClose();
+  }
+
+  /// Start auto-refresh timer based on time intervals
+  void startAutoRefreshTimer() {
+    // Refresh every 30 seconds to update time ago text
+    ever(myTasks, (_) {
+      // Cancel existing timer if any
+      if (Get.isRegistered<Timer>()) {
+        Get.delete<Timer>();
+      }
+
+      // Start new timer
+      Future.delayed(Duration(seconds: 30), () {
+        if (myTasks.isNotEmpty || tasksNearMe.isNotEmpty) {
+          updateTrigger.value++;
+        }
+      });
+    });
+
+    // Also set up a periodic timer for continuous updates
+    Future.delayed(Duration(seconds: 30), () {
+      _setupPeriodicTimer();
+    });
+  }
+
+  /// Setup periodic timer for continuous updates
+  void _setupPeriodicTimer() {
+    Future.doWhile(() async {
+      await Future.delayed(Duration(seconds: 30));
+      if (myTasks.isNotEmpty || tasksNearMe.isNotEmpty) {
+        updateTrigger.value++;
+      }
+      return true; // Continue looping
+    });
+  }
+
+  /// Start real-time stream of tasks
+  void startRealTimeUpdates() {
+    try {
+      final currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null) {
+        print('❌ User not authenticated');
+        isLoadingMyTasks.value = false;
+        isLoadingTasksNearMe.value = false;
+        return;
+      }
+
+      // Listen to all tasks stream for real-time updates
+      _taskService.streamAllTasks().listen(
+        (allTasks) {
+          // Filter my tasks (created by current user, not completed/cancelled)
+          myTasks.value = allTasks
+              .where((task) {
+                final isMyTask = task.uid == currentUserId;
+                final status = task.status.toLowerCase();
+                final isActive = status != 'completed' && status != 'cancelled';
+                return isMyTask && isActive;
+              })
+              .toList();
+
+          // Filter tasks near me (created by other users, not completed/cancelled)
+          tasksNearMe.value = allTasks
+              .where((task) {
+                final isOtherUser = task.uid != currentUserId;
+                final status = task.status.toLowerCase();
+                final isActive = status != 'completed' && status != 'cancelled';
+                return isOtherUser && isActive;
+              })
+              .toList();
+
+          // Filter history tasks (completed or cancelled)
+          historyTasks.value = allTasks
+              .where((task) {
+                final isMyTask = task.uid == currentUserId;
+                final status = task.status.toLowerCase();
+                final isHistory = status == 'completed' || status == 'cancelled' || status == 'rejected';
+                return isMyTask && isHistory;
+              })
+              .toList();
+
+          isLoadingMyTasks.value = false;
+          isLoadingTasksNearMe.value = false;
+          isLoadingHistoryTasks.value = false;
+
+          print('✅ Real-time update: My Tasks: ${myTasks.length}, Tasks Near Me: ${tasksNearMe.length}, History: ${historyTasks.length}');
+        },
+        onError: (error) {
+          print('❌ Error in real-time updates: $error');
+          isLoadingMyTasks.value = false;
+          isLoadingTasksNearMe.value = false;
+          isLoadingHistoryTasks.value = false;
+        },
+      );
+    } catch (e) {
+      print('❌ Error setting up real-time updates: $e');
+      isLoadingMyTasks.value = false;
+      isLoadingTasksNearMe.value = false;
+      isLoadingHistoryTasks.value = false;
+    }
   }
 
   /// Fetch all tasks (both my tasks and tasks near me)

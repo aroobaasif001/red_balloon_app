@@ -94,6 +94,21 @@ class EditProfileController extends GetxController {
   // Loading state
   RxBool isLoading = false.obs;
 
+  // Track if any changes have been made
+  RxBool hasChanges = false.obs;
+
+  // Flag to track if initial data load is complete
+  bool _isInitialLoadComplete = false;
+
+  // Store original values to compare
+  late String originalDisplayName;
+  late String originalCity;
+  late String originalCountry;
+  late String originalPhone;
+  late String originalCountryCode;
+  late String originalWorkExperience;
+  late String originalImageUrl;
+
   @override
   void onInit() {
     super.onInit();
@@ -158,6 +173,21 @@ class EditProfileController extends GetxController {
           }
         }
       }
+
+      // Store original values for comparison
+      originalDisplayName = displayNameController.text;
+      originalCity = cityController.text;
+      originalCountry = countryController.text;
+      originalPhone = phoneController.text;
+      originalCountryCode = selectedCountryCode.value;
+      originalWorkExperience = workExperienceController.text;
+      originalImageUrl = imagePreviewUrl.value;
+
+      // Reset hasChanges flag
+      hasChanges.value = false;
+
+      // Mark initial load as complete - now enable change detection
+      _isInitialLoadComplete = true;
     }
   }
 
@@ -181,6 +211,7 @@ class EditProfileController extends GetxController {
         if (file.path != null) {
           selectedImage.value = File(file.path!);
           imagePreviewUrl.value = file.path!;
+          _checkForChanges();
         }
       }
     } catch (e) {
@@ -200,6 +231,7 @@ class EditProfileController extends GetxController {
   bool validateDisplayName(String value) {
     final trimmed = value.trim();
     displayNameLength.value = value.length; // Update character count
+    _checkForChanges();
 
     if (trimmed.isEmpty) {
       displayNameError.value = "Full name is required";
@@ -224,6 +256,7 @@ class EditProfileController extends GetxController {
   bool validateCity(String value) {
     final trimmed = value.trim();
     cityLength.value = value.length; // Update character count
+    _checkForChanges();
 
     if (trimmed.isEmpty) {
       cityError.value = "City is required";
@@ -248,6 +281,7 @@ class EditProfileController extends GetxController {
   bool validateCountry(String value) {
     final trimmed = value.trim();
     countryLength.value = value.length; // Update character count
+    _checkForChanges();
 
     if (trimmed.isEmpty) {
       countryError.value = "Country is required";
@@ -273,6 +307,7 @@ class EditProfileController extends GetxController {
     final trimmed = value.trim();
     // Update character count (only digits)
     phoneLength.value = trimmed.replaceAll(RegExp(r'[^\d]'), '').length;
+    _checkForChanges();
 
     if (trimmed.isEmpty) {
       phoneError.value = "Phone number is required";
@@ -396,6 +431,7 @@ class EditProfileController extends GetxController {
   bool validateWorkExperience(String value) {
     final trimmed = value.trim();
     workExperienceLength.value = value.length; // Update character count
+    _checkForChanges();
 
     // Optional field - only validate if not empty
     if (trimmed.isEmpty) {
@@ -447,6 +483,30 @@ class EditProfileController extends GetxController {
     countryError.value = "";
     phoneError.value = "";
     workExperienceError.value = "";
+  }
+
+  // Check if any changes have been made
+  void _checkForChanges() {
+    // Only check for changes after initial data load is complete
+    if (!_isInitialLoadComplete) {
+      return;
+    }
+
+    final hasDisplayNameChanged = displayNameController.text != originalDisplayName;
+    final hasCityChanged = cityController.text != originalCity;
+    final hasCountryChanged = countryController.text != originalCountry;
+    final hasPhoneChanged = phoneController.text != originalPhone;
+    final hasCountryCodeChanged = selectedCountryCode.value != originalCountryCode;
+    final hasWorkExperienceChanged = workExperienceController.text != originalWorkExperience;
+    final hasImageChanged = imagePreviewUrl.value != originalImageUrl;
+
+    hasChanges.value = hasDisplayNameChanged ||
+        hasCityChanged ||
+        hasCountryChanged ||
+        hasPhoneChanged ||
+        hasCountryCodeChanged ||
+        hasWorkExperienceChanged ||
+        hasImageChanged;
   }
 
   // Update profile

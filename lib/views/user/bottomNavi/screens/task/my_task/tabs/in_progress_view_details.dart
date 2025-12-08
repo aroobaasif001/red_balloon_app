@@ -18,6 +18,7 @@ class InProgressViewDetails extends StatelessWidget {
   final String? userName;
   final String? photoUrl;
   final String? location;
+  final String? userId;
   const InProgressViewDetails({
     super.key,
     this.taskId,
@@ -27,6 +28,7 @@ class InProgressViewDetails extends StatelessWidget {
     this.price,
     this.taskTitle,
     this.location,
+    this.userId,
   });
 
   @override
@@ -60,7 +62,12 @@ class InProgressViewDetails extends StatelessWidget {
                       location ?? '',
                     ),
                     const SizedBox(height: 16),
-                    buildHelperInfoCard(controller, photoUrl, userName ?? ''),
+                    buildHelperInfoCard(
+                      controller,
+                      photoUrl,
+                      userName ?? '',
+                      userId ?? '',
+                    ),
                     const SizedBox(height: 100),
                   ],
                 ),

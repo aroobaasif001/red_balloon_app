@@ -33,7 +33,7 @@ class ConfirmPaymentScreen extends StatelessWidget {
             Center(
               child: Image(
                 image: AssetImage('assets/icons/lock_img.png'),
-                height: 170,
+                height: 150,
               ),
             ),
             SizedBox(height: 29),
@@ -56,7 +56,7 @@ class ConfirmPaymentScreen extends StatelessWidget {
                     children: [
                       CustomText(
                         'Task Cost',
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontVariant.medium,
                       ),
                       GetBuilder<PostNewTaskController>(
@@ -64,7 +64,7 @@ class ConfirmPaymentScreen extends StatelessWidget {
                           final budget = controller.taskBudget.text.trim();
                           return CustomText(
                             'SAR ${budget.isEmpty ? "0" : budget}',
-                            fontSize: 26,
+                            fontSize: 24,
                             fontWeight: FontVariant.bold,
                           );
                         },
@@ -72,19 +72,19 @@ class ConfirmPaymentScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 14),
-                  Divider(),
+                  Divider(color: blackColor),
                   SizedBox(height: 18),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomText(
                         'Available Balance',
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontVariant.medium,
                       ),
                       CustomText(
                         'SAR 100',
-                        fontSize: 26,
+                        fontSize: 24,
                         fontWeight: FontVariant.bold,
                         color: redColor,
                       ),
@@ -106,7 +106,7 @@ class ConfirmPaymentScreen extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.info_outline_rounded,
-                          size: 25,
+                          size: 23,
                           color: whiteColor,
                         ),
                         SizedBox(width: 12),
@@ -143,7 +143,7 @@ class ConfirmPaymentScreen extends StatelessWidget {
                     children: [
                       Image(
                         image: AssetImage('assets/icons/gurd.png'),
-                        height: 47,
+                        height: 44,
                       ),
                       SizedBox(width: 12),
                       Expanded(
@@ -152,7 +152,7 @@ class ConfirmPaymentScreen extends StatelessWidget {
                           children: [
                             CustomText(
                               'Secure Escrow Protection',
-                              fontSize: 22,
+                              fontSize: 20,
                               fontWeight: FontVariant.semiBold,
                               color: whiteColor,
                             ),
@@ -182,14 +182,18 @@ class ConfirmPaymentScreen extends StatelessWidget {
                             height: 26,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                whiteColor,
+                              ),
                             ),
                           )
                         : Image(
                             image: AssetImage('assets/icons/lock.png'),
                             height: 26,
                           ),
-                    label: controller.isLoading.value ? 'Processing...' : 'Confirm & Lock Funds',
+                    label: controller.isLoading.value
+                        ? 'Processing...'
+                        : 'Confirm & Lock Funds',
                     onPressed: controller.isLoading.value
                         ? null
                         : () async {
@@ -199,14 +203,15 @@ class ConfirmPaymentScreen extends StatelessWidget {
                               DialogHelpers.showPaymentSuccessDialog(
                                 context: context,
                                 message:
-                                    'Your Payment has been\nlocked in escrow successfully',
+                                    'Your Payment has been locked in escrow successfully',
                                 showButton: true,
                                 onButtonTap: () {
                                   Get.offAll(() => BottomNaviScreen());
                                   DialogHelpers.showPaymentSuccessDialog(
                                     showButton: false,
                                     context: context,
-                                    message: 'Your Task was posted\nsuccessfully!',
+                                    message:
+                                        'Your Task was posted successfully!',
                                   );
                                 },
                               );

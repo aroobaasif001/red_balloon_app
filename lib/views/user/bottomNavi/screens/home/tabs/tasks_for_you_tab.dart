@@ -214,6 +214,7 @@ class TasksForYouTab extends StatelessWidget {
                           final userName =
                               userData?['displayName'] ?? 'Unknown';
                           final userPhoto = userData?['photoURL'];
+                          final userId = userData?['userId'];
 
                           isInProgress
                               ? Get.to(
@@ -246,7 +247,7 @@ class TasksForYouTab extends StatelessWidget {
                                     ),
                                     taskType: task.taskType,
                                     taskImage: controller.getImageUrl(task),
-                                    userId: task.uid,
+                                    userId: userId,
                                     userName: userName,
                                     userPhoto: userPhoto,
                                   ),

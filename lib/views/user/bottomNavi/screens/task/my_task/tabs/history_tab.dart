@@ -4,7 +4,6 @@ import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/clean_my_solar_panels.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
 
 import '../../post_new_task/post_new_task_screen.dart';
@@ -16,11 +15,13 @@ class HistoryTab extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get the TasksController
     final TasksController controller = Get.find<TasksController>();
-    
+
     // Fetch history tasks when tab is opened
     controller.fetchHistoryTasks();
 
     return RefreshIndicator(
+      backgroundColor: whiteColor,
+      color: redColor,
       onRefresh: () => controller.fetchHistoryTasks(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -33,7 +34,7 @@ class HistoryTab extends StatelessWidget {
                 return const Center(
                   child: Padding(
                     padding: EdgeInsets.all(20.0),
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(color: redColor),
                   ),
                 );
               }
@@ -43,11 +44,7 @@ class HistoryTab extends StatelessWidget {
                 return Center(
                   child: Column(
                     children: [
-                      Icon(
-                        Icons.history,
-                        size: 50,
-                        color: Colors.grey[400],
-                      ),
+                      Icon(Icons.history, size: 50, color: Colors.grey[400]),
                       const SizedBox(height: 10),
                       CustomText(
                         'No history yet',
@@ -73,7 +70,7 @@ class HistoryTab extends StatelessWidget {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   final task = controller.historyTasks[index];
-                  
+
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 15),
                     child: CustomMyTaskCard(
@@ -84,18 +81,23 @@ class HistoryTab extends StatelessWidget {
                       image: task.imageUrl != null && task.imageUrl!.isNotEmpty
                           ? task.imageUrl!
                           : "assets/images/sofa.png",
-                      isNetworkImage: task.imageUrl != null && task.imageUrl!.isNotEmpty,
+                      isNetworkImage:
+                          task.imageUrl != null && task.imageUrl!.isNotEmpty,
                       distance: '2.5 km away',
                       taskType: task.taskType,
                       showButton: true,
-                      btnText: task.status.toLowerCase() == 'completed' 
-                          ? 'Completed' 
+                      btnText: task.status.toLowerCase() == 'completed'
+                          ? 'Completed'
                           : 'Cancelled',
-                      buttonColor: const Color(0xFFEF9A9A), // 🔥 Light pink/salmon color
+                      buttonColor: const Color(
+                        0xFFEF9A9A,
+                      ), // 🔥 Light pink/salmon color
                       isButtonEnabled: false, // 🔥 Disable button for history
                       showType: false,
                       onViewDetails: () {
-                        Get.to(() => TaskDetailsScreen(task: task)); // 🔥 Pass real task
+                        Get.to(
+                          () => TaskDetailsScreen(task: task),
+                        ); // 🔥 Pass real task
                       },
                       onEdit: () {
                         Get.to(() => PostNewTaskScreen());

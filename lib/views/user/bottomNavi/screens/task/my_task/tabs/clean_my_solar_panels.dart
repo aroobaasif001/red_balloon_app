@@ -90,7 +90,11 @@ class Cleanmysolarpanels extends StatelessWidget {
                     Divider(color: bordercolor1, thickness: 1.5, height: 1),
                     const SizedBox(height: 12),
 
-                    TaskOwnerTile(name: userName, photoUrl: userPhoto),
+                    TaskOwnerTile(
+                      name: userName,
+                      photoUrl: userPhoto,
+                      id: userId,
+                    ),
 
                     const SizedBox(height: 10),
                     Divider(color: bordercolor1, thickness: 1.5, height: 1),

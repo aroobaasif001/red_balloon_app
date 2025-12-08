@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -11,6 +10,8 @@ class UserProfileScreen extends StatelessWidget {
   final double rating;
   final int tasksCompleted;
   final int tasksRequested;
+  final String? userId;
+  final String? userPhoto;
 
   const UserProfileScreen({
     super.key,
@@ -19,6 +20,8 @@ class UserProfileScreen extends StatelessWidget {
     required this.rating,
     required this.tasksCompleted,
     required this.tasksRequested,
+    this.userId,
+    this.userPhoto,
   });
 
   Widget _ratingBar(String label, double value) {
@@ -54,9 +57,7 @@ class UserProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        titleText: 'User Profile',
-      ),
+      appBar: CustomAppBar(titleText: 'User Profile'),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -84,12 +85,17 @@ class UserProfileScreen extends StatelessWidget {
                             shape: BoxShape.circle,
                             conColor: redColor,
                             alignment: Alignment.center,
-                            child: CustomText(
-                              userInitials, // 🔥 Real initials
-                              fontSize: 45,
-                              fontWeight: FontVariant.bold,
-                              color: whiteColor,
-                            ),
+                            child: userPhoto == null
+                                ? CustomText(
+                                    userInitials, // 🔥 Real initials
+                                    fontSize: 45,
+                                    fontWeight: FontVariant.bold,
+                                    color: whiteColor,
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Image.network(userPhoto!),
+                                  ),
                           ),
                           Positioned(
                             bottom: 0,
@@ -99,10 +105,7 @@ class UserProfileScreen extends StatelessWidget {
                               width: 24,
                               conColor: redColor,
                               shape: BoxShape.circle,
-                              border: Border.all(
-                                color: whiteColor,
-                                width: 2,
-                              ),
+                              border: Border.all(color: whiteColor, width: 2),
                             ),
                           ),
                         ],
@@ -129,8 +132,8 @@ class UserProfileScreen extends StatelessWidget {
                               vertical: 5,
                             ),
                             borderRadius: BorderRadius.circular(8),
-                            child: const CustomText(
-                              "RB-452",
+                            child: CustomText(
+                              userId ?? "RB-452",
                               fontSize: 11,
                               color: redColor,
                               fontWeight: FontVariant.semiBold,
@@ -149,11 +152,7 @@ class UserProfileScreen extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
-                                  Icons.verified,
-                                  color: redColor,
-                                  size: 14,
-                                ),
+                                Icon(Icons.verified, color: redColor, size: 14),
                                 const SizedBox(width: 4),
                                 const CustomText(
                                   "Verified",
@@ -215,11 +214,7 @@ class UserProfileScreen extends StatelessWidget {
                             ),
                             Row(
                               children: [
-                                Icon(
-                                  Icons.star,
-                                  color: redColor,
-                                  size: 20,
-                                ),
+                                Icon(Icons.star, color: redColor, size: 20),
                                 const SizedBox(width: 6),
                                 CustomText(
                                   rating.toStringAsFixed(1), // 🔥 Real rating
@@ -262,9 +257,10 @@ class UserProfileScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 8),
                                         CustomText(
-                                          tasksCompleted
-                                              .toString()
-                                              .padLeft(2, '0'), // 🔥 Real count
+                                          tasksCompleted.toString().padLeft(
+                                            2,
+                                            '0',
+                                          ), // 🔥 Real count
                                           fontSize: 28,
                                           fontWeight: FontVariant.bold,
                                           color: whiteColor,
@@ -290,9 +286,10 @@ class UserProfileScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 8),
                                         CustomText(
-                                          tasksRequested
-                                              .toString()
-                                              .padLeft(2, '0'), // 🔥 Real count
+                                          tasksRequested.toString().padLeft(
+                                            2,
+                                            '0',
+                                          ), // 🔥 Real count
                                           fontSize: 28,
                                           fontWeight: FontVariant.bold,
                                           color: whiteColor,
