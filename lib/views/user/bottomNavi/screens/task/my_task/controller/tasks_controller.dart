@@ -106,13 +106,17 @@ class TasksController extends GetxController {
               })
               .toList();
 
-          // Filter history tasks (completed or cancelled)
+          // Filter history tasks (completed, cancelled, or rejected)
+          // Include tasks where:
+          // 1. User is the task owner (requester)
+          // 2. User is the helper (acceptedOfferUid matches)
           historyTasks.value = allTasks
               .where((task) {
                 final isMyTask = task.uid == currentUserId;
+                final isHelper = task.acceptedOfferUid == currentUserId;
                 final status = task.status.toLowerCase();
                 final isHistory = status == 'completed' || status == 'cancelled' || status == 'rejected';
-                return isMyTask && isHistory;
+                return (isMyTask || isHelper) && isHistory;
               })
               .toList();
 
@@ -242,17 +246,26 @@ class TasksController extends GetxController {
 
       print('🔍 Fetching History Tasks for User: $currentUserId');
 
-      // Fetch all user's tasks
-      final allUserTasks = await _taskService.getUserTasks(currentUserId);
+      // Fetch ALL tasks (not just user's tasks)
+      final allTasks = await _taskService.getAllTasks();
       
-      print('📋 Total user tasks: ${allUserTasks.length}');
+      print('📋 Total tasks in database: ${allTasks.length}');
       
-      // Filter to show only completed or cancelled tasks
-      historyTasks.value = allUserTasks.where((task) {
+      // Filter to show completed/cancelled/rejected tasks where user is either:
+      // 1. Task owner (requester)
+      // 2. Helper (acceptedOfferUid matches)
+      historyTasks.value = allTasks.where((task) {
+        final isMyTask = task.uid == currentUserId;
+        final isHelper = task.acceptedOfferUid == currentUserId;
         final status = task.status.toLowerCase();
         final isHistory = status == 'completed' || status == 'cancelled' || status == 'rejected';
-        print('  Task: "${task.title}" | Status: ${task.status} | Is History: $isHistory');
-        return isHistory;
+        final shouldInclude = (isMyTask || isHelper) && isHistory;
+        
+        if (shouldInclude) {
+          print('  ✅ Task: "${task.title}" | Status: ${task.status} | Role: ${isMyTask ? "Requester" : "Helper"}');
+        }
+        
+        return shouldInclude;
       }).toList();
       
       print('✅ History Tasks Count: ${historyTasks.length}');
