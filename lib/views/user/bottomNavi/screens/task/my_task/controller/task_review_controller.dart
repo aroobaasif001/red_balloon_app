@@ -113,6 +113,7 @@ class TaskReviewController extends GetxController {
         'status': 'rejected',
         'beforePhotoUrl': beforeImageUrl.value, // 🔥 Add before image
         'afterPhotoUrl': afterImageUrl.value,   // 🔥 Add after image
+        'isVotingCompleted': false, // 🔥 Initially false, will be true when voting reaches threshold
       });
 
       print('✅ Added to validations collection');

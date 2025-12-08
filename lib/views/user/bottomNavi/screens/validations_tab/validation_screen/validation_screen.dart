@@ -127,7 +127,7 @@ class _ValidationScreenState extends State<ValidationScreen> {
                         border: Border.all(color: redColor, width: 3),
                         alignment: Alignment.center,
                         child: CustomText(
-                          "14:56",
+                          controller.remainingTime.value,
                           fontSize: 16,
                           fontWeight: FontVariant.bold,
                           color: redColor,
