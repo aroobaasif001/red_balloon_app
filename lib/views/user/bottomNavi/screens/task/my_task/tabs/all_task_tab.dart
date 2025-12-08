@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
@@ -32,6 +33,37 @@ class AllTaskTab extends StatelessWidget {
             // CustomText('My Tasks', fontSize: 22, fontWeight: FontVariant.bold),
             // const SizedBox(height: 15),
             Obx(() {
+              // Get current user ID
+              final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+
+              // Filter tasks:
+              // 1. Remove completed, cancelled, rejected tasks
+              // 2. For "active" tasks: ensure userId == current user
+              // 3. For "in progress" tasks: ensure acceptedOfferUid == current user
+              final filteredTasks = controller.myTasks.where((task) {
+                final status = task.status.toLowerCase();
+
+                // Remove completed, cancelled, rejected tasks
+                if (status == 'completed' ||
+                    status == 'rejected' ||
+                    status == 'cancelled') {
+                  return false;
+                }
+
+                // For active tasks: check if user is the task owner
+                if (status == 'active' && task.userId == currentUserId) {
+                  return false;
+                }
+
+                // For in progress tasks: check if user is the accepted helper
+                if (status == 'in progress' &&
+                    task.acceptedOfferUid == currentUserId) {
+                  return false;
+                }
+
+                // Keep all other valid tasks
+                return true;
+              }).toList();
               // Show loading indicator
               if (controller.isLoadingMyTasks.value) {
                 return const Center(
@@ -43,22 +75,15 @@ class AllTaskTab extends StatelessWidget {
               }
 
               // Show empty state if no tasks
-              if (controller.myTasks.isEmpty) {
+              if (filteredTasks.isEmpty) {
                 return Center(
                   child: Container(
+                    width: double.infinity,
+                    height: 500,
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: whiteColor,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: blackColor.withOpacity(0.1),
-                          offset: const Offset(0, 2),
-                          blurRadius: 4,
-                        ),
-                      ],
-                    ),
+                    decoration: BoxDecoration(color: whiteColor),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.task_alt_outlined,
@@ -85,7 +110,7 @@ class AllTaskTab extends StatelessWidget {
 
               // Show list of tasks
               return Column(
-                children: controller.myTasks.map((task) {
+                children: filteredTasks.map((task) {
                   // 🔥 Check if task is in progress
                   final isInProgress =
                       task.status.toLowerCase() == 'in progress';

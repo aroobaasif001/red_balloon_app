@@ -8,7 +8,7 @@ import '../controller/in_progress_task_controller.dart';
 import '../tabs/leave_feedback.dart';
 import '../tabs/upload_proof.dart';
 
-/// BOTTOM BAR: helper text + Upload Proof button
+/// BOTTOM BAR: helper text + Upload Proof button or Mark as Complete (disabled)
 Widget buildBottomUploadBar(
   BuildContext context,
   InProgressTaskController controller, {
@@ -26,40 +26,58 @@ Widget buildBottomUploadBar(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const CustomText(
-          'Complete the task and upload proof.',
-          fontSize: 13,
-          color: walletGrey600Color,
-          fontWeight: FontVariant.regular,
+        Obx(
+          () => CustomText(
+            controller.hasProof.value
+                ? 'Proof uploaded. Mark task as complete to proceed.'
+                : 'Complete the task and upload proof.',
+            fontSize: 13,
+            color: walletGrey600Color,
+            fontWeight: FontVariant.regular,
+            textAlign: TextAlign.center,
+          ),
         ),
         const SizedBox(height: 10),
-        InkWell(
-          onTap: () {
-            controller.isSubmitted == false
-                ? Get.to(() => UploadProof(
-                      taskId: taskId ?? '',
-                      taskTitle: taskTitle ?? 'Task',
-                      price: price ?? '0',
-                    ))
-                : Get.to(() => LeaveFeedback());
-          },
-          child: CustomContainer(
-            height: 52,
-            width: double.infinity,
-            conColor: redColor,
-            borderRadius: BorderRadius.circular(14),
-            alignment: Alignment.center,
-            child: Obx(
-              () => CustomText(
-                controller.isSubmitted == false
-                    ? 'Upload Proof'
-                    : 'Mark as Complete',
-                fontSize: 16,
-                fontWeight: FontVariant.semiBold,
-                color: whiteColor,
+        Obx(
+          () {
+            final bool hasProof = controller.hasProof.value;
+            final bool isLoading = controller.isCheckingProof.value;
+
+            return InkWell(
+              // Disable tap when proof exists or when loading
+              onTap: (!hasProof && !isLoading)
+                  ? () {
+                      Get.to(() => UploadProof(
+                            taskId: taskId ?? '',
+                            taskTitle: taskTitle ?? 'Task',
+                            price: price ?? '0',
+                          ));
+                    }
+                  : null,
+              child: CustomContainer(
+                height: 52,
+                width: double.infinity,
+                conColor: hasProof ? Colors.grey : redColor,
+                borderRadius: BorderRadius.circular(14),
+                alignment: Alignment.center,
+                child: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: whiteColor,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : CustomText(
+                        hasProof ? 'Mark as Complete' : 'Upload Proof',
+                        fontSize: 16,
+                        fontWeight: FontVariant.semiBold,
+                        color: whiteColor,
+                      ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ],
     ),

@@ -58,7 +58,10 @@ class ActiveTab extends StatelessWidget {
                 final status = task.status.toLowerCase();
 
                 // Remove completed tasks
-                if (status == 'completed') return false;
+                if (status == 'completed' ||
+                    status == 'rejected' ||
+                    status == 'cancelled')
+                  return false;
 
                 // Remove "in progress" tasks that don't belong to current user
                 if (status == 'in progress' &&
@@ -88,19 +91,13 @@ class ActiveTab extends StatelessWidget {
               // Show empty state if no tasks after filtering
               if (filteredTasks.isEmpty) {
                 return Container(
+                  width: double.infinity,
+
+                  height: 500,
                   padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: whiteColor,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: blackColor.withOpacity(0.1),
-                        offset: const Offset(0, 2),
-                        blurRadius: 4,
-                      ),
-                    ],
-                  ),
+                  decoration: BoxDecoration(color: whiteColor),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         Icons.location_on_outlined,
@@ -165,6 +162,7 @@ class ActiveTab extends StatelessWidget {
 
                         final userPhoto = userData?['photoURL'];
                         final userId = userData?['userId'];
+                        final phone = userData?['phoneNumber'];
 
                         isAccepted
                             ? Get.to(
@@ -179,6 +177,7 @@ class ActiveTab extends StatelessWidget {
                                   userName: userName,
                                   photoUrl: userPhoto,
                                   location: task.location,
+                                  phoneNumber: phone,
                                 ),
                               )
                             : Get.to(

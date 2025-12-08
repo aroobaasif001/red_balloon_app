@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_review_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../../../../../../custom_widgets/custom_button.dart';
 import '../../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../../custom_widgets/customappbar.dart';
 import '../../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
+import '../../../profile/tabs/controller/chat_controller.dart';
 import '../controller/task_in_progress_controller.dart'; // 🔥 Import controller
 
 class TaskInProgressScreen extends StatelessWidget {
   final String? taskId; // 🔥 Optional task ID
-  
+
   const TaskInProgressScreen({super.key, this.taskId});
 
   @override
@@ -27,9 +30,7 @@ class TaskInProgressScreen extends StatelessWidget {
         body: Obx(() {
           // 🔥 Show loading indicator
           if (controller.isLoading.value) {
-            return Center(
-              child: CircularProgressIndicator(color: redColor),
-            );
+            return Center(child: CircularProgressIndicator(color: redColor));
           }
 
           // 🔥 Show message if no task found
@@ -54,7 +55,7 @@ class TaskInProgressScreen extends StatelessWidget {
                 /// ------------------ APP BAR ------------------
                 CustomAppBar1(title: 'Task InProgress', showRightImage: false),
 
-                const SizedBox(height: 15),
+                SizedBox(height: 15),
 
                 /// ------------------ TOP IMAGES SECTION ------------------
                 Padding(
@@ -66,7 +67,9 @@ class TaskInProgressScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15),
-                            child: task.imageUrl != null && task.imageUrl!.isNotEmpty
+                            child:
+                                task.imageUrl != null &&
+                                    task.imageUrl!.isNotEmpty
                                 ? Image.network(
                                     task.imageUrl!,
                                     height: 155,
@@ -115,7 +118,8 @@ class TaskInProgressScreen extends StatelessWidget {
                       style: const TextStyle(fontSize: 14, color: timeColor),
                       children: [
                         TextSpan(
-                          text: "(3.2 km away)", // TODO: Calculate real distance
+                          text:
+                              "(3.2 km away)", // TODO: Calculate real distance
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: blackColor,
@@ -172,7 +176,10 @@ class TaskInProgressScreen extends StatelessWidget {
                               radius: 25,
                               backgroundColor: rdLight100Color,
                               child: CustomText(
-                                controller.getInitials(helper?.displayName ?? offer?.offeringUserName), // 🔥 Real initials
+                                controller.getInitials(
+                                  helper?.displayName ??
+                                      offer?.offeringUserName,
+                                ), // 🔥 Real initials
                                 fontWeight: FontVariant.bold,
                                 color: redColor,
                                 fontSize: 18,
@@ -183,7 +190,9 @@ class TaskInProgressScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CustomText(
-                                  helper?.displayName ?? offer?.offeringUserName ?? 'Unknown', // 🔥 Real name
+                                  helper?.displayName ??
+                                      offer?.offeringUserName ??
+                                      'Unknown', // 🔥 Real name
                                   fontSize: 16,
                                   fontWeight: FontVariant.semiBold,
                                 ),
@@ -215,7 +224,35 @@ class TaskInProgressScreen extends StatelessWidget {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  Get.to(() => ChatScreen());
+                                  // Navigate to chat with helper
+                                  final helperUid =
+                                      offer?.offeringUserUid ??
+                                      task.acceptedOfferUid;
+                                  final helperName =
+                                      helper?.displayName ??
+                                      offer?.offeringUserName ??
+                                      'Helper';
+                                  final helperPhoto =
+                                      helper?.photoURL ??
+                                      offer?.offeringUserPhoto;
+
+                                  if (helperUid != null) {
+                                    // Delete old controller if exists
+                                    if (Get.isRegistered<ChatController>()) {
+                                      Get.delete<ChatController>();
+                                    }
+
+                                    Get.put(
+                                      ChatController(
+                                        taskId: task.id!,
+                                        taskTitle: task.title,
+                                        taskOwnerId: helperUid,
+                                        taskOwnerName: helperName,
+                                        taskOwnerPhoto: helperPhoto,
+                                      ),
+                                    );
+                                    Get.to(() => const ChatScreen());
+                                  }
                                 },
                                 child: CustomContainer(
                                   height: 45,
@@ -233,7 +270,8 @@ class TaskInProgressScreen extends StatelessWidget {
                                   ],
                                   child: Center(
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Image(
                                           image: AssetImage(
@@ -260,8 +298,49 @@ class TaskInProgressScreen extends StatelessWidget {
                             /// CALL BUTTON — CLICKABLE
                             Expanded(
                               child: GestureDetector(
-                                onTap: () {
-                                  // Get.to(() => TaskReviewScreen());
+                                onTap: () async {
+                                  // Get helper's phone number
+                                  final helperPhone = helper?.phoneNumber;
+                                  print(helperPhone);
+
+                                  if (helperPhone != null &&
+                                      helperPhone.isNotEmpty) {
+                                    // Launch phone dialer
+                                    final Uri phoneUri = Uri(
+                                      scheme: 'tel',
+                                      path: helperPhone,
+                                    );
+
+                                    if (await canLaunchUrl(phoneUri)) {
+                                      await launchUrl(phoneUri);
+                                    } else {
+                                      // Show error snackbar
+                                      Get.showSnackbar(
+                                        GetSnackBar(
+                                          message:
+                                              'Could not launch phone dialer',
+                                          backgroundColor: Colors.red,
+                                          duration: const Duration(seconds: 2),
+                                          snackPosition: SnackPosition.TOP,
+                                          margin: const EdgeInsets.all(10),
+                                          borderRadius: 8,
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    // Show snackbar if phone number doesn't exist
+                                    Get.showSnackbar(
+                                      GetSnackBar(
+                                        message:
+                                            "Helper's phone number doesn't exist",
+                                        backgroundColor: Colors.orange,
+                                        duration: const Duration(seconds: 2),
+                                        snackPosition: SnackPosition.TOP,
+                                        margin: const EdgeInsets.all(10),
+                                        borderRadius: 8,
+                                      ),
+                                    );
+                                  }
                                 },
                                 child: CustomContainer(
                                   height: 45,
@@ -276,7 +355,8 @@ class TaskInProgressScreen extends StatelessWidget {
                                   ],
                                   child: Center(
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         const Icon(
                                           Icons.call,
@@ -388,7 +468,9 @@ class TaskInProgressScreen extends StatelessWidget {
                                 ),
                                 SizedBox(width: 4),
                                 CustomText(
-                                  controller.formatBudget(task.budget), // 🔥 Real budget
+                                  controller.formatBudget(
+                                    task.budget,
+                                  ), // 🔥 Real budget
                                   fontSize: 14,
                                   color: timeColor,
                                 ),
@@ -403,7 +485,9 @@ class TaskInProgressScreen extends StatelessWidget {
                                 ),
                                 SizedBox(width: 4),
                                 CustomText(
-                                  controller.getTimeAgo(task.createdAt), // 🔥 Real time
+                                  controller.getTimeAgo(
+                                    task.createdAt,
+                                  ), // 🔥 Real time
                                   fontSize: 13,
                                   color: timeColor,
                                 ),
@@ -427,7 +511,8 @@ class TaskInProgressScreen extends StatelessWidget {
                                 ),
                                 SizedBox(width: 4),
                                 CustomText(
-                                  task.location ?? 'Online Task', // 🔥 Real location
+                                  task.location ??
+                                      'Online Task', // 🔥 Real location
                                   fontSize: 13,
                                   color: timeColor,
                                 ),
@@ -443,7 +528,9 @@ class TaskInProgressScreen extends StatelessWidget {
                                 ),
                                 SizedBox(width: 4),
                                 CustomText(
-                                  controller.getTimeAgo(task.createdAt), // 🔥 Real time
+                                  controller.getTimeAgo(
+                                    task.createdAt,
+                                  ), // 🔥 Real time
                                   fontSize: 14,
                                   color: timeColor,
                                 ),
@@ -489,10 +576,12 @@ class TaskInProgressScreen extends StatelessWidget {
                     label: "Review Proof",
                     onPressed: controller.hasProof.value
                         ? () {
-                            Get.to(() => TaskReviewScreen(
-                              taskId: controller.task.value?.id,
-                              proofId: controller.proofId.value,
-                            ));
+                            Get.to(
+                              () => TaskReviewScreen(
+                                taskId: controller.task.value?.id,
+                                proofId: controller.proofId.value,
+                              ),
+                            );
                           }
                         : null, // 🔥 Disabled when no proof
                     bgColor: controller.hasProof.value
@@ -530,7 +619,10 @@ class TaskInProgressScreen extends StatelessWidget {
                       RichText(
                         text: TextSpan(
                           text: "Helper en route — ",
-                          style: const TextStyle(color: timeColor, fontSize: 14),
+                          style: const TextStyle(
+                            color: timeColor,
+                            fontSize: 14,
+                          ),
                           children: [
                             TextSpan(
                               text: "ETA: 10 mins", // TODO: Calculate real ETA
@@ -540,6 +632,20 @@ class TaskInProgressScreen extends StatelessWidget {
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
                         ),
                       ),
                       const SizedBox(height: 20),

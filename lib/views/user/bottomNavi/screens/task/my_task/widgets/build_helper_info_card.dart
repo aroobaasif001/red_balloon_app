@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/widgets/rating_row.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../../utils/colors.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
+import '../../../profile/tabs/controller/chat_controller.dart';
 import '../controller/in_progress_task_controller.dart';
 
 /// HELPER INFO CARD: initials avatar, name, rating, role, actions
@@ -14,8 +16,11 @@ Widget buildHelperInfoCard(
   InProgressTaskController controller,
   String? photoUrl,
   String userName,
-  String userId,
-) {
+  String userId, {
+  String? taskId,
+  String? taskTitle,
+  String? phoneNumber,
+}) {
   return CustomContainer(
     conColor: white2Color,
     borderRadius: BorderRadius.circular(16),
@@ -75,7 +80,24 @@ Widget buildHelperInfoCard(
             Expanded(
               child: InkWell(
                 onTap: () {
-                  Get.to(() => ChatScreen());
+                  // Navigate to chat with helper
+                  if (taskId != null && userId.isNotEmpty) {
+                    // Delete old controller if exists
+                    if (Get.isRegistered<ChatController>()) {
+                      Get.delete<ChatController>();
+                    }
+
+                    Get.put(
+                      ChatController(
+                        taskId: taskId,
+                        taskTitle: taskTitle ?? 'Task',
+                        taskOwnerId: userId,
+                        taskOwnerName: userName,
+                        taskOwnerPhoto: photoUrl,
+                      ),
+                    );
+                    Get.to(() => const ChatScreen());
+                  }
                 },
                 child: CustomContainer(
                   height: 44,
@@ -104,16 +126,52 @@ Widget buildHelperInfoCard(
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: CustomContainer(
-                height: 44,
-                conColor: redColor,
-                borderRadius: BorderRadius.circular(24),
-                child: const Center(
-                  child: CustomText(
-                    'Call',
-                    fontSize: 14,
-                    fontWeight: FontVariant.semiBold,
-                    color: whiteColor,
+              child: InkWell(
+                onTap: () async {
+                  if (phoneNumber != null && phoneNumber.isNotEmpty) {
+                    // Launch phone dialer
+                    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+
+                    if (await canLaunchUrl(phoneUri)) {
+                      await launchUrl(phoneUri);
+                    } else {
+                      // Show error snackbar
+                      Get.showSnackbar(
+                        GetSnackBar(
+                          message: 'Could not launch phone dialer',
+                          backgroundColor: Colors.red,
+                          duration: const Duration(seconds: 2),
+                          snackPosition: SnackPosition.TOP,
+                          margin: const EdgeInsets.all(10),
+                          borderRadius: 8,
+                        ),
+                      );
+                    }
+                  } else {
+                    // Show snackbar if phone number doesn't exist
+                    Get.showSnackbar(
+                      GetSnackBar(
+                        message: "Helper's phone number doesn't exist",
+                        backgroundColor: Colors.orange,
+                        duration: const Duration(seconds: 2),
+                        snackPosition: SnackPosition.TOP,
+                        margin: const EdgeInsets.all(10),
+                        borderRadius: 8,
+                      ),
+                    );
+                  }
+                },
+                child: CustomContainer(
+                  height: 44,
+                  conColor: redColor,
+                  borderRadius: BorderRadius.circular(24),
+                  child: const Center(
+                    child: CustomText(
+                      'Call',
+                      fontSize: 14,
+                      fontWeight: FontVariant.semiBold,
+                      color: whiteColor,
+                    ),
                   ),
                 ),
               ),
@@ -123,7 +181,12 @@ Widget buildHelperInfoCard(
         const SizedBox(height: 12),
         InkWell(
           onTap: () {
-            DialogHelpers.showHelperProfileDialog(Get.context!);
+            DialogHelpers.showHelperProfileDialog(
+              Get.context!,
+              userName,
+              photoUrl!,
+              userId,
+            );
           },
           child: const Center(
             child: CustomText(

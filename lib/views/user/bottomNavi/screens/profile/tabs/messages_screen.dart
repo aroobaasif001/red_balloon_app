@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:red_balloon_app/custom_widgets/custom_textfield.dart';
-import 'package:red_balloon_app/custom_widgets/customappbar.dart';
+import 'package:get/get.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
 
+import '../../../../../../custom_widgets/custom_textfield.dart';
+import '../../../../../../custom_widgets/customappbar.dart';
+import '../../../../../../custom_widgets/customtext.dart';
+import '../../../../../../utils/colors.dart';
 import '../widgets/messagetile.dart';
+import 'controller/chat_controller.dart';
+import 'controller/messages_controller.dart';
 
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(MessagesController());
+
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -19,50 +27,103 @@ class MessagesScreen extends StatelessWidget {
             // 🔹 Search Bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: Column(
-                children: [
-                  CustomTextField(
-                    hintText: 'Search conversations',
-                    prefixWidget: Image(
-                      image: AssetImage('assets/icons/i (5).png'),
-                      height: 25,
-                      width: 25,
-                    ),
-                  ),
-                ],
+              child: CustomTextField(
+                hintText: 'Search conversations',
+                onChanged: (value) => controller.updateSearch(value),
+                prefixWidget: const Image(
+                  image: AssetImage('assets/icons/i (5).png'),
+                  height: 25,
+                  width: 25,
+                ),
               ),
             ),
 
-            // 🔹 MESSAGE LIST (Added)
+            // 🔹 MESSAGE LIST
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                children: [
-                  MessageTile(
-                    name: "Mike Johnson",
-                    subtitle: "Furniture Assembly - IKEA",
-                    message: "I can help with that! I've assembled lots…",
-                    time: "15m",
-                    image: "assets/images/user1.png",
-                  ),
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: redColor),
+                  );
+                }
 
-                  MessageTile(
-                    name: "Emma Wilson",
-                    subtitle: "Furniture Assembly - IKEA",
-                    message: "I can help with that! I've assembled lots…",
-                    time: "1h",
-                    image: "assets/images/user1.png",
-                  ),
+                if (controller.filteredConversations.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.chat_bubble_outline,
+                          size: 60,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        CustomText(
+                          controller.searchQuery.value.isEmpty
+                              ? 'No conversations yet'
+                              : 'No results found',
+                          fontSize: 16,
+                          color: Colors.grey[600]!,
+                        ),
+                        const SizedBox(height: 8),
+                        CustomText(
+                          controller.searchQuery.value.isEmpty
+                              ? 'Start chatting from task details'
+                              : 'Try a different search term',
+                          fontSize: 14,
+                          color: Colors.grey[500]!,
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-                  MessageTile(
-                    name: "Lisa Martinez",
-                    subtitle: "House Cleaning - 2 Bedroom",
-                    message: "Perfect, See You Tomorrow!",
-                    time: "2h",
-                    image: "assets/images/user1.png",
-                  ),
-                ],
-              ),
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  itemCount: controller.filteredConversations.length,
+                  itemBuilder: (context, index) {
+                    final conversation =
+                        controller.filteredConversations[index];
+                    final otherParticipant = conversation.getOtherParticipant(
+                      controller.chatService.currentUserId!,
+                    );
+                    final unreadCount = conversation.getUnreadCountForUser(
+                      controller.chatService.currentUserId!,
+                    );
+
+                    return MessageTile(
+                      name: otherParticipant['name'] ?? 'Unknown',
+                      subtitle: conversation.taskTitle,
+                      message: conversation.lastMessage,
+                      time: controller.getTimeAgo(
+                        conversation.lastMessageTime.toDate(),
+                      ),
+                      image:
+                          otherParticipant['photo'] ??
+                          'assets/images/user1.png',
+                      unreadCount: unreadCount,
+                      onTap: () {
+                        // Delete old controller if exists
+                        if (Get.isRegistered<ChatController>()) {
+                          Get.delete<ChatController>();
+                        }
+                        
+                        // Navigate to chat screen
+                        Get.put(
+                          ChatController(
+                            taskId: conversation.taskId,
+                            taskTitle: conversation.taskTitle,
+                            taskOwnerId: otherParticipant['uid'],
+                            taskOwnerName: otherParticipant['name'],
+                            taskOwnerPhoto: otherParticipant['photo'],
+                          ),
+                        );
+                        Get.to(() => const ChatScreen());
+                      },
+                    );
+                  },
+                );
+              }),
             ),
           ],
         ),

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../utils/colors.dart';
-import '../tabs/chat_screen.dart';
 
 class MessageTile extends StatelessWidget {
   final String name;
@@ -12,6 +10,8 @@ class MessageTile extends StatelessWidget {
   final String message;
   final String time;
   final String image;
+  final int unreadCount;
+  final VoidCallback? onTap;
 
   const MessageTile({
     super.key,
@@ -20,18 +20,20 @@ class MessageTile extends StatelessWidget {
     required this.message,
     required this.time,
     required this.image,
+    this.unreadCount = 0,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isNetworkImage = image.startsWith('http');
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: InkWell(
-        onTap: () {
-          Get.to(() => ChatScreen());
-        },
+        onTap: onTap,
         child: CustomContainer(
-          conColor:whiteColor,
+          conColor: whiteColor,
           borderRadius: const BorderRadius.all(Radius.circular(16)),
           padding: const EdgeInsets.all(12),
           boxShadow: [
@@ -49,14 +51,28 @@ class MessageTile extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(40),
-                    child: Image.asset(
-                      image,
-                      height: 48,
-                      width: 48,
-                      fit: BoxFit.cover,
-                    ),
+                    child: isNetworkImage
+                        ? Image.network(
+                            image,
+                            height: 48,
+                            width: 48,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/images/user1.png',
+                                height: 48,
+                                width: 48,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            image,
+                            height: 48,
+                            width: 48,
+                            fit: BoxFit.cover,
+                          ),
                   ),
-
                   Positioned(
                     bottom: 2,
                     right: 2,
@@ -64,9 +80,9 @@ class MessageTile extends StatelessWidget {
                       height: 12,
                       width: 12,
                       decoration: BoxDecoration(
-                        color:greenColor,
+                        color: greenColor,
                         shape: BoxShape.circle,
-                        border: Border.all(color:whiteColor, width: 2),
+                        border: Border.all(color: whiteColor, width: 2),
                       ),
                     ),
                   ),
@@ -106,26 +122,28 @@ class MessageTile extends StatelessWidget {
               ),
 
               // TIME + BADGE
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   CustomText(time, fontSize: 12, color: timeColor),
-                  const SizedBox(width: 6),
-                  Container(
-                    height: 22,
-                    width: 22,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: redColor,
-                      shape: BoxShape.circle,
+                  if (unreadCount > 0) ...[
+                    const SizedBox(height: 6),
+                    Container(
+                      height: 22,
+                      width: 22,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        color: redColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: CustomText(
+                        unreadCount > 9 ? "9+" : "$unreadCount",
+                        fontSize: 12,
+                        color: whiteColor,
+                        fontWeight: FontVariant.bold,
+                      ),
                     ),
-                    child: const CustomText(
-                      "1",
-                      fontSize: 12,
-                      color: whiteColor,
-                      fontWeight: FontVariant.bold,
-                    ),
-                  ),
+                  ],
                 ],
               ),
             ],

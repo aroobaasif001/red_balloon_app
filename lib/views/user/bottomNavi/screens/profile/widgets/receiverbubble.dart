@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 class ReceiverBubble extends StatelessWidget {
   final String text;
   final String time;
 
-  const ReceiverBubble({
-    super.key,
-    required this.text,
-    required this.time,
-  });
+  const ReceiverBubble({super.key, required this.text, required this.time});
 
   @override
   Widget build(BuildContext context) {
@@ -30,29 +26,26 @@ class ReceiverBubble extends StatelessWidget {
 
         const SizedBox(width: 10),
 
-        Expanded(
+        Flexible(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomContainer(
-                width: 262,
-                conColor:white2Color,
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-                borderRadius: BorderRadius.circular(22),
-                child: CustomText(
-                  text,
-                  fontSize: 15,
-                  color: grey50Color,
+                conColor: white2Color,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 16,
                 ),
+                borderRadius: BorderRadius.circular(22),
+                // constraints: const BoxConstraints(
+                //   maxWidth: 262,
+                // ),
+                child: CustomText(text, fontSize: 15, color: grey50Color),
               ),
 
               const SizedBox(height: 6),
 
-              CustomText(
-                time,
-                fontSize: 11,
-                color: timeColor,
-              ),
+              CustomText(time, fontSize: 11, color: timeColor),
             ],
           ),
         ),

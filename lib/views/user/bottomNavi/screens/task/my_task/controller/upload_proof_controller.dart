@@ -1,12 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../../../../../services/task_service.dart';
 import '../../../../../../../services/auth_service.dart';
-import 'in_progress_task_controller.dart';
+import '../../../../../../../services/task_service.dart';
 
 enum ProofTab { before, after }
 
@@ -134,7 +133,8 @@ class UploadProofController extends GetxController {
 
       // Get user data from Firestore to get username
       final userData = await _authService.getUserData(currentUser.uid);
-      final username = userData?['displayName'] ?? currentUser.displayName ?? 'Unknown User';
+      final username =
+          userData?['displayName'] ?? currentUser.displayName ?? 'Unknown User';
       final userPhotoUrl = userData?['photoURL'] ?? currentUser.photoURL;
 
       // Upload images to Firebase Storage (optional)
@@ -165,20 +165,22 @@ class UploadProofController extends GetxController {
         userPhotoUrl: userPhotoUrl,
         beforePhotoUrl: beforePhotoUrl,
         afterPhotoUrl: afterPhotoUrl,
-        note: noteController.text.trim().isEmpty ? null : noteController.text.trim(),
+        note: noteController.text.trim().isEmpty
+            ? null
+            : noteController.text.trim(),
         taskTitle: taskTitle.value,
         taskPrice: taskPrice.value,
       );
 
       isSubmitting.value = false;
 
-      // Update InProgressTaskController to change button text
-      try {
-        final inProgressController = Get.find<InProgressTaskController>();
-        inProgressController.isSubmitted.value = true;
-      } catch (e) {
-        print('InProgressTaskController not found: $e');
-      }
+      // // Update InProgressTaskController to change button text
+      // try {
+      //   final inProgressController = Get.find<InProgressTaskController>();
+      //   inProgressController.isSubmitted.value = true;
+      // } catch (e) {
+      //   print('InProgressTaskController not found: $e');
+      // }
 
       // Success - return to previous screen
       Get.back();

@@ -4,10 +4,24 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 class TaskHeaderCard extends StatelessWidget {
-  const TaskHeaderCard({super.key});
+  final String? taskTitle;
+  final String? taskPrice;
+  final String? taskImage;
+  final String? timeAgo;
+
+  const TaskHeaderCard({
+    super.key,
+    this.taskTitle,
+    this.taskPrice,
+    this.taskImage,
+    this.timeAgo,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isNetworkImage =
+        taskImage != null && taskImage!.startsWith('http');
+
     return CustomContainer(
       conColor: rbcolor,
       padding: const EdgeInsets.all(14),
@@ -24,12 +38,27 @@ class TaskHeaderCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.asset(
-              "assets/images/sofa.png",
-              height: 80,
-              width: 106,
-              fit: BoxFit.cover,
-            ),
+            child: taskImage != null && isNetworkImage
+                ? Image.network(
+                    taskImage!,
+                    height: 80,
+                    width: 106,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        "assets/images/sofa.png",
+                        height: 80,
+                        width: 106,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  )
+                : Image.asset(
+                    taskImage ?? "assets/images/sofa.png",
+                    height: 80,
+                    width: 106,
+                    fit: BoxFit.cover,
+                  ),
           ),
 
           const SizedBox(width: 14),
@@ -39,10 +68,12 @@ class TaskHeaderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  "Help Move Furniture",
+                  taskTitle ?? "Help Move Furniture",
                   fontSize: 20,
                   fontWeight: FontVariant.bold,
-                  color:blackColor,
+                  color: blackColor,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
 
                 const SizedBox(height: 10),
@@ -50,7 +81,7 @@ class TaskHeaderCard extends StatelessWidget {
                 Row(
                   children: [
                     CustomText(
-                      "500 SAR",
+                      taskPrice ?? "500 SAR",
                       fontSize: 16,
                       fontWeight: FontVariant.bold,
                       color: redColor,
@@ -58,13 +89,13 @@ class TaskHeaderCard extends StatelessWidget {
 
                     const SizedBox(width: 25),
 
-                    Icon(Icons.watch_later_outlined,
-                        size: 16, color:grey4Color),
+                    const Icon(Icons.watch_later_outlined,
+                        size: 16, color: grey4Color),
 
                     const SizedBox(width: 4),
 
                     CustomText(
-                      "2 min ago",
+                      timeAgo ?? "2 min ago",
                       fontSize: 13,
                       color: grey4Color,
                     ),

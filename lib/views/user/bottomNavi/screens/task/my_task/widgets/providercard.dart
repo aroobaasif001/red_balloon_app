@@ -3,8 +3,7 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-
-import '../tabs/chat_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
 
 class ProviderCard extends StatelessWidget {
   final String initials;
@@ -158,7 +157,7 @@ class ProviderCard extends StatelessWidget {
                 buildButton("View Profile", onViewProfile),
                 buildButton("Accept", onAccept),
                 buildButton("Chat", () {
-                  Get.to(() => chatScreen());
+                  Get.to(() => ChatScreen());
                 }),
               ],
             ),

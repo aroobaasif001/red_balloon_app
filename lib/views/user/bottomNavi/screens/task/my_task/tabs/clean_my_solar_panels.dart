@@ -11,6 +11,7 @@ import '../../../../../../../services/offer_service2.dart';
 import '../../../../../../../utils/colors.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
+import '../../../profile/tabs/controller/chat_controller.dart';
 import '../controller/task_detail_controller.dart';
 import '../widgets/offer_card.dart';
 import '../widgets/task_info_top_row.dart';
@@ -267,6 +268,7 @@ class Cleanmysolarpanels extends StatelessWidget {
           return _OfferCardWithTimer(
             offerData: offer,
             key: ValueKey(offer['offerId']),
+            userId: userId ?? '',
           );
         }).toList(),
       );
@@ -430,9 +432,14 @@ class OfferTimerController extends GetxController {
 
 /// Offer card with 15-second auto-hide timer and countdown display
 class _OfferCardWithTimer extends StatelessWidget {
+  final String userId;
   final Map<String, dynamic> offerData;
 
-  const _OfferCardWithTimer({super.key, required this.offerData});
+  const _OfferCardWithTimer({
+    super.key,
+    required this.offerData,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -459,6 +466,7 @@ class _OfferCardWithTimer extends StatelessWidget {
         stars: 5,
         ratingCount: 0,
         photoUrl: userPhoto,
+        userId: userId,
         timerWidget: CustomText(
           '00:${controller.remainingSeconds.value.toString().padLeft(2, '0')}',
           fontSize: 12,
@@ -557,7 +565,23 @@ class RefreshButtonWithData extends StatelessWidget {
           Expanded(
             child: InkWell(
               onTap: () {
-                Get.to(() => ChatScreen());
+                if (taskId != null && taskOwnerUid != null) {
+                  // Delete old controller if exists
+                  if (Get.isRegistered<ChatController>()) {
+                    Get.delete<ChatController>();
+                  }
+                  
+                  Get.put(
+                    ChatController(
+                      taskId: taskId!,
+                      taskTitle: taskTitle ?? 'Task',
+                      taskOwnerId: taskOwnerUid!,
+                      taskOwnerName: taskOwnerName ?? 'User',
+                      taskOwnerPhoto: taskOwnerPhoto,
+                    ),
+                  );
+                  Get.to(() => const ChatScreen());
+                }
               },
               child: Container(
                 height: 51,
@@ -634,7 +658,23 @@ class RefreshButtonWithData extends StatelessWidget {
           Expanded(
             child: InkWell(
               onTap: () {
-                Get.to(() => ChatScreen());
+                if (taskId != null && taskOwnerUid != null) {
+                  // Delete old controller if exists
+                  if (Get.isRegistered<ChatController>()) {
+                    Get.delete<ChatController>();
+                  }
+                  
+                  Get.put(
+                    ChatController(
+                      taskId: taskId!,
+                      taskTitle: taskTitle ?? 'Task',
+                      taskOwnerId: taskOwnerUid!,
+                      taskOwnerName: taskOwnerName ?? 'User',
+                      taskOwnerPhoto: taskOwnerPhoto,
+                    ),
+                  );
+                  Get.to(() => const ChatScreen());
+                }
               },
               child: Container(
                 height: 51,

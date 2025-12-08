@@ -1960,7 +1960,12 @@ class DialogHelpers {
   /// ===================================================
   /// SHOW HELPER PROFILE DIALOG
   /// ===================================================
-  static void showHelperProfileDialog(BuildContext context) {
+  static void showHelperProfileDialog(
+    BuildContext context,
+    String name,
+    String image,
+    String id,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -2031,12 +2036,19 @@ class DialogHelpers {
                                   shape: BoxShape.circle,
                                   conColor: redColor,
                                   alignment: Alignment.center,
-                                  child: const CustomText(
-                                    "A",
-                                    fontSize: 45,
-                                    fontWeight: FontVariant.bold,
-                                    color: whiteColor,
-                                  ),
+                                  child: image == ''
+                                      ? CustomText(
+                                          "A",
+                                          fontSize: 45,
+                                          fontWeight: FontVariant.bold,
+                                          color: whiteColor,
+                                        )
+                                      : ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            50,
+                                          ),
+                                          child: Image.network(image),
+                                        ),
                                 ),
                                 Positioned(
                                   bottom: 0,
@@ -2057,8 +2069,8 @@ class DialogHelpers {
                             const SizedBox(height: 16),
 
                             /// NAME
-                            const CustomText(
-                              "Anton Furnitures",
+                            CustomText(
+                              name == '' ? "Anton Furnitures" : name,
                               fontSize: 22,
                               fontWeight: FontVariant.bold,
                             ),
@@ -2076,8 +2088,8 @@ class DialogHelpers {
                                     vertical: 5,
                                   ),
                                   borderRadius: BorderRadius.circular(8),
-                                  child: const CustomText(
-                                    "RB-452",
+                                  child: CustomText(
+                                    id == '' ? "RB-452" : id,
                                     fontSize: 11,
                                     color: redColor,
                                     fontWeight: FontVariant.semiBold,

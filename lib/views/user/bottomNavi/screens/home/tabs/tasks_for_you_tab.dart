@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -89,21 +90,39 @@ class TasksForYouTab extends StatelessWidget {
               );
             }
 
-            if (controller.tasksForYou.isEmpty) {
-              return RefreshIndicator(
-                backgroundColor: whiteColor,
-                onRefresh: controller.refreshTasks,
-                color: redColor,
+            final filteredTasks = controller.tasksForYou.where((task) {
+              final status = task.status.toLowerCase();
+
+              // Remove tasks that are not "in progress" or "active"
+              if (status != 'in progress' && status != 'active') {
+                return false;
+              }
+
+              // Remove "in progress" tasks that don't belong to current user
+              if (status == 'in progress' &&
+                  task.acceptedOfferUid !=
+                      FirebaseAuth.instance.currentUser!.uid) {
+                return false;
+              }
+
+              // Keep "active" tasks and "in progress" tasks for current user
+              return true;
+            }).toList();
+
+            if (filteredTasks.isEmpty) {
+              return Container(
+                height: 200,
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
                           'assets/icons/empty.png',
                           height: 40,
                           width: 40,
-                          color: redColor,
+                          color: blackColor,
                         ),
                         SizedBox(height: 20),
                         CustomText(
@@ -215,6 +234,7 @@ class TasksForYouTab extends StatelessWidget {
                               userData?['displayName'] ?? 'Unknown';
                           final userPhoto = userData?['photoURL'];
                           final userId = userData?['userId'];
+                          final phone = userData?['phoneNumber'];
 
                           isInProgress
                               ? Get.to(
@@ -228,6 +248,7 @@ class TasksForYouTab extends StatelessWidget {
                                     ),
                                     price: task.budget.toString(),
                                     location: task.location,
+                                    phoneNumber: phone,
                                   ),
                                 )
                               : Get.to(

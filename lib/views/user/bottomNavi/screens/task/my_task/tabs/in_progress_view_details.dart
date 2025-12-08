@@ -19,6 +19,8 @@ class InProgressViewDetails extends StatelessWidget {
   final String? photoUrl;
   final String? location;
   final String? userId;
+  final String? phoneNumber;
+  
   const InProgressViewDetails({
     super.key,
     this.taskId,
@@ -29,6 +31,7 @@ class InProgressViewDetails extends StatelessWidget {
     this.taskTitle,
     this.location,
     this.userId,
+    this.phoneNumber,
   });
 
   @override
@@ -36,6 +39,12 @@ class InProgressViewDetails extends StatelessWidget {
     final InProgressTaskController controller = Get.put(
       InProgressTaskController(),
     );
+    
+    // Check if proof exists for this task
+    if (taskId != null && taskId!.isNotEmpty) {
+      controller.checkProofExists(taskId!);
+    }
+    
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -67,6 +76,9 @@ class InProgressViewDetails extends StatelessWidget {
                       photoUrl,
                       userName ?? '',
                       userId ?? '',
+                      taskId: taskId,
+                      taskTitle: taskTitle,
+                      phoneNumber: phoneNumber,
                     ),
                     const SizedBox(height: 100),
                   ],

@@ -11,8 +11,9 @@ class OfferCard extends StatelessWidget {
   final String price;
   final int ratingCount;
   final int stars;
-  final String? photoUrl;
+  final String photoUrl;
   final Widget? timerWidget;
+  final String userId;
 
   const OfferCard({
     super.key,
@@ -20,7 +21,8 @@ class OfferCard extends StatelessWidget {
     required this.price,
     required this.ratingCount,
     required this.stars,
-    this.photoUrl,
+    required this.photoUrl,
+    required this.userId,
     this.timerWidget,
   });
 
@@ -103,7 +105,12 @@ class OfferCard extends StatelessWidget {
                 const SizedBox(height: 14),
                 InkWell(
                   onTap: () {
-                    DialogHelpers.showHelperProfileDialog(context);
+                    DialogHelpers.showHelperProfileDialog(
+                      context,
+                      name,
+                      photoUrl,
+                      userId,
+                    );
                   },
                   child: CustomContainer(
                     width: 254,
@@ -119,8 +126,7 @@ class OfferCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                )
-
+                ),
               ],
             ),
           ),

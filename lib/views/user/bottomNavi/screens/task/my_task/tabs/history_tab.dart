@@ -18,8 +18,8 @@ class HistoryTab extends StatelessWidget {
     // Get the TasksController
     final TasksController controller = Get.find<TasksController>();
 
-    // Fetch history tasks when tab is opened
-    controller.fetchHistoryTasks();
+    // Real-time updates are already active from controller's onInit
+    // No need to fetch again here
 
     return RefreshIndicator(
       backgroundColor: whiteColor,
@@ -43,24 +43,29 @@ class HistoryTab extends StatelessWidget {
 
               // Show empty state if no history tasks
               if (controller.historyTasks.isEmpty) {
-                return Center(
-                  child: Column(
-                    children: [
-                      Icon(Icons.history, size: 50, color: Colors.grey[400]),
-                      const SizedBox(height: 10),
-                      CustomText(
-                        'No history yet',
-                        fontSize: 16,
-                        color: Colors.grey[600]!,
-                      ),
-                      const SizedBox(height: 5),
-                      CustomText(
-                        'Completed and cancelled tasks \nwill appear here',
-                        fontSize: 14,
-                        color: Colors.grey[500]!,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                return Container(
+                  width: double.infinity,
+                  height: 500,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.history, size: 50, color: Colors.grey[400]),
+                        const SizedBox(height: 10),
+                        CustomText(
+                          'No history yet',
+                          fontSize: 16,
+                          color: Colors.grey[600]!,
+                        ),
+                        const SizedBox(height: 5),
+                        CustomText(
+                          'Completed and cancelled tasks \nwill appear here',
+                          fontSize: 14,
+                          color: Colors.grey[500]!,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }
