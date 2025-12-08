@@ -90,7 +90,7 @@ class TaskInProgressScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                       Expanded(
                         child: CustomContainer(
                           borderRadius: BorderRadius.circular(15),
@@ -632,20 +632,6 @@ class TaskInProgressScreen extends StatelessWidget {
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
-      ),
-    );
-  }
-}
                         ),
                       ),
                       const SizedBox(height: 20),
