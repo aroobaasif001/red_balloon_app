@@ -9,7 +9,6 @@ import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 import 'package:red_balloon_app/views/auth/widgets/social_button.dart';
 
-import '../../../admin/bottomNavi/admin_bottom_navi_screen.dart';
 import '../../../user/bottomNavi/bottom_navi_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -65,25 +64,25 @@ class OnboardingScreen extends StatelessWidget {
                           ],
                           SocialButton.google(
                             onPressed: () async {
-                              // final user = await authController
-                              //     .signInWithGoogle();
-                              // if (user != null) {
-                              Get.offAll(() => BottomNaviScreen());
-                            },
-                            // },
-                          ),
-                          const SizedBox(height: 12),
-
-                          SocialButton.apple(
-                            onPressed: () async {
-                              // final user = await authController
-                              //     .signInWithApple();
-                              // if (user != null) {
-                              Get.off(() => AdminBottomNaviScreen());
-                              // }
+                              final user = await authController
+                                  .signInWithGoogle();
+                              if (user != null) {
+                                Get.offAll(() => BottomNaviScreen());
+                              }
                             },
                           ),
-                          const SizedBox(height: 12),
+                          // const SizedBox(height: 12),
+                          //
+                          // SocialButton.apple(
+                          //   onPressed: () async {
+                          //     // final user = await authController
+                          //     //     .signInWithApple();
+                          //     // if (user != null) {
+                          //     Get.off(() => AdminBottomNaviScreen());
+                          //     // }
+                          //   },
+                          // ),
+                          // const SizedBox(height: 12),
                         ],
                       ),
                     ),
