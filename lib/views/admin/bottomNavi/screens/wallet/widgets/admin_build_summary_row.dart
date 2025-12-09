@@ -7,7 +7,7 @@ import '../tabs/transaction_history.dart';
 import 'admin_summary_card.dart';
 
 Widget adminBuildSummaryRow(BuildContext context) {
-  final WalletController controller = Get.find<WalletController>();
+  final WalletController controller = Get.find<WalletController>(tag: 'admin_wallet');
 
   return Row(
     children: [
