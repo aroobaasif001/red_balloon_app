@@ -1,55 +1,88 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
+import 'package:lottie/lottie.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/home/widgets/offline_and_online_card.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/in_progress_view_details.dart';
 
-import '../../post_new_task/post_new_task_screen.dart';
 import 'clean_my_solar_panels.dart';
 
-class ActiveTab extends StatelessWidget {
+class ActiveTab extends StatefulWidget {
   const ActiveTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomMyTaskCard(
-            title: "Help needed move furniture",
-            amount: "SAR 500",
-            status: "Not accepted",
-            postedTime: "2 hours ago",
-            image: "assets/images/sofa.png",
-            btnText: 'In Progress',
-            // type: 'Offline Task',
-            onEdit: () {},
-            onViewDetails: () {
-              Get.to(() => InProgressViewDetails());
-            },
-            showButton: true,
-          ),
-          SizedBox(height: 10),
-          CustomMyTaskCard(
-            title: "Help needed move furniture",
-            amount: "SAR 500",
+  State<ActiveTab> createState() => _ActiveTabState();
+}
 
-            // type: 'Offline Task',
-            status: "Not accepted",
-            postedTime: "2 hours ago",
-            image: "assets/images/sofa.png",
-            onEdit: () {
-              Get.to(() => PostNewTaskScreen());
-            },
-            showButton: true,
-            onViewDetails: () {
-              Get.to(() => Cleanmysolarpanels(taskType: 'Offline Task'));
-            },
-          ),
-          SizedBox(height: 140),
-        ],
-      ),
-    );
+class _ActiveTabState extends State<ActiveTab> {
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return isLoading
+        ? Center(
+            child: Lottie.asset(
+              'assets/animation/loader.json',
+              width: 250,
+              height: 250,
+            ),
+          )
+        : SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FadeInUp(
+                  duration: const Duration(milliseconds: 700),
+                  child: OfflineAndOnlineCard(
+                    title: "Help needed move furniture",
+                    subtitle: "Not accepted", // Mapping subtitle for now
+                    price: "SAR 500",
+                    distance: '2.5 km away',
+                    taskType: 'Offline Task',
+                    timeAgo: "2 hours ago",
+                    image: "assets/images/sofa.png",
+                    type: 'Offline Task',
+                    onViewDetails: () {
+                      Get.to(() => InProgressViewDetails());
+                    },
+                  ),
+                ),
+                SizedBox(height: 10),
+                FadeInUp(
+                  duration: const Duration(milliseconds: 700),
+                  delay: const Duration(milliseconds: 700),
+                  child: OfflineAndOnlineCard(
+                    title: "Help needed move furniture",
+                    subtitle: "Not accepted", // Mapping subtitle for now
+                    price: "SAR 500",
+                    distance: '2.5 km away',
+                    taskType: 'Offline Task',
+                    timeAgo: "2 hours ago",
+                    image: "assets/images/sofa.png",
+                    type: 'Offline Task',
+                    onViewDetails: () {
+                      Get.to(
+                        () => Cleanmysolarpanels(taskType: 'Offline Task'),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 140),
+              ],
+            ),
+          );
   }
 }

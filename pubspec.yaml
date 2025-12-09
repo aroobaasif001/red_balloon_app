@@ -52,6 +52,7 @@ dependencies:
   #Image picker and file picker
   image_picker: ^1.2.1
   file_picker: ^10.3.6
+  lottie: ^3.3.2
 
 
 
@@ -96,6 +97,7 @@ flutter:
     - assets/appLogo/
     - assets/navi_icons/
     - assets/banners/
+    - assets/animation/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

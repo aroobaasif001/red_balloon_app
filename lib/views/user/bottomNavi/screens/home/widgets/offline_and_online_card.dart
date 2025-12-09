@@ -33,7 +33,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      width: Get.width * 0.45,
+      width: Get.width,
       conColor: whiteColor,
       borderRadius: BorderRadius.circular(15),
       boxShadow: [
@@ -69,13 +69,17 @@ class OfflineAndOnlineCard extends StatelessWidget {
 
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
+                  flex: 2,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: CustomText(
@@ -88,7 +92,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 15.1),
+                      const SizedBox(height: 35.1),
 
                       FittedBox(
                         child: Row(
@@ -99,7 +103,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
                                   children: [
                                     CustomText(
                                       distance!,
-                                      fontSize: 11,
+                                      fontSize: 12,
                                       fontWeight: FontVariant.regular,
                                       color: grey5Color,
                                     ),
@@ -113,7 +117,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
                                 children: [
                                   CustomText(
                                     " • ${timeAgo}",
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     fontWeight: FontVariant.regular,
 
                                     color: grey5Color,
@@ -124,30 +128,36 @@ class OfflineAndOnlineCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 10.1),
-
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    // crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
                       CustomText(
                         price,
                         fontSize: 18,
                         fontWeight: FontVariant.bold,
                         color: blackColor,
                       ),
+                      SizedBox(height: 10),
+                      CustomContainer(
+                        margin: EdgeInsets.only(bottom: 15),
+                        width: 120,
+                        // padding: EdgeInsets.symmetric(horizontal: 15),
+                        child: CustomButton(
+                          // width: Get.width * 0.4,
+                          fontSize: 12,
+                          height: 40,
+                          label: 'View Details',
+                          onPressed: onViewDetails,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ],
-            ),
-          ),
-          CustomContainer(
-            margin: EdgeInsets.only(bottom: 15),
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            child: CustomButton(
-              // width: Get.width * 0.4,
-              fontSize: 12,
-              height: 40,
-              label: 'View Details',
-              onPressed: onViewDetails,
             ),
           ),
         ],
