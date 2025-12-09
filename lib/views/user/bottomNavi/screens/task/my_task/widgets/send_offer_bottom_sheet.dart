@@ -167,17 +167,17 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
   }
 
   Future<void> _submitOffer() async {
-    // Validate task data
-    if (widget.taskId == null || widget.taskOwnerUid == null) {
-      Get.snackbar(
-        'Error',
-        'Missing task information',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
+    // // Validate task data
+    // if (widget.taskId == null || widget.taskOwnerUid == null) {
+    //   Get.snackbar(
+    //     'Error',
+    //     'Missing task information',
+    //     snackPosition: SnackPosition.BOTTOM,
+    //     backgroundColor: Colors.red,
+    //     colorText: Colors.white,
+    //   );
+    //   return;
+    // }
 
     // Validate price input
     final priceText = _priceController.text.trim();
@@ -261,8 +261,8 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
         'description': widget.taskDescription ?? '',
         'timeAgo': widget.taskTimeAgo ?? '',
         'taskType': widget.taskType ?? '',
-        if (widget.taskImage != null) 'image': widget.taskImage!,
-        if (widget.location != null) 'location': widget.location!,
+        'image': widget.taskImage ?? '',
+        'location': widget.location ?? '',
       };
 
       // Submit offer to Firebase

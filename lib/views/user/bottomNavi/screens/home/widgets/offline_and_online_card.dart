@@ -49,23 +49,6 @@ class OfflineAndOnlineCard extends StatelessWidget {
         // mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Image
-          CustomContainer(
-            // height: 115,
-            width: Get.width * 0.45,
-            conColor: whiteColor,
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: [
-              BoxShadow(
-                color: blackColor.withOpacity(0.25),
-                offset: const Offset(0, 4),
-                blurRadius: 4,
-                spreadRadius: 0,
-              ),
-            ],
-            child: Center(child: Image.asset(image)),
-          ),
-
           SizedBox(height: 7),
           CustomContainer(
             padding: const EdgeInsets.symmetric(horizontal: 16),

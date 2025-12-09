@@ -31,7 +31,7 @@ class TasksForYouTab extends StatelessWidget {
     // This formula automatically adjusts for ANY device size
     // Formula: cardWidth / (screenHeight * factor)
     // Lower factor = taller cards, Higher factor = shorter cards
-    final responsiveAspectRatio = cardWidth / (screenHeight * 0.34);
+    final responsiveAspectRatio = cardWidth / (screenHeight * 0.19);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

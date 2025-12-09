@@ -186,7 +186,7 @@ class ActiveTab extends StatelessWidget {
 
                                   location: task.taskType == 'Offline Task'
                                       ? task.location
-                                      : null,
+                                      : '',
                                   taskType: task.taskType,
                                   taskDescription: task.description,
                                   taskTitle: task.title,

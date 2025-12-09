@@ -31,7 +31,8 @@ class ValidationHubController extends GetxController {
       for (var doc in snapshot.docs) {
         final validationData = doc.data();
         final taskId = validationData['taskId'];
-        final rejectedBy = validationData['rejectedBy']; // UID of user who rejected
+        final rejectedBy =
+            validationData['rejectedBy']; // UID of user who rejected
 
         // Fetch userId from users collection using rejectedBy UID
         String userId = 'RB-00000'; // Default
@@ -41,7 +42,7 @@ class ValidationHubController extends GetxController {
                 .collection('users')
                 .doc(rejectedBy)
                 .get();
-            
+
             if (userDoc.exists) {
               final userData = userDoc.data();
               userId = userData?['userId'] ?? 'RB-00000';
@@ -64,6 +65,7 @@ class ValidationHubController extends GetxController {
               'afterPhotoUrl': validationData['afterPhotoUrl'] ?? '',
               'proofId': validationData['proofId'] ?? '',
               'status': validationData['status'] ?? 'pending',
+              'rejectedAt': validationData['rejectedAt'] ?? '',
             });
           }
         }

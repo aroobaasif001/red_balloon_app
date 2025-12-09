@@ -154,15 +154,14 @@ class PostNewTaskController extends GetxController {
       // Parse budget
       final budget = double.tryParse(taskBudget.text.trim()) ?? 0.0;
 
-      // Get userId from Firestore
-      String? userId;
-      final currentUser = _authService.getCurrentUserModel();
-      if (currentUser != null) {
-        final userData = await _authService.getUserData(currentUser.uid);
-        if (userData != null) {
-          userId = userData['userId'];
-        }
+      // Ensure userId is available
+      if (storedUserId == null) {
+        await fetchUserData();
       }
+      
+      print('🚀 Submitting Task...');
+      print('   Type: ${selectedTaskType.value}');
+      print('   UserID (Custom): $storedUserId');
 
       // Create task
       final taskId = await _taskService.createTask(
@@ -171,7 +170,7 @@ class PostNewTaskController extends GetxController {
         description: taskDescription.text.trim(),
         budget: budget,
         location: selectedTaskType.value == "Offline Task" ? location.text.trim() : null,
-        userId: userId,
+        userId: storedUserId,
         imageFile: imageFile,
       );
 
@@ -206,6 +205,29 @@ class PostNewTaskController extends GetxController {
     descriptionError.value = "";
     budgetError.value = "";
     locationError.value = "";
+  }
+  
+  String? storedUserId;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchUserData();
+  }
+  
+  Future<void> fetchUserData() async {
+    try {
+      final currentUser = _authService.getCurrentUserModel();
+      if (currentUser != null) {
+        final userData = await _authService.getUserData(currentUser.uid);
+        if (userData != null) {
+          storedUserId = userData['userId'];
+          print("✅ PostNewTaskController: Fetched userId: $storedUserId");
+        }
+      }
+    } catch (e) {
+      print("❌ Error fetching user data in PostNewTaskController: $e");
+    }
   }
 
   @override

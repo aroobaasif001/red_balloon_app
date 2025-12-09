@@ -82,7 +82,7 @@ class CustomMyTaskCard extends StatelessWidget {
                       fontSize: 18,
                       color: blackColor,
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 10),
                     Row(
                       children: [
                         // 🔥 Only show distance if NOT Online Task
@@ -156,24 +156,24 @@ class CustomMyTaskCard extends StatelessWidget {
                 ),
               ),
 
-              Expanded(
-                child: CustomContainer(
-                  height: 100,
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                    image: isNetworkImage
-                        ? NetworkImage(image) as ImageProvider
-                        : AssetImage(image),
-                    fit: BoxFit.cover,
-                    onError: isNetworkImage
-                        ? (exception, stackTrace) {
-                            // Handle network image error
-                            print('Error loading network image: $exception');
-                          }
-                        : null,
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: CustomContainer(
+              //     height: 100,
+              //     borderRadius: BorderRadius.circular(10),
+              //     image: DecorationImage(
+              //       image: isNetworkImage
+              //           ? NetworkImage(image) as ImageProvider
+              //           : AssetImage(image),
+              //       fit: BoxFit.cover,
+              //       onError: isNetworkImage
+              //           ? (exception, stackTrace) {
+              //               // Handle network image error
+              //               print('Error loading network image: $exception');
+              //             }
+              //           : null,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           if (showButton) ...[

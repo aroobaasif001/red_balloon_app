@@ -55,6 +55,7 @@ dependencies:
   
   # URL Launcher for phone calls
   url_launcher: ^6.3.1
+  intl: ^0.20.2
 
 
 dev_dependencies:

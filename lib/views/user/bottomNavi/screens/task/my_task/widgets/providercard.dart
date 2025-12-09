@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
 
 class ProviderCard extends StatelessWidget {
   final String initials;
@@ -70,7 +68,10 @@ class ProviderCard extends StatelessWidget {
                           fontWeight: FontVariant.bold,
                           color: redColor,
                         )
-                      : Image.network(userPhoto!),
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Image.network(userPhoto!),
+                        ),
                 ),
 
                 const SizedBox(width: 14),
@@ -98,7 +99,7 @@ class ProviderCard extends StatelessWidget {
                             conColor: rdBgColor,
                             borderRadius: BorderRadius.circular(10),
                             child: CustomText(
-                              id,
+                              id == '' ? 'RB-124' : id,
                               fontSize: 12,
                               color: redColor,
                             ),
@@ -156,9 +157,7 @@ class ProviderCard extends StatelessWidget {
               children: [
                 buildButton("View Profile", onViewProfile),
                 buildButton("Accept", onAccept),
-                buildButton("Chat", () {
-                  Get.to(() => ChatScreen());
-                }),
+                buildButton("Chat", onChat),
               ],
             ),
           ],

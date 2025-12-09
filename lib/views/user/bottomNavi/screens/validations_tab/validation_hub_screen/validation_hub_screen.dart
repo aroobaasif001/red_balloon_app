@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
@@ -59,6 +60,15 @@ class ValidationHubScreen extends StatelessWidget {
                   itemCount: controller.validations.length,
                   itemBuilder: (_, index) {
                     final validation = controller.validations[index];
+                    // String time = DateFormat(
+                    //   'dd MMM \'at\' hh:mm a',
+                    //   'en_US',
+                    // ).format(DateTime.parse(validation['rejectedAt']));
+
+                    // String output = DateTimeUtils.convertToDisplayFormat(input);
+                    String time = DateFormat(
+                      'dd MMM \'at\' hh:mm a',
+                    ).format(validation['rejectedAt'].toDate());
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 20),
@@ -77,90 +87,31 @@ class ValidationHubScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            /// BEFORE & AFTER IMAGES
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomContainer(
-                                    height: 120,
-                                    conColor: redColor.withOpacity(0.4),
-                                    borderRadius: BorderRadius.circular(16),
-                                    alignment: Alignment.bottomCenter,
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    image:
-                                        validation['beforePhotoUrl']
-                                                ?.isNotEmpty ==
-                                            true
-                                        ? DecorationImage(
-                                            image: NetworkImage(
-                                              validation['beforePhotoUrl'],
-                                            ),
-                                            fit: BoxFit.cover,
-                                          )
-                                        : null,
-                                    child: const CustomText(
-                                      "BEFORE",
-                                      fontWeight: FontVariant.semiBold,
-                                      fontSize: 12,
-                                      color: blackColor,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-
-                                Expanded(
-                                  child: CustomContainer(
-                                    height: 120,
-                                    conColor: redColor.withOpacity(0.4),
-                                    borderRadius: BorderRadius.circular(16),
-                                    alignment: Alignment.bottomCenter,
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    image:
-                                        validation['afterPhotoUrl']
-                                                ?.isNotEmpty ==
-                                            true
-                                        ? DecorationImage(
-                                            image: NetworkImage(
-                                              validation['afterPhotoUrl'],
-                                            ),
-                                            fit: BoxFit.cover,
-                                          )
-                                        : null,
-                                    child: const CustomText(
-                                      "AFTER",
-                                      fontWeight: FontVariant.semiBold,
-                                      fontSize: 12,
-                                      color: blackColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 20),
-
                             /// TITLE + BADGE
                             Row(
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       CustomText(
-                                        validation['userId'] ?? 'RB-00000',
+                                        validation['taskTitle'] ?? 'No Title',
                                         fontSize: 18,
                                         fontWeight: FontVariant.bold,
                                         fontType: AppFont.montserrat,
                                         color: blackColor,
+                                        maxLines: null, // unlimited lines allow
+                                        overflow: TextOverflow
+                                            .visible, // next line wrap
                                       ),
+                                      SizedBox(height: 10),
                                       CustomText(
-                                        validation['taskTitle'] ?? 'No Title',
+                                        validation['userId'] ?? 'RB-00000',
                                         fontSize: 16,
-                                        fontWeight: FontVariant.semiBold,
+                                        fontWeight: FontVariant.bold,
                                         fontType: AppFont.montserrat,
                                         color: blackColor,
-                                        maxLines: null,                 // unlimited lines allow
-                                        overflow: TextOverflow.visible, // next line wrap
                                       ),
                                     ],
                                   ),
@@ -184,38 +135,45 @@ class ValidationHubScreen extends StatelessWidget {
                                       7,
                                     ), // FULL ROUND
                                   ),
-                                  child: Row(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
-                                    children: const [
-                                      Image(
-                                        image: AssetImage(
-                                          "assets/icons/timer99.png",
-                                        ),
-                                        height: 20,
-                                      ),
-                                      SizedBox(width: 8),
-                                      CustomText(
+                                    children: [
+                                      const CustomText(
                                         "15 min left to validate",
-                                        fontSize: 12,
-                                        fontWeight: FontVariant.medium,
-                                        color: blackColor,
+                                        fontSize: 14,
+                                        fontWeight: FontVariant.regular,
+                                        color: txColor,
+                                      ),
+                                      SizedBox(height: 10),
+                                      CustomText(
+                                        time.toString(),
+                                        fontSize: 14,
+                                        fontWeight: FontVariant.regular,
+                                        color: txColor,
                                       ),
                                     ],
                                   ),
                                 ),
-                                const SizedBox(width: 10),
+                                const SizedBox(width: 30),
 
                                 Expanded(
                                   child: CustomButton(
                                     label: "Review Proof",
                                     onPressed: () {
-                                      Get.to(() => ValidationScreen(
-                                        taskId: validation['taskId'],
-                                        userId: validation['userId'],
-                                        beforePhotoUrl: validation['beforePhotoUrl'],
-                                        afterPhotoUrl: validation['afterPhotoUrl'],
-                                        proofId: validation['proofId'],
-                                      ));
+                                      Get.to(
+                                        () => ValidationScreen(
+                                          taskId: validation['taskId'],
+                                          userId: validation['userId'],
+                                          beforePhotoUrl:
+                                              validation['beforePhotoUrl'],
+                                          afterPhotoUrl:
+                                              validation['afterPhotoUrl'],
+                                          proofId: validation['proofId'],
+                                        ),
+                                      );
                                     },
                                     height: 40,
                                     width: 80,

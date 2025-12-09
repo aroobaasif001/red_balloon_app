@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
+import 'package:intl/intl.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/widgets/history_task_card.dart';
 
 import '../../../validations_tab/validation_screen/validation_screen.dart';
-import '../../post_new_task/post_new_task_screen.dart';
 
 class HistoryTab extends StatelessWidget {
   const HistoryTab({super.key});
@@ -77,36 +77,36 @@ class HistoryTab extends StatelessWidget {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   final task = controller.historyTasks[index];
+                  String statusText;
+                  if (task.status.toLowerCase() == 'rejected') {
+                    statusText = 'Validation';
+                  } else if (task.status.toLowerCase() == 'completed') {
+                    statusText = 'Completed';
+                  } else {
+                    statusText = 'Disputed';
+                  }
+                  // if (task.status)
+                  print(task.createdAt.toString());
+                  String time = DateFormat(
+                    'dd MMM \'at\' hh:mm a',
+                    'en_US',
+                  ).format(task.createdAt);
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 15),
-                    child: CustomMyTaskCard(
+                    child: HistoryTaskCard(
                       title: task.title,
                       amount: controller.formatBudget(task.budget),
-                      status: controller.getStatusText(task.status),
-                      postedTime: controller.getTimeAgo(task.createdAt),
-                      image: task.imageUrl != null && task.imageUrl!.isNotEmpty
-                          ? task.imageUrl!
-                          : "assets/images/sofa.png",
-                      isNetworkImage:
-                          task.imageUrl != null && task.imageUrl!.isNotEmpty,
-                      distance: '2.5 km away',
-                      taskType: task.taskType,
-                      showButton: true,
-                      btnText: task.status.toLowerCase() == 'completed'
-                          ? 'Completed'
-                          : task.status.toLowerCase() == 'rejected'
-                          ? 'Validation'
-                          : 'Cancelled',
-                      buttonColor: task.status.toLowerCase() == 'rejected'
-                          ? redColor // 🔥 Red for rejected tasks
-                          : const Color(
-                              0xFFEF9A9A,
-                            ), // Light pink/salmon for others
-                      isButtonEnabled:
-                          task.status.toLowerCase() ==
-                          'rejected', // 🔥 Enable for rejected
-                      showType: false,
+                      statusText: statusText,
+                      statusTextColor: task.status.toLowerCase() == 'completed'
+                          ? greenColor // 🔥 Red for rejected tasks
+                          : redColor,
+                      statusBgColor: task.status.toLowerCase() == 'completed'
+                          ? greenColor.withOpacity(
+                              0.25,
+                            ) // 🔥 Red for rejected tasks
+                          : redColor.withOpacity(0.25),
+
                       onViewDetails: () async {
                         // 🔥 For rejected tasks, fetch validation data and navigate
                         if (task.status.toLowerCase() == 'rejected') {
@@ -167,18 +167,8 @@ class HistoryTab extends StatelessWidget {
                           Get.to(() => TaskDetailsScreen(task: task));
                         }
                       },
-                      onEdit: () {
-                        // 🔥 For rejected tasks, show validation details
-                        if (task.status.toLowerCase() == 'rejected') {
-                          // TODO: Navigate to validation details screen
-                          Get.snackbar(
-                            'Validation',
-                            'View validation details for ${task.title}',
-                          );
-                        } else {
-                          Get.to(() => PostNewTaskScreen());
-                        }
-                      },
+                      location: '2.5 km away',
+                      dateTime: time,
                     ),
                   );
                 },

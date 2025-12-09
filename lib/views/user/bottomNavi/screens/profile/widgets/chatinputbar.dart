@@ -86,7 +86,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
                     shape: BoxShape.circle,
                   ),
                   child: Image.asset(
-                    'assets/icons/iconchat.png',
+                    _hasText.value
+                        ? 'assets/icons/iconchat2.png'
+                        : 'assets/icons/iconchat.png',
                     height: 45,
                     width: 45,
                   ),

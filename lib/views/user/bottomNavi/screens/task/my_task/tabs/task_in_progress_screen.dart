@@ -175,15 +175,22 @@ class TaskInProgressScreen extends StatelessWidget {
                             CircleAvatar(
                               radius: 25,
                               backgroundColor: rdLight100Color,
-                              child: CustomText(
-                                controller.getInitials(
-                                  helper?.displayName ??
-                                      offer?.offeringUserName,
-                                ), // 🔥 Real initials
-                                fontWeight: FontVariant.bold,
-                                color: redColor,
-                                fontSize: 18,
-                              ),
+                              child: helper!.photoURL!.isEmpty
+                                  ? CustomText(
+                                      controller.getInitials(
+                                        helper?.displayName ??
+                                            offer?.offeringUserName,
+                                      ), // 🔥 Real initials
+                                      fontWeight: FontVariant.bold,
+                                      color: redColor,
+                                      fontSize: 18,
+                                    )
+                                  : ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: Image.network(
+                                        helper!.photoURL.toString(),
+                                      ),
+                                    ),
                             ),
                             const SizedBox(width: 15),
                             Column(

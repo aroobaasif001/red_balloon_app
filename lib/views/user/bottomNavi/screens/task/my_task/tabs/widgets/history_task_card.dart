@@ -97,7 +97,7 @@ class HistoryTaskCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     CustomText(
-                      '08 Dec at 09:15 PM',
+                      dateTime,
                       fontSize: 14,
                       fontWeight: FontVariant.regular,
                       color: Colors.grey[600],

@@ -566,21 +566,18 @@ class RefreshButtonWithData extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 if (taskId != null && taskOwnerUid != null) {
-                  // Delete old controller if exists
-                  if (Get.isRegistered<ChatController>()) {
-                    Get.delete<ChatController>();
-                  }
-                  
-                  Get.put(
-                    ChatController(
-                      taskId: taskId!,
-                      taskTitle: taskTitle ?? 'Task',
-                      taskOwnerId: taskOwnerUid!,
-                      taskOwnerName: taskOwnerName ?? 'User',
-                      taskOwnerPhoto: taskOwnerPhoto,
-                    ),
+                  Get.to(
+                    () => const ChatScreen(),
+                    binding: BindingsBuilder(() {
+                      Get.put(ChatController(
+                        taskId: taskId!,
+                        taskTitle: taskTitle ?? 'Task',
+                        taskOwnerId: taskOwnerUid!,
+                        taskOwnerName: taskOwnerName ?? 'User',
+                        taskOwnerPhoto: taskOwnerPhoto,
+                      ));
+                    }),
                   );
-                  Get.to(() => const ChatScreen());
                 }
               },
               child: Container(
@@ -659,21 +656,18 @@ class RefreshButtonWithData extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 if (taskId != null && taskOwnerUid != null) {
-                  // Delete old controller if exists
-                  if (Get.isRegistered<ChatController>()) {
-                    Get.delete<ChatController>();
-                  }
-                  
-                  Get.put(
-                    ChatController(
-                      taskId: taskId!,
-                      taskTitle: taskTitle ?? 'Task',
-                      taskOwnerId: taskOwnerUid!,
-                      taskOwnerName: taskOwnerName ?? 'User',
-                      taskOwnerPhoto: taskOwnerPhoto,
-                    ),
+                  Get.to(
+                    () => const ChatScreen(),
+                    binding: BindingsBuilder(() {
+                      Get.put(ChatController(
+                        taskId: taskId!,
+                        taskTitle: taskTitle ?? 'Task',
+                        taskOwnerId: taskOwnerUid!,
+                        taskOwnerName: taskOwnerName ?? 'User',
+                        taskOwnerPhoto: taskOwnerPhoto,
+                      ));
+                    }),
                   );
-                  Get.to(() => const ChatScreen());
                 }
               },
               child: Container(

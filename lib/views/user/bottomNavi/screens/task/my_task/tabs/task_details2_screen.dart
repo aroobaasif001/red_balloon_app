@@ -5,12 +5,15 @@ import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/model/offer_model.dart';
 import 'package:red_balloon_app/model/task_model.dart';
+import 'package:red_balloon_app/model/user_model.dart'; // 🔥 Import UserModel
 import 'package:red_balloon_app/services/offer_service.dart';
 import 'package:red_balloon_app/services/user_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../widgets/providercard.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/controller/chat_controller.dart';
 import 'user_profile_screen.dart'; // 🔥 Import profile screen
 
 class TaskDetails2Screen extends StatefulWidget {
@@ -29,6 +32,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
   final OfferService _offerService = OfferService();
   final UserService _userService = UserService(); // 🔥 Add UserService
   List<OfferModel> offers = [];
+  Map<String, UserModel?> offerUsers = {}; // 🔥 Cache for user data
   bool isLoading = true;
 
   @override
@@ -38,23 +42,40 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
   }
 
   Future<void> _fetchOffers() async {
-    if (!mounted) return; // 🔥 Check if widget is still mounted
+    if (!mounted) return;
 
     setState(() => isLoading = true);
     print(
       '🔍 TaskDetails2Screen: Fetching offers for Task ID: ${widget.task.id}',
     );
 
-    final fetchedOffers = await _offerService.getOffersForTask(
-      widget.task.id ?? '',
-    );
+    try {
+      final fetchedOffers = await _offerService.getOffersForTask(
+        widget.task.id ?? '',
+      );
 
-    if (!mounted) return; // 🔥 Check again before setState
+      // 🔥 Pre-fetch user data for each offer
+      Map<String, UserModel?> usersMap = {};
+      for (var offer in fetchedOffers) {
+        if (!usersMap.containsKey(offer.offeringUserUid)) {
+          final user = await _userService.getUserByUid(offer.offeringUserUid);
+          usersMap[offer.offeringUserUid] = user;
+        }
+      }
 
-    setState(() {
-      offers = fetchedOffers;
-      isLoading = false;
-    });
+      if (!mounted) return;
+
+      setState(() {
+        offers = fetchedOffers;
+        offerUsers = usersMap;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching offers or users: $e");
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
   }
 
   String _getTimeAgo(DateTime dateTime) {
@@ -224,56 +245,71 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                 )
               else
                 ...offers.map((offer) {
+                  // 🔥 Get pre-fetched user
+                  final user = offerUsers[offer.offeringUserUid];
+
                   // Get first letter of name for initials
                   final initials = offer.offeringUserName.isNotEmpty
                       ? offer.offeringUserName[0].toUpperCase()
                       : 'U';
 
                   return ProviderCard(
-                    userPhoto: displayImage,
+                    userPhoto:
+                        user?.photoURL ??
+                        displayImage, // 🔥 Use user photo if available
                     initials: initials,
-                    name: offer.offeringUserName, // 🔥 Real offering user name
-                    id: "RB-452",
-                    // id: offer.offerId, // 🔥 Real offer ID
-                    rating: "4.9", // TODO: Add rating to offer model
-                    description: "(25 Tasks Completed)", // TODO: Add task count
-                    price: "SAR ${offer.offerPrice}", // 🔥 Real offer price
-                    distance: "34.5 km away", // TODO: Calculate distance
-                    onViewProfile: () async {
-                      // 🔥 Fetch user data and navigate to profile screen
-                      try {
-                        final user = await _userService.getUserByUid(
-                          offer.offeringUserUid,
-                        );
-                        final stats = await _userService.getUserStatistics(
-                          offer.offeringUserUid,
-                        );
+                    name: offer.offeringUserName,
+                    id: user!.userId ?? '',
 
-                        if (user != null) {
+                    rating: "4.9",
+                    description: "(25 Tasks Completed)",
+                    price: "SAR ${offer.offerPrice}",
+                    distance: "34.5 km away",
+                    onViewProfile: () async {
+                      if (user != null) {
+                        try {
+                          final stats = await _userService.getUserStatistics(
+                            offer.offeringUserUid,
+                          );
+
                           Get.to(
                             () => UserProfileScreen(
                               userName: user.displayName,
                               userInitials: user.initials,
+                              userPhoto: user.photoURL,
+                              userId: user.userId,
                               rating: (stats['rating'] ?? 4.9).toDouble(),
                               tasksCompleted: stats['tasksCompleted'] ?? 0,
                               tasksRequested: stats['tasksRequested'] ?? 0,
                             ),
                           );
+                        } catch (e) {
+                          print('Error loading user profile stats: $e');
                         }
-                      } catch (e) {
-                        print('Error loading user profile: $e');
                       }
                     },
                     onAccept: () {
-                      // 🔥 Show confirmation dialog
                       DialogHelpers.showOfferConfirmationDialog(
                         context: context,
                         offerId: offer.offerId,
-                        taskId: widget.task.id ?? '', // 🔥 Pass task ID
+                        taskId: widget.task.id ?? '',
                         onAccepted: () {
-                          // Refresh offers list after acceptance
                           _fetchOffers();
                         },
+                      );
+                    },
+                    onChat: () {
+                       Get.to(
+                        () => const ChatScreen(),
+                        binding: BindingsBuilder(() {
+                          Get.put(ChatController(
+                            taskId: widget.task.id ?? '',
+                            taskTitle: widget.task.title,
+                            taskOwnerId: offer.offeringUserUid,
+                            taskOwnerName: offer.offeringUserName,
+                            taskOwnerPhoto: user?.photoURL,
+                          ));
+                        }),
                       );
                     },
                   );
