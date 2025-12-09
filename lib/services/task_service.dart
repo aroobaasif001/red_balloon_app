@@ -291,5 +291,49 @@ class TaskService {
       rethrow;
     }
   }
+  /// Update Help Request
+  Future<void> updateHelpRequest({
+    required String taskId,
+    required String role, // 'requester' or 'helper'
+    required String reason,
+    required String details,
+  }) async {
+    try {
+      final taskDoc = tasksCollection.doc(taskId);
+      final snapshot = await taskDoc.get();
+
+      if (!snapshot.exists) return;
+
+      final data = snapshot.data() as Map<String, dynamic>;
+      
+      final Map<String, dynamic> updates = {
+        '${role}HelpRequested': true,
+        '${role}HelpReason': reason,
+        '${role}HelpDetails': details,
+      };
+
+      // Check if the OTHER party has already requested help
+      bool otherPartyRequested = false;
+      if (role == 'requester') {
+        otherPartyRequested = data['helperHelpRequested'] ?? false;
+      } else {
+        otherPartyRequested = data['requesterHelpRequested'] ?? false;
+      }
+
+      // If both have now requested, set status to Disputed
+      if (otherPartyRequested) {
+        updates['status'] = 'Disputed';
+        updates['disputedStartTime'] = DateTime.now().toIso8601String(); // 🔥 Added timestamp
+        print('🚨 Both parties requested help. Task $taskId moved to Disputed.');
+      } else {
+        print('⚠️ $role requested help. Waiting for other party.');
+      }
+
+      await taskDoc.update(updates);
+    } catch (e) {
+      print('Error updating help request: $e');
+      rethrow;
+    }
+  }
 }
 

@@ -46,7 +46,8 @@ class AllTaskTab extends StatelessWidget {
                 // Remove completed, cancelled, rejected tasks
                 if (status == 'completed' ||
                     status == 'rejected' ||
-                    status == 'cancelled') {
+                    status == 'cancelled' ||
+                    status == 'disputed') {
                   return false;
                 }
 

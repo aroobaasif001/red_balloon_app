@@ -1145,7 +1145,12 @@ class DialogHelpers {
     );
   }
 
-  void showSupportHelpSheet(BuildContext context) {
+  void showSupportHelpSheet(
+    BuildContext context, {
+    String? firstOptionText,
+    String? lastOptionText,
+    Function(String reason, String details)? onSubmit,
+  }) {
     int selectedIndex = 0;
 
     showModalBottomSheet(
@@ -1159,11 +1164,11 @@ class DialogHelpers {
         return StatefulBuilder(
           builder: (context, setState) {
             final List<String> reasons = [
-              "Helper is not responding",
+              firstOptionText ?? "Helper is not responding",
               "Task is taking longer than expected",
               "Task details are unclear or incorrect",
               "Safety or comfort concern",
-              "Helper unresponsive",
+              lastOptionText ?? "Helper unresponsive",
             ];
 
             return Padding(
@@ -1251,7 +1256,11 @@ class DialogHelpers {
                   CustomButton(
                     label: "Continue",
                     onPressed: () {
-                      DialogHelpers().showDescribeProblemSheet(context);
+                      DialogHelpers().showDescribeProblemSheet(
+                        context,
+                        selectedReason: reasons[selectedIndex],
+                        onSubmit: onSubmit,
+                      );
                     },
                     bgColor: redColor,
                     textColor: whiteColor,
@@ -1272,7 +1281,11 @@ class DialogHelpers {
     );
   }
 
-  void showDescribeProblemSheet(BuildContext context) {
+  void showDescribeProblemSheet(
+    BuildContext context, {
+    String? selectedReason,
+    Function(String reason, String details)? onSubmit,
+  }) {
     TextEditingController msgController = TextEditingController();
 
     showModalBottomSheet(
@@ -1348,8 +1361,13 @@ class DialogHelpers {
               CustomButton(
                 label: "Continue",
                 onPressed: () {
-                  Get.back();
-                  Get.back();
+                  // 🔥 Call submit callback if provided
+                  if (onSubmit != null) {
+                    onSubmit(selectedReason ?? 'Other', msgController.text);
+                  }
+                  
+                  Get.back(); // Close description sheet
+                  Get.back(); // Close reason sheet
                   DialogHelpers.showReportSubmittedDialog(context: context);
                 },
                 height: 51,

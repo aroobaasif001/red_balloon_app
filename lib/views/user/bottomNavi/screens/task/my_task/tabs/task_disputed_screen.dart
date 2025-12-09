@@ -12,7 +12,18 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/widge
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/widgets/task_summary_card.dart';
 
 class TaskDisputedScreen extends StatelessWidget {
-  TaskDisputedScreen({super.key});
+  final Map<String, dynamic>? requesterData;
+  final Map<String, dynamic>? helperData;
+  final Map<String, dynamic>? disputeData;
+  final Map<String, dynamic>? taskData;
+
+  TaskDisputedScreen({
+    super.key,
+    this.requesterData,
+    this.helperData,
+    this.disputeData,
+    this.taskData,
+  });
 
   final controller = Get.put(TaskDisputedController());
 

@@ -10,7 +10,14 @@ class TaskModel {
   final String? imageUrl;
   final DateTime createdAt;
   final String status;
-  final String? acceptedOfferUid; // 🔥 Track which user's offer was accepted
+  final String? acceptedOfferUid;
+  final String? requesterHelpReason;
+  final String? requesterHelpDetails;
+  final bool? requesterHelpRequested;
+  final String? helperHelpReason;
+  final String? helperHelpDetails;
+  final bool? helperHelpRequested;
+  final String? disputedStartTime;
 
   TaskModel({
     this.id,
@@ -24,7 +31,14 @@ class TaskModel {
     this.imageUrl,
     required this.createdAt,
     this.status = 'active',
-    this.acceptedOfferUid, // 🔥 Optional field
+    this.acceptedOfferUid,
+    this.requesterHelpReason,
+    this.requesterHelpDetails,
+    this.requesterHelpRequested,
+    this.helperHelpReason,
+    this.helperHelpDetails,
+    this.helperHelpRequested,
+    this.disputedStartTime,
   });
 
   Map<String, dynamic> toJson() {
@@ -39,7 +53,14 @@ class TaskModel {
       'imageUrl': imageUrl,
       'createdAt': createdAt.toIso8601String(),
       'status': status,
-      'acceptedOfferUid': acceptedOfferUid, // 🔥 Include in JSON
+      'acceptedOfferUid': acceptedOfferUid,
+      'requesterHelpReason': requesterHelpReason,
+      'requesterHelpDetails': requesterHelpDetails,
+      'requesterHelpRequested': requesterHelpRequested,
+      'helperHelpReason': helperHelpReason,
+      'helperHelpDetails': helperHelpDetails,
+      'helperHelpRequested': helperHelpRequested,
+      'disputedStartTime': disputedStartTime,
     };
   }
 
@@ -58,13 +79,20 @@ class TaskModel {
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
       status: json['status'] ?? 'active',
-      acceptedOfferUid: json['acceptedOfferUid'], // 🔥 Parse from JSON
+      acceptedOfferUid: json['acceptedOfferUid'],
+      requesterHelpReason: json['requesterHelpReason'],
+      requesterHelpDetails: json['requesterHelpDetails'],
+      requesterHelpRequested: json['requesterHelpRequested'],
+      helperHelpReason: json['helperHelpReason'],
+      helperHelpDetails: json['helperHelpDetails'],
+      helperHelpRequested: json['helperHelpRequested'],
+      disputedStartTime: json['disputedStartTime'],
     );
   }
 
   factory TaskModel.fromFirestore(dynamic doc) {
     final data = doc.data() as Map<String, dynamic>;
-    
+
     // Handle createdAt - can be either String or Timestamp
     DateTime createdAtValue = DateTime.now();
     if (data['createdAt'] != null) {
@@ -86,7 +114,7 @@ class TaskModel {
         }
       }
     }
-    
+
     return TaskModel(
       id: doc.id,
       uid: data['uid'] ?? '',
@@ -100,6 +128,13 @@ class TaskModel {
       createdAt: createdAtValue,
       status: data['status'] ?? 'active',
       acceptedOfferUid: data['acceptedOfferUid'],
+      requesterHelpReason: data['requesterHelpReason'],
+      requesterHelpDetails: data['requesterHelpDetails'],
+      requesterHelpRequested: data['requesterHelpRequested'],
+      helperHelpReason: data['helperHelpReason'],
+      helperHelpDetails: data['helperHelpDetails'],
+      helperHelpRequested: data['helperHelpRequested'],
+      disputedStartTime: data['disputedStartTime'],
     );
   }
 }

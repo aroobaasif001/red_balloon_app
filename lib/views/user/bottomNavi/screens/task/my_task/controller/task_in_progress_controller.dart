@@ -27,10 +27,47 @@ class TaskInProgressController extends GetxController {
 
   TaskInProgressController({this.taskId});
 
+  // Help Request Status
+  var requesterHelpRequested = false.obs;
+  var helperHelpRequested = false.obs;
+
   @override
   void onInit() {
     super.onInit();
     fetchInProgressTask();
+  }
+
+  void setupTaskListener(String taskId) {
+    FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(taskId)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        if (data != null) {
+          requesterHelpRequested.value = data['requesterHelpRequested'] ?? false;
+          helperHelpRequested.value = data['helperHelpRequested'] ?? false;
+          
+          // Also update local task model if needed, but these flags are most critical
+          // task.value = TaskModel.fromJson(data, snapshot.id); // Optional, might cause rebuilds
+        }
+      }
+    });
+  }
+
+  /// Submit Help Request for Requester
+  Future<void> submitHelpRequest(String reason, String details) async {
+    if (task.value?.id == null) return;
+    
+    await _taskService.updateHelpRequest(
+      taskId: task.value!.id!,
+      role: 'requester',
+      reason: reason,
+      details: details,
+    );
+    
+    // Refresh local state (listener handles it mostly, but good for immediate feedback if needed)
   }
 
   /// Fetch in-progress task (specific or first available)
@@ -62,6 +99,7 @@ class TaskInProgressController extends GetxController {
           taskDoc.data()!,
           taskDoc.id,
         );
+        setupTaskListener(task.value!.id!); // 🔥 Start listening
 
         print('✅ Found specific task: ${task.value?.title}');
       } else {
@@ -85,6 +123,7 @@ class TaskInProgressController extends GetxController {
           taskDoc.data(),
           taskDoc.id,
         );
+        setupTaskListener(task.value!.id!); // 🔥 Start listening
 
         print('✅ Found in-progress task: ${task.value?.title}');
       }
