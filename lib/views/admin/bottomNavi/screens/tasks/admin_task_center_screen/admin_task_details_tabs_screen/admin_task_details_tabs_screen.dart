@@ -7,6 +7,7 @@ import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/admin_task_details_tabs_screen/tabs/admin_after_tab.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/admin_task_details_tabs_screen/tabs/admin_before_tab.dart';
 import 'controller/admin_task_details_controller.dart';
+import 'widgets/admin_task_voting_details_widget.dart';
 
 class AdminTaskDetailsTabsScreen extends StatefulWidget {
   final String? validationId;
@@ -21,10 +22,21 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
   @override
   void initState() {
     super.initState();
+    // 🔥 Delete old controller instance to ensure fresh data
+    Get.delete<AdminTaskDetailsController>();
+    // Create new controller instance
     controller = Get.put(AdminTaskDetailsController());
     if (widget.validationId != null) {
+      print('🔄 Initializing controller for validation: ${widget.validationId}');
       controller.fetchTaskDetails(widget.validationId!);
     }
+  }
+
+  @override
+  void dispose() {
+    // Clean up controller when screen is disposed
+    Get.delete<AdminTaskDetailsController>();
+    super.dispose();
   }
 
   @override
@@ -397,12 +409,17 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
             ),
             const SizedBox(height: 20),
             Obx(() => selectedTab == 0 
-                ? AdminBeforeTab(imageUrl: controller.beforePhotoUrl.value) 
+                ? AdminBeforeTab(
+                    imageUrl: controller.beforePhotoUrl.value,
+                  ) 
                 : AdminAfterTab(
                     imageUrl: controller.afterPhotoUrl.value,
-                    supportRequesterVotes: controller.supportRequesterVotes.value,
-                    supportHelperVotes: controller.supportHelperVotes.value,
                   )),
+            const SizedBox(height: 30),
+            
+            // 🔥 Voting and Task Details Widget (shared between both tabs)
+            AdminTaskVotingDetailsWidget(controller: controller),
+            
             const SizedBox(height: 40),
           ],
         ),

@@ -7,6 +7,7 @@ class AdminTaskDetailsController extends GetxController {
   // Observables
   var isLoading = true.obs;
   var taskTitle = ''.obs;
+  var taskDescription = ''.obs; // 🔥 Added task description
   var rejectionReason = ''.obs;
   var completedTime = ''.obs;
   var taskCreatorUserId = ''.obs;
@@ -45,11 +46,26 @@ class AdminTaskDetailsController extends GetxController {
       final validationData = validationDoc.data()!;
       final taskId = validationData['taskId'];
       final proofId = validationData['proofId'];
-      final rejectedBy = validationData['rejectedBy']; // Task creator UID
+      
+      print('📄 Validation Document ID: $validationId');
+      print('📄 Validation Data: $validationData');
       
       rejectionReason.value = validationData['rejectionReason'] ?? 'No reason provided';
       beforePhotoUrl.value = validationData['beforePhotoUrl'] ?? '';
       afterPhotoUrl.value = validationData['afterPhotoUrl'] ?? '';
+      
+      // 🔥 Fetch votes directly from validation document
+      final helperVotesFromDB = validationData['helperVotes'];
+      final requesterVotesFromDB = validationData['requesterVotes'];
+      
+      print('🔍 RAW helperVotes from DB: $helperVotesFromDB (type: ${helperVotesFromDB.runtimeType})');
+      print('🔍 RAW requesterVotes from DB: $requesterVotesFromDB (type: ${requesterVotesFromDB.runtimeType})');
+      
+      supportHelperVotes.value = helperVotesFromDB ?? 0;
+      supportRequesterVotes.value = requesterVotesFromDB ?? 0;
+      totalVotes.value = supportHelperVotes.value + supportRequesterVotes.value;
+      
+      print('✅ FINAL Votes - Helper: ${supportHelperVotes.value}, Requester: ${supportRequesterVotes.value}, Total: ${totalVotes.value}');
       
       // Calculate completed time
       if (validationData['rejectedAt'] != null) {
@@ -62,35 +78,51 @@ class AdminTaskDetailsController extends GetxController {
         completedTime.value = _getTimeAgo(rejectedAt);
       }
 
-      // 2. Fetch task details
+      // 2. Fetch task details and REQUESTER UID
+      String? requesterUid = null;
       if (taskId != null) {
+        print('📋 Fetching task details for taskId: $taskId');
         final taskDoc = await _firestore.collection('tasks').doc(taskId).get();
         if (taskDoc.exists) {
           final taskData = taskDoc.data()!;
           taskTitle.value = taskData['title'] ?? 'No Title';
+          taskDescription.value = taskData['description'] ?? 'No description available';
+          requesterUid = taskData['uid']; // 🔥 Get requester UID from task.uid
+          print('✅ Task title: ${taskTitle.value}');
+          print('✅ Task description: ${taskDescription.value}');
+          print('✅ Requester UID from task.uid: $requesterUid');
+        } else {
+          print('❌ Task document not found');
         }
       }
 
-      // 3. Fetch task creator (rejectedBy) details
-      if (rejectedBy != null) {
-        await _fetchUserDetails(rejectedBy, isHelper: false);
+      // 3. Fetch REQUESTER details using UID from task.uid
+      if (requesterUid != null) {
+        print('👤 Fetching REQUESTER details for UID: $requesterUid');
+        await _fetchUserDetails(requesterUid, isHelper: false);
+      } else {
+        print('⚠️ Requester UID not found in task');
       }
 
-      // 4. Fetch helper (proof submitter) details
+      // 4. Fetch HELPER details from task_proofs
       if (proofId != null) {
+        print('👷 Fetching proof details for proofId: $proofId');
         final proofDoc = await _firestore.collection('task_proofs').doc(proofId).get();
         if (proofDoc.exists) {
           final proofData = proofDoc.data()!;
-          final helperUid = proofData['userId']; // Helper's UID
+          final helperUid = proofData['userId']; // 🔥 Get helper UID from proof.userId
+          print('👷 Helper UID from task_proofs.userId: $helperUid');
           if (helperUid != null) {
+            print('👤 Fetching HELPER details for UID: $helperUid');
             await _fetchUserDetails(helperUid, isHelper: true);
+          } else {
+            print('⚠️ Helper userId is null in proof');
           }
+        } else {
+          print('❌ Proof document not found');
         }
-      }
-
-      // 5. Fetch voting data
-      if (taskId != null) {
-        await _fetchVotingData(taskId);
+      } else {
+        print('⚠️ proofId is null');
       }
 
       isLoading.value = false;
@@ -104,13 +136,42 @@ class AdminTaskDetailsController extends GetxController {
   /// Fetch user details from users collection
   Future<void> _fetchUserDetails(String uid, {required bool isHelper}) async {
     try {
+      print('🔍 Fetching user details for UID: $uid (isHelper: $isHelper)');
       final userDoc = await _firestore.collection('users').doc(uid).get();
       
       if (userDoc.exists) {
         final userData = userDoc.data()!;
+        
+        // 🔥 DEBUG: Print ALL fields to see what's available
+        print('📋 Available fields in user document:');
+        userData.forEach((key, value) {
+          print('   - $key: $value');
+        });
+        
         final userId = userData['userId'] ?? 'RB-00000';
-        final name = userData['name'] ?? 'Unknown User';
-        final image = userData['profileImage'] ?? '';
+        
+        // 🔥 Try multiple possible field names for name
+        String name = 'Unknown User';
+        if (userData.containsKey('username') && userData['username'] != null && userData['username'].toString().isNotEmpty) {
+          name = userData['username'];
+        } else if (userData.containsKey('name') && userData['name'] != null && userData['name'].toString().isNotEmpty) {
+          name = userData['name'];
+        } else if (userData.containsKey('displayName') && userData['displayName'] != null && userData['displayName'].toString().isNotEmpty) {
+          name = userData['displayName'];
+        }
+        
+        // 🔥 Try multiple possible field names for image
+        String image = '';
+        if (userData.containsKey('photoURL') && userData['photoURL'] != null && userData['photoURL'].toString().isNotEmpty) {
+          image = userData['photoURL'];
+        } else if (userData.containsKey('profileImage') && userData['profileImage'] != null && userData['profileImage'].toString().isNotEmpty) {
+          image = userData['profileImage'];
+        } else if (userData.containsKey('profilePicture') && userData['profilePicture'] != null && userData['profilePicture'].toString().isNotEmpty) {
+          image = userData['profilePicture'];
+        }
+        
+        print('✅ User found: $name ($userId)');
+        print('📸 User image: ${image.isNotEmpty ? image : "Not available"}');
         
         if (isHelper) {
           helperUserId.value = userId;
@@ -121,34 +182,20 @@ class AdminTaskDetailsController extends GetxController {
           helperTasksCount.value = userData['completedTasks'] ?? 0;
           helperRating.value = (userData['rating'] ?? 0.0).toDouble();
           helperResponseTime.value = _calculateResponseTime(userData['averageResponseTime']);
+          
+          print('📊 Helper stats - Tasks: ${helperTasksCount.value}, Rating: ${helperRating.value}');
         } else {
           taskCreatorUserId.value = userId;
           taskCreatorName.value = name;
           taskCreatorImage.value = image;
+          
+          print('📊 Task creator: $name ($userId)');
         }
+      } else {
+        print('❌ User document not found for UID: $uid');
       }
     } catch (e) {
-      print('❌ Error fetching user details: $e');
-    }
-  }
-
-  /// Fetch voting data
-  Future<void> _fetchVotingData(String taskId) async {
-    try {
-      final votingDoc = await _firestore.collection('voting').doc(taskId).get();
-      
-      if (votingDoc.exists) {
-        final votingData = votingDoc.data()!;
-        final voters = List<Map<String, dynamic>>.from(votingData['voters'] ?? []);
-        
-        supportHelperVotes.value = voters.where((v) => v['voteType'] == 'helper').length;
-        supportRequesterVotes.value = voters.where((v) => v['voteType'] == 'requester').length;
-        totalVotes.value = voters.length;
-        
-        print('📊 Votes - Helper: ${supportHelperVotes.value}, Requester: ${supportRequesterVotes.value}');
-      }
-    } catch (e) {
-      print('❌ Error fetching voting data: $e');
+      print('❌ Error fetching user details for $uid: $e');
     }
   }
 
