@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+
+import '../admin_task_center_screen/admin_task_details_tabs_screen/admin_task_details_tabs_screen.dart';
 
 class ValidationTaskItemCard extends StatelessWidget {
   final String title;
   final String price;
   final String startedAgo;
   final String image;
+  final String? validationId;
 
   const ValidationTaskItemCard({
     super.key,
@@ -16,6 +21,7 @@ class ValidationTaskItemCard extends StatelessWidget {
     required this.price,
     required this.startedAgo,
     required this.image,
+    this.validationId,
   });
 
   @override
@@ -137,7 +143,9 @@ class ValidationTaskItemCard extends StatelessWidget {
                   textColor: whiteColor,
                   fontSize: 14,
                   borderRadius: BorderRadius.circular(10),
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(() => AdminTaskDetailsTabsScreen(validationId: validationId));
+                  },
                 ),
               ),
             ],

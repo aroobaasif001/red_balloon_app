@@ -3,8 +3,18 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import '../../../../../../../../custom_widgets/custom_button.dart';
 import '../../../../../../../../custom_widgets/custom_container.dart';
+
 class AdminAfterTab extends StatelessWidget {
-  const AdminAfterTab({super.key});
+  final String? imageUrl;
+  final int supportRequesterVotes;
+  final int supportHelperVotes;
+  
+  const AdminAfterTab({
+    super.key,
+    this.imageUrl,
+    this.supportRequesterVotes = 0,
+    this.supportHelperVotes = 0,
+  });
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -19,7 +29,15 @@ class AdminAfterTab extends StatelessWidget {
               width: double.infinity,
               borderRadius: BorderRadius.circular(20),
               conColor: whiteColor,
-              image: DecorationImage(image: AssetImage('assets/images/Rectangle 34625290.png'),scale: 4),
+              image: imageUrl != null && imageUrl!.isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(imageUrl!),
+                      fit: BoxFit.cover,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/Rectangle 34625290.png'),
+                      scale: 4,
+                    ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.20),
@@ -89,8 +107,8 @@ class AdminAfterTab extends StatelessWidget {
                                 color: timeColor,
                               ),
                               const SizedBox(height: 2),
-                              const CustomText(
-                                "Total Votes: 06",
+                              CustomText(
+                                "Total Votes: ${supportRequesterVotes.toString().padLeft(2, '0')}",
                                 fontSize: 14,
                                 color: timeColor,
                               ),
@@ -127,8 +145,8 @@ class AdminAfterTab extends StatelessWidget {
                                 color: timeColor,
                               ),
                               const SizedBox(height: 2),
-                              const CustomText(
-                                "Total Votes: 05",
+                              CustomText(
+                                "Total Votes: ${supportHelperVotes.toString().padLeft(2, '0')}",
                                 fontSize: 14,
                                 color: timeColor,
                               ),

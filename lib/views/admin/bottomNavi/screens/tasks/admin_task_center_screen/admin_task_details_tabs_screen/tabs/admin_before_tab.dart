@@ -3,8 +3,11 @@ import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+
 class AdminBeforeTab extends StatelessWidget {
-  const AdminBeforeTab({super.key});
+  final String? imageUrl;
+  const AdminBeforeTab({super.key, this.imageUrl});
+  
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -19,7 +22,15 @@ class AdminBeforeTab extends StatelessWidget {
               width: double.infinity,
               borderRadius: BorderRadius.circular(20),
               conColor: whiteColor,
-              image: DecorationImage(image: AssetImage('assets/images/Rectangle 34625290 (1).png'),scale: 4),
+              image: imageUrl != null && imageUrl!.isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(imageUrl!),
+                      fit: BoxFit.cover,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/Rectangle 34625290 (1).png'),
+                      scale: 4,
+                    ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.20),

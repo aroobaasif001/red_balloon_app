@@ -1,25 +1,56 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import '../controller/admin_validation_tasks_controller.dart';
 import '../../widget/validation_task_item_card.dart';
+
 class ValidationTasksTab extends StatelessWidget {
   const ValidationTasksTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+    print('📱 ValidationTasksTab build() called');
+    final controller = Get.put(AdminValidationTasksController());
+    print('📊 Controller state - isLoading: ${controller.isLoading.value}, validations count: ${controller.validationTasks.length}');
 
-      child: Column(
-        children: [
+    return Obx(() {
+      print('🔄 Obx rebuilding - isLoading: ${controller.isLoading.value}, validations: ${controller.validationTasks.length}');
 
-          ValidationTaskItemCard(
-            title: "Deliver a car to my home",
-            price: "SAR 450.00",
-            startedAgo: "Started 15 mins ago",
-            image: "assets/images/Rectangle 34625307.png",
+      if (controller.isLoading.value) {
+        print('⏳ Showing loading indicator');
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+
+      if (controller.validationTasks.isEmpty) {
+        print('📭 Showing empty state');
+        return const Center(
+          child: Text('No validation tasks available'),
+        );
+      }
+
+      print('✅ Showing ${controller.validationTasks.length} validation tasks');
+
+      return RefreshIndicator(
+        onRefresh: () => controller.fetchValidationTasks(),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            children: controller.validationTasks.map((validation) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: ValidationTaskItemCard(
+                  title: validation['title'] ?? 'No Title',
+                  price: "SAR ${(validation['budget'] ?? 0).toStringAsFixed(2)}",
+                  startedAgo: controller.getTimeAgo(validation['rejectedAt']),
+                  image: "assets/images/Rectangle 34625307.png",
+                  validationId: validation['validationId'], // 🔥 Pass validationId
+                ),
+              );
+            }).toList(),
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 }

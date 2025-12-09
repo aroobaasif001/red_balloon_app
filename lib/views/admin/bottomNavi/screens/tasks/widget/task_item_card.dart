@@ -149,7 +149,6 @@ class TaskItemCard extends StatelessWidget {
                   fontSize: 15,
                   borderRadius: BorderRadius.circular(10),
                   onPressed: () {
-                    Get.to(()=>AdminTaskDetailsTabsScreen());
                   },
                 ),
               ),
