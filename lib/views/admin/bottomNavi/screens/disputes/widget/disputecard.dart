@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/disputes/disputes/tabs/dispute_details_screen.dart';
 
 import '../../../../../../custom_widgets/custom_button.dart';
@@ -8,10 +9,25 @@ import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../utils/colors.dart';
 
 class DisputeCard extends StatelessWidget {
-  const DisputeCard({super.key});
+  final TaskModel task;
+  final String timeAgo;
+  
+  const DisputeCard({
+    super.key,
+    required this.task,
+    required this.timeAgo,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Determine dispute reason based on who requested help
+    String disputeReason = "Dispute in progress";
+    if (task.requesterHelpRequested == true && task.requesterHelpReason != null) {
+      disputeReason = task.requesterHelpReason!;
+    } else if (task.helperHelpRequested == true && task.helperHelpReason != null) {
+      disputeReason = task.helperHelpReason!;
+    }
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: CustomContainer(
@@ -22,7 +38,8 @@ class DisputeCard extends StatelessWidget {
           bottom: BorderSide(color: bordercol, width: 1),
           right: BorderSide(color: bordercol, width: 1),
           left: BorderSide(color: bordercol, width: 1),
-        ),         boxShadow: [
+        ),
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
             blurRadius: 1,
@@ -39,16 +56,20 @@ class DisputeCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(
-                    "Wash and Clean my Car",
+                    task.title,
                     fontSize: 15,
                     fontWeight: FontVariant.bold,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
 
                   CustomText(
-                    "Requester claims incomplete work",
+                    disputeReason,
                     fontSize: 13,
                     color: walletTextGreyColor,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
 
                   const SizedBox(height: 10),
@@ -83,22 +104,29 @@ class DisputeCard extends StatelessWidget {
 
                       const SizedBox(width: 1),
 
-                      /// Distance tag
-                      CustomContainer(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                      /// Distance tag (if location available)
+                      if (task.location != null && task.location!.isNotEmpty)
+                        CustomContainer(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          conColor: disBgColor,
+                          borderRadius: BorderRadius.circular(20),
+                          child: Row(
+                            children: [
+                              Icon(Icons.location_on, size: 14, color: redColor),
+                              const SizedBox(width: 4),
+                              CustomText(
+                                task.location!.length > 15 
+                                    ? "${task.location!.substring(0, 15)}..." 
+                                    : task.location!,
+                                fontSize: 12,
+                                color: redColor,
+                              ),
+                            ],
+                          ),
                         ),
-                        conColor: disBgColor,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Row(
-                          children: [
-                            Icon(Icons.location_on, size: 14, color: redColor),
-                            const SizedBox(width: 4),
-                            CustomText("3.2 km", fontSize: 12, color: redColor),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
 
@@ -129,7 +157,7 @@ class DisputeCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         CustomText(
-                          "15 mins ago",
+                          timeAgo,
                           fontSize: 12,
                           color: timeColor,
                         ),
@@ -140,7 +168,7 @@ class DisputeCard extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   CustomText(
-                    "SAR 500",
+                    "SAR ${task.budget}",
                     fontSize: 18,
                     fontWeight: FontVariant.bold,
                     color: redColor,
@@ -157,12 +185,27 @@ class DisputeCard extends StatelessWidget {
                 /// Image
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    "assets/images/Rectangle 34625307.png",
-                    height: 110,
-                    width: 110,
-                    fit: BoxFit.cover,
-                  ),
+                  child: task.imageUrl != null && task.imageUrl!.isNotEmpty
+                      ? Image.network(
+                          task.imageUrl!,
+                          height: 110,
+                          width: 110,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              "assets/images/Rectangle 34625307.png",
+                              height: 110,
+                              width: 110,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          "assets/images/Rectangle 34625307.png",
+                          height: 110,
+                          width: 110,
+                          fit: BoxFit.cover,
+                        ),
                 ),
 
                 const SizedBox(height: 10),
@@ -174,19 +217,14 @@ class DisputeCard extends StatelessWidget {
                   fontSize: 14,
                   label: 'View Details',
                   onPressed: () {
-                    Get.to(() => DisputeDetailsScreen());
+                    Get.to(() => DisputeDetailsScreen(task: task));
                   },
                 ),
               ],
             ),
-
           ],
-
         ),
-
       ),
-
     );
-
   }
 }
