@@ -61,4 +61,45 @@ class TaskModel {
       acceptedOfferUid: json['acceptedOfferUid'], // 🔥 Parse from JSON
     );
   }
+
+  factory TaskModel.fromFirestore(dynamic doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    
+    // Handle createdAt - can be either String or Timestamp
+    DateTime createdAtValue = DateTime.now();
+    if (data['createdAt'] != null) {
+      if (data['createdAt'] is String) {
+        // Parse ISO 8601 string
+        try {
+          createdAtValue = DateTime.parse(data['createdAt']);
+        } catch (e) {
+          print('Error parsing createdAt string: $e');
+          createdAtValue = DateTime.now();
+        }
+      } else {
+        // Firestore Timestamp
+        try {
+          createdAtValue = (data['createdAt'] as dynamic).toDate();
+        } catch (e) {
+          print('Error converting createdAt timestamp: $e');
+          createdAtValue = DateTime.now();
+        }
+      }
+    }
+    
+    return TaskModel(
+      id: doc.id,
+      uid: data['uid'] ?? '',
+      userId: data['userId'],
+      taskType: data['taskType'] ?? '',
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      budget: (data['budget'] ?? 0).toDouble(),
+      location: data['location'],
+      imageUrl: data['imageUrl'],
+      createdAt: createdAtValue,
+      status: data['status'] ?? 'active',
+      acceptedOfferUid: data['acceptedOfferUid'],
+    );
+  }
 }

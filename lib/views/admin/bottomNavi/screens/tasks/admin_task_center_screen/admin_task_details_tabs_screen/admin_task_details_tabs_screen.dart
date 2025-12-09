@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/admin_task_details_tabs_screen/tabs/admin_after_tab.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/admin_task_details_tabs_screen/tabs/admin_before_tab.dart';
+import 'controller/admin_task_details_controller.dart';
+
 class AdminTaskDetailsTabsScreen extends StatefulWidget {
-  const AdminTaskDetailsTabsScreen({super.key});
+  final String? validationId;
+  const AdminTaskDetailsTabsScreen({super.key, this.validationId});
   @override
   State<AdminTaskDetailsTabsScreen> createState() => _AdminTaskDetailsTabsScreenState();
 }
 class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen> {
   int selectedTab = 0; // 0 = BEFORE, 1 = AFTER
+  late final AdminTaskDetailsController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(AdminTaskDetailsController());
+    if (widget.validationId != null) {
+      controller.fetchTaskDetails(widget.validationId!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,30 +96,30 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
                               const SizedBox(height: 10),
 
                               /// TITLE
-                              CustomText(
-                                "Help Move Furniture",
+                              Obx(() => CustomText(
+                                controller.taskTitle.value.isEmpty ? "Loading..." : controller.taskTitle.value,
                                 fontSize: 15,
                                 fontWeight: FontVariant.semiBold,
-                              ),
+                              )),
                               const SizedBox(height: 6),
-                              CustomText(
-                                "Helper moved the furniture in the wrong place",
+                              Obx(() => CustomText(
+                                controller.rejectionReason.value.isEmpty ? "Loading..." : controller.rejectionReason.value,
                                 fontSize: 14,
                                 color: timeColor,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                              ),
+                              )),
                               const SizedBox(height: 10),
-                              CustomText(
-                                "Completed 10 minutes ago",
+                              Obx(() => CustomText(
+                                controller.completedTime.value.isEmpty ? "Loading..." : controller.completedTime.value,
                                 fontSize: 12,
                                 color: walletGrey600Color,
-                              ),
-                              CustomText(
-                                "Task ID: RBT-204",
+                              )),
+                              Obx(() => CustomText(
+                                controller.taskCreatorUserId.value.isEmpty ? "Task ID: Loading..." : "Task ID: ${controller.taskCreatorUserId.value}",
                                 fontSize: 12,
                                 color: timeColor,
-                              ),
+                              )),
                             ],
                           ),
                         ),
@@ -141,11 +156,12 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
+                        Obx(() => CircleAvatar(
                           radius: 26,
-                          backgroundImage:
-                          AssetImage("assets/images/prof.png"),
-                        ),
+                          backgroundImage: controller.helperImage.value.isNotEmpty
+                              ? NetworkImage(controller.helperImage.value)
+                              : AssetImage("assets/images/prof.png") as ImageProvider,
+                        )),
                         const SizedBox(width: 14),
                         Expanded(
                           child: Column(
@@ -153,21 +169,21 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
                             children: [
                               Row(
                                 children: [
-                                  CustomText(
-                                    "Ahmad Hassan",
+                                  Obx(() => CustomText(
+                                    controller.helperName.value.isEmpty ? "Loading..." : controller.helperName.value,
                                     fontSize: 16,
                                     fontWeight: FontVariant.semiBold,
-                                  ),
+                                  )),
                                   const SizedBox(width: 6),
                                   const Icon(Icons.check_circle,
                                       color: historyGreenColor, size: 18),
                                 ],
                               ),
-                              CustomText(
-                                "Helper ID: RB-452",
+                              Obx(() => CustomText(
+                                controller.helperUserId.value.isEmpty ? "Helper ID: Loading..." : "Helper ID: ${controller.helperUserId.value}",
                                 fontSize: 12,
                                 color: timeColor,
-                              ),
+                              )),
                             ],
                           ),
                         ),
@@ -193,25 +209,25 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: const [
+                      children: [
                         Column(
                           children: [
-                            CustomText("124",
-                                fontSize: 16, fontWeight: FontVariant.semiBold),
+                            Obx(() => CustomText("${controller.helperTasksCount.value}",
+                                fontSize: 16, fontWeight: FontVariant.semiBold)),
                             CustomText("Tasks", fontSize: 12,color: timeColor,),
                           ],
                         ),
                         Column(
                           children: [
-                            CustomText("4.8",
-                                fontSize: 16, fontWeight: FontVariant.semiBold),
+                            Obx(() => CustomText(controller.helperRating.value.toStringAsFixed(1),
+                                fontSize: 16, fontWeight: FontVariant.semiBold)),
                             CustomText("Rating", fontSize: 12,color: timeColor,),
                           ],
                         ),
                         Column(
                           children: [
-                            CustomText("5 min",
-                                fontSize: 16, fontWeight: FontVariant.semiBold),
+                            Obx(() => CustomText(controller.helperResponseTime.value.isEmpty ? "5 min" : controller.helperResponseTime.value,
+                                fontSize: 16, fontWeight: FontVariant.semiBold)),
                             CustomText("Response", fontSize: 12,color: timeColor,),
                           ],
                         ),
@@ -239,26 +255,27 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
+                        Obx(() => CircleAvatar(
                           radius: 26,
-                          backgroundImage:
-                          AssetImage("assets/images/Rectangle 34625307.png"),
-                        ),
+                          backgroundImage: controller.taskCreatorImage.value.isNotEmpty
+                              ? NetworkImage(controller.taskCreatorImage.value)
+                              : AssetImage("assets/images/Rectangle 34625307.png") as ImageProvider,
+                        )),
                         const SizedBox(width: 14),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CustomText(
-                                "Sarah Al-Rashid",
+                              Obx(() => CustomText(
+                                controller.taskCreatorName.value.isEmpty ? "Loading..." : controller.taskCreatorName.value,
                                 fontSize: 16,
                                 fontWeight: FontVariant.semiBold,
-                              ),
-                              CustomText(
-                                "Requester ID: RB-891",
+                              )),
+                              Obx(() => CustomText(
+                                controller.taskCreatorUserId.value.isEmpty ? "Requester ID: Loading..." : "Requester ID: ${controller.taskCreatorUserId.value}",
                                 fontSize: 12,
                                 color: timeColor,
-                              ),
+                              )),
                             ],
                           ),
                         ),
@@ -379,7 +396,13 @@ class _AdminTaskDetailsTabsScreenState extends State<AdminTaskDetailsTabsScreen>
               ),
             ),
             const SizedBox(height: 20),
-            selectedTab == 0 ? const AdminBeforeTab() : const AdminAfterTab(),
+            Obx(() => selectedTab == 0 
+                ? AdminBeforeTab(imageUrl: controller.beforePhotoUrl.value) 
+                : AdminAfterTab(
+                    imageUrl: controller.afterPhotoUrl.value,
+                    supportRequesterVotes: controller.supportRequesterVotes.value,
+                    supportHelperVotes: controller.supportHelperVotes.value,
+                  )),
             const SizedBox(height: 40),
           ],
         ),
