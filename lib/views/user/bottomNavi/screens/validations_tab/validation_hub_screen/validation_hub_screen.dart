@@ -25,9 +25,11 @@ class ValidationHubScreen extends StatelessWidget {
         backgroundColor: whiteColor,
         color: redColor,
         onRefresh: () async {
-          await controller.fetchValidations();
+          // Stream updates automatically
+          await Future.delayed(const Duration(seconds: 1));
         },
         child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
               CustomAppBar1(

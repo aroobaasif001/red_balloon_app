@@ -577,11 +577,16 @@ class TaskInProgressScreen extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 /// ------------------ REVIEW PROOF BUTTON ------------------
+                /// ------------------ REVIEW PROOF BUTTON ------------------
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomButton(
-                    label: "Review Proof",
-                    onPressed: controller.hasProof.value
+                    label: (controller.requesterHelpRequested.value || controller.helperHelpRequested.value) 
+                        ? "Dispute in Progress" 
+                        : "Review Proof",
+                    onPressed: (controller.hasProof.value && 
+                                !controller.requesterHelpRequested.value && 
+                                !controller.helperHelpRequested.value)
                         ? () {
                             Get.to(
                               () => TaskReviewScreen(
@@ -590,10 +595,12 @@ class TaskInProgressScreen extends StatelessWidget {
                               ),
                             );
                           }
-                        : null, // 🔥 Disabled when no proof
-                    bgColor: controller.hasProof.value
+                        : null,
+                    bgColor: (controller.hasProof.value && 
+                              !controller.requesterHelpRequested.value && 
+                              !controller.helperHelpRequested.value)
                         ? redColor
-                        : Colors.grey, // 🔥 Grey when disabled
+                        : Colors.grey,
                     textColor: whiteColor,
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -605,11 +612,20 @@ class TaskInProgressScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomButton(
-                    label: "Request Help",
-                    onPressed: () {
-                      DialogHelpers().showSupportHelpSheet(context);
-                    },
-                    bgColor: redColor,
+                    label: controller.requesterHelpRequested.value 
+                        ? "Help Requested" 
+                        : "Request Help",
+                    onPressed: controller.requesterHelpRequested.value 
+                        ? null 
+                        : () {
+                            DialogHelpers().showSupportHelpSheet(
+                              context,
+                              onSubmit: (reason, details) {
+                                controller.submitHelpRequest(reason, details);
+                              },
+                            );
+                          },
+                    bgColor: controller.requesterHelpRequested.value ? Colors.grey : redColor,
                     textColor: whiteColor,
                     borderRadius: BorderRadius.circular(30),
                   ),

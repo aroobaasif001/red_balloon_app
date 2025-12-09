@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/services/task_service.dart';
 
@@ -12,8 +12,9 @@ class TasksController extends GetxController {
   // Observable lists
   final RxList<TaskModel> myTasks = <TaskModel>[].obs;
   final RxList<TaskModel> tasksNearMe = <TaskModel>[].obs;
-  final RxList<TaskModel> historyTasks = <TaskModel>[].obs; // 🔥 NEW: For completed/cancelled tasks
-  
+  final RxList<TaskModel> historyTasks =
+      <TaskModel>[].obs; // 🔥 NEW: For completed/cancelled tasks
+
   // Loading states
   final RxBool isLoadingMyTasks = false.obs;
   final RxBool isLoadingTasksNearMe = false.obs;
@@ -87,44 +88,52 @@ class TasksController extends GetxController {
       _taskService.streamAllTasks().listen(
         (allTasks) {
           // Filter my tasks (created by current user, not completed/cancelled)
-          myTasks.value = allTasks
-              .where((task) {
-                final isMyTask = task.uid == currentUserId;
-                final status = task.status.toLowerCase();
-                final isActive = status != 'completed' && status != 'cancelled';
-                return isMyTask && isActive;
-              })
-              .toList();
+          myTasks.value = allTasks.where((task) {
+            final isMyTask = task.uid == currentUserId;
+            final status = task.status.toLowerCase();
+            final isActive =
+                status != 'completed' &&
+                status != 'cancelled' &&
+                status != 'disputed' &&
+                status != 'rejected';
+            return isMyTask && isActive;
+          }).toList();
 
           // Filter tasks near me (created by other users, not completed/cancelled)
-          tasksNearMe.value = allTasks
-              .where((task) {
-                final isOtherUser = task.uid != currentUserId;
-                final status = task.status.toLowerCase();
-                final isActive = status != 'completed' && status != 'cancelled';
-                return isOtherUser && isActive;
-              })
-              .toList();
+          tasksNearMe.value = allTasks.where((task) {
+            final isOtherUser = task.uid != currentUserId;
+            final status = task.status.toLowerCase();
+            final isActive =
+                status != 'completed' &&
+                status != 'cancelled' &&
+                status != 'disputed' &&
+                status != 'rejected';
+            return isOtherUser && isActive;
+          }).toList();
 
           // Filter history tasks (completed, cancelled, or rejected)
           // Include tasks where:
           // 1. User is the task owner (requester)
           // 2. User is the helper (acceptedOfferUid matches)
-          historyTasks.value = allTasks
-              .where((task) {
-                final isMyTask = task.uid == currentUserId;
-                final isHelper = task.acceptedOfferUid == currentUserId;
-                final status = task.status.toLowerCase();
-                final isHistory = status == 'completed' || status == 'cancelled' || status == 'rejected';
-                return (isMyTask || isHelper) && isHistory;
-              })
-              .toList();
+          historyTasks.value = allTasks.where((task) {
+            final isMyTask = task.uid == currentUserId;
+            final isHelper = task.acceptedOfferUid == currentUserId;
+            final status = task.status.toLowerCase();
+            final isHistory =
+                status == 'completed' ||
+                status == 'cancelled' ||
+                status == 'rejected' ||
+                status == 'disputed';
+            return (isMyTask || isHelper) && isHistory;
+          }).toList();
 
           isLoadingMyTasks.value = false;
           isLoadingTasksNearMe.value = false;
           isLoadingHistoryTasks.value = false;
 
-          print('✅ Real-time update: My Tasks: ${myTasks.length}, Tasks Near Me: ${tasksNearMe.length}, History: ${historyTasks.length}');
+          print(
+            '✅ Real-time update: My Tasks: ${myTasks.length}, Tasks Near Me: ${tasksNearMe.length}, History: ${historyTasks.length}',
+          );
         },
         onError: (error) {
           print('❌ Error in real-time updates: $error');
@@ -143,17 +152,14 @@ class TasksController extends GetxController {
 
   /// Fetch all tasks (both my tasks and tasks near me)
   Future<void> fetchAllTasks() async {
-    await Future.wait([
-      fetchMyTasks(),
-      fetchTasksNearMe(),
-    ]);
+    await Future.wait([fetchMyTasks(), fetchTasksNearMe()]);
   }
 
   /// Fetch tasks created by current user
   Future<void> fetchMyTasks() async {
     try {
       isLoadingMyTasks.value = true;
-      
+
       final currentUserId = _auth.currentUser?.uid;
       if (currentUserId == null) {
         print('❌ User not authenticated');
@@ -165,19 +171,24 @@ class TasksController extends GetxController {
 
       // Fetch tasks where uid matches current user
       final tasks = await _taskService.getUserTasks(currentUserId);
-      
+
       // Debug: Print each task's UID
       print('📋 Total tasks fetched from getUserTasks: ${tasks.length}');
       for (var task in tasks) {
-        print('  Task: "${task.title}" | UID: ${task.uid} | Status: ${task.status} | Match: ${task.uid == currentUserId}');
+        print(
+          '  Task: "${task.title}" | UID: ${task.uid} | Status: ${task.status} | Match: ${task.uid == currentUserId}',
+        );
       }
-      
+
       // Filter to show only active tasks (not completed, cancelled, or rejected)
       myTasks.value = tasks.where((task) {
         final status = task.status.toLowerCase();
-        return status != 'completed' && status != 'cancelled' && status != 'rejected';
+        return status != 'completed' &&
+            status != 'cancelled' &&
+            status != 'rejected' &&
+            status != 'disputed';
       }).toList();
-      
+
       print('✅ My Tasks Count (Active only): ${myTasks.length}');
     } catch (e) {
       print('❌ Error fetching my tasks: $e');
@@ -195,7 +206,7 @@ class TasksController extends GetxController {
   Future<void> fetchTasksNearMe() async {
     try {
       isLoadingTasksNearMe.value = true;
-      
+
       final currentUserId = _auth.currentUser?.uid;
       if (currentUserId == null) {
         print('❌ User not authenticated for Tasks Near Me');
@@ -207,18 +218,18 @@ class TasksController extends GetxController {
 
       // Fetch all tasks
       final allTasks = await _taskService.getAllTasks();
-      
+
       print('📋 Total tasks in database: ${allTasks.length}');
-      
+
       // Filter out current user's tasks to show only other users' tasks
-      tasksNearMe.value = allTasks
-          .where((task) {
-            final isOtherUser = task.uid != currentUserId;
-            print('  Task: "${task.title}" | UID: ${task.uid} | Is Other User: $isOtherUser');
-            return isOtherUser;
-          })
-          .toList();
-      
+      tasksNearMe.value = allTasks.where((task) {
+        final isOtherUser = task.uid != currentUserId;
+        print(
+          '  Task: "${task.title}" | UID: ${task.uid} | Is Other User: $isOtherUser',
+        );
+        return isOtherUser;
+      }).toList();
+
       print('✅ Tasks Near Me Count: ${tasksNearMe.length}');
     } catch (e) {
       print('❌ Error fetching tasks near me: $e');
@@ -236,7 +247,7 @@ class TasksController extends GetxController {
   Future<void> fetchHistoryTasks() async {
     try {
       isLoadingHistoryTasks.value = true;
-      
+
       final currentUserId = _auth.currentUser?.uid;
       if (currentUserId == null) {
         print('❌ User not authenticated for History Tasks');
@@ -248,9 +259,9 @@ class TasksController extends GetxController {
 
       // Fetch ALL tasks (not just user's tasks)
       final allTasks = await _taskService.getAllTasks();
-      
+
       print('📋 Total tasks in database: ${allTasks.length}');
-      
+
       // Filter to show completed/cancelled/rejected tasks where user is either:
       // 1. Task owner (requester)
       // 2. Helper (acceptedOfferUid matches)
@@ -258,16 +269,22 @@ class TasksController extends GetxController {
         final isMyTask = task.uid == currentUserId;
         final isHelper = task.acceptedOfferUid == currentUserId;
         final status = task.status.toLowerCase();
-        final isHistory = status == 'completed' || status == 'cancelled' || status == 'rejected';
+        final isHistory =
+            status == 'completed' ||
+            status == 'cancelled' ||
+            status == 'rejected' ||
+            status == 'disputed';
         final shouldInclude = (isMyTask || isHelper) && isHistory;
-        
+
         if (shouldInclude) {
-          print('  ✅ Task: "${task.title}" | Status: ${task.status} | Role: ${isMyTask ? "Requester" : "Helper"}');
+          print(
+            '  ✅ Task: "${task.title}" | Status: ${task.status} | Role: ${isMyTask ? "Requester" : "Helper"}',
+          );
         }
-        
+
         return shouldInclude;
       }).toList();
-      
+
       print('✅ History Tasks Count: ${historyTasks.length}');
     } catch (e) {
       print('❌ Error fetching history tasks: $e');

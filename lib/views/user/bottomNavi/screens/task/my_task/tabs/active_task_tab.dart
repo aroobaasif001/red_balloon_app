@@ -60,7 +60,8 @@ class ActiveTab extends StatelessWidget {
                 // Remove completed tasks
                 if (status == 'completed' ||
                     status == 'rejected' ||
-                    status == 'cancelled')
+                    status == 'cancelled' ||
+                    status == 'disputed')
                   return false;
 
                 // Remove "in progress" tasks that don't belong to current user

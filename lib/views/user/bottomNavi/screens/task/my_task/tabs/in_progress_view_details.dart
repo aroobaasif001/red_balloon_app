@@ -40,9 +40,10 @@ class InProgressViewDetails extends StatelessWidget {
       InProgressTaskController(),
     );
     
-    // Check if proof exists for this task
+    // Check if proof exists and start listening for task updates
     if (taskId != null && taskId!.isNotEmpty) {
       controller.checkProofExists(taskId!);
+      controller.startTaskListener(taskId!);
     }
     
     return SafeArea(

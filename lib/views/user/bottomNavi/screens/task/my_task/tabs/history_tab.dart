@@ -6,6 +6,7 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_disputed_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/widgets/history_task_card.dart';
 
 import '../../../validations_tab/validation_screen/validation_screen.dart';
@@ -78,12 +79,24 @@ class HistoryTab extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final task = controller.historyTasks[index];
                   String statusText;
+                  Color statusTextColor;
+                  Color statusBgColor;
                   if (task.status.toLowerCase() == 'rejected') {
                     statusText = 'Validation';
+                    statusTextColor = redColor;
+                    statusBgColor = redColor.withOpacity(0.25);
                   } else if (task.status.toLowerCase() == 'completed') {
                     statusText = 'Completed';
-                  } else {
+                    statusTextColor = greenColor;
+                    statusBgColor = greenColor.withOpacity(0.25);
+                  } else if (task.status.toLowerCase() == 'disputed') {
                     statusText = 'Disputed';
+                    statusTextColor = redColor;
+                    statusBgColor = redColor.withOpacity(0.25);
+                  } else {
+                    statusText = 'Cancelled';
+                    statusTextColor = redColor;
+                    statusBgColor = redColor.withOpacity(0.25);
                   }
                   // if (task.status)
                   print(task.createdAt.toString());
@@ -98,14 +111,8 @@ class HistoryTab extends StatelessWidget {
                       title: task.title,
                       amount: controller.formatBudget(task.budget),
                       statusText: statusText,
-                      statusTextColor: task.status.toLowerCase() == 'completed'
-                          ? greenColor // 🔥 Red for rejected tasks
-                          : redColor,
-                      statusBgColor: task.status.toLowerCase() == 'completed'
-                          ? greenColor.withOpacity(
-                              0.25,
-                            ) // 🔥 Red for rejected tasks
-                          : redColor.withOpacity(0.25),
+                      statusTextColor: statusTextColor,
+                      statusBgColor: statusBgColor,
 
                       onViewDetails: () async {
                         // 🔥 For rejected tasks, fetch validation data and navigate
@@ -161,6 +168,83 @@ class HistoryTab extends StatelessWidget {
                             Get.snackbar(
                               'Error',
                               'Failed to load validation details',
+                            );
+                          }
+                        } else if (task.status.toLowerCase() == 'disputed') {
+                          try {
+                            // 1. Fetch Requester Details (using task user uid)
+                            Map<String, dynamic> requesterInfo = {};
+                            if (task.uid != null) {
+                              final reqDoc = await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .where('uid', isEqualTo: task.uid)
+                                  .limit(1)
+                                  .get();
+                              
+                              if (reqDoc.docs.isNotEmpty) {
+                                final data = reqDoc.docs.first.data();
+                                requesterInfo = {
+                                  'id': reqDoc.docs.first.id,
+                                  'name': data['displayName'] ?? data['name'],
+                                  'photoUrl': data['photoURL'] ?? data['photoUrl'],
+                                  'userId': data['userId'],
+                                };
+                              }
+                            }
+
+                            // 2. Fetch Helper Details (using acceptedOfferUid)
+                            Map<String, dynamic> helperInfo = {};
+                            if (task.acceptedOfferUid != null) {
+                              final helperDoc = await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .where('uid', isEqualTo: task.acceptedOfferUid)
+                                  .limit(1)
+                                  .get();
+                              
+                              if (helperDoc.docs.isNotEmpty) {
+                                final data = helperDoc.docs.first.data();
+                                helperInfo = {
+                                  'id': helperDoc.docs.first.id,
+                                  'name': data['displayName'] ?? data['name'],
+                                  'photoUrl': data['photoURL'] ?? data['photoUrl'],
+                                  'userId': data['userId'],
+                                };
+                              }
+                            }
+
+                            // 3. Prepare Dispute Data
+                            final disputeInfo = {
+                              'requesterReason': task.requesterHelpReason,
+                              'requesterDetails': task.requesterHelpDetails,
+                              'helperReason': task.helperHelpReason,
+                              'helperDetails': task.helperHelpDetails,
+                              'requesterHelpRequested': task.requesterHelpRequested,
+                              'helperHelpRequested': task.helperHelpRequested,
+                              'disputedStartTime': task.disputedStartTime,
+                            };
+
+                            // 4. Prepare Task Data
+                            final taskInfo = {
+                              'id': task.id,
+                              'title': task.title,
+                              'type': task.taskType,
+                              'price': task.budget.toString(),
+                              'createdAt': task.createdAt.toString(),
+                            };
+
+                            // Navigate
+                            Get.to(() => TaskDisputedScreen(
+                              requesterData: requesterInfo,
+                              helperData: helperInfo,
+                              disputeData: disputeInfo,
+                              taskData: taskInfo,
+                            ));
+
+                          } catch (e) {
+                            print('❌ Error fetching disputed details: $e');
+                            Get.snackbar(
+                              'Error', 
+                              'Failed to load dispute details'
                             );
                           }
                         } else {
