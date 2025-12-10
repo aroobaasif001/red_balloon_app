@@ -33,15 +33,22 @@ class CustomWalletCard extends StatelessWidget {
                   fontWeight: FontVariant.bold,
                   color: blackColor,
                 ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
                 CustomText(
                   availableAmount,
                   fontSize: 15,
                   fontWeight: FontVariant.medium,
                   color: blackColor,
                 ),
+                SizedBox(width: 5),
+                Image.asset('assets/icons/wallet_4.png', height: 34, width: 34),
               ],
             ),
-            Image.asset('assets/icons/wallet_4.png', height: 34, width: 34),
           ],
         ),
       ),

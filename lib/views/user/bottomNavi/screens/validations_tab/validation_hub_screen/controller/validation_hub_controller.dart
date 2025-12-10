@@ -12,71 +12,70 @@ class ValidationHubController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _streamValidations();
+    fetchValidations();
   }
 
-  // Stream validations from Firestore
-  void _streamValidations() {
-    isLoading.value = true;
+  // Fetch validations from Firestore
+  Future<void> fetchValidations() async {
+    try {
+      isLoading.value = true;
 
-    // 🔥 Stream changes where isVotingCompleted is false
-    _firestore
-        .collection('validations')
-        .where('isVotingCompleted', isEqualTo: false)
-        .snapshots()
-        .listen((snapshot) async {
-          
+      // 🔥 Only fetch validations where isVotingCompleted is false
+      final snapshot = await _firestore
+          .collection('validations')
+          .where('isVotingCompleted', isEqualTo: false)
+          .get();
+
       final List<Map<String, dynamic>> fetchedValidations = [];
 
       for (var doc in snapshot.docs) {
         final validationData = doc.data();
         final taskId = validationData['taskId'];
-        final rejectedBy = validationData['rejectedBy']; // UID
+        final rejectedBy =
+            validationData['rejectedBy']; // UID of user who rejected
 
-        // Fetch user data
-        String userId = 'RB-00000';
+        // Fetch userId from users collection using rejectedBy UID
+        String userId = 'RB-00000'; // Default
         if (rejectedBy != null && rejectedBy.isNotEmpty) {
           try {
-             // Optimize: You might consider caching user data if fetching repeatedly
-            final userDoc = await _firestore.collection('users').doc(rejectedBy).get();
+            final userDoc = await _firestore
+                .collection('users')
+                .doc(rejectedBy)
+                .get();
+
             if (userDoc.exists) {
-              userId = userDoc.data()?['userId'] ?? 'RB-00000';
+              final userData = userDoc.data();
+              userId = userData?['userId'] ?? 'RB-00000';
             }
           } catch (e) {
             print('Error fetching user data: $e');
           }
         }
 
-        // Fetch task details
+        // Fetch task details using taskId
         if (taskId != null) {
-          try {
-            // Similarly, consider caching task details
-            final taskData = await _taskService.getTaskById(taskId);
-            if (taskData != null) {
-              fetchedValidations.add({
-                'validationId': doc.id,
-                'taskId': taskId,
-                'taskTitle': taskData['title'] ?? 'No Title',
-                'userId': userId,
-                'beforePhotoUrl': validationData['beforePhotoUrl'] ?? '',
-                'afterPhotoUrl': validationData['afterPhotoUrl'] ?? '',
-                'proofId': validationData['proofId'] ?? '',
-                'status': validationData['status'] ?? 'pending',
-                'rejectedAt': validationData['rejectedAt'] ?? '',
-              });
-            }
-          } catch(e) {
-             print('Error fetching task details: $e');
+          final taskData = await _taskService.getTaskById(taskId);
+          if (taskData != null) {
+            fetchedValidations.add({
+              'validationId': doc.id,
+              'taskId': taskId,
+              'taskTitle': taskData['title'] ?? 'No Title',
+              'userId': userId, // From users collection
+              'beforePhotoUrl': validationData['beforePhotoUrl'] ?? '',
+              'afterPhotoUrl': validationData['afterPhotoUrl'] ?? '',
+              'proofId': validationData['proofId'] ?? '',
+              'status': validationData['status'] ?? 'pending',
+              'rejectedAt': validationData['rejectedAt'] ?? '',
+            });
           }
         }
       }
 
       validations.value = fetchedValidations;
       isLoading.value = false;
-      
-    }, onError: (error) {
-       print('Error streaming validations: $error');
-       isLoading.value = false;
-    });
+    } catch (e) {
+      print('Error fetching validations: $e');
+      isLoading.value = false;
+    }
   }
 }

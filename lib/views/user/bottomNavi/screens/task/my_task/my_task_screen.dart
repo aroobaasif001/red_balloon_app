@@ -57,7 +57,7 @@ class MyTaskScreen extends StatelessWidget {
                 builder: (ctrl) {
                   return TabBarView(
                     controller: ctrl.tabController,
-                    children: [AllTaskTab(), ActiveTab(), HistoryTab()],
+                    children: [ActiveTab(), AllTaskTab(), HistoryTab()],
                   );
                 },
               ),

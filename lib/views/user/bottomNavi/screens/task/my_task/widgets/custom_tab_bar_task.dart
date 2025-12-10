@@ -31,13 +31,13 @@ class CustomTabBarTask extends StatelessWidget {
           // ),
           // const SizedBox(width: 10),
           _tabItem(
-            label: "My TASKS",
+            label: "TASKS NEAR ME",
             isSelected: selectedIndex == 0,
             onTap: onPostedByMeTap,
           ),
           const SizedBox(width: 10),
           _tabItem(
-            label: "TASKS NEAR ME",
+            label: "MY TASKS",
             isSelected: selectedIndex == 1,
             onTap: onTasksNearMeTap,
           ),
