@@ -72,4 +72,72 @@ class UserService {
       };
     }
   }
+
+  /// Get all users from Firestore
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      print('🔍 UserService: Fetching all users...');
+      
+      final snapshot = await usersCollection.get();
+      
+      print('📊 UserService: Found ${snapshot.docs.length} users');
+      
+      final List<UserModel> users = [];
+      
+      for (var doc in snapshot.docs) {
+        try {
+          final data = doc.data() as Map<String, dynamic>;
+          data['uid'] = doc.id; // Ensure uid is set
+          
+          final user = UserModel.fromJson(data);
+          users.add(user);
+        } catch (e) {
+          print('❌ UserService: Error parsing user ${doc.id}: $e');
+        }
+      }
+      
+      print('✅ UserService: Loaded ${users.length} users');
+      return users;
+    } catch (e) {
+      print('❌ UserService Error getting all users: $e');
+      return [];
+    }
+  }
+
+  /// Get user task statistics (tasks posted, completed, earnings)
+  Future<Map<String, dynamic>> getUserTaskStats(String uid) async {
+    try {
+      // Count tasks posted by user
+      final tasksPosted = await _firestore
+          .collection('tasks')
+          .where('uid', isEqualTo: uid)
+          .get();
+      
+      // Count tasks completed by user (as helper)
+      final tasksCompleted = await _firestore
+          .collection('tasks')
+          .where('acceptedOfferUid', isEqualTo: uid)
+          .where('status', isEqualTo: 'Completed')
+          .get();
+      
+      // Calculate total earnings
+      int totalEarnings = 0;
+      for (var task in tasksCompleted.docs) {
+        totalEarnings += (task.data()['budget'] ?? 0) as int;
+      }
+      
+      return {
+        'tasksPosted': tasksPosted.docs.length,
+        'tasksCompleted': tasksCompleted.docs.length,
+        'totalEarnings': totalEarnings,
+      };
+    } catch (e) {
+      print('❌ UserService Error getting task stats: $e');
+      return {
+        'tasksPosted': 0,
+        'tasksCompleted': 0,
+        'totalEarnings': 0,
+      };
+    }
+  }
 }

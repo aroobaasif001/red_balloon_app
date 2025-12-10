@@ -14,7 +14,7 @@ import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/t
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/strong_box.dart';
 
 class UserProfileDetailsScreen extends StatelessWidget {
-  const UserProfileDetailsScreen({super.key});
+  const UserProfileDetailsScreen({super.key, required String userId});
 
   @override
   Widget build(BuildContext context) {

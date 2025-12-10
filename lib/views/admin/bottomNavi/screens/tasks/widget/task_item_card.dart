@@ -7,12 +7,15 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/admin_task_details_tabs_screen/admin_task_details_tabs_screen.dart';
 
+import '../admin_task_center_screen/admin_all_task_details.dart';
+
 class TaskItemCard extends StatelessWidget {
   final String title;
   final String price;
   final String distance;
   final String timeAgo;
   final String image;
+  final String? taskId;
 
   const TaskItemCard({
     super.key,
@@ -21,6 +24,7 @@ class TaskItemCard extends StatelessWidget {
     required this.distance,
     required this.timeAgo,
     required this.image,
+    this.taskId,
   });
 
   @override
@@ -149,6 +153,9 @@ class TaskItemCard extends StatelessWidget {
                   fontSize: 15,
                   borderRadius: BorderRadius.circular(10),
                   onPressed: () {
+                    if (taskId != null) {
+                      Get.to(() => AdminAllTaskDetails(taskId: taskId));
+                    }
                   },
                 ),
               ),

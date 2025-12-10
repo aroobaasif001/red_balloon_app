@@ -45,7 +45,8 @@ class AllTasksTab extends StatelessWidget {
                   price: "SAR ${task.budget.toStringAsFixed(2)}",
                   distance: task.location ?? "Unknown location",
                   timeAgo: _getTimeAgo(task.createdAt),
-                  image: "assets/images/Rectangle 34625307.png", // TaskItemCard only supports assets
+                  image: "assets/images/Rectangle 34625307.png",
+                  taskId: task.id, // Pass real task ID
                 ),
               );
             }).toList(),
