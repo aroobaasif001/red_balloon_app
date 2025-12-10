@@ -161,19 +161,20 @@ class _ValidationScreenState extends State<ValidationScreen> {
                     const SizedBox(height: 18),
 
                     /// SUBMITTED TIME ROW
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset("assets/icons/timer99.png", height: 18),
-                        const SizedBox(width: 8),
-                        CustomText(
-                          "Submitted 2m ago",
-                          fontSize: 14,
-                          fontWeight: FontVariant.regular,
-                          color: walletGrey600Color,
-                        ),
-                      ],
-                    ),
+                    if (controller.completedAt.value != null)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset("assets/icons/timer99.png", height: 18),
+                          const SizedBox(width: 8),
+                          CustomText(
+                            "Submitted ${controller.getSubmittedTimeAgo()}",
+                            fontSize: 14,
+                            fontWeight: FontVariant.regular,
+                            color: walletGrey600Color,
+                          ),
+                        ],
+                      ),
 
                     const SizedBox(height: 25),
 

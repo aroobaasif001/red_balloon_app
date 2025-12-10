@@ -35,7 +35,7 @@ class OfflineAndOnlineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      width: Get.width * 0.45,
+      width: Get.width,
       conColor: whiteColor,
       borderRadius: BorderRadius.circular(15),
       boxShadow: [
@@ -52,97 +52,77 @@ class OfflineAndOnlineCard extends StatelessWidget {
           SizedBox(height: 7),
           CustomContainer(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
+                  flex: 2,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: CustomText(
-                              title,
-                              fontSize: 13,
-                              fontWeight: FontVariant.bold,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                      CustomText(
+                        title,
+                        fontSize: 15,
+                        fontWeight: FontVariant.bold,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 15.1),
 
+                      const SizedBox(height: 25.1),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           if (distance != null)
-                            Expanded(
-                              child: CustomContainer(
-                                child: Row(
-                                  children: [
-                                    Flexible(
-                                      child: CustomText(
-                                        distance!,
-                                        fontSize: 11,
-                                        fontWeight: FontVariant.regular,
-                                        color: grey5Color,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            CustomText(
+                              distance!,
+                              fontSize: 12,
+                              fontWeight: FontVariant.regular,
+                              color: blackColor,
+                              overflow: TextOverflow.ellipsis,
                             ),
 
-                          if (distance == null) const Spacer(),
-                          CustomContainer(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  child: CustomText(
-                                    distance != null
-                                        ? " • ${timeAgo}"
-                                        : timeAgo,
-                                    fontSize: 11,
-                                    fontWeight: FontVariant.regular,
-                                    color: grey5Color,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          // if (distance == null) const Spacer(),
+                          CustomText(
+                            distance != null ? " • ${timeAgo}" : timeAgo,
+                            fontSize: 12,
+                            fontWeight: FontVariant.regular,
+                            color: blackColor,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10.1),
-
+                    ],
+                  ),
+                ),
+                SizedBox(width: 7),
+                Expanded(
+                  child: Column(
+                    children: [
                       CustomText(
                         price,
                         fontSize: 18,
-                        fontWeight: FontVariant.bold,
+                        fontWeight: FontVariant.semiBold,
                         color: blackColor,
+                      ),
+                      SizedBox(height: 10),
+                      CustomContainer(
+                        width: double.infinity,
+                        margin: EdgeInsets.only(bottom: 15),
+                        // padding: EdgeInsets.symmetric(horizontal: 15),
+                        child: CustomButton(
+                          // width: Get.width * 0.4,
+                          fontSize: 12,
+                          height: 40,
+                          label: btnText, // 🔥 Dynamic button text
+                          onPressed: onViewDetails,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ],
-            ),
-          ),
-          CustomContainer(
-            width: double.infinity,
-            margin: EdgeInsets.only(bottom: 15),
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            child: CustomButton(
-              // width: Get.width * 0.4,
-              fontSize: 12,
-              height: 40,
-              label: btnText, // 🔥 Dynamic button text
-              onPressed: onViewDetails,
             ),
           ),
         ],

@@ -34,11 +34,36 @@ class ValidationScreenController extends GetxController {
   var requesterVotes = 0.obs;
   var validationId = ''.obs;
   var rejectedAt = Rx<DateTime?>(null);
+  var completedAt = Rx<DateTime?>(null); // 🔥 For "Submitted time ago"
 
   @override
   void onClose() {
     _timer?.cancel();
     super.onClose();
+  }
+
+  /// Format time ago for "Submitted ... ago"
+  String getSubmittedTimeAgo() {
+    if (completedAt.value == null) return '';
+    
+    final now = DateTime.now();
+    final difference = now.difference(completedAt.value!);
+
+    if (difference.inDays > 365) {
+      final years = (difference.inDays / 365).floor();
+      return '$years y ago';
+    } else if (difference.inDays > 30) {
+      final months = (difference.inDays / 30).floor();
+      return '$months m ago';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} min ago';
+    } else {
+      return 'Just now';
+    }
   }
 
   /// Fetch task details using taskId from validation
@@ -130,6 +155,12 @@ class ValidationScreenController extends GetxController {
         if (timestamp != null) {
           rejectedAt.value = timestamp.toDate();
           _startTimer(); // 🔥 Start 15-minute countdown
+        }
+
+        // 🔥 Get completedAt timestamp for "Submitted time ago"
+        final Timestamp? completedTimestamp = validationDoc.data()['completedAt'];
+        if (completedTimestamp != null) {
+          completedAt.value = completedTimestamp.toDate();
         }
       }
 

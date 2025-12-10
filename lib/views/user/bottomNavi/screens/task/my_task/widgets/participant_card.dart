@@ -8,6 +8,7 @@ class ParticipantCard extends StatelessWidget {
   final String id;
   final String tasksCompleted;
   final double rating;
+  final String photoUrl;
 
   const ParticipantCard({
     super.key,
@@ -15,6 +16,7 @@ class ParticipantCard extends StatelessWidget {
     required this.id,
     required this.tasksCompleted,
     required this.rating,
+    required this.photoUrl,
   });
 
   @override
@@ -28,12 +30,17 @@ class ParticipantCard extends StatelessWidget {
           CircleAvatar(
             radius: 24,
             backgroundColor: redColor.withOpacity(0.1),
-            child: CustomText(
-              name[0],
-              fontSize: 18,
-              fontWeight: FontVariant.bold,
-              color: redColor,
-            ),
+            child: photoUrl == ''
+                ? CustomText(
+                    name[0],
+                    fontSize: 18,
+                    fontWeight: FontVariant.bold,
+                    color: redColor,
+                  )
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Image.network(photoUrl, fit: BoxFit.cover),
+                  ),
           ),
           const SizedBox(width: 12),
           Expanded(

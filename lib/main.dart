@@ -1,7 +1,6 @@
 // import 'package:device_preview/device_preview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,9 +32,10 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: whiteColor,
 
         textSelectionTheme: TextSelectionThemeData(
-          cursorColor: Colors.red,              // Cursor ka color
-          selectionColor: Colors.grey,      // Select ki hui text ka background
-          selectionHandleColor: Colors.red,       // Handles ka color
+          cursorColor: redColor, // Cursor ka color
+          selectionColor:
+              taskstatus3, //Colors.grey,      // Select ki hui text ka background
+          selectionHandleColor: redColor, // Handles ka color
         ),
       ),
 

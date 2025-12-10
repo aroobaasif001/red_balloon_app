@@ -64,7 +64,7 @@ class DialogHelpers {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CustomText(
-                      "Due to no vote, the task has\nbeen moved to Validation Hub",
+                      "Due to no vote, the task has been moved to Validation Hub",
                       fontSize: 16,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,
@@ -134,7 +134,7 @@ class DialogHelpers {
                     ),
                     const SizedBox(height: 8),
                     CustomText(
-                      "Please tell us why you're rejecting this proof\nThis helps us keep your task accurate",
+                      "Please tell us why you're rejecting this proof. This helps us keep your task accurate",
                       textAlign: TextAlign.center,
                       fontWeight: FontVariant.medium,
                       fontSize: 12,
@@ -389,7 +389,7 @@ class DialogHelpers {
                     ),
                     const SizedBox(height: 6),
                     CustomText(
-                      "Task is marked as completed. Payment\nwill be released within 48 hours",
+                      "Task is marked as completed. Payment will be released within 48 hours",
                       fontSize: 12,
                       textAlign: TextAlign.center,
                       color: blackColor,
@@ -446,7 +446,7 @@ class DialogHelpers {
                   children: [
                     // TEXT
                     CustomText(
-                      "Are You Sure you want\nto Save Profile",
+                      "Are You Sure you want to Save Profile",
                       fontSize: 16,
                       color: blackColor,
                       textAlign: TextAlign.center,
@@ -573,7 +573,7 @@ class DialogHelpers {
                   children: [
                     // TEXT
                     CustomText(
-                      "Are You Sure you want\nto buy this badge",
+                      "Are You Sure you want to buy this badge",
                       fontSize: 16,
                       textAlign: TextAlign.center,
                       fontWeight: FontVariant.semiBold,
@@ -697,7 +697,7 @@ class DialogHelpers {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CustomText(
-                      "Your Feedback was submitted\nsuccessfully!",
+                      "Your Feedback was submitted successfully!",
                       fontSize: 16,
                       textAlign: TextAlign.center,
                       fontWeight: FontVariant.medium,
@@ -767,7 +767,7 @@ class DialogHelpers {
 
                     /// SUBTEXT
                     CustomText(
-                      "By approving this proof, the task will be\nmarked as Completed",
+                      "By approving this proof, the task will be marked as Completed",
                       fontSize: 13,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,
@@ -874,7 +874,7 @@ class DialogHelpers {
                   children: [
                     // TEXT
                     CustomText(
-                      "Are You Sure you want\nto Logout",
+                      "Are You Sure you want to Logout",
                       fontSize: 16,
                       color: blackColor,
                       textAlign: TextAlign.center,
@@ -1013,7 +1013,7 @@ class DialogHelpers {
 
                   /// 🔥 UPDATED SUBTITLE (MATCH SCREENSHOT)
                   CustomText(
-                    "Tell us why you want to\nreport this user",
+                    "Tell us why you want to report this user",
                     fontSize: 16,
                     fontWeight: FontVariant.medium,
                     textAlign: TextAlign.center,
@@ -1169,6 +1169,7 @@ class DialogHelpers {
               "Task details are unclear or incorrect",
               "Safety or comfort concern",
               lastOptionText ?? "Helper unresponsive",
+              "Others", // 🔥 Added "Others" at the end
             ];
 
             return Padding(
@@ -1194,7 +1195,7 @@ class DialogHelpers {
                   const SizedBox(height: 8),
 
                   CustomText(
-                    "Tell us what went wrong, our support\nteam will assist you shortly",
+                    "Tell us what went wrong, our support team will assist you shortly",
                     fontSize: 16,
                     fontWeight: FontVariant.medium,
                     textAlign: TextAlign.center,
@@ -1256,11 +1257,26 @@ class DialogHelpers {
                   CustomButton(
                     label: "Continue",
                     onPressed: () {
-                      DialogHelpers().showDescribeProblemSheet(
-                        context,
-                        selectedReason: reasons[selectedIndex],
-                        onSubmit: onSubmit,
-                      );
+                      final selectedReason = reasons[selectedIndex];
+
+                      if (selectedReason == "Others") {
+                        // 🔥 If "Others", show description sheet
+                        DialogHelpers().showDescribeProblemSheet(
+                          context,
+                          selectedReason: selectedReason,
+                          onSubmit: onSubmit,
+                        );
+                      } else {
+                        // 🔥 If Predefined Option, submit immediately
+                        if (onSubmit != null) {
+                          // Pass selected reason, empty details (as per "eik jae" request)
+                          onSubmit(selectedReason, "");
+                        }
+                        Get.back(); // Close sheet
+                        DialogHelpers.showReportSubmittedDialog(
+                          context: context,
+                        );
+                      }
                     },
                     bgColor: redColor,
                     textColor: whiteColor,
@@ -1327,7 +1343,7 @@ class DialogHelpers {
 
               /// -------- SUBTITLE --------
               CustomText(
-                "Please, Elaborate your problem, or\nwhat went wrong. Thanks!",
+                "Please, Elaborate your problem, or what went wrong. Thanks!",
                 fontSize: 16,
                 fontWeight: FontVariant.medium,
                 textAlign: TextAlign.center,
@@ -1363,9 +1379,10 @@ class DialogHelpers {
                 onPressed: () {
                   // 🔥 Call submit callback if provided
                   if (onSubmit != null) {
-                    onSubmit(selectedReason ?? 'Other', msgController.text);
+                    // 🔥 Pass usage typed text as the REASON, empty details (as per "user ke andr wala reason daal dena")
+                    onSubmit(msgController.text, "");
                   }
-                  
+
                   Get.back(); // Close description sheet
                   Get.back(); // Close reason sheet
                   DialogHelpers.showReportSubmittedDialog(context: context);
@@ -1440,7 +1457,7 @@ class DialogHelpers {
 
                   /// -------- SUBTITLE --------
                   CustomText(
-                    "Please, Elaborate your problem, or\nwhat went wrong. Thanks!",
+                    "Please, Elaborate your problem, or what went wrong. Thanks!",
                     fontSize: 16,
                     fontWeight: FontVariant.medium,
                     textAlign: TextAlign.center,
@@ -1688,7 +1705,7 @@ class DialogHelpers {
 
                     /// SUBTEXT
                     CustomText(
-                      "Our Support Team will look into it,\nYou will be notified shortly!",
+                      "Our Support Team will look into it, You will be notified shortly!",
                       fontSize: 13,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,
@@ -1757,7 +1774,7 @@ class DialogHelpers {
                   children: [
                     // CONFIRMATION TEXT
                     const CustomText(
-                      "Are you sure you want to\naccept this offer",
+                      "Are you sure you want to accept this offer",
                       fontSize: 16,
                       fontWeight: FontVariant.medium,
                       textAlign: TextAlign.center,

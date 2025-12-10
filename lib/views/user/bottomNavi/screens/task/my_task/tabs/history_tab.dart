@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -105,154 +106,167 @@ class HistoryTab extends StatelessWidget {
                     'en_US',
                   ).format(task.createdAt);
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    child: HistoryTaskCard(
-                      title: task.title,
-                      amount: controller.formatBudget(task.budget),
-                      statusText: statusText,
-                      statusTextColor: statusTextColor,
-                      statusBgColor: statusBgColor,
+                  return FadeInUp(
+                    duration: const Duration(milliseconds: 700),
+                    delay: Duration(milliseconds: index * 700),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: HistoryTaskCard(
+                        title: task.title,
+                        amount: controller.formatBudget(task.budget),
+                        statusText: statusText,
+                        statusTextColor: statusTextColor,
+                        statusBgColor: statusBgColor,
 
-                      onViewDetails: () async {
-                        // 🔥 For rejected tasks, fetch validation data and navigate
-                        if (task.status.toLowerCase() == 'rejected') {
-                          try {
-                            // Fetch validation data from validations collection
-                            final validationSnapshot = await FirebaseFirestore
-                                .instance
-                                .collection('validations')
-                                .where('taskId', isEqualTo: task.id)
-                                .limit(1)
-                                .get();
+                        onViewDetails: () async {
+                          // 🔥 For rejected tasks, fetch validation data and navigate
+                          if (task.status.toLowerCase() == 'rejected') {
+                            try {
+                              // Fetch validation data from validations collection
+                              final validationSnapshot = await FirebaseFirestore
+                                  .instance
+                                  .collection('validations')
+                                  .where('taskId', isEqualTo: task.id)
+                                  .limit(1)
+                                  .get();
 
-                            if (validationSnapshot.docs.isNotEmpty) {
-                              final validationData = validationSnapshot
-                                  .docs
-                                  .first
-                                  .data();
+                              if (validationSnapshot.docs.isNotEmpty) {
+                                final validationData = validationSnapshot
+                                    .docs
+                                    .first
+                                    .data();
 
-                              // Fetch userId from users collection using rejectedBy
-                              String userId = 'RB-00000';
-                              final rejectedBy = validationData['rejectedBy'];
-                              if (rejectedBy != null && rejectedBy.isNotEmpty) {
-                                final userDoc = await FirebaseFirestore.instance
+                                // Fetch userId from users collection using rejectedBy
+                                String userId = 'RB-00000';
+                                final rejectedBy = validationData['rejectedBy'];
+                                if (rejectedBy != null && rejectedBy.isNotEmpty) {
+                                  final userDoc = await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(rejectedBy)
+                                      .get();
+                                  if (userDoc.exists) {
+                                    userId =
+                                        userDoc.data()?['userId'] ?? 'RB-00000';
+                                  }
+                                }
+
+                                // Navigate with validation data
+                                Get.to(
+                                  () => ValidationScreen(
+                                    taskId: task.id,
+                                    userId: userId,
+                                    beforePhotoUrl:
+                                        validationData['beforePhotoUrl'] ?? '',
+                                    afterPhotoUrl:
+                                        validationData['afterPhotoUrl'] ?? '',
+                                  ),
+                                );
+                              } else {
+                                Get.snackbar(
+                                  'Error',
+                                  'Validation data not found',
+                                );
+                              }
+                            } catch (e) {
+                              print('❌ Error fetching validation data: $e');
+                              Get.snackbar(
+                                'Error',
+                                'Failed to load validation details',
+                              );
+                            }
+                          } else if (task.status.toLowerCase() == 'disputed') {
+                            try {
+                              // 1. Fetch Requester Details (using task user uid)
+                              Map<String, dynamic> requesterInfo = {};
+                              if (task.uid != null) {
+                                final reqDoc = await FirebaseFirestore.instance
                                     .collection('users')
-                                    .doc(rejectedBy)
+                                    .where('uid', isEqualTo: task.uid)
+                                    .limit(1)
                                     .get();
-                                if (userDoc.exists) {
-                                  userId =
-                                      userDoc.data()?['userId'] ?? 'RB-00000';
+
+                                if (reqDoc.docs.isNotEmpty) {
+                                  final data = reqDoc.docs.first.data();
+                                  requesterInfo = {
+                                    'id': reqDoc.docs.first.id,
+                                    'name': data['displayName'] ?? data['name'],
+                                    'photoUrl':
+                                        data['photoURL'] ?? data['photoUrl'],
+                                    'userId': data['userId'],
+                                  };
                                 }
                               }
 
-                              // Navigate with validation data
+                              // 2. Fetch Helper Details (using acceptedOfferUid)
+                              Map<String, dynamic> helperInfo = {};
+                              if (task.acceptedOfferUid != null) {
+                                final helperDoc = await FirebaseFirestore.instance
+                                    .collection('users')
+                                    .where(
+                                      'uid',
+                                      isEqualTo: task.acceptedOfferUid,
+                                    )
+                                    .limit(1)
+                                    .get();
+
+                                if (helperDoc.docs.isNotEmpty) {
+                                  final data = helperDoc.docs.first.data();
+                                  helperInfo = {
+                                    'id': helperDoc.docs.first.id,
+                                    'name': data['displayName'] ?? data['name'],
+                                    'photoUrl':
+                                        data['photoURL'] ?? data['photoUrl'],
+                                    'userId': data['userId'],
+                                  };
+                                }
+                              }
+
+                              // 3. Prepare Dispute Data
+                              final disputeInfo = {
+                                'requesterReason': task.requesterHelpReason,
+                                'requesterDetails': task.requesterHelpDetails,
+                                'helperReason': task.helperHelpReason,
+                                'helperDetails': task.helperHelpDetails,
+                                'requesterHelpRequested':
+                                    task.requesterHelpRequested,
+                                'helperHelpRequested': task.helperHelpRequested,
+                                'disputedStartTime': task.disputedStartTime,
+                              };
+
+                              // 4. Prepare Task Data
+                              final taskInfo = {
+                                'id': task.id,
+                                'title': task.title,
+                                'type': task.taskType,
+                                'price': task.budget.toString(),
+                                'createdAt': task.createdAt.toString(),
+                              };
+
+                              print(disputeInfo['disputedStartTime']);
+
+                              // Navigate
                               Get.to(
-                                () => ValidationScreen(
-                                  taskId: task.id,
-                                  userId: userId,
-                                  beforePhotoUrl:
-                                      validationData['beforePhotoUrl'] ?? '',
-                                  afterPhotoUrl:
-                                      validationData['afterPhotoUrl'] ?? '',
+                                () => TaskDisputedScreen(
+                                  requesterData: requesterInfo,
+                                  helperData: helperInfo,
+                                  disputeData: disputeInfo,
+                                  taskData: taskInfo,
                                 ),
                               );
-                            } else {
+                            } catch (e) {
+                              print('❌ Error fetching disputed details: $e');
                               Get.snackbar(
                                 'Error',
-                                'Validation data not found',
+                                'Failed to load dispute details',
                               );
                             }
-                          } catch (e) {
-                            print('❌ Error fetching validation data: $e');
-                            Get.snackbar(
-                              'Error',
-                              'Failed to load validation details',
-                            );
+                          } else {
+                            Get.to(() => TaskDetailsScreen(task: task));
                           }
-                        } else if (task.status.toLowerCase() == 'disputed') {
-                          try {
-                            // 1. Fetch Requester Details (using task user uid)
-                            Map<String, dynamic> requesterInfo = {};
-                            if (task.uid != null) {
-                              final reqDoc = await FirebaseFirestore.instance
-                                  .collection('users')
-                                  .where('uid', isEqualTo: task.uid)
-                                  .limit(1)
-                                  .get();
-                              
-                              if (reqDoc.docs.isNotEmpty) {
-                                final data = reqDoc.docs.first.data();
-                                requesterInfo = {
-                                  'id': reqDoc.docs.first.id,
-                                  'name': data['displayName'] ?? data['name'],
-                                  'photoUrl': data['photoURL'] ?? data['photoUrl'],
-                                  'userId': data['userId'],
-                                };
-                              }
-                            }
-
-                            // 2. Fetch Helper Details (using acceptedOfferUid)
-                            Map<String, dynamic> helperInfo = {};
-                            if (task.acceptedOfferUid != null) {
-                              final helperDoc = await FirebaseFirestore.instance
-                                  .collection('users')
-                                  .where('uid', isEqualTo: task.acceptedOfferUid)
-                                  .limit(1)
-                                  .get();
-                              
-                              if (helperDoc.docs.isNotEmpty) {
-                                final data = helperDoc.docs.first.data();
-                                helperInfo = {
-                                  'id': helperDoc.docs.first.id,
-                                  'name': data['displayName'] ?? data['name'],
-                                  'photoUrl': data['photoURL'] ?? data['photoUrl'],
-                                  'userId': data['userId'],
-                                };
-                              }
-                            }
-
-                            // 3. Prepare Dispute Data
-                            final disputeInfo = {
-                              'requesterReason': task.requesterHelpReason,
-                              'requesterDetails': task.requesterHelpDetails,
-                              'helperReason': task.helperHelpReason,
-                              'helperDetails': task.helperHelpDetails,
-                              'requesterHelpRequested': task.requesterHelpRequested,
-                              'helperHelpRequested': task.helperHelpRequested,
-                              'disputedStartTime': task.disputedStartTime,
-                            };
-
-                            // 4. Prepare Task Data
-                            final taskInfo = {
-                              'id': task.id,
-                              'title': task.title,
-                              'type': task.taskType,
-                              'price': task.budget.toString(),
-                              'createdAt': task.createdAt.toString(),
-                            };
-
-                            // Navigate
-                            Get.to(() => TaskDisputedScreen(
-                              requesterData: requesterInfo,
-                              helperData: helperInfo,
-                              disputeData: disputeInfo,
-                              taskData: taskInfo,
-                            ));
-
-                          } catch (e) {
-                            print('❌ Error fetching disputed details: $e');
-                            Get.snackbar(
-                              'Error', 
-                              'Failed to load dispute details'
-                            );
-                          }
-                        } else {
-                          Get.to(() => TaskDetailsScreen(task: task));
-                        }
-                      },
-                      location: '2.5 km away',
-                      dateTime: time,
+                        },
+                        location: '2.5 km away',
+                        dateTime: time,
+                      ),
                     ),
                   );
                 },

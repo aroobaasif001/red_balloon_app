@@ -40,6 +40,7 @@ class CompletedParticipantsSection extends StatelessWidget {
             CustomText("Helper", fontSize: 12, color: grey2Color),
             const SizedBox(height: 8),
             ParticipantCard(
+              photoUrl: '',
               name: controller.helperName.value,
               id: "Helper ID: #H-9876",
               tasksCompleted:

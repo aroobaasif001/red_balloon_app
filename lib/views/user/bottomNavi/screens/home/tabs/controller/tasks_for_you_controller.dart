@@ -151,16 +151,20 @@ class TasksForYouController extends GetxController {
     final now = DateTime.now();
     final difference = now.difference(createdAt);
 
-    if (difference.inMinutes < 1) {
-      return 'just now';
-    } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} mins ago';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
+    if (difference.inDays > 365) {
+      final years = (difference.inDays / 365).floor();
+      return '$years y ago';
+    } else if (difference.inDays > 30) {
+      final months = (difference.inDays / 30).floor();
+      return '$months m ago';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} min ago';
     } else {
-      return '${(difference.inDays / 7).floor()}w ago';
+      return 'Just now';
     }
   }
 

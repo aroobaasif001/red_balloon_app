@@ -73,6 +73,9 @@ class TasksController extends GetxController {
     });
   }
 
+  // Flag for initial load delay
+  bool _isFirstLoad = true;
+
   /// Start real-time stream of tasks
   void startRealTimeUpdates() {
     try {
@@ -84,9 +87,20 @@ class TasksController extends GetxController {
         return;
       }
 
+      // Allow UI to show loader initially
+      isLoadingMyTasks.value = true;
+      isLoadingTasksNearMe.value = true;
+      isLoadingHistoryTasks.value = true;
+
       // Listen to all tasks stream for real-time updates
       _taskService.streamAllTasks().listen(
-        (allTasks) {
+        (allTasks) async {
+          // 🔥 Enforce minimum 1 second delay on first load
+          if (_isFirstLoad) {
+            await Future.delayed(const Duration(seconds: 1));
+            _isFirstLoad = false;
+          }
+
           // Filter my tasks (created by current user, not completed/cancelled)
           myTasks.value = allTasks.where((task) {
             final isMyTask = task.uid == currentUserId;
@@ -151,14 +165,19 @@ class TasksController extends GetxController {
   }
 
   /// Fetch all tasks (both my tasks and tasks near me)
-  Future<void> fetchAllTasks() async {
-    await Future.wait([fetchMyTasks(), fetchTasksNearMe()]);
+  Future<void> fetchAllTasks({Duration minDelay = Duration.zero}) async {
+    await Future.wait([
+      fetchMyTasks(minDelay: minDelay), 
+      fetchTasksNearMe(minDelay: minDelay)
+    ]);
   }
 
   /// Fetch tasks created by current user
-  Future<void> fetchMyTasks() async {
+  Future<void> fetchMyTasks({Duration minDelay = Duration.zero}) async {
     try {
       isLoadingMyTasks.value = true;
+      
+      final delayFuture = Future.delayed(minDelay);
 
       final currentUserId = _auth.currentUser?.uid;
       if (currentUserId == null) {
@@ -170,7 +189,10 @@ class TasksController extends GetxController {
       print('🔍 Current User UID: $currentUserId');
 
       // Fetch tasks where uid matches current user
-      final tasks = await _taskService.getUserTasks(currentUserId);
+      final tasksFuture = _taskService.getUserTasks(currentUserId);
+      
+      await Future.wait([delayFuture, tasksFuture]);
+      final tasks = await tasksFuture;
 
       // Debug: Print each task's UID
       print('📋 Total tasks fetched from getUserTasks: ${tasks.length}');
@@ -203,9 +225,11 @@ class TasksController extends GetxController {
   }
 
   /// Fetch tasks created by other users (tasks near me)
-  Future<void> fetchTasksNearMe() async {
+  Future<void> fetchTasksNearMe({Duration minDelay = Duration.zero}) async {
     try {
       isLoadingTasksNearMe.value = true;
+      
+      final delayFuture = Future.delayed(minDelay);
 
       final currentUserId = _auth.currentUser?.uid;
       if (currentUserId == null) {
@@ -217,7 +241,10 @@ class TasksController extends GetxController {
       print('🔍 Fetching Tasks Near Me for User: $currentUserId');
 
       // Fetch all tasks
-      final allTasks = await _taskService.getAllTasks();
+      final allTasksFuture = _taskService.getAllTasks();
+      
+      await Future.wait([delayFuture, allTasksFuture]);
+      final allTasks = await allTasksFuture;
 
       print('📋 Total tasks in database: ${allTasks.length}');
 
@@ -244,9 +271,11 @@ class TasksController extends GetxController {
   }
 
   /// Fetch history tasks (completed and cancelled) for current user
-  Future<void> fetchHistoryTasks() async {
+  Future<void> fetchHistoryTasks({Duration minDelay = Duration.zero}) async {
     try {
       isLoadingHistoryTasks.value = true;
+      
+      final delayFuture = Future.delayed(minDelay);
 
       final currentUserId = _auth.currentUser?.uid;
       if (currentUserId == null) {
@@ -258,7 +287,10 @@ class TasksController extends GetxController {
       print('🔍 Fetching History Tasks for User: $currentUserId');
 
       // Fetch ALL tasks (not just user's tasks)
-      final allTasks = await _taskService.getAllTasks();
+      final allTasksFuture = _taskService.getAllTasks();
+      
+      await Future.wait([delayFuture, allTasksFuture]);
+      final allTasks = await allTasksFuture;
 
       print('📋 Total tasks in database: ${allTasks.length}');
 
@@ -299,9 +331,9 @@ class TasksController extends GetxController {
   }
 
   /// Refresh all tasks
-  Future<void> refreshTasks() async {
-    await fetchAllTasks();
-    await fetchHistoryTasks(); // 🔥 Also refresh history
+  Future<void> refreshTasks({Duration minDelay = Duration.zero}) async {
+    await fetchAllTasks(minDelay: minDelay);
+    await fetchHistoryTasks(minDelay: minDelay);
   }
 
   /// Get time ago string from DateTime
@@ -311,16 +343,16 @@ class TasksController extends GetxController {
 
     if (difference.inDays > 365) {
       final years = (difference.inDays / 365).floor();
-      return '$years ${years == 1 ? 'year' : 'years'} ago';
+      return '$years y ago';
     } else if (difference.inDays > 30) {
       final months = (difference.inDays / 30).floor();
-      return '$months ${months == 1 ? 'month' : 'months'} ago';
+      return '$months m ago';
     } else if (difference.inDays > 0) {
-      return '${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'} ago';
+      return '${difference.inDays} d ago';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
+      return '${difference.inHours} h ago';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'} ago';
+      return '${difference.inMinutes} min ago';
     } else {
       return 'Just now';
     }

@@ -7,8 +7,15 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/widge
 
 class ParticipantsSection extends StatelessWidget {
   final TaskDisputedController controller;
+  final dynamic requester;
+  final dynamic helper;
 
-  const ParticipantsSection({super.key, required this.controller});
+  const ParticipantsSection({
+    super.key,
+    required this.controller,
+    this.helper,
+    this.requester,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +47,9 @@ class ParticipantsSection extends StatelessWidget {
             CustomText("Helper", fontSize: 12, color: grey2Color),
             const SizedBox(height: 8),
             ParticipantCard(
-              name: controller.helperName.value,
-              id: "ID: #H-9876",
+              photoUrl: helper['photoUrl'],
+              name: helper['name'],
+              id: "ID: ${helper['userId']}",
               tasksCompleted:
                   "${controller.helperTasksCompleted.value} tasks completed",
               rating: controller.helperRating.value,
@@ -50,8 +58,9 @@ class ParticipantsSection extends StatelessWidget {
             CustomText("Requester", fontSize: 12, color: grey2Color),
             const SizedBox(height: 8),
             ParticipantCard(
-              name: controller.requesterName.value,
-              id: "ID: #R-1234",
+              photoUrl: requester['photoUrl'],
+              name: requester['name'],
+              id: "ID: ${requester['userId']}",
               tasksCompleted:
                   "Member since ${controller.requesterMemberSince.value}",
               rating: controller.requesterRating.value,

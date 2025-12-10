@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,20 +20,6 @@ class TasksForYouTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    // 🔥 Calculate card width for 2 columns with proper spacing
-    final horizontalPadding = 15.0 * 2; // left and right padding
-    final crossAxisSpacing = 12.0;
-    final cardWidth = (screenWidth - horizontalPadding - crossAxisSpacing) / 2;
-
-    // 🔥 Fully dynamic aspect ratio based on screen dimensions
-    // This formula automatically adjusts for ANY device size
-    // Formula: cardWidth / (screenHeight * factor)
-    // Lower factor = taller cards, Higher factor = shorter cards
-    final responsiveAspectRatio = cardWidth / (screenHeight * 0.19);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -181,99 +168,97 @@ class TasksForYouTab extends StatelessWidget {
                 return 0;
               });
 
+              // 🔥 Limit to max 4 tasks
+              final limitedTasks = filteredTasks.take(4).toList();
+
               return RefreshIndicator(
                 backgroundColor: whiteColor,
 
                 onRefresh: controller.refreshTasks,
                 color: redColor,
-                child: GridView.builder(
+                child: ListView.builder(
                   shrinkWrap: true,
-
                   physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio:
-                        responsiveAspectRatio, // 🔥 Dynamic aspect ratio
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12, // 🔥 Added vertical spacing
-                  ),
                   padding: EdgeInsets.symmetric(horizontal: 15),
-                  itemCount:
-                      filteredTasks.length, // 🔥 Use filtered list length
+                  itemCount: limitedTasks.length,
                   itemBuilder: (context, index) {
-                    final task = filteredTasks[index]; // 🔥 Use filtered list
+                    final task = limitedTasks[index]; // 🔥 Use limited list
                     final isOfflineTask = task.taskType == 'Offline Task';
                     // 🔥 Check if task is truly "in progress" for current user
                     final isInProgress =
                         task.status.toLowerCase() == 'in progress' &&
                         task.acceptedOfferUid == currentUserId;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: OfflineAndOnlineCard(
-                        title: task.title,
-                        subtitle: task.description,
-                        distance: isOfflineTask ? task.location : null,
-                        taskType: task.taskType,
-                        timeAgo: controller.getTimeAgo(task.createdAt),
-                        price: controller.formatBudget(task.budget),
-                        image: controller.getImageUrl(task),
-                        type: task.taskType,
-                        btnText: isInProgress
-                            ? 'In Progress'
-                            : 'View Details', // 🔥 Conditional button text
-                        onViewDetails: () async {
-                          print("Task details tapped: ${task.id}");
+                    return FadeInUp(
+                      duration: const Duration(milliseconds: 700),
+                      delay: Duration(milliseconds: index * 700),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: OfflineAndOnlineCard(
+                          title: task.title,
+                          subtitle: task.description,
+                          distance: isOfflineTask ? task.location : null,
+                          taskType: task.taskType,
+                          timeAgo: controller.getTimeAgo(task.createdAt),
+                          price: controller.formatBudget(task.budget),
+                          image: controller.getImageUrl(task),
+                          type: task.taskType,
+                          btnText: isInProgress
+                              ? 'In Progress'
+                              : 'View Details', // 🔥 Conditional button text
+                          onViewDetails: () async {
+                            print("Task details tapped: ${task.id}");
 
-                          // Fetch user profile data
-                          final authService = AuthService();
-                          final userData = await authService.getUserData(
-                            task.uid,
-                          );
+                            // Fetch user profile data
+                            final authService = AuthService();
+                            final userData = await authService.getUserData(
+                              task.uid,
+                            );
 
-                          final userName =
-                              userData?['displayName'] ?? 'Unknown';
-                          final userPhoto = userData?['photoURL'];
-                          final userId = userData?['userId'];
-                          final phone = userData?['phoneNumber'];
+                            final userName =
+                                userData?['displayName'] ?? 'Unknown';
+                            final userPhoto = userData?['photoURL'];
+                            final userId = userData?['userId'];
+                            final phone = userData?['phoneNumber'];
 
-                          isInProgress
-                              ? Get.to(
-                                  () => InProgressViewDetails(
-                                    taskId: task.id,
-                                    photoUrl: userPhoto,
-                                    userName: userName,
-                                    taskTitle: task.title,
-                                    timeAgo: controller.getTimeAgo(
-                                      task.createdAt,
+                            isInProgress
+                                ? Get.to(
+                                    () => InProgressViewDetails(
+                                      taskId: task.id,
+                                      photoUrl: userPhoto,
+                                      userName: userName,
+                                      taskTitle: task.title,
+                                      timeAgo: controller.getTimeAgo(
+                                        task.createdAt,
+                                      ),
+                                      price: task.budget.toString(),
+                                      location: task.location,
+                                      phoneNumber: phone,
                                     ),
-                                    price: task.budget.toString(),
-                                    location: task.location,
-                                    phoneNumber: phone,
-                                  ),
-                                )
-                              : Get.to(
-                                  () => Cleanmysolarpanels(
-                                    taskId: task.id,
-                                    location: isOfflineTask
-                                        ? task.location
-                                        : null,
-                                    taskTitle: task.title,
-                                    taskDescription: task.description,
-                                    taskPrice: controller.formatBudget(
-                                      task.budget,
+                                  )
+                                : Get.to(
+                                    () => Cleanmysolarpanels(
+                                      taskId: task.id,
+                                      location: isOfflineTask
+                                          ? task.location
+                                          : null,
+                                      taskTitle: task.title,
+                                      taskDescription: task.description,
+                                      taskPrice: controller.formatBudget(
+                                        task.budget,
+                                      ),
+                                      taskBudget: task.budget,
+                                      taskTimeAgo: controller.getTimeAgo(
+                                        task.createdAt,
+                                      ),
+                                      taskType: task.taskType,
+                                      taskImage: controller.getImageUrl(task),
+                                      userId: userId,
+                                      userName: userName,
+                                      userPhoto: userPhoto,
                                     ),
-                                    taskBudget: task.budget,
-                                    taskTimeAgo: controller.getTimeAgo(
-                                      task.createdAt,
-                                    ),
-                                    taskType: task.taskType,
-                                    taskImage: controller.getImageUrl(task),
-                                    userId: userId,
-                                    userName: userName,
-                                    userPhoto: userPhoto,
-                                  ),
-                                );
-                        },
+                                  );
+                          },
+                        ),
                       ),
                     );
                   },

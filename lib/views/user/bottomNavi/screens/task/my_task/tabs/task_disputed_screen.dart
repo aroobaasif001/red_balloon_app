@@ -43,17 +43,24 @@ class TaskDisputedScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Red Dispute Banner
-            DisputeBanner(controller: controller),
+            DisputeBanner(
+              controller: controller,
+              startedTime: DateTime.parse(disputeData?['disputedStartTime']),
+            ),
 
             const SizedBox(height: 24),
 
             // Task Summary Section
-            TaskSummaryCard(controller: controller),
+            TaskSummaryCard(
+              controller: controller,
+              task: taskData,
+              dispute: disputeData,
+            ),
 
             const SizedBox(height: 24),
 
             // Dispute Reason Section
-            DisputeReasonCard(controller: controller),
+            DisputeReasonCard(controller: controller, dispute: disputeData),
 
             const SizedBox(height: 24),
 
@@ -63,7 +70,11 @@ class TaskDisputedScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Participants Section
-            ParticipantsSection(controller: controller),
+            ParticipantsSection(
+              controller: controller,
+              requester: requesterData,
+              helper: helperData,
+            ),
 
             const SizedBox(height: 24),
 

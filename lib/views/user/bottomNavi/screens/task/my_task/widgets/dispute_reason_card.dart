@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
@@ -7,8 +6,9 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/contr
 
 class DisputeReasonCard extends StatelessWidget {
   final TaskDisputedController controller;
+  final dynamic dispute;
 
-  const DisputeReasonCard({super.key, required this.controller});
+  const DisputeReasonCard({super.key, required this.controller, this.dispute});
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +43,11 @@ class DisputeReasonCard extends StatelessWidget {
                 color: white2Color,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Obx(
-                () => CustomText(
-                  controller.disputeReason.value,
-                  fontSize: 14,
-                  color: rbtxColor,
-                  fontWeight: FontVariant.regular,
-                ),
+              child: CustomText(
+                "\"${dispute['requesterReason'] == '' ? dispute['requesterDetails'] : dispute['requesterReason']}\"",
+                fontSize: 14,
+                color: rbtxColor,
+                fontWeight: FontVariant.regular,
               ),
             ),
             const SizedBox(height: 8),

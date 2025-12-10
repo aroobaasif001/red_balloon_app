@@ -1,5 +1,7 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
@@ -22,7 +24,8 @@ class ActiveTab extends StatelessWidget {
       backgroundColor: whiteColor,
 
       color: Colors.red,
-      onRefresh: () => controller.refreshTasks(),
+      onRefresh: () =>
+          controller.refreshTasks(minDelay: const Duration(seconds: 1)),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -39,10 +42,14 @@ class ActiveTab extends StatelessWidget {
             Obx(() {
               // Show loading indicator
               if (controller.isLoadingTasksNearMe.value) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: CircularProgressIndicator(color: Colors.red),
+                return Container(
+                  height: 600,
+                  child: Center(
+                    child: Lottie.asset(
+                      'assets/animation/loader.json',
+                      height: double.infinity,
+                      width: double.infinity,
+                    ),
                   ),
                 );
               }
@@ -124,91 +131,98 @@ class ActiveTab extends StatelessWidget {
 
               // Show list of filtered and sorted tasks
               return Column(
-                children: filteredTasks.map((task) {
+                children: filteredTasks.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final task = entry.value;
+
                   // 🔥 Check if task is truly "in progress" for current user
                   // Must have status "in progress" AND acceptedOfferUid matches current user
                   final isAccepted =
                       task.status.toLowerCase() == 'in progress' &&
                       task.acceptedOfferUid == currentUserId;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    child: CustomMyTaskCard(
-                      title: task.title,
-                      amount: controller.formatBudget(task.budget),
-                      status: controller.getStatusText(task.status),
-                      postedTime: controller.getTimeAgo(task.createdAt),
-                      image: task.imageUrl != null && task.imageUrl!.isNotEmpty
-                          ? task.imageUrl!
-                          : "assets/images/sofa.png",
-                      isNetworkImage:
-                          task.imageUrl != null && task.imageUrl!.isNotEmpty,
-                      distance: '2.5 km away',
-                      taskType: task.taskType, // 🔥 Pass taskType
-                      onEdit: () {
-                        Get.to(() => PostNewTaskScreen());
-                      },
-                      showButton: true,
-                      btnText: isAccepted
-                          ? 'In Progress'
-                          : 'View Details', // 🔥 Conditional button text
-                      onViewDetails: () async {
-                        // Fetch user profile data
-                        final authService = AuthService();
-                        final userData = await authService.getUserData(
-                          task.uid,
-                        );
+                  return FadeInUp(
+                    duration: const Duration(milliseconds: 700),
+                    delay: Duration(milliseconds: index * 700),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: CustomMyTaskCard(
+                        title: task.title,
+                        amount: controller.formatBudget(task.budget),
+                        status: controller.getStatusText(task.status),
+                        postedTime: controller.getTimeAgo(task.createdAt),
+                        image: task.imageUrl != null && task.imageUrl!.isNotEmpty
+                            ? task.imageUrl!
+                            : "assets/images/sofa.png",
+                        isNetworkImage:
+                            task.imageUrl != null && task.imageUrl!.isNotEmpty,
+                        distance: '2.5 km away',
+                        taskType: task.taskType, // 🔥 Pass taskType
+                        onEdit: () {
+                          Get.to(() => PostNewTaskScreen());
+                        },
+                        showButton: true,
+                        btnText: isAccepted
+                            ? 'In Progress'
+                            : 'View Details', // 🔥 Conditional button text
+                        onViewDetails: () async {
+                          // Fetch user profile data
+                          final authService = AuthService();
+                          final userData = await authService.getUserData(
+                            task.uid,
+                          );
 
-                        final userName = userData?['displayName'] ?? 'Unknown';
+                          final userName = userData?['displayName'] ?? 'Unknown';
 
-                        final userPhoto = userData?['photoURL'];
-                        final userId = userData?['userId'];
-                        final phone = userData?['phoneNumber'];
+                          final userPhoto = userData?['photoURL'];
+                          final userId = userData?['userId'];
+                          final phone = userData?['phoneNumber'];
 
-                        isAccepted
-                            ? Get.to(
-                                () => InProgressViewDetails(
-                                  userId: userId,
-                                  taskId: task.id,
-                                  timeAgo: controller.getTimeAgo(
-                                    task.createdAt,
+                          isAccepted
+                              ? Get.to(
+                                  () => InProgressViewDetails(
+                                    userId: userId,
+                                    taskId: task.id,
+                                    timeAgo: controller.getTimeAgo(
+                                      task.createdAt,
+                                    ),
+                                    taskTitle: task.title,
+                                    price: task.budget.toString(),
+                                    userName: userName,
+                                    photoUrl: userPhoto,
+                                    location: task.location,
+                                    phoneNumber: phone,
                                   ),
-                                  taskTitle: task.title,
-                                  price: task.budget.toString(),
-                                  userName: userName,
-                                  photoUrl: userPhoto,
-                                  location: task.location,
-                                  phoneNumber: phone,
-                                ),
-                              )
-                            : Get.to(
-                                () => Cleanmysolarpanels(
-                                  taskId: task.id,
+                                )
+                              : Get.to(
+                                  () => Cleanmysolarpanels(
+                                    taskId: task.id,
 
-                                  location: task.taskType == 'Offline Task'
-                                      ? task.location
-                                      : '',
-                                  taskType: task.taskType,
-                                  taskDescription: task.description,
-                                  taskTitle: task.title,
-                                  taskPrice: controller.formatBudget(
-                                    task.budget,
+                                    location: task.taskType == 'Offline Task'
+                                        ? task.location
+                                        : '',
+                                    taskType: task.taskType,
+                                    taskDescription: task.description,
+                                    taskTitle: task.title,
+                                    taskPrice: controller.formatBudget(
+                                      task.budget,
+                                    ),
+                                    taskBudget: task.budget,
+                                    taskTimeAgo: controller.getTimeAgo(
+                                      task.createdAt,
+                                    ),
+                                    taskImage:
+                                        task.imageUrl != null &&
+                                            task.imageUrl!.isNotEmpty
+                                        ? task.imageUrl!
+                                        : "assets/images/sofa.png",
+                                    userId: userId,
+                                    userName: userName,
+                                    userPhoto: userPhoto,
                                   ),
-                                  taskBudget: task.budget,
-                                  taskTimeAgo: controller.getTimeAgo(
-                                    task.createdAt,
-                                  ),
-                                  taskImage:
-                                      task.imageUrl != null &&
-                                          task.imageUrl!.isNotEmpty
-                                      ? task.imageUrl!
-                                      : "assets/images/sofa.png",
-                                  userId: userId,
-                                  userName: userName,
-                                  userPhoto: userPhoto,
-                                ),
-                              );
-                      },
+                                );
+                        },
+                      ),
                     ),
                   );
                 }).toList(),

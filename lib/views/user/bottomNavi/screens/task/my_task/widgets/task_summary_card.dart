@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
@@ -7,8 +8,15 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/contr
 
 class TaskSummaryCard extends StatelessWidget {
   final TaskDisputedController controller;
+  final dynamic task;
+  final dynamic dispute;
 
-  const TaskSummaryCard({super.key, required this.controller});
+  const TaskSummaryCard({
+    super.key,
+    required this.controller,
+    this.task,
+    this.dispute,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +47,31 @@ class TaskSummaryCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _buildDetailRow("Task ID", controller.taskId.value, false),
-            _buildDetailRow("Amount", controller.taskAmount.value, true),
-            _buildDetailRow("Category", controller.taskCategory.value, false),
-            _buildDetailRow("Date Posted", "Jan 15, 2025", false),
-            _buildDetailRow("Date of Issue", "Jan 10, 2025", false),
+            _buildDetailRow(
+              "Task ID",
+              '#TK-${task['id'].toString().substring(0, 4)}',
+              false,
+            ),
+            _buildDetailRow(
+              "Amount",
+              '${double.parse('2222.0').toInt().toString()} SAR',
+              true,
+            ),
+            _buildDetailRow("Category", task['type'], false),
+            _buildDetailRow(
+              "Date Posted",
+              DateFormat(
+                'MMM d, yyyy',
+              ).format(DateTime.parse(task['createdAt'])),
+              false,
+            ),
+            _buildDetailRow(
+              "Date of Issue",
+              DateFormat(
+                'MMM d, yyyy',
+              ).format(DateTime.parse(dispute['disputedStartTime'])),
+              false,
+            ),
           ],
         ),
       ),
@@ -66,8 +94,9 @@ class TaskSummaryCard extends StatelessWidget {
             child: CustomText(
               value,
               fontSize: isBold == false ? 14 : 16,
-              fontWeight:
-                  isBold == false ? FontVariant.medium : FontVariant.bold,
+              fontWeight: isBold == false
+                  ? FontVariant.medium
+                  : FontVariant.bold,
               color: textcolord,
             ),
           ),

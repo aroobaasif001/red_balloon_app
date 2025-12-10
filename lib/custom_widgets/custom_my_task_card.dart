@@ -47,7 +47,7 @@ class CustomMyTaskCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomContainer(
       width: double.maxFinite,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       conColor: whiteColor,
       borderRadius: BorderRadius.circular(15),
       boxShadow: [
@@ -58,150 +58,139 @@ class CustomMyTaskCard extends StatelessWidget {
         ),
       ],
 
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ----------------- AMOUNT + IMAGE -----------------
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(title, fontSize: 15, fontWeight: FontVariant.bold),
+
+                const SizedBox(height: 10),
+                const SizedBox(height: 10),
+                Row(
                   children: [
-                    CustomText(
-                      title,
-                      fontSize: 18,
-                      fontWeight: FontVariant.bold,
-                    ),
-                    const SizedBox(height: 8),
-                    CustomText(
-                      amount,
-                      fontWeight: FontVariant.bold,
-                      fontSize: 18,
-                      color: blackColor,
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        // 🔥 Only show distance if NOT Online Task
-                        if (taskType != 'Online Task') ...[
-                          CustomContainer(
-                            conColor: whiteColor,
-                            borderRadius: BorderRadius.circular(15),
-                            child: CustomText(
-                              distance,
-                              fontSize: 14,
-                              fontWeight: FontVariant.regular,
-                            ),
-                          ),
-                          // Add dot separator only if distance is shown
-                          CustomText(
-                            ' • ',
-                            fontSize: 14,
-                            fontWeight: FontVariant.regular,
-                          ),
-                        ],
-
-                        Expanded(
-                          child: CustomContainer(
-                            // width: Get.width*0.33, // Removed fixed width to avoid overflow
-                            conColor: whiteColor,
-                            borderRadius: BorderRadius.circular(15),
-                            child: CustomText(
-                              postedTime, // Removed ' • ' prefix as it is handled above
-                              fontSize: 14,
-                              fontWeight: FontVariant.regular,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
+                    // 🔥 Only show distance if NOT Online Task
+                    if (taskType != 'Online Task') ...[
+                      CustomContainer(
+                        conColor: whiteColor,
+                        borderRadius: BorderRadius.circular(15),
+                        child: CustomText(
+                          distance,
+                          fontSize: 12,
+                          fontWeight: FontVariant.regular,
                         ),
-                      ],
-                    ),
+                      ),
+                      // Add dot separator only if distance is shown
+                      CustomText(
+                        ' • ',
+                        fontSize: 12,
+                        fontWeight: FontVariant.regular,
+                      ),
+                    ],
 
-                    // if (showType == false) ...[
-                    //   SizedBox(height: 9),
-                    //   CustomContainer(
-                    //     padding: const EdgeInsets.symmetric(
-                    //       horizontal: 14,
-                    //       vertical: 8,
-                    //     ),
-                    //     boxShadow: [
-                    //       BoxShadow(
-                    //         color: blackColor.withOpacity(0.25),
-                    //         offset: const Offset(0, 4),
-                    //         blurRadius: 4,
-                    //       ),
-                    //     ],
-                    //     borderRadius: BorderRadius.circular(12),
-                    //     conColor: white2Color,
-                    //     child: Row(
-                    //       mainAxisSize: MainAxisSize.min,
-                    //       mainAxisAlignment: MainAxisAlignment.center,
-                    //       children: [
-                    //         // CustomText(
-                    //         //   // type,
-                    //         //   fontWeight: FontVariant.regular,
-                    //         //   fontSize: 14,
-                    //         //   color: walletGrey500Color,
-                    //         // ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    //   SizedBox(height: 8),
-                    // ],
+                    Expanded(
+                      child: CustomContainer(
+                        // width: Get.width*0.33, // Removed fixed width to avoid overflow
+                        conColor: whiteColor,
+                        borderRadius: BorderRadius.circular(15),
+                        child: CustomText(
+                          postedTime, // Removed ' • ' prefix as it is handled above
+                          fontSize: 12,
+                          fontWeight: FontVariant.regular,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              ),
 
-              // Expanded(
-              //   child: CustomContainer(
-              //     height: 100,
-              //     borderRadius: BorderRadius.circular(10),
-              //     image: DecorationImage(
-              //       image: isNetworkImage
-              //           ? NetworkImage(image) as ImageProvider
-              //           : AssetImage(image),
-              //       fit: BoxFit.cover,
-              //       onError: isNetworkImage
-              //           ? (exception, stackTrace) {
-              //               // Handle network image error
-              //               print('Error loading network image: $exception');
-              //             }
-              //           : null,
-              //     ),
-              //   ),
-              // ),
-            ],
+                // if (showType == false) ...[
+                //   SizedBox(height: 9),
+                //   CustomContainer(
+                //     padding: const EdgeInsets.symmetric(
+                //       horizontal: 14,
+                //       vertical: 8,
+                //     ),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: blackColor.withOpacity(0.25),
+                //         offset: const Offset(0, 4),
+                //         blurRadius: 4,
+                //       ),
+                //     ],
+                //     borderRadius: BorderRadius.circular(12),
+                //     conColor: white2Color,
+                //     child: Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         // CustomText(
+                //         //   // type,
+                //         //   fontWeight: FontVariant.regular,
+                //         //   fontSize: 14,
+                //         //   color: walletGrey500Color,
+                //         // ),
+                //       ],
+                //     ),
+                //   ),
+                //   SizedBox(height: 8),
+                // ],
+              ],
+            ),
           ),
-          if (showButton) ...[
-            const SizedBox(height: 9),
-            Row(
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // if (showType == true) ...[const SizedBox(width: 70)],
+                CustomText(
+                  amount,
+                  fontWeight: FontVariant.semiBold,
+                  fontSize: 18,
+                  color: blackColor,
+                ),
+                const SizedBox(height: 8),
 
-                /// BUTTON FIX
-                Expanded(
-                  child: CustomButton(
-                    height: 40,
-                    borderRadius: BorderRadius.circular(5),
-                    label: btnText ?? 'View Details',
-                    onPressed: isButtonEnabled
-                        ? onViewDetails
-                        : null, // 🔥 Disable if needed
-                    bgColor:
-                        buttonColor ??
-                        redColor, // 🔥 Use custom color or default red
-                    // width: showType == true ? 140 : Get.width * 0.8523,
-                    fontSize: 16,
-                    fontWeight: FontVariant.semiBold,
-                  ),
+                CustomButton(
+                  height: 40,
+                  // width: 130,
+                  // borderRadius: BorderRadius.circular(5),
+                  label: btnText ?? 'View Details',
+                  onPressed: isButtonEnabled
+                      ? onViewDetails
+                      : null, // 🔥 Disable if needed
+                  bgColor:
+                      buttonColor ??
+                      redColor, // 🔥 Use custom color or default red
+                  // width: showType == true ? 140 : Get.width * 0.8523,
+                  fontSize: 12,
+                  fontWeight: FontVariant.semiBold,
                 ),
               ],
             ),
-          ],
+          ),
+
+          // Expanded(
+          //   child: CustomContainer(
+          //     height: 100,
+          //     borderRadius: BorderRadius.circular(10),
+          //     image: DecorationImage(
+          //       image: isNetworkImage
+          //           ? NetworkImage(image) as ImageProvider
+          //           : AssetImage(image),
+          //       fit: BoxFit.cover,
+          //       onError: isNetworkImage
+          //           ? (exception, stackTrace) {
+          //               // Handle network image error
+          //               print('Error loading network image: $exception');
+          //             }
+          //           : null,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

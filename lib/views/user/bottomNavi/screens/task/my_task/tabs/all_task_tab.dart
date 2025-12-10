@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -111,40 +112,47 @@ class AllTaskTab extends StatelessWidget {
 
               // Show list of tasks
               return Column(
-                children: filteredTasks.map((task) {
+                children: filteredTasks.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final task = entry.value;
+
                   // 🔥 Check if task is in progress
                   final isInProgress =
                       task.status.toLowerCase() == 'in progress';
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    child: CustomMyTaskCard(
-                      title: task.title,
-                      amount: controller.formatBudget(task.budget),
-                      status: controller.getStatusText(task.status),
-                      postedTime: controller.getTimeAgo(task.createdAt),
-                      image: task.imageUrl != null && task.imageUrl!.isNotEmpty
-                          ? task.imageUrl!
-                          : "assets/images/sofa.png",
-                      isNetworkImage:
-                          task.imageUrl != null && task.imageUrl!.isNotEmpty,
-                      distance: '2.5 km away',
-                      taskType: task.taskType, // 🔥 Pass taskType
-                      btnText: isInProgress
-                          ? 'In Progress'
-                          : 'View Details', // 🔥 Dynamic button text
-                      onEdit: () {
-                        Get.to(() => PostNewTaskScreen());
-                      },
-                      onViewDetails: () {
-                        // 🔥 Navigate based on task status
-                        if (isInProgress) {
-                          Get.to(() => TaskInProgressScreen());
-                        } else {
-                          Get.to(() => TaskDetailsScreen(task: task));
-                        }
-                      },
-                      showButton: true,
+                  return FadeInUp(
+                    duration: const Duration(milliseconds: 700),
+                    delay: Duration(milliseconds: index * 700),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: CustomMyTaskCard(
+                        title: task.title,
+                        amount: controller.formatBudget(task.budget),
+                        status: controller.getStatusText(task.status),
+                        postedTime: controller.getTimeAgo(task.createdAt),
+                        image: task.imageUrl != null && task.imageUrl!.isNotEmpty
+                            ? task.imageUrl!
+                            : "assets/images/sofa.png",
+                        isNetworkImage:
+                            task.imageUrl != null && task.imageUrl!.isNotEmpty,
+                        distance: '2.5 km away',
+                        taskType: task.taskType, // 🔥 Pass taskType
+                        btnText: isInProgress
+                            ? 'In Progress'
+                            : 'View Details', // 🔥 Dynamic button text
+                        onEdit: () {
+                          Get.to(() => PostNewTaskScreen());
+                        },
+                        onViewDetails: () {
+                          // 🔥 Navigate based on task status
+                          if (isInProgress) {
+                            Get.to(() => TaskInProgressScreen());
+                          } else {
+                            Get.to(() => TaskDetailsScreen(task: task));
+                          }
+                        },
+                        showButton: true,
+                      ),
                     ),
                   );
                 }).toList(),
