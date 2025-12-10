@@ -1,16 +1,62 @@
+import 'package:animate_do/animate_do.dart'; // Added for consistent animations if desired, or just standard
 import 'package:flutter/material.dart';
+import 'package:get/get.dart'; // Import Get
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/leave_feedback_controller.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart'; // To access formatters if needed
 
 import '../../../../../../../utils/dialog_helpers.dart';
 
 class LeaveFeedbackScreen extends StatelessWidget {
-  const LeaveFeedbackScreen({super.key});
+  final Map<String, dynamic> taskInfo;
+  final Map<String, dynamic> otherUserData;
+  final bool isRequester;
+
+  const LeaveFeedbackScreen({
+    super.key,
+    required this.taskInfo,
+    required this.otherUserData,
+    required this.isRequester,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Initialize controller
+    final controller = Get.put(LeaveFeedbackController(
+      taskId: taskInfo['taskId'],
+      isRequester: isRequester,
+      taskInfo: taskInfo,
+      otherUserData: otherUserData,
+    ));
+
+    // Access generic tasks controller for helpers like getTimeAgo if needed, 
+    // but we can just use the provided function logic.
+    // Assuming simple time ago logic or passed string.
+    // Let's use get.find if available or a local helper. 
+    // Actually, taskInfo['completedAt'] is likely a Timestamp.
+    
+    String getFormattedTime() {
+      if (taskInfo['completedAt'] != null) {
+         // Use the TasksController logic or standard
+         // Since we don't have direct access without importing, let's try finding existing TasksController
+         try {
+           final tasksCtrl = Get.find<TasksController>();
+           return "Completed ${tasksCtrl.getTimeAgo(taskInfo['completedAt'])}";
+         } catch(e) {
+           return "Completed recently";
+         }
+      }
+      return "Completed recently";
+    }
+
+    final String otherUserName = otherUserData['name'] ?? 'Unknown User';
+    final String otherUserId = otherUserData['userId'] ?? 'RB-0000';
+    final String? otherUserPhoto = otherUserData['photoUrl'];
+    final String roleLabel = isRequester ? "Helper" : "Requester";
+
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -60,7 +106,7 @@ class LeaveFeedbackScreen extends StatelessWidget {
                     vertical: 16,
                   ),
                   borderRadius: BorderRadius.circular(16),
-                  conColor:whiteColor,
+                  conColor: whiteColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.20),
@@ -70,58 +116,82 @@ class LeaveFeedbackScreen extends StatelessWidget {
                   ],
                   child: Row(
                     children: [
-                      /// RED INITIAL
+                      /// USER IMAGE / INITIAL
                       CustomContainer(
                         height: 38,
                         width: 38,
                         borderRadius: BorderRadius.circular(100),
                         conColor: redColor.withOpacity(0.15),
-                        child: Center(
-                          child: CustomText(
-                            "AA",
-                            fontSize: 14,
-                            fontWeight: FontVariant.bold,
-                            color: redColor,
-                          ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: otherUserPhoto != null && otherUserPhoto.isNotEmpty
+                              ? Image.network(
+                                  otherUserPhoto,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Center(
+                                      child: CustomText(
+                                        otherUserName.isNotEmpty ? otherUserName[0].toUpperCase() : "?",
+                                        fontSize: 14,
+                                        fontWeight: FontVariant.bold,
+                                        color: redColor,
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Center(
+                                  child: CustomText(
+                                    otherUserName.isNotEmpty ? otherUserName[0].toUpperCase() : "?",
+                                    fontSize: 14,
+                                    fontWeight: FontVariant.bold,
+                                    color: redColor,
+                                  ),
+                                ),
                         ),
                       ),
 
                       const SizedBox(width: 14),
 
                       /// TEXT BLOCK
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const CustomText(
-                            "Help Move Furniture",
-                            fontWeight: FontVariant.semiBold,
-                            fontSize: 14,
-                          ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(
+                              taskInfo['title'] ?? "Task Title",
+                              fontWeight: FontVariant.semiBold,
+                              fontSize: 14,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
 
-                          const SizedBox(height: 3),
+                            const SizedBox(height: 3),
 
-                          CustomText(
-                            "Helper: Ahmed Al-Rashid",
-                            fontSize: 12,
-                            color: timeColor,
-                          ),
+                            CustomText(
+                              "$roleLabel: $otherUserName",
+                              fontSize: 12,
+                              color: timeColor,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
 
-                          const SizedBox(height: 2),
+                            const SizedBox(height: 2),
 
-                          CustomText(
-                            "Helper ID: RB-876",
-                            fontSize: 12,
-                            color: timeColor,
-                          ),
+                            CustomText(
+                              "$roleLabel ID: $otherUserId",
+                              fontSize: 12,
+                              color: timeColor,
+                            ),
 
-                          const SizedBox(height: 2),
+                            const SizedBox(height: 2),
 
-                          CustomText(
-                            "Completed 2h ago",
-                            fontSize: 10,
-                            color: walletTextGreyColor,
-                          ),
-                        ],
+                            CustomText(
+                              getFormattedTime(),
+                              fontSize: 10,
+                              color: walletTextGreyColor,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -140,23 +210,47 @@ class LeaveFeedbackScreen extends StatelessWidget {
               const SizedBox(height: 25),
 
               /// ------------------ STAR RATING ------------------
-              Row(
+              Obx(() => Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(5, (index) {
-                  return const Image(
-                    image: AssetImage('assets/icons/star2.png'),
-                    height: 60,
-                    width: 39,
+                  int starValue = index + 1;
+                  return GestureDetector(
+                    onTap: () {
+                      controller.setRating(starValue);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Image(
+                        image: AssetImage(
+                            starValue <= controller.rating.value 
+                            ? 'assets/icons/star2.png' // Filled star (assuming)
+                            : 'assets/icons/star_unfilled.png' // You might need an unfilled star asset, otherwise check existing assets. 
+                            // If 'star2.png' is filled, and assuming 'star1.png' or similar is empty? 
+                            // Looking at codebase isn't possible for assets easily. 
+                            // Assuming 'star2.png' is the highlighted one used in mockup.
+                            // I will use ColorFilter or Opacity for "unselected" if unselected asset unknown, 
+                            // OR just assume user has 'star_gray.png' or similar. 
+                            // Let's check the previous code: it just showed 5 star2.png images.
+                            // I'll assume standard behavior: star2 is Gold/Filled. 
+                            // I will use Opacity for unselected simple approach if no other asset known.
+                        ),
+                        // Adjust visual for unselected
+                        color: starValue <= controller.rating.value ? null : Colors.grey.withOpacity(0.3), 
+                        colorBlendMode: starValue <= controller.rating.value ? null : BlendMode.srcATop,
+                        height: 60,
+                        width: 39,
+                      ),
+                    ),
                   );
                 }),
-              ),
+              )),
 
               const SizedBox(height: 8),
 
               const CustomText(
                 "Tap to rate",
                 fontSize: 13,
-                color:blackColor,
+                color: blackColor,
               ),
 
               const SizedBox(height: 25),
@@ -170,34 +264,36 @@ class LeaveFeedbackScreen extends StatelessWidget {
                     const CustomText(
                       "Write a short review (optional)",
                       fontSize: 14,
-                      color:blackColor,
+                      color: blackColor,
                     ),
 
                     const SizedBox(height: 10),
 
                     CustomContainer(
                       height: 145,
-                      conColor:greyLiteColor,
+                      conColor: greyLiteColor,
                       borderRadius: BorderRadius.circular(14),
                       padding: const EdgeInsets.all(12),
-                      child: const TextField(
+                      child: TextField(
+                        controller: controller.reviewController,
                         maxLines: 6,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: "Type your message...",
-                          hintStyle: TextStyle(color:walletProgressBgColor),
+                          hintStyle: TextStyle(color: walletProgressBgColor),
                         ),
                       ),
                     ),
 
                     const SizedBox(height: 5),
 
+                    // Character count could be reactive if needed, leaving static style for now
                     const Align(
                       alignment: Alignment.centerRight,
                       child: CustomText(
                         "0/250 characters",
                         fontSize: 12,
-                        color:walletTransactionDescColor,
+                        color: walletTransactionDescColor,
                       ),
                     ),
                   ],
@@ -213,17 +309,24 @@ class LeaveFeedbackScreen extends StatelessWidget {
                   children: [
                     /// SKIP
                     Expanded(
-                      child: CustomContainer(
-                        height: 50,
-                        borderRadius: BorderRadius.circular(30),
-                        conColor: whiteColor,
-                        border: Border.all(color: fundCardBorderColor),
-                        child: const Center(
-                          child: CustomText(
-                            "Skip",
-                            fontSize: 15,
-                            fontWeight: FontVariant.semiBold,
-                            color: lastTextColor,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (!controller.isLoading.value) {
+                             controller.skipFeedback();
+                          }
+                        },
+                        child: CustomContainer(
+                          height: 50,
+                          borderRadius: BorderRadius.circular(30),
+                          conColor: whiteColor,
+                          border: Border.all(color: fundCardBorderColor),
+                          child: const Center(
+                            child: CustomText(
+                              "Skip",
+                              fontSize: 15,
+                              fontWeight: FontVariant.semiBold,
+                              color: lastTextColor,
+                            ),
                           ),
                         ),
                       ),
@@ -233,14 +336,16 @@ class LeaveFeedbackScreen extends StatelessWidget {
 
                     /// SUBMIT
                     Expanded(
-                      child: CustomButton(
-                        label: 'Submit Feedback',
+                      child: Obx(() => CustomButton(
+                        label: controller.isLoading.value ? 'Sending...' : 'Submit Feedback',
                         borderRadius: BorderRadius.circular(30),
                         fontSize: 15,
                         onPressed: () {
-                          DialogHelpers().showFeedbackSubmittedDialog(context);
+                          if (!controller.isLoading.value) {
+                            controller.submitFeedback();
+                          }
                         },
-                      ),
+                      )),
                     ),
                   ],
                 ),

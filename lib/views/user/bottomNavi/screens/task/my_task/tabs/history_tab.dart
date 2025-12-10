@@ -1,12 +1,14 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/leave_feedback_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_completed_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_disputed_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/widgets/history_task_card.dart';
 
@@ -139,8 +141,10 @@ class HistoryTab extends StatelessWidget {
                                 // Fetch userId from users collection using rejectedBy
                                 String userId = 'RB-00000';
                                 final rejectedBy = validationData['rejectedBy'];
-                                if (rejectedBy != null && rejectedBy.isNotEmpty) {
-                                  final userDoc = await FirebaseFirestore.instance
+                                if (rejectedBy != null &&
+                                    rejectedBy.isNotEmpty) {
+                                  final userDoc = await FirebaseFirestore
+                                      .instance
                                       .collection('users')
                                       .doc(rejectedBy)
                                       .get();
@@ -200,7 +204,8 @@ class HistoryTab extends StatelessWidget {
                               // 2. Fetch Helper Details (using acceptedOfferUid)
                               Map<String, dynamic> helperInfo = {};
                               if (task.acceptedOfferUid != null) {
-                                final helperDoc = await FirebaseFirestore.instance
+                                final helperDoc = await FirebaseFirestore
+                                    .instance
                                     .collection('users')
                                     .where(
                                       'uid',
@@ -260,8 +265,137 @@ class HistoryTab extends StatelessWidget {
                                 'Failed to load dispute details',
                               );
                             }
-                          } else {
-                            Get.to(() => TaskDetailsScreen(task: task));
+                          } else if (task.status.toLowerCase() == 'completed') {
+                            final currentUser = FirebaseAuth.instance.currentUser;
+                            if (currentUser == null) return;
+
+                            // Show Loading Feedback immediately
+                            Get.dialog(
+                              const Center(
+                                child: CircularProgressIndicator(color: redColor),
+                              ),
+                              barrierDismissible: false,
+                            );
+
+                            try {
+                              final currentUserId = currentUser.uid;
+
+                              // 1. Start Validation Fetch (Parallel)
+                              // We can start this before fetching task details since we have task.id
+                              final validationFuture = FirebaseFirestore.instance
+                                  .collection('validations')
+                                  .where('taskId', isEqualTo: task.id)
+                                  .where('status', isEqualTo: 'approved')
+                                  .limit(1)
+                                  .get();
+
+                              // 2. Fetch Fresh Task Data
+                              final taskDoc = await FirebaseFirestore.instance
+                                  .collection('tasks')
+                                  .doc(task.id)
+                                  .get();
+
+                              if (!taskDoc.exists) {
+                                Get.back(); // Close loader
+                                return;
+                              }
+                              final taskData = taskDoc.data()!;
+
+                              // 3. Identified User Role
+                              bool isRequester =
+                                  taskData['uid'] == currentUserId;
+                              bool isHelper =
+                                  taskData['acceptedOfferUid'] == currentUserId;
+
+                              // 4. Check for existing feedback
+                              bool hasFeedback = false;
+                              if (isRequester) {
+                                hasFeedback =
+                                    taskData['requesterFeedback'] != null;
+                              } else if (isHelper) {
+                                hasFeedback =
+                                    taskData['helperFeedback'] != null;
+                              }
+
+                              // 5. Fetch Other User Details
+                              // (We need taskDoc first to know who the other user is)
+                              String otherUserId = isRequester
+                                  ? (taskData['acceptedOfferUid'] ?? '')
+                                  : (taskData['uid'] ?? '');
+
+                              Map<String, dynamic> otherUserData = {};
+                              if (otherUserId.isNotEmpty) {
+                                final userQuery = await FirebaseFirestore
+                                    .instance
+                                    .collection('users')
+                                    .where('uid', isEqualTo: otherUserId)
+                                    .limit(1)
+                                    .get();
+
+                                if (userQuery.docs.isNotEmpty) {
+                                  final data = userQuery.docs.first.data();
+                                  otherUserData = {
+                                    'name': data['displayName'] ?? data['name'],
+                                    'photoUrl':
+                                        data['photoURL'] ?? data['photoUrl'],
+                                    'userId': data['userId'],
+                                  };
+                                }
+                              }
+
+                              // 6. Await Validation Data (if not already done)
+                              final validationQuery = await validationFuture;
+                              Map<String, dynamic> validationInfo = {};
+                              if (validationQuery.docs.isNotEmpty) {
+                                final vData = validationQuery.docs.first.data();
+                                validationInfo = {
+                                  'beforePhotoUrl':
+                                      vData['beforePhotoUrl'] ?? '',
+                                  'afterPhotoUrl': vData['afterPhotoUrl'] ?? '',
+                                  'validationId': validationQuery.docs.first.id,
+                                  'approvedAt': vData['approvedAt'],
+                                };
+                              }
+
+                              // 7. Prepare Final Data Maps
+                              final taskInfo = {
+                                'taskId': task.id,
+                                'title': taskData['title'] ?? task.title,
+                                'budget': taskData['budget'] ?? task.budget,
+                                'taskType':
+                                    taskData['taskType'] ?? task.taskType,
+                                'location': taskData['location'] ?? '',
+                                'completedAt': taskData['completedAt'],
+                              };
+
+                              // Close Loading Dialog
+                              Get.back();
+
+                              // 8. Navigate
+                              if (!hasFeedback) {
+                                Get.to(
+                                  () => LeaveFeedbackScreen(
+                                    taskInfo: taskInfo,
+                                    otherUserData: otherUserData,
+                                    isRequester: isRequester,
+                                  ),
+                                );
+                              } else {
+                                Get.to(
+                                  () => TaskCompletedScreen(
+                                    taskId: task.id!,
+                                    taskData: taskData,
+                                    isRequester: isRequester,
+                                    otherUserData: otherUserData,
+                                    validationInfo: validationInfo,
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              if (Get.isDialogOpen ?? false) Get.back();
+                              print('❌ Error in completed task navigation: $e');
+                              Get.snackbar('Error', 'Something went wrong');
+                            }
                           }
                         },
                         location: '2.5 km away',

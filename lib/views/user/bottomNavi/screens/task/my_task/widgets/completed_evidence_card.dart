@@ -97,15 +97,40 @@ class CompletedEvidenceCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                "assets/images/homedetail.png",
-                width: double.infinity,
-                height: 250,
-                fit: BoxFit.cover,
-              ),
-            ),
+            Obx(() {
+               final showBefore = controller.showBefore.value;
+               final url = showBefore ? controller.beforePhotoUrl : controller.afterPhotoUrl;
+               
+               if (url.isNotEmpty) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      url,
+                      width: double.infinity,
+                      height: 250,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          "assets/images/homedetail.png", 
+                          width: double.infinity,
+                          height: 250,
+                          fit: BoxFit.cover,
+                        );
+                      }
+                    ),
+                  );
+               } else {
+                 return ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    "assets/images/homedetail.png",
+                    width: double.infinity,
+                    height: 250,
+                    fit: BoxFit.cover,
+                  ),
+                );
+               }
+            }),
           ],
         ),
       ),
