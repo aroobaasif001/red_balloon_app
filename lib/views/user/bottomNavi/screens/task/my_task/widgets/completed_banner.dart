@@ -34,13 +34,11 @@ class CompletedBanner extends StatelessWidget {
             color: whiteColor,
           ),
           const SizedBox(height: 4),
-          Obx(
-            () => CustomText(
-              "Completed on ${controller.completedDate.value}",
-              fontSize: 14,
-              fontWeight: FontVariant.regular,
-              color: whiteColor,
-            ),
+          CustomText(
+            "Completed on ${controller.formattedCompletedDate}",
+            fontSize: 14,
+            fontWeight: FontVariant.regular,
+            color: whiteColor,
           ),
         ],
       ),

@@ -1,96 +1,129 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class TaskCompletedController extends GetxController {
-  // Observable for Before/After toggle state
-  final RxBool showBefore = true.obs;
+  final Map<String, dynamic> taskData;
+  final String taskId;
+  final bool isRequester;
+  final Map<String, dynamic> otherUserData;
+  final Map<String, dynamic> validationInfo;
 
-  // Task data
-  final RxString taskTitle = ''.obs;
-  final RxString taskAmount = ''.obs;
-  final RxString taskCategory = ''.obs;
-  final RxString completedTime = ''.obs;
-  final RxString taskId = ''.obs;
-  final RxString completedDate = ''.obs;
+  TaskCompletedController({
+    required this.taskData,
+    required this.taskId,
+    required this.isRequester,
+    required this.otherUserData,
+    required this.validationInfo,
+  });
 
-  // Participant data with ratings
-  final RxString helperName = ''.obs;
-  final RxString helperPhoto = ''.obs;
-  final RxDouble helperRating = 0.0.obs;
-  final RxInt helperTasksCompleted = 0.obs;
+  // UI State
+  RxBool showBefore = true.obs;
 
-  final RxString requesterName = ''.obs;
-  final RxString requesterPhoto = ''.obs;
-  final RxDouble requesterRating = 0.0.obs;
-  final RxString requesterMemberSince = ''.obs;
+  // --- Getters for UI ---
 
-  // Payment Summary
-  final RxDouble platformFee = 0.0.obs;
-  final RxDouble escrowFee = 0.0.obs;
-  final RxDouble finalAmountEarned = 0.0.obs;
+  // 1. Task Title
+  String get taskTitle => taskData['title'] ?? 'Task Details';
 
-  // Feedback & Ratings
-  final RxList<Map<String, dynamic>> reviews = <Map<String, dynamic>>[].obs;
+  // 2. Completed Date (e.g., "Dec 4, 2025 at 2:30 PM")
+  String get formattedCompletedDate {
+    final feedbackMap = isRequester ? taskData['requesterFeedback'] : taskData['helperFeedback'];
+    final date = _parseDateTime(feedbackMap?['createdAt']) ?? _parseDateTime(taskData['completedAt']);
 
-  // Evidence images
-  final RxString beforeImageUrl = ''.obs;
-  final RxString afterImageUrl = ''.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    // Initialize with default/sample data
-    _loadCompletedTaskData();
+    if (date == null) return 'N/A';
+    return DateFormat('MMM d, yyyy \'at\' h:mm a').format(date);
   }
 
-  void _loadCompletedTaskData() {
-    // Sample data - in real app, this would come from API/Firebase
-    taskTitle.value = 'Fix kitchen sink sat';
-    taskAmount.value = 'SAR 250';
-    taskCategory.value = 'Offline Task';
-    completedTime.value = '2:30 PM';
-    taskId.value = '#TK-2024-4567';
-    completedDate.value = 'Dec 4, 2025 at 2:30 PM';
+  // 3. Amount (e.g., "SAR 250")
+  double get budgetAmount {
+     return (taskData['budget'] ?? 0).toDouble();
+  }
+  
+  String get formattedAmount {
+    return 'SAR $budgetAmount';
+  }
+  
+  double get platformFee => budgetAmount * 0.075;
+  double get escrowFee => budgetAmount * 0.075;
+  double get finalAmountEarned => budgetAmount - platformFee - escrowFee;
 
-    // Helper data
-    helperName.value = 'Ahmed AL-Rashid';
-    helperRating.value = 4.8;
-    helperTasksCompleted.value = 124;
-
-    // Requester data
-    requesterName.value = 'Sarah Mohammed';
-    requesterRating.value = 4.6;
-    requesterMemberSince.value = 'Jan 2023';
-
-    // Payment calculation
-    platformFee.value = -12.50;
-    escrowFee.value = -2.50;
-    finalAmountEarned.value = 235.00;
-
-    // Sample reviews
-    reviews.value = [
-      {
-        'name': 'Sarah Mohammed',
-        'time': '2 weeks ago',
-        'rating': 5.0,
-        'review':
-            '"Ahmed was punctual, professional, and fixed the sink perfectly. The work area was clean and tidy. Highly recommend!"',
-      }
-    ];
+  // 4. Category (Offline/Online)
+  String get formattedCategory {
+    final type = taskData['taskType']?.toString().toLowerCase();
+    return type == 'online' ? 'Online Task' : 'Offline Task';
   }
 
-  void toggleEvidence() {
-    showBefore.value = !showBefore.value;
+  // 5. Completed Time (e.g., "2:30 PM")
+  String get formattedCompletedTime {
+    final feedbackMap = isRequester ? taskData['requesterFeedback'] : taskData['helperFeedback'];
+    final date = _parseDateTime(feedbackMap?['createdAt']) ?? _parseDateTime(taskData['completedAt']);
+
+    if (date == null) return 'N/A';
+    return DateFormat('h:mm a').format(date);
   }
 
-  double getTotalPlatformFee() {
-    return platformFee.value;
+  // 6. Formatted Task ID (#TK-{Year}-{First4})
+  String get formattedTaskId {
+    final createdAt = _parseDateTime(taskData['createdAt']);
+    String year = '2025'; // Fallback
+    if (createdAt != null) {
+      year = createdAt.year.toString();
+    }
+    String shortId = taskId.length > 4 ? taskId.substring(0, 4) : taskId;
+    return '#TK-$year-$shortId';
   }
 
-  double getTotalEscrowFee() {
-    return escrowFee.value;
+  // 7. Validation Images
+  String get beforePhotoUrl => validationInfo['beforePhotoUrl'] ?? '';
+  String get afterPhotoUrl => validationInfo['afterPhotoUrl'] ?? '';
+
+  // 8. Other User (Counterparty) details
+  String get otherUserName => otherUserData['name'] ?? 'Unknown';
+  String get otherUserId => otherUserData['userId'] ?? 'RB-0000';
+  String get otherUserPhoto => otherUserData['photoUrl'] ?? '';
+  // Tasks completed logic: safely fallback if not in passed data
+  String get otherUserTasksCompleted {
+     // If fetched user data has it:
+     return (otherUserData['tasksCompleted'] ?? 0).toString();
+  }
+  double get otherUserRating {
+     // If fetched user data has it:
+     return (otherUserData['rating'] ?? 5.0).toDouble();
   }
 
-  double getFinalAmount() {
-    return finalAmountEarned.value;
+  // 9. Feedback Data logic
+  Map<String, dynamic>? get myFeedback {
+     if (isRequester) {
+       return taskData['requesterFeedback'];
+     } else {
+       return taskData['helperFeedback'];
+     }
+  }
+
+  String get feedbackReview => myFeedback?['review'] ?? '';
+  double get feedbackRating => (myFeedback?['rating'] ?? 0).toDouble();
+  String get feedbackTimeAgo {
+    final ts = _parseDateTime(myFeedback?['createdAt']);
+    if (ts == null) return '';
+    // Simple time ago or date
+    final diff = DateTime.now().difference(ts);
+    if (diff.inDays > 7) {
+       return DateFormat('MMM d, yyyy').format(ts);
+    } else if (diff.inDays > 0) {
+       return '${diff.inDays}d ago';
+    } else if (diff.inHours > 0) {
+       return '${diff.inHours}h ago';
+    } else {
+       return 'Just now';
+    }
+  }
+  
+  String get feedbackAuthorName => "You"; // Or otherUserName if showing RECEIVED feedback
+
+  DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is Timestamp) return value.toDate();
+    if (value is String) return DateTime.tryParse(value);
+    return null;
   }
 }

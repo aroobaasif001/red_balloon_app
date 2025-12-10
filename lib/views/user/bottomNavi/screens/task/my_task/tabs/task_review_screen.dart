@@ -228,7 +228,7 @@ class TaskReviewScreen extends StatelessWidget {
                   /// BEFORE
                   InkWell(
                     onTap: () {
-                      Get.to(() => LeaveFeedbackScreen());
+                      // View image code here
                     },
                     child: CustomContainer(
                       height: 150,

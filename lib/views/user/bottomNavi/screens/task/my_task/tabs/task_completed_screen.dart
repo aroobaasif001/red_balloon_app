@@ -13,12 +13,33 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/widge
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/widgets/payment_summary_card.dart';
 
 class TaskCompletedScreen extends StatelessWidget {
-  TaskCompletedScreen({super.key});
+  final Map<String, dynamic> taskData;
+  final String taskId;
+  final bool isRequester;
+  final Map<String, dynamic> otherUserData;
+  final Map<String, dynamic> validationInfo;
 
-  final controller = Get.put(TaskCompletedController());
+  TaskCompletedScreen({
+    super.key,
+    required this.taskData,
+    required this.taskId,
+    required this.isRequester,
+    required this.otherUserData,
+    required this.validationInfo,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(TaskCompletedController(
+      taskData: taskData,
+      taskId: taskId,
+      isRequester: isRequester,
+      otherUserData: otherUserData,
+      validationInfo: validationInfo,
+    ));
+    
+    // Safety check just in case reused
+    // controller.refresh(taskData...); // If needed, but new instance is safer.
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(

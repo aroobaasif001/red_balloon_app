@@ -40,39 +40,75 @@ class PaymentSummaryCard extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               conColor: white2Color,
               borderRadius: BorderRadius.circular(8),
-              child: Column(
-                children: [
-                  _buildPaymentRow(
-                    "Platform Fee",
-                    "SAR ${controller.platformFee.value.toStringAsFixed(2)}",
-                  ),
-                  const SizedBox(height: 12),
-                  _buildPaymentRow(
-                    "Escrow Fee",
-                    "- SAR ${controller.escrowFee.value.abs().toStringAsFixed(2)}",
-                  ),
-                  const SizedBox(height: 16),
-                  Divider(color: borderColor),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        "Final Amount Earned",
-                        fontSize: 14,
-                        fontWeight: FontVariant.semiBold,
-                        color: textcolord,
-                      ),
-                      CustomText(
-                        "SAR ${controller.finalAmountEarned.value.toStringAsFixed(2)}",
-                        fontSize: 18,
-                        fontWeight: FontVariant.bold,
-                        color: greenColor,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              child: controller.isRequester 
+              ? Column(
+                  // ---------------- REQUESTER VIEW ----------------
+                  children: [
+                    _buildPaymentRow(
+                      "Task Budget",
+                      "SAR ${controller.budgetAmount.toStringAsFixed(2)}",
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPaymentRow(
+                      "Payment Status",
+                      "Sent to Helper",
+                    ),
+                    const SizedBox(height: 16),
+                    Divider(color: borderColor),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomText(
+                          "Total Paid",
+                          fontSize: 14,
+                          fontWeight: FontVariant.semiBold,
+                          color: textcolord,
+                        ),
+                        CustomText(
+                          "SAR ${controller.budgetAmount.toStringAsFixed(2)}",
+                          fontSize: 18,
+                          fontWeight: FontVariant.bold,
+                          color: redColor,
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              : Column(
+                  // ---------------- HELPER VIEW ----------------
+                  children: [
+                    _buildPaymentRow(
+                      "Platform Fee (7.5%)",
+                      "SAR ${controller.platformFee.toStringAsFixed(2)}",
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPaymentRow(
+                      "Escrow Fee (7.5%)",
+                      "- SAR ${controller.escrowFee.abs().toStringAsFixed(2)}",
+                    ),
+                    const SizedBox(height: 16),
+                    Divider(color: borderColor),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomText(
+                          "Final Amount Earned",
+                          fontSize: 14,
+                          fontWeight: FontVariant.semiBold,
+                          color: textcolord,
+                        ),
+                        CustomText(
+                          "SAR ${controller.finalAmountEarned.toStringAsFixed(2)}",
+                          fontSize: 18,
+                          fontWeight: FontVariant.bold,
+                          color: greenColor,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
             ),
           ],
         ),

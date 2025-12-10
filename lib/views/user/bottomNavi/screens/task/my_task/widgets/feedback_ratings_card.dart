@@ -37,10 +37,9 @@ class FeedbackRatingsCard extends StatelessWidget {
               color: textcolord,
             ),
             const SizedBox(height: 16),
-            Obx(
-              () => Column(
-                children: controller.reviews.map((review) {
-                  return CustomContainer(
+            controller.feedbackReview.isEmpty 
+              ? CustomText("No feedback available", fontSize: 13, color: grey2Color)
+              : CustomContainer(
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(12),
                     conColor: whiteColor,
@@ -52,13 +51,13 @@ class FeedbackRatingsCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomText(
-                              review['name'],
+                              controller.feedbackAuthorName,
                               fontSize: 14,
                               fontWeight: FontVariant.semiBold,
                               color: textcolord,
                             ),
                             CustomText(
-                              review['time'],
+                              controller.feedbackTimeAgo,
                               fontSize: 11,
                               color: grey2Color,
                             ),
@@ -69,7 +68,7 @@ class FeedbackRatingsCard extends StatelessWidget {
                           children: List.generate(
                             5,
                             (index) => Icon(
-                              Icons.star,
+                              index < controller.feedbackRating ? Icons.star : Icons.star_border,
                               color: yellow,
                               size: 14,
                             ),
@@ -77,16 +76,13 @@ class FeedbackRatingsCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         CustomText(
-                          review['review'],
+                          controller.feedbackReview,
                           fontSize: 12,
                           color: rbtxColor,
                         ),
                       ],
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
+                  ),
           ],
         ),
       ),
