@@ -49,6 +49,22 @@ class AdminAllTaskDetailsController extends GetxController {
   // Offers data
   var offers = <OfferModel>[].obs;
   var acceptedOfferId = ''.obs;
+  var offerUserIds = <String, String>{}.obs; // Map: UID -> Formatted ID (e.g., "RB-001")
+  
+  // Proof data
+  var beforePhotoUrl = ''.obs;
+  var afterPhotoUrl = ''.obs;
+  var selectedProofTab = 0.obs; // 0 = BEFORE, 1 = AFTER
+  var hasProofDocument = false.obs; // Track if task has proof in database
+  
+  // Offers listener
+  StreamSubscription<QuerySnapshot>? _offersSubscription;
+  
+  // Task document listener
+  StreamSubscription<DocumentSnapshot>? _taskSubscription;
+  
+  // Proof listener
+  StreamSubscription<QuerySnapshot>? _proofSubscription;
   
   /// Fetch task details (with static caching)
   Future<void> fetchTaskDetails(String taskId, {bool forceRefresh = false}) async {
@@ -61,62 +77,89 @@ class AdminAllTaskDetailsController extends GetxController {
     
     try {
       isLoading.value = true;
-      print('🔍 Fetching task details from Firestore for: $taskId');
+      print('🔍 Setting up real-time task listener for: $taskId');
       
-      // Fetch task document
-      final taskDoc = await _firestore.collection('tasks').doc(taskId).get();
+      // Cancel previous task subscription
+      await _taskSubscription?.cancel();
       
-      if (!taskDoc.exists) {
-        print('❌ Task not found');
-        isLoading.value = false;
-        return;
-      }
+      // Set up real-time listener for task document
+      _taskSubscription = _firestore
+          .collection('tasks')
+          .doc(taskId)
+          .snapshots()
+          .listen((taskDoc) async {
+        if (!taskDoc.exists) {
+          print('❌ Task not found');
+          return;
+        }
+        
+        final taskData = taskDoc.data()!;
+        
+        // Parse task data
+        taskTitle.value = taskData['title'] ?? 'No Title';
+        taskDescription.value = taskData['description'] ?? 'No description';
+        taskLocation.value = taskData['location'] ?? 'Unknown';
+        taskBudget.value = 'SAR ${taskData['budget'] ?? 0}';
+        taskStatus.value = taskData['status'] ?? 'Unknown';
+        taskType.value = taskData['taskType'] ?? 'Offline Task';
+        taskImageUrl.value = taskData['imageUrl'] ?? '';
+        
+        // Parse dates
+        if (taskData['createdAt'] != null) {
+          final createdAt = _parseTimestamp(taskData['createdAt']);
+          taskCreatedAt.value = _getTimeAgo(createdAt);
+        }
+        
+        if (taskData['completedAt'] != null) {
+          final completedAt = _parseTimestamp(taskData['completedAt']);
+          taskCompletedAt.value = _getTimeAgo(completedAt);
+        }
+        
+        // Fetch requester data (only if changed)
+        final requesterUidValue = taskData['uid'];
+        if (requesterUidValue != null && requesterUid.value != requesterUidValue) {
+          requesterUid.value = requesterUidValue;
+          await _fetchRequesterData(requesterUidValue);
+        }
+        
+        // Fetch helper data (real-time update when offer accepted!)
+        final helperUidValue = taskData['acceptedOfferUid'];
+        if (helperUidValue != null && helperUid.value != helperUidValue) {
+          print('🔄 Helper updated: $helperUidValue');
+          helperUid.value = helperUidValue;
+          acceptedOfferId.value = helperUidValue;
+          await _fetchHelperData(helperUidValue);
+        } else if (helperUidValue == null && helperUid.value.isNotEmpty) {
+          // Helper removed
+          print('🔄 Helper removed');
+          helperUid.value = '';
+          helperName.value = '';
+          helperUserId.value = '';
+          helperImage.value = '';
+          helperTasksCompleted.value = 0;
+          helperRating.value = 0.0;
+          helperResponseTime.value = '';
+        }
+        
+        // Update cache
+        if (_cache.containsKey(taskId)) {
+          _saveToCache(taskId);
+        }
+        
+        // Fetch proof data from task_proofs collection
+        _fetchProofData(taskId);
+        
+        print('✅ Task data updated in real-time');
+      });
       
-      final taskData = taskDoc.data()!;
-      
-      // Parse task data
-      taskTitle.value = taskData['title'] ?? 'No Title';
-      taskDescription.value = taskData['description'] ?? 'No description';
-      taskLocation.value = taskData['location'] ?? 'Unknown';
-      taskBudget.value = 'SAR ${taskData['budget'] ?? 0}';
-      taskStatus.value = taskData['status'] ?? 'Unknown';
-      taskType.value = taskData['taskType'] ?? 'Offline Task';
-      taskImageUrl.value = taskData['imageUrl'] ?? '';
-      
-      // Parse dates
-      if (taskData['createdAt'] != null) {
-        final createdAt = _parseTimestamp(taskData['createdAt']);
-        taskCreatedAt.value = _getTimeAgo(createdAt);
-      }
-      
-      if (taskData['completedAt'] != null) {
-        final completedAt = _parseTimestamp(taskData['completedAt']);
-        taskCompletedAt.value = _getTimeAgo(completedAt);
-      }
-      
-      // Fetch requester data
-      final requesterUidValue = taskData['uid'];
-      if (requesterUidValue != null) {
-        requesterUid.value = requesterUidValue;
-        await _fetchRequesterData(requesterUidValue);
-      }
-      
-      // Fetch helper data
-      final helperUidValue = taskData['acceptedOfferUid'];
-      if (helperUidValue != null) {
-        helperUid.value = helperUidValue;
-        acceptedOfferId.value = helperUidValue;
-        await _fetchHelperData(helperUidValue);
-      }
-      
-      // Fetch offers using OfferService
+      // Fetch offers using real-time listener
       await _fetchOffers(taskId);
       
       // Save to cache
       _saveToCache(taskId);
       
       isLoading.value = false;
-      print('✅ Task details loaded and cached (${_cache.length} tasks in cache)');
+      print('✅ Task details loaded with real-time listeners');
     } catch (e) {
       print('❌ Error fetching task details: $e');
       isLoading.value = false;
@@ -155,9 +198,10 @@ class AdminAllTaskDetailsController extends GetxController {
     offers.value = cached.offers;
     acceptedOfferId.value = cached.acceptedOfferId;
     
-    // IMPORTANT: Still set up real-time listener for offers
-    // This ensures new offers appear even when using cached data
+    // IMPORTANT: Still set up real-time listeners even when using cached data
+    // This ensures new offers and proof appear even when using cached data
     _fetchOffers(taskId);
+    _fetchProofData(taskId);
   }
   
   /// Save current data to cache
@@ -237,8 +281,53 @@ class AdminAllTaskDetailsController extends GetxController {
     }
   }
   
-  // Offers listener
-  StreamSubscription<QuerySnapshot>? _offersSubscription;
+  /// Fetch proof data from task_proofs collection with real-time listener
+  Future<void> _fetchProofData(String taskId) async {
+    try {
+      print('📸 Setting up real-time proof listener for task: $taskId');
+      print('🔍 Searching in task_proofs collection with taskId: $taskId');
+      
+      // Cancel previous subscription if exists
+      await _proofSubscription?.cancel();
+      
+      // Set up real-time listener for proof
+      _proofSubscription = _firestore
+          .collection('task_proofs')
+          .where('taskId', isEqualTo: taskId)
+          .snapshots()
+          .listen((snapshot) {
+        print('🔄 Proof snapshot received: ${snapshot.docs.length} documents');
+        
+        if (snapshot.docs.isNotEmpty) {
+          // Proof document exists in database
+          hasProofDocument.value = true;
+          
+          final proofDoc = snapshot.docs.first;
+          final proofData = proofDoc.data();
+          
+          print('📄 Proof document ID: ${proofDoc.id}');
+          print('📄 Proof data keys: ${proofData.keys.toList()}');
+          print('📄 beforePhotoUrl: ${proofData['beforePhotoUrl']}');
+          print('📄 afterPhotoUrl: ${proofData['afterPhotoUrl']}');
+          
+          beforePhotoUrl.value = proofData['beforePhotoUrl'] ?? '';
+          afterPhotoUrl.value = proofData['afterPhotoUrl'] ?? '';
+          
+          print('✅ Proof document exists - showing Before & After section');
+          print('✅ Proof data updated: before=${beforePhotoUrl.value.isNotEmpty}, after=${afterPhotoUrl.value.isNotEmpty}');
+        } else {
+          // No proof document in database
+          hasProofDocument.value = false;
+          beforePhotoUrl.value = '';
+          afterPhotoUrl.value = '';
+          print('ℹ️ No proof document found - hiding Before & After section');
+        }
+      });
+    } catch (e) {
+      print('❌ Error setting up proof listener: $e');
+      print('❌ Stack trace: ${StackTrace.current}');
+    }
+  }
   
   /// Fetch offers for this task using OfferService
   Future<void> _fetchOffers(String taskId) async {
@@ -280,6 +369,9 @@ class AdminAllTaskDetailsController extends GetxController {
         
         offers.value = offersList;
         
+        // Fetch formatted user IDs for all offer users
+        _fetchOfferUserIds(offersList);
+        
         // Update cache with new offers
         if (_cache.containsKey(taskId)) {
           _saveToCache(taskId);
@@ -292,10 +384,44 @@ class AdminAllTaskDetailsController extends GetxController {
     }
   }
   
+  /// Fetch formatted user IDs for offer users
+  Future<void> _fetchOfferUserIds(List<OfferModel> offersList) async {
+    try {
+      for (var offer in offersList) {
+        final uid = offer.offeringUserUid;
+        
+        // Skip if already fetched
+        if (offerUserIds.containsKey(uid)) continue;
+        
+        // Fetch user document
+        final userDoc = await _firestore.collection('users').doc(uid).get();
+        
+        if (userDoc.exists) {
+          final userData = userDoc.data();
+          final formattedId = userData?['userId'] ?? '';
+          
+          if (formattedId.isNotEmpty) {
+            offerUserIds[uid] = formattedId;
+            offerUserIds.refresh(); // ✅ Trigger reactivity
+            print('✅ Fetched user ID for $uid: $formattedId');
+          } else {
+            print('⚠️ User $uid has no userId field');
+          }
+        } else {
+          print('⚠️ User document not found for $uid');
+        }
+      }
+    } catch (e) {
+      print('❌ Error fetching offer user IDs: $e');
+    }
+  }
+  
   @override
   void onClose() {
-    // Cancel offers subscription when controller is disposed
+    // Cancel subscriptions when controller is disposed
+    _taskSubscription?.cancel();
     _offersSubscription?.cancel();
+    _proofSubscription?.cancel();
     super.onClose();
   }
   
