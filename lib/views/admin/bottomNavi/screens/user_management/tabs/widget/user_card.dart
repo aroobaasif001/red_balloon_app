@@ -17,6 +17,7 @@ class UserCard extends StatelessWidget {
   final String tasksText;
   final String price;
   final String initials;
+  final String? imageUrl;
   final VoidCallback onView;
 
   const UserCard({
@@ -29,6 +30,7 @@ class UserCard extends StatelessWidget {
     required this.tasksText,
     required this.price,
     required this.initials,
+    this.imageUrl,
     required this.onView,
   });
 
@@ -78,7 +80,7 @@ class UserCard extends StatelessWidget {
 
                         Row(
                           children: [
-                            CustomTag(title: userType),
+                            // CustomTag(title: userType),
                             const SizedBox(width: 8),
                             if (verified) CustomTag(title: "Verified"),
                           ],
@@ -88,7 +90,10 @@ class UserCard extends StatelessWidget {
                     const SizedBox(width: 12),
 
                     /// RIGHT SIDE (Avatar + Button)
-                    ProfileCircle(initials: initials),
+                    ProfileCircle(
+                      initials: initials,
+                      imageUrl: imageUrl,
+                    ),
                   ],
                 ),
 
