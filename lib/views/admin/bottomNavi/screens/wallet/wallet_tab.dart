@@ -18,6 +18,7 @@ class AdminWalletTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final WalletController controller = Get.put(
       WalletController(),
+      tag: 'admin_wallet',
       permanent: false,
     );
     return SafeArea(

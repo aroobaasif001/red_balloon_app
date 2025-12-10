@@ -18,7 +18,7 @@ class AllTasksTab extends StatelessWidget {
       if (controller.isLoading.value) {
         print('⏳ Showing loading indicator');
         return const Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(color: Colors.red,),
         );
       }
 
@@ -32,6 +32,7 @@ class AllTasksTab extends StatelessWidget {
       print('✅ Showing ${controller.allTasks.length} tasks');
 
       return RefreshIndicator(
+        color: Colors.red,
         onRefresh: () => controller.fetchAllTasks(),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

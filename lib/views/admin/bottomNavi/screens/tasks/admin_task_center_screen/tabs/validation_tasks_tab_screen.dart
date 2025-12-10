@@ -21,7 +21,7 @@ class ValidationTasksTab extends StatelessWidget {
 
       if (controller.isLoading.value) {
         print('⏳ Showing loading indicator');
-        return const Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator(color:Colors.red));
       }
 
       if (controller.validationTasks.isEmpty) {
@@ -32,6 +32,7 @@ class ValidationTasksTab extends StatelessWidget {
       print('✅ Showing ${controller.validationTasks.length} validation tasks');
 
       return RefreshIndicator(
+        color: Colors.red,
         onRefresh: () => controller.fetchValidationTasks(),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
