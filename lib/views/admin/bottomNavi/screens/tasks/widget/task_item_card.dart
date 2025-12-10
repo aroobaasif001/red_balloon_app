@@ -7,7 +7,7 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/admin_task_details_tabs_screen/admin_task_details_tabs_screen.dart';
 
-import '../admin_task_center_screen/admin_all_task_details.dart';
+import '../admin_task_center_screen/admin_all_task_details_screen.dart';
 
 class TaskItemCard extends StatelessWidget {
   final String title;
@@ -154,7 +154,7 @@ class TaskItemCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   onPressed: () {
                     if (taskId != null) {
-                      Get.to(() => AdminAllTaskDetails(taskId: taskId));
+                      Get.to(() => AdminAllTaskDetailsScreen(taskId: taskId));
                     }
                   },
                 ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/controller/user_profile_details_controller.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/danger_button.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/key_value_row.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/outline_black_button.dart';
@@ -14,23 +16,39 @@ import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/t
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/strong_box.dart';
 
 class UserProfileDetailsScreen extends StatelessWidget {
-  const UserProfileDetailsScreen({super.key, required String userId});
+  final String userId;
+  
+  const UserProfileDetailsScreen({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
+    // Initialize controller with userId
+    final controller = Get.put(UserProfileDetailsController(), tag: userId);
+    controller.fetchUserProfileData(userId);
+    
     return Scaffold(
       appBar: CustomAppBar(titleText: 'User Profile Details'),
-      body: SafeArea(
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(color: redColor),
+          );
+        }
+        
+        return SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // PROFILE HEADER
-              const ProfileHeaderCard(
-                name: "Anton Furnitures",
-                initial: "A",
-                verified: true,
+              ProfileHeaderCard(
+                name: controller.userName.value,
+                initial: controller.userName.value.isNotEmpty 
+                    ? controller.userName.value[0].toUpperCase() 
+                    : 'U',
+                verified: controller.isVerified.value,
+                photoUrl: controller.userPhoto.value,
               ),
 
               const SizedBox(height: 25),
@@ -60,14 +78,17 @@ class UserProfileDetailsScreen extends StatelessWidget {
 
                     ProgressBarTile(
                       title: "Work as a Requester",
-                      percent: 0.45,
+                      percent: controller.requesterProgress.value,
                     ),
                     SizedBox(height: 16),
-                    ProgressBarTile(title: "Work as a Helper", percent: 0.75),
+                    ProgressBarTile(
+                      title: "Work as a Helper", 
+                      percent: controller.helperProgress.value,
+                    ),
                     SizedBox(height: 16),
                     ProgressBarTile(
                       title: "Work as a Validator",
-                      percent: 0.12,
+                      percent: controller.validatorProgress.value,
                     ),
                   ],
                 ),
@@ -76,7 +97,10 @@ class UserProfileDetailsScreen extends StatelessWidget {
               const SizedBox(height: 25),
 
               // RATING CARD
-              const RatingSummaryCard(rating: 4.9, completed: 14),
+              RatingSummaryCard(
+                rating: controller.rating.value, 
+                completed: controller.tasksCompleted.value,
+              ),
 
               const SizedBox(height: 25),
 
@@ -84,37 +108,37 @@ class UserProfileDetailsScreen extends StatelessWidget {
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
-                children: const [
+                children: [
                   StatsSmallCard(
                     imagePath: "assets/icons/validation1.png",
                     title: "Validation Accuracy",
-                    value: "96%",
+                    value: controller.validationAccuracy.value,
                   ),
 
                   StatsSmallCard(
                     imagePath: "assets/icons/response1.png",
                     title: "Response Time",
-                    value: "< 5 min",
+                    value: controller.responseTime.value,
                   ),
                   StatsSmallCard(
                     imagePath: "assets/icons/avgd.png",
                     title: "Average Distance",
-                    value: "3.2 km",
+                    value: controller.averageDistance.value,
                   ),
                   StatsSmallCard(
                     imagePath: "assets/icons/comr.png",
                     title: "Completion Rate",
-                    value: "98%",
+                    value: controller.completionRate.value,
                   ),
                   StatsSmallCard(
                     imagePath: "assets/icons/vio.png",
                     title: "Dispute Rate",
-                    value: "2.5%",
+                    value: controller.disputeRate.value,
                   ),
                   StatsSmallCard(
                     imagePath: "assets/icons/disr.png",
                     title: "Violations",
-                    value: "0",
+                    value: controller.violations.value.toString(),
                   ),
                 ],
               ),
@@ -162,17 +186,26 @@ class UserProfileDetailsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
 
-                          const KeyValueRow(title: "Total Tasks", value: "25"),
-                          const KeyValueRow(title: "Completed", value: "22"),
-                          const KeyValueRow(
+                          KeyValueRow(
+                            title: "Total Tasks", 
+                            value: controller.totalTasks.value.toString(),
+                          ),
+                          KeyValueRow(
+                            title: "Completed", 
+                            value: controller.completedTasks.value.toString(),
+                          ),
+                          KeyValueRow(
                             title: "Cancelled by User",
-                            value: "1",
+                            value: controller.cancelledByUser.value.toString(),
                           ),
-                          const KeyValueRow(
+                          KeyValueRow(
                             title: "Cancelled by Helper",
-                            value: "0",
+                            value: controller.cancelledByHelper.value.toString(),
                           ),
-                          const KeyValueRow(title: "Disputed", value: "2"),
+                          KeyValueRow(
+                            title: "Disputed", 
+                            value: controller.disputedTasks.value.toString(),
+                          ),
                         ],
                       ),
                     ),
@@ -194,19 +227,22 @@ class UserProfileDetailsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
 
-                          const KeyValueRow(
+                          KeyValueRow(
                             title: "Total Earned",
-                            value: "SAR 6,850",
+                            value: "SAR ${controller.totalEarned.value.toStringAsFixed(0)}",
                           ),
-                          const KeyValueRow(
+                          KeyValueRow(
                             title: "Current Balance",
-                            value: "SAR 1,240",
+                            value: "SAR ${controller.currentBalance.value.toStringAsFixed(0)}",
                           ),
-                          const KeyValueRow(
+                          KeyValueRow(
                             title: "Pending Withdrawals",
-                            value: "SAR 340",
+                            value: "SAR ${controller.pendingWithdrawals.value.toStringAsFixed(0)}",
                           ),
-                          const KeyValueRow(title: "Penalties", value: "0"),
+                          KeyValueRow(
+                            title: "Penalties", 
+                            value: controller.penalties.value.toStringAsFixed(0),
+                          ),
                         ],
                       ),
                     ),
@@ -218,9 +254,15 @@ class UserProfileDetailsScreen extends StatelessWidget {
 
               Row(
                 children: [
-                  DangerButton(label: "Warn Helper", onTap: () {}),
+                  DangerButton(
+                    label: "Warn Helper", 
+                    onTap: controller.warnHelper,
+                  ),
                   const SizedBox(width: 12),
-                  OutlineBlackButton(label: "Suspend Account", onTap: () {}),
+                  OutlineBlackButton(
+                    label: "Suspend Account", 
+                    onTap: controller.suspendAccount,
+                  ),
                 ],
               ),
 
@@ -228,9 +270,8 @@ class UserProfileDetailsScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
+      );
+      }),
     );
   }
 }
-
-/// STRONG SHADOW BOX (Visible Always)

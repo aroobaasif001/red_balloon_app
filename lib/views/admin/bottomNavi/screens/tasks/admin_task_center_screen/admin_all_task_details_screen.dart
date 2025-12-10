@@ -8,16 +8,16 @@ import '../../../../../../custom_widgets/custom_button.dart';
 import 'controller/admin_all_task_details_controller.dart';
 import 'widgets/admin_all_task_details_widgets.dart';
 
-class AdminAllTaskDetails extends StatefulWidget {
+class AdminAllTaskDetailsScreen extends StatefulWidget {
   final String? taskId;
 
-  const AdminAllTaskDetails({super.key, this.taskId});
+  const AdminAllTaskDetailsScreen({super.key, this.taskId});
 
   @override
-  State<AdminAllTaskDetails> createState() => _AdminAllTaskDetailsState();
+  State<AdminAllTaskDetailsScreen> createState() => _AdminAllTaskDetailsScreenState();
 }
 
-class _AdminAllTaskDetailsState extends State<AdminAllTaskDetails> {
+class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
   int selectedTab = 0; // 0 = DETAILS, 1 = OFFERS
   late final AdminAllTaskDetailsController controller;
 

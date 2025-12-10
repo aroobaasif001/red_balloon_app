@@ -9,12 +9,14 @@ class ProfileHeaderCard extends StatelessWidget {
   final String name;
   final String initial;
   final bool verified;
+  final String? photoUrl;
 
   const ProfileHeaderCard({
     super.key,
     required this.name,
     required this.initial,
     required this.verified,
+    this.photoUrl,
   });
 
   @override
@@ -38,13 +40,21 @@ class ProfileHeaderCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomText(
-              initial,
-              fontSize: 30,
-              fontWeight: FontVariant.bold,
-              alignment: Alignment.center,
-              color: whiteColor,
-            ),
+            // Profile Image or Initial
+            if (photoUrl != null && photoUrl!.isNotEmpty)
+              CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(photoUrl!),
+                backgroundColor: whiteColor.withOpacity(0.2),
+              )
+            else
+              CustomText(
+                initial,
+                fontSize: 30,
+                fontWeight: FontVariant.bold,
+                alignment: Alignment.center,
+                color: whiteColor,
+              ),
             const SizedBox(height: 6),
 
             // Green Online Dot
