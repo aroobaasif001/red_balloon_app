@@ -43,104 +43,73 @@ class _ValidationScreenState extends State<ValidationScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// PROFILE + TITLE + TIMER (RIGHT SIDE)
+                  /// PROFILE + TITLE
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// LEFT — IMAGE + TEXT
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundImage: AssetImage(
-                              "assets/images/prof.png",
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomText(
-                                "Help Move Furniture",
-                                fontSize: 18,
-                                fontWeight: FontVariant.bold,
-                                color: blackColor,
-                              ),
-                              const SizedBox(height: 2),
-                              CustomText(
-                                "RB - 402",
-                                fontSize: 14,
-                                fontWeight: FontVariant.medium,
-                                color: rbtxColor,
-                              ),
-                            ],
-                          ),
-                        ],
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundImage: AssetImage("assets/images/prof.png"),
                       ),
-
-                      /// RIGHT — TIMER (EXACT LIKE YOUR IMAGE)
-                      CustomContainer(
-                        width: 55,
-                        height: 55,
-                        borderRadius: BorderRadius.circular(60),
-                        conColor: whiteColor,
-                        border: Border.all(color: redColor, width: 3),
-                        alignment: Alignment.center,
-                        child: CustomText(
-                          "14:56",
-                          fontSize: 16,
-                          fontWeight: FontVariant.bold,
-                          color: redColor,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(
+                              "Help Move Furniture",
+                              fontSize: 18,
+                              fontWeight: FontVariant.bold,
+                              color: blackColor,
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                CustomText(
+                                  "RB - 402",
+                                  fontSize: 13,
+                                  fontWeight: FontVariant.medium,
+                                  color: walletGrey600Color,
+                                ),
+                                const SizedBox(width: 6),
+                                CustomText(
+                                  "•",
+                                  fontSize: 13,
+                                  fontWeight: FontVariant.medium,
+                                  color: walletGrey600Color,
+                                ),
+                                const SizedBox(width: 6),
+                                CustomText(
+                                  "Submitted 2m ago",
+                                  fontSize: 13,
+                                  fontWeight: FontVariant.medium,
+                                  color: walletGrey600Color,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 35),
-
-                  CustomText(
-                    "DESCRIPTION",
-                    fontSize: 14,
-                    fontWeight: FontVariant.bold,
-                    color: greyColor,
-                  ),
-
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 16),
 
                   CustomText(
                     "Need help moving furniture from my apartment to a new location. "
-                    "Items include a sofa, dining table, and several boxes. "
-                    "Helper should have a truck or van. Estimated time: 3 hours.",
-                    fontSize: 15,
+                    "Items include a sofa, dining table, and several boxes.",
+                    fontSize: 14,
                     fontWeight: FontVariant.regular,
-                    color: blackColor,
+                    color: walletGrey600Color,
                   ),
 
-                  const SizedBox(height: 18),
-
-                  /// SUBMITTED TIME ROW
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset("assets/icons/timer99.png", height: 18),
-                      const SizedBox(width: 8),
-                      CustomText(
-                        "Submitted 2m ago",
-                        fontSize: 14,
-                        fontWeight: FontVariant.regular,
-                        color: walletGrey600Color,
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 20),
 
                   /// ⭐ VALIDATION STATISTICS
                   CustomContainer(
                     padding: const EdgeInsets.symmetric(
-                      vertical: 20,
-                      horizontal: 16,
+                      vertical: 24,
+                      horizontal: 20,
                     ),
                     borderRadius: BorderRadius.circular(16),
                     conColor: whiteColor,
@@ -155,7 +124,7 @@ class _ValidationScreenState extends State<ValidationScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Image.asset(
                               "assets/icons/statistics.png",
@@ -170,45 +139,34 @@ class _ValidationScreenState extends State<ValidationScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 24),
 
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 52,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: redColor,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const CustomText(
-                                  "03 Votes Received",
-                                  fontSize: 14,
-                                  fontWeight: FontVariant.bold,
-                                  color: whiteColor,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Container(
-                                height: 52,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: redColor,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const CustomText(
-                                  "09 Votes Needed",
-                                  fontSize: 14,
-                                  fontWeight: FontVariant.bold,
-                                  color: whiteColor,
-                                ),
-                              ),
-                            ),
-                          ],
+                        /// Votes Received Row
+                        _buildStatRow("Votes Received", "03"),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Divider(
+                            color: greyColor.withOpacity(0.2),
+                            thickness: 1,
+                            height: 1,
+                          ),
                         ),
+
+                        /// Votes Needed Row
+                        _buildStatRow("Votes Needed", "09"),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Divider(
+                            color: greyColor.withOpacity(0.2),
+                            thickness: 1,
+                            height: 1,
+                          ),
+                        ),
+
+                        /// Time Left Row
+                        _buildStatRow("Time Left", "14:56"),
                       ],
                     ),
                   ),
@@ -294,6 +252,27 @@ class _ValidationScreenState extends State<ValidationScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  /// Helper method to build each statistics row
+  Widget _buildStatRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CustomText(
+          label,
+          fontSize: 16,
+          fontWeight: FontVariant.medium,
+          color: lastTextColor,
+        ),
+        CustomText(
+          value,
+          fontSize: 20,
+          fontWeight: FontVariant.bold,
+          color: redColor,
+        ),
+      ],
     );
   }
 }

@@ -156,25 +156,22 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(width: 50),
+                                    const SizedBox(width: 60),
 
                                     Expanded(
                                       child: CustomButton(
                                         label: "Review Proof",
-                                        trailing: Icon(
-                                          Icons.arrow_right_alt_sharp,
-                                          color: redColor,
-                                        ),
+
                                         onPressed: () {
                                           Get.to(() => ValidationScreen());
                                         },
                                         height: 40,
-                                        width: 80,
-                                        fontSize: 14,
-                                        fontWeight: FontVariant.bold,
+                                        width: 60,
+                                        fontSize: 16,
+                                        fontWeight: FontVariant.medium,
                                         borderRadius: BorderRadius.circular(14),
-                                        bgColor: whiteColor,
-                                        textColor: redColor,
+                                        bgColor: redColor,
+                                        textColor: whiteColor,
                                       ),
                                     ),
                                   ],

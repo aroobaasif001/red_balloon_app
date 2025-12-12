@@ -76,65 +76,72 @@ class AfterTab extends StatelessWidget {
           SizedBox(height: isTask == false ? 20 : 0),
 
           /// -------------------------------
-          /// BUTTONS ROW
+          /// VOTING OPTIONS CARD
           /// -------------------------------
           isTask == false
-              ? Row(
-                  children: [
-                    /// ❌ SUPPORT USER BUTTON
-                    Flexible(
-                      child: CustomButton(
-                        label: "Support Helper",
-                        height: 50,
-                        fontSize: 14, // slightly smaller = no overflow
-                        fontWeight: FontVariant.semiBold,
-                        bgColor: redColor,
-                        borderRadius: BorderRadius.circular(12),
-                        onPressed: () {
-                          DialogHelpers.showPaymentSuccessDialog(
-                            context: context,
-                            showButton: false,
-                          );
-                        },
-                        leading: const Icon(
-                          Icons.close,
-                          color: whiteColor,
-                          size: 18,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                        ), // prevents overflow
-                      ),
-                    ),
-
-                    const SizedBox(width: 14),
-
-                    /// ✔ SUPPORT PROVIDER BUTTON
-                    Flexible(
-                      child: CustomButton(
-                        label: "Support Requester",
-                        height: 50,
-                        fontSize: 14, // same as above
-                        fontWeight: FontVariant.semiBold,
-                        bgColor: redColor,
-                        borderRadius: BorderRadius.circular(12),
-                        onPressed: () {
-                          DialogHelpers.showPaymentSuccessDialog(
-                            context: context,
-                            showButton: false,
-                          );
-                        },
-                        leading: const Icon(
-                          Icons.check,
-                          color: whiteColor,
-                          size: 18,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                        ), // prevents overflow
-                      ),
+              ? CustomContainer(
+                  width: double.infinity,
+                  borderRadius: BorderRadius.circular(16),
+                  conColor: whiteColor,
+                  padding: const EdgeInsets.all(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: blackColor.withOpacity(0.25),
+                      blurRadius: 4,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 4),
                     ),
                   ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// Voting Options Header
+                      Row(
+                        children: [
+                          Image.asset(
+                            "assets/icons/statistics.png",
+                            height: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          const CustomText(
+                            "Voting Options",
+                            fontSize: 16,
+                            fontWeight: FontVariant.semiBold,
+                            color: lastTextColor,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      /// Option 1: Support Ahmed Al-Rashid
+                      _buildVotingOption(
+                        context,
+                        "Support Ahmed Al-Rashid",
+                        false,
+                        () {
+                          DialogHelpers.showPaymentSuccessDialog(
+                            context: context,
+                            showButton: false,
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      /// Option 2: Support Bilal Haider
+                      _buildVotingOption(
+                        context,
+                        "Support Bilal Haider",
+                        true,
+                        () {
+                          DialogHelpers.showPaymentSuccessDialog(
+                            context: context,
+                            showButton: false,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 )
               : CustomContainer(),
 
@@ -157,4 +164,46 @@ class AfterTab extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Helper function to build each voting option row
+Widget _buildVotingOption(
+  BuildContext context,
+  String label,
+  bool isSelected,
+  VoidCallback onTap,
+) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CustomText(
+          label,
+          fontSize: 15,
+          fontWeight: FontVariant.medium,
+          color: lastTextColor,
+        ),
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isSelected ? redColor : Colors.transparent,
+            border: Border.all(
+              color: isSelected ? redColor : walletGrey600Color,
+              width: 2,
+            ),
+          ),
+          child: isSelected
+              ? const Icon(
+                  Icons.check,
+                  color: whiteColor,
+                  size: 16,
+                )
+              : null,
+        ),
+      ],
+    ),
+  );
 }
