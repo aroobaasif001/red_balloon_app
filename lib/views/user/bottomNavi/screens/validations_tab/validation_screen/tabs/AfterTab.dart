@@ -14,6 +14,8 @@ class AfterTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<ValidationScreenController>();
+    
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -78,74 +80,79 @@ class AfterTab extends StatelessWidget {
           SizedBox(height: isTask == false ? 20 : 0),
 
           /// -------------------------------
-          /// BUTTONS ROW
+          /// VOTING OPTIONS CARD
           /// -------------------------------
           isTask == false
-              ? Row(
-                  children: [
-                    /// ❌ SUPPORT HELPER BUTTON
-                    Flexible(
-                      child: CustomButton(
-                        label: "Support Helper",
-                        height: 50,
-                        fontSize: 14,
-                        fontWeight: FontVariant.semiBold,
-                        bgColor: redColor,
-                        borderRadius: BorderRadius.circular(12),
-                        onPressed: () {
+              ? Obx(() => CustomContainer(
+                  width: double.infinity,
+                  borderRadius: BorderRadius.circular(16),
+                  conColor: whiteColor,
+                  padding: const EdgeInsets.all(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: blackColor.withOpacity(0.25),
+                      blurRadius: 4,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// Voting Options Header
+                      Row(
+                        children: [
+                          Image.asset(
+                            "assets/icons/statistics.png",
+                            height: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          const CustomText(
+                            "Voting Options",
+                            fontSize: 16,
+                            fontWeight: FontVariant.semiBold,
+                            color: lastTextColor,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      /// Option 1: Support Helper
+                      _buildVotingOption(
+                        context,
+                        "Support ${controller.helperName.value}",
+                        controller.myVote.value == 'helper',
+                        () {
                           DialogHelpers.showVoteConfirmationDialog(
                             context: context,
                             voteType: 'helper',
                             onConfirm: () async {
-                              final controller = Get.find<ValidationScreenController>();
                               await controller.submitVote('helper');
                             },
                           );
                         },
-                        leading: const Icon(
-                          Icons.close,
-                          color: whiteColor,
-                          size: 18,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                        ),
                       ),
-                    ),
 
-                    const SizedBox(width: 14),
+                      const SizedBox(height: 16),
 
-                    /// ✔ SUPPORT REQUESTER BUTTON
-                    Flexible(
-                      child: CustomButton(
-                        label: "Support Requester",
-                        height: 50,
-                        fontSize: 14,
-                        fontWeight: FontVariant.semiBold,
-                        bgColor: redColor,
-                        borderRadius: BorderRadius.circular(12),
-                        onPressed: () {
+                      /// Option 2: Support Requester
+                      _buildVotingOption(
+                        context,
+                        "Support ${controller.requesterName.value}",
+                        controller.myVote.value == 'requester',
+                        () {
                           DialogHelpers.showVoteConfirmationDialog(
                             context: context,
                             voteType: 'requester',
                             onConfirm: () async {
-                              final controller = Get.find<ValidationScreenController>();
                               await controller.submitVote('requester');
                             },
                           );
                         },
-                        leading: const Icon(
-                          Icons.check,
-                          color: whiteColor,
-                          size: 18,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                        ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  ),
+                ))
               : CustomContainer(),
 
           const SizedBox(height: 25),
@@ -163,6 +170,48 @@ class AfterTab extends StatelessWidget {
           SizedBox(height: 40),
 
           const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  /// Helper function to build each voting option row
+  Widget _buildVotingOption(
+    BuildContext context,
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CustomText(
+            label,
+            fontSize: 15,
+            fontWeight: FontVariant.medium,
+            color: lastTextColor,
+          ),
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? redColor : Colors.transparent,
+              border: Border.all(
+                color: isSelected ? redColor : walletGrey600Color,
+                width: 2,
+              ),
+            ),
+            child: isSelected
+                ? const Icon(
+                    Icons.check,
+                    color: whiteColor,
+                    size: 16,
+                  )
+                : null,
+          ),
         ],
       ),
     );

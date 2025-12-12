@@ -85,12 +85,12 @@ class _ValidationScreenState extends State<ValidationScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// PROFILE + TITLE + TIMER (RIGHT SIDE)
+                    /// PROFILE + TITLE
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CircleAvatar(
-                          radius: 30,
+                          radius: 24,
                           backgroundImage: AssetImage("assets/images/prof.png"),
                         ),
                         const SizedBox(width: 12),
@@ -103,86 +103,58 @@ class _ValidationScreenState extends State<ValidationScreen> {
                                 fontSize: 18,
                                 fontWeight: FontVariant.bold,
                                 color: blackColor,
-                                maxLines: null, // unlimited lines allow
-                                overflow:
-                                    TextOverflow.visible, // next line wrap
+                                maxLines: null,
+                                overflow: TextOverflow.visible,
                               ),
-                              const SizedBox(height: 2),
-                              CustomText(
-                                controller.userId.value,
-                                fontSize: 14,
-                                fontWeight: FontVariant.medium,
-                                color: rbtxColor,
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  CustomText(
+                                    controller.userId.value,
+                                    fontSize: 13,
+                                    fontWeight: FontVariant.medium,
+                                    color: walletGrey600Color,
+                                  ),
+                                  if (controller.completedAt.value != null) const SizedBox(width: 6),
+                                  if (controller.completedAt.value != null) CustomText(
+                                    "•",
+                                    fontSize: 13,
+                                    fontWeight: FontVariant.medium,
+                                    color: walletGrey600Color,
+                                  ),
+                                  if (controller.completedAt.value != null) const SizedBox(width: 6),
+                                  if (controller.completedAt.value != null) CustomText(
+                                    "Submitted ${controller.getSubmittedTimeAgo()}",
+                                    fontSize: 13,
+                                    fontWeight: FontVariant.medium,
+                                    color: walletGrey600Color,
+                                  ),
+                                ],
                               ),
                             ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-
-                        /// RIGHT — TIMER (EXACT LIKE YOUR IMAGE)
-                        CustomContainer(
-                          width: 55,
-                          height: 55,
-                          borderRadius: BorderRadius.circular(60),
-                          padding: EdgeInsets.all(3),
-                          conColor: whiteColor,
-                          border: Border.all(color: redColor, width: 3),
-                          alignment: Alignment.center,
-                          child: FittedBox(
-                            child: CustomText(
-                              controller.remainingTime.value,
-                              fontSize: 16,
-                              fontWeight: FontVariant.bold,
-                              color: redColor,
-                            ),
                           ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 35),
-
-                    CustomText(
-                      "DESCRIPTION",
-                      fontSize: 14,
-                      fontWeight: FontVariant.bold,
-                      color: greyColor,
-                    ),
-
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 16),
 
                     CustomText(
                       controller.taskDescription.value,
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontVariant.regular,
-                      color: blackColor,
+                      color: walletGrey600Color,
                     ),
 
-                    const SizedBox(height: 18),
 
-                    /// SUBMITTED TIME ROW
-                    if (controller.completedAt.value != null)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset("assets/icons/timer99.png", height: 18),
-                          const SizedBox(width: 8),
-                          CustomText(
-                            "Submitted ${controller.getSubmittedTimeAgo()}",
-                            fontSize: 14,
-                            fontWeight: FontVariant.regular,
-                            color: walletGrey600Color,
-                          ),
-                        ],
-                      ),
 
                     const SizedBox(height: 25),
 
                     /// ⭐ VALIDATION STATISTICS
                     CustomContainer(
                       padding: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 16,
+                        vertical: 24,
+                        horizontal: 20,
                       ),
                       borderRadius: BorderRadius.circular(16),
                       conColor: whiteColor,
@@ -212,44 +184,42 @@ class _ValidationScreenState extends State<ValidationScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 18),
+                          const SizedBox(height: 24),
 
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: 52,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: redColor,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: CustomText(
-                                    "${controller.votesReceived.value.toString().padLeft(2, '0')} Votes Received",
-                                    fontSize: 14,
-                                    fontWeight: FontVariant.bold,
-                                    color: whiteColor,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Container(
-                                  height: 52,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: redColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: CustomText(
-                                    "${controller.votesNeeded.value.toString().padLeft(2, '0')} Votes Needed",
-                                    fontSize: 14,
-                                    fontWeight: FontVariant.bold,
-                                    color: whiteColor,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          /// Votes Received Row
+                          _buildStatRow(
+                            "Votes Received",
+                            controller.votesReceived.value.toString().padLeft(2, '0'),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: Divider(
+                              color: greyColor.withOpacity(0.2),
+                              thickness: 1,
+                              height: 1,
+                            ),
+                          ),
+
+                          /// Votes Needed Row
+                          _buildStatRow(
+                            "Votes Needed",
+                            controller.votesNeeded.value.toString().padLeft(2, '0'),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: Divider(
+                              color: greyColor.withOpacity(0.2),
+                              thickness: 1,
+                              height: 1,
+                            ),
+                          ),
+
+                          /// Time Left Row
+                          _buildStatRow(
+                            "Time Left",
+                            controller.remainingTime.value,
                           ),
                         ],
                       ),
@@ -345,6 +315,27 @@ class _ValidationScreenState extends State<ValidationScreen> {
           ),
         );
       }), // Close Obx
+    );
+  }
+
+  /// Helper method to build each statistics row
+  Widget _buildStatRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CustomText(
+          label,
+          fontSize: 16,
+          fontWeight: FontVariant.medium,
+          color: lastTextColor,
+        ),
+        CustomText(
+          value,
+          fontSize: 20,
+          fontWeight: FontVariant.bold,
+          color: redColor,
+        ),
+      ],
     );
   }
 }

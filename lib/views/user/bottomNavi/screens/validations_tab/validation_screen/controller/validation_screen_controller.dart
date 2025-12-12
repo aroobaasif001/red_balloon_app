@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/services/task_service.dart';
 
 class ValidationScreenController extends GetxController {
@@ -22,19 +23,27 @@ class ValidationScreenController extends GetxController {
   var votesNeeded = 0.obs;
   var isTaskOwner = false.obs; // 🔥 Check if current user owns the task
   var hasVoted = false.obs; // 🔥 Check if user already voted
-  var isProofSubmitter = false.obs; // 🔥 Check if current user submitted the proof
-  
+  var isProofSubmitter =
+      false.obs; // 🔥 Check if current user submitted the proof
+
   // 🔥 Timer observables
   var remainingTime = '15:00'.obs; // Display format MM:SS
   var remainingSeconds = 900.obs; // 15 minutes = 900 seconds
   Timer? _timer;
-  
+
   // 🔥 Voting calculation
   var helperVotes = 0.obs;
   var requesterVotes = 0.obs;
   var validationId = ''.obs;
   var rejectedAt = Rx<DateTime?>(null);
   var completedAt = Rx<DateTime?>(null); // 🔥 For "Submitted time ago"
+
+  // 🔥 Participant Names
+  var requesterName = 'Requester'.obs;
+  var helperName = 'Helper'.obs;
+  
+  // 🔥 Track Current User's Vote
+  var myVote = ''.obs; // 'helper' or 'requester'
 
   @override
   void onClose() {
@@ -45,7 +54,7 @@ class ValidationScreenController extends GetxController {
   /// Format time ago for "Submitted ... ago"
   String getSubmittedTimeAgo() {
     if (completedAt.value == null) return '';
-    
+
     final now = DateTime.now();
     final difference = now.difference(completedAt.value!);
 
@@ -88,22 +97,35 @@ class ValidationScreenController extends GetxController {
 
       if (taskData != null) {
         taskTitle.value = taskData['title'] ?? 'No Title';
-        taskDescription.value = taskData['description'] ?? 'No description available';
-        
+        taskDescription.value =
+            taskData['description'] ?? 'No description available';
+
         // 🔥 Check if current user owns this task
         final currentUserId = _auth.currentUser?.uid;
         final taskOwnerId = taskData['uid']; // Task creator's UID
         isTaskOwner.value = (currentUserId == taskOwnerId);
-        
+
         print('🔍 Current User: $currentUserId');
         print('🔍 Task Owner: $taskOwnerId');
         print('🔍 Is Task Owner: ${isTaskOwner.value}');
-        
+
+        // 🔥 Fetch Requester Name
+        if (taskOwnerId != null) {
+          final userDoc = await _firestore
+              .collection('users')
+              .doc(taskOwnerId)
+              .get();
+          if (userDoc.exists) {
+            requesterName.value = userDoc.data()?['displayName'] ?? 'Requester';
+            print('🔍 Requester Name: ${requesterName.value}');
+          }
+        }
+
         // 🔥 Fetch proof submitter userId from task_proofs
         if (proofId != null && proofId.isNotEmpty) {
           await _fetchProofSubmitterUserId(proofId, currentUserId);
         }
-        
+
         // 🔥 Fetch voting data from voting collection
         await _fetchVotingData(validationTaskId);
       }
@@ -116,20 +138,39 @@ class ValidationScreenController extends GetxController {
     }
   }
 
-  /// Fetch proof submitter's userId from task_proofs collection
-  Future<void> _fetchProofSubmitterUserId(String proofId, String? currentUserId) async {
+  /// Fetch proof submitter's userId and Name from task_proofs collection
+  Future<void> _fetchProofSubmitterUserId(
+    String proofId,
+    String? currentUserId,
+  ) async {
     try {
-      final proofDoc = await _firestore.collection('task_proofs').doc(proofId).get();
-      
+      final proofDoc = await _firestore
+          .collection('task_proofs')
+          .doc(proofId)
+          .get();
+
       if (proofDoc.exists) {
         final proofData = proofDoc.data()!;
-        final proofSubmitterUserId = proofData['userId']; // UID of proof submitter
-        
+        final proofSubmitterUserId =
+            proofData['userId']; // UID of proof submitter
+
         // Check if current user is the proof submitter
         isProofSubmitter.value = (currentUserId == proofSubmitterUserId);
-        
+
         print('🔍 Proof Submitter: $proofSubmitterUserId');
         print('🔍 Is Proof Submitter: ${isProofSubmitter.value}');
+
+        // 🔥 Fetch Helper Name
+        if (proofSubmitterUserId != null) {
+          final userDoc = await _firestore
+              .collection('users')
+              .doc(proofSubmitterUserId)
+              .get();
+          if (userDoc.exists) {
+            helperName.value = userDoc.data()?['displayName'] ?? 'Helper';
+            print('🔍 Helper Name: ${helperName.value}');
+          }
+        }
       }
     } catch (e) {
       print('❌ Error fetching proof submitter data: $e');
@@ -149,7 +190,7 @@ class ValidationScreenController extends GetxController {
       if (validationSnapshot.docs.isNotEmpty) {
         final validationDoc = validationSnapshot.docs.first;
         validationId.value = validationDoc.id;
-        
+
         // Get rejectedAt timestamp
         final Timestamp? timestamp = validationDoc.data()['rejectedAt'];
         if (timestamp != null) {
@@ -158,28 +199,42 @@ class ValidationScreenController extends GetxController {
         }
 
         // 🔥 Get completedAt timestamp for "Submitted time ago"
-        final Timestamp? completedTimestamp = validationDoc.data()['completedAt'];
+        final Timestamp? completedTimestamp = validationDoc
+            .data()['completedAt'];
         if (completedTimestamp != null) {
           completedAt.value = completedTimestamp.toDate();
         }
       }
 
       final votingDoc = await _firestore.collection('voting').doc(taskId).get();
-      
+
       if (votingDoc.exists) {
         final data = votingDoc.data()!;
         votesReceived.value = data['votesReceived'] ?? 0;
         votesNeeded.value = data['votesNeeded'] ?? 9;
-        
+
         // 🔥 Calculate helper vs requester votes
         final voters = List<Map<String, dynamic>>.from(data['voters'] ?? []);
-        helperVotes.value = voters.where((v) => v['voteType'] == 'helper').length;
-        requesterVotes.value = voters.where((v) => v['voteType'] == 'requester').length;
-        
+        helperVotes.value = voters
+            .where((v) => v['voteType'] == 'helper')
+            .length;
+        requesterVotes.value = voters
+            .where((v) => v['voteType'] == 'requester')
+            .length;
+
         // Check if current user already voted
         final currentUserId = _auth.currentUser?.uid;
-        hasVoted.value = voters.any((voter) => voter['userId'] == currentUserId);
+        final myVoteData = voters.firstWhereOrNull(
+          (voter) => voter['userId'] == currentUserId,
+        );
         
+        hasVoted.value = myVoteData != null;
+        if (hasVoted.value) {
+          myVote.value = myVoteData!['voteType'] ?? '';
+        } else {
+          myVote.value = '';
+        }
+
         // 🔥 Check if voting should be completed
         _checkVotingCompletion();
       } else {
@@ -189,6 +244,7 @@ class ValidationScreenController extends GetxController {
         helperVotes.value = 0;
         requesterVotes.value = 0;
         hasVoted.value = false;
+        myVote.value = '';
       }
     } catch (e) {
       print('❌ Error fetching voting data: $e');
@@ -233,9 +289,9 @@ class ValidationScreenController extends GetxController {
   void _updateTimerDisplay() {
     final minutes = remainingSeconds.value ~/ 60;
     final seconds = remainingSeconds.value % 60;
-    remainingTime.value = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    remainingTime.value =
+        '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
-
 
   /// Handle timer expiry
   void _handleTimerExpiry() {
@@ -249,7 +305,7 @@ class ValidationScreenController extends GetxController {
     if (helperVotes.value >= 5 || requesterVotes.value >= 5) {
       final winner = helperVotes.value >= 5 ? 'helper' : 'requester';
       await _recordWinner(winner: winner);
-      
+
       // 🔥 Stop accepting new votes but DON'T set isVotingCompleted
       // Timer keeps running until 15 minutes
       // Get.snackbar(
@@ -263,13 +319,15 @@ class ValidationScreenController extends GetxController {
   /// Record winner but don't set isVotingCompleted
   Future<void> _recordWinner({required String winner}) async {
     try {
-      await _firestore.collection('validations').doc(validationId.value).update({
-        'winner': winner,
-        'helperVotes': helperVotes.value,
-        'requesterVotes': requesterVotes.value,
-        'votingClosedAt': FieldValue.serverTimestamp(),
-        // 🔥 isVotingCompleted stays false until timer expires
-      });
+      await _firestore.collection('validations').doc(validationId.value).update(
+        {
+          'winner': winner,
+          'helperVotes': helperVotes.value,
+          'requesterVotes': requesterVotes.value,
+          'votingClosedAt': FieldValue.serverTimestamp(),
+          // 🔥 isVotingCompleted stays false until timer expires
+        },
+      );
 
       print('✅ Winner recorded: $winner (Timer still running)');
     } catch (e) {
@@ -289,20 +347,24 @@ class ValidationScreenController extends GetxController {
         await _sendToAdmin();
         return;
       } else {
-        winner = helperVotes.value > requesterVotes.value ? 'helper' : 'requester';
+        winner = helperVotes.value > requesterVotes.value
+            ? 'helper'
+            : 'requester';
       }
 
       // 🔥 ONLY set isVotingCompleted when timer expires
-      await _firestore.collection('validations').doc(validationId.value).update({
-        'isVotingCompleted': true, // 🔥 ONLY here!
-        'winner': winner,
-        'helperVotes': helperVotes.value,
-        'requesterVotes': requesterVotes.value,
-        'completedAt': FieldValue.serverTimestamp(),
-      });
+      await _firestore.collection('validations').doc(validationId.value).update(
+        {
+          'isVotingCompleted': true, // 🔥 ONLY here!
+          'winner': winner,
+          'helperVotes': helperVotes.value,
+          'requesterVotes': requesterVotes.value,
+          'completedAt': FieldValue.serverTimestamp(),
+        },
+      );
 
       print('✅ Voting finalized. isVotingCompleted = true. Winner: $winner');
-      
+
       Get.snackbar(
         'Validation Complete',
         'Timer expired. Final result: $winner wins!',
@@ -316,16 +378,19 @@ class ValidationScreenController extends GetxController {
   /// Send to admin for manual review
   Future<void> _sendToAdmin() async {
     try {
-      await _firestore.collection('validations').doc(validationId.value).update({
-        'isVotingCompleted': true,
-        'sentToAdmin': true,
-        'helperVotes': helperVotes.value,
-        'requesterVotes': requesterVotes.value,
-        'completedAt': FieldValue.serverTimestamp(),
-      });
+      await _firestore
+          .collection('validations')
+          .doc(validationId.value)
+          .update({
+            'isVotingCompleted': true,
+            'sentToAdmin': true,
+            'helperVotes': helperVotes.value,
+            'requesterVotes': requesterVotes.value,
+            'completedAt': FieldValue.serverTimestamp(),
+          });
 
       print('📤 Sent to admin for review');
-      
+
       Get.snackbar(
         'Admin Review',
         'Votes are tied. Sent to admin for manual review.',
@@ -374,8 +439,9 @@ class ValidationScreenController extends GetxController {
             {
               'userId': currentUserId,
               'voteType': voteType, // 'helper' or 'requester'
-              'votedAt': DateTime.now().toIso8601String(), // Use DateTime instead of serverTimestamp
-            }
+              'votedAt': DateTime.now()
+                  .toIso8601String(), // Use DateTime instead of serverTimestamp
+            },
           ]),
         });
       } else {
@@ -388,8 +454,9 @@ class ValidationScreenController extends GetxController {
             {
               'userId': currentUserId,
               'voteType': voteType,
-              'votedAt': DateTime.now().toIso8601String(), // Use DateTime instead of serverTimestamp
-            }
+              'votedAt': DateTime.now()
+                  .toIso8601String(), // Use DateTime instead of serverTimestamp
+            },
           ],
           'createdAt': FieldValue.serverTimestamp(),
         });
@@ -398,6 +465,7 @@ class ValidationScreenController extends GetxController {
       // Update local state
       votesReceived.value++;
       hasVoted.value = true;
+      myVote.value = voteType; // 🔥 Update local vote state
       
       // 🔥 Update helper/requester vote counts
       if (voteType == 'helper') {
@@ -413,8 +481,10 @@ class ValidationScreenController extends GetxController {
       );
 
       print('✅ Vote submitted: $voteType');
-      print('📊 Helper votes: ${helperVotes.value}, Requester votes: ${requesterVotes.value}');
-      
+      print(
+        '📊 Helper votes: ${helperVotes.value}, Requester votes: ${requesterVotes.value}',
+      );
+
       // 🔥 Check if voting should be completed
       await _checkVotingCompletion();
     } catch (e) {
