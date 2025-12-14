@@ -12,14 +12,29 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/
 import '../post_new_task/post_new_task_screen.dart';
 import 'controller/task_tabs_controller.dart';
 
-class MyTaskScreen extends StatelessWidget {
+class MyTaskScreen extends StatefulWidget {
   const MyTaskScreen({super.key});
 
   @override
+  State<MyTaskScreen> createState() => _MyTaskScreenState();
+}
+
+class _MyTaskScreenState extends State<MyTaskScreen> {
+  late TaskTabsController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    if (Get.isRegistered<TaskTabsController>()) {
+      controller = Get.find<TaskTabsController>();
+      controller.resetTab();
+    } else {
+      controller = Get.put(TaskTabsController());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final TaskTabsController controller = Get.isRegistered<TaskTabsController>()
-        ? Get.find<TaskTabsController>()
-        : Get.put(TaskTabsController());
     return Scaffold(
       appBar: CustomAppBar(titleText: 'Tasks', disableLeading: true),
 
@@ -47,7 +62,7 @@ class MyTaskScreen extends StatelessWidget {
               child: TabBar(
                 controller: controller.tabController,
                 isScrollable: true,
-                tabAlignment: TabAlignment.start, // <-- Add this
+                tabAlignment: TabAlignment.start,
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 dividerColor: Colors.transparent,
                 indicator: BoxDecoration(

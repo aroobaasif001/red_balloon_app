@@ -25,12 +25,24 @@ class TaskTabsController extends GetxController
   // Sync Custom Tabs → Flutter TabController
   void changeTab(int index) {
     selectedTab.value = index;
-    tabController.animateTo(index);
+    if (!tabController.indexIsChanging) {
+      tabController.animateTo(index);
+    }
+  }
+
+  void resetTab() {
+    try {
+      if (!tabController.indexIsChanging && tabController.index != 0) {
+        tabController.animateTo(0);
+      }
+      selectedTab.value = 0;
+    } catch (e) {
+      // Controller might be disposed, ignore
+    }
   }
 
   @override
   void onClose() {
-    tabController.dispose();
     super.onClose();
   }
 }
