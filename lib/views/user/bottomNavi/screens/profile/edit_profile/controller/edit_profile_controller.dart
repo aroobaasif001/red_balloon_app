@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
-import 'package:image_picker/image_picker.dart';
 
 class EditProfileController extends GetxController {
   final AuthService _authService = AuthService();
@@ -208,7 +208,7 @@ class EditProfileController extends GetxController {
       // Start with quality 85 and reduce until file size is under 30KB
       int quality = 85;
       File? compressedFile;
-      
+
       while (quality > 10) {
         final result = await FlutterImageCompress.compressAndGetFile(
           file.absolute.path,
@@ -220,14 +220,14 @@ class EditProfileController extends GetxController {
         if (result != null) {
           compressedFile = File(result.path);
           final fileSize = await compressedFile.length();
-          
+
           // Check if file size is under 30KB (30 * 1024 bytes)
           if (fileSize <= 30 * 1024) {
             print('Image compressed successfully to ${fileSize / 1024} KB');
             return compressedFile;
           }
         }
-        
+
         // Reduce quality for next iteration
         quality -= 10;
       }
@@ -258,7 +258,7 @@ class EditProfileController extends GetxController {
   Future<void> pickProfileImage() async {
     try {
       final ImagePicker picker = ImagePicker();
-      
+
       // Pick image from gallery
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.gallery,
@@ -290,7 +290,7 @@ class EditProfileController extends GetxController {
 
       // Compress the image
       final compressedFile = await compressImage(originalFile);
-      
+
       // Stop loading
       isCompressingImage.value = false;
 
@@ -298,7 +298,7 @@ class EditProfileController extends GetxController {
         selectedImage.value = compressedFile;
         imagePreviewUrl.value = compressedFile.path;
         _checkForChanges();
-        
+
         Get.snackbar(
           "Success",
           "Image uploaded successfully",
@@ -318,10 +318,10 @@ class EditProfileController extends GetxController {
       }
     } catch (e) {
       print('Error picking image: $e');
-      
+
       // Stop loading if error occurs
       isCompressingImage.value = false;
-      
+
       Get.snackbar(
         "Error",
         "Failed to pick image: ${e.toString()}",
@@ -344,7 +344,7 @@ class EditProfileController extends GetxController {
   Future<void> pickAndUploadProfileImage() async {
     try {
       final ImagePicker picker = ImagePicker();
-      
+
       // Pick image from gallery
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.gallery,
@@ -375,7 +375,7 @@ class EditProfileController extends GetxController {
 
       // Compress the image
       final compressedFile = await compressImage(originalFile);
-      
+
       if (compressedFile == null) {
         isUploadingImage.value = false;
         Get.snackbar(
@@ -391,8 +391,10 @@ class EditProfileController extends GetxController {
       // Upload to Firebase
       final currentUser = _authService.currentUser;
       if (currentUser != null) {
-        final newPhotoURL = await _authService.uploadProfileImage(compressedFile);
-        
+        final newPhotoURL = await _authService.uploadProfileImage(
+          compressedFile,
+        );
+
         if (newPhotoURL != null) {
           // Update Firebase Auth photoURL
           await currentUser.updatePhotoURL(newPhotoURL);
@@ -440,7 +442,7 @@ class EditProfileController extends GetxController {
     } catch (e) {
       print('Error uploading image: $e');
       isUploadingImage.value = false;
-      
+
       Get.snackbar(
         "Error",
         "Failed to upload image: ${e.toString()}",
@@ -663,7 +665,7 @@ class EditProfileController extends GetxController {
       workExperienceError.value = "";
       return true; // Valid if empty
     }
-    
+
     if (trimmed.length < 10) {
       workExperienceError.value =
           "Work experience must be at least 10 characters";
@@ -717,15 +719,19 @@ class EditProfileController extends GetxController {
       return;
     }
 
-    final hasDisplayNameChanged = displayNameController.text != originalDisplayName;
+    final hasDisplayNameChanged =
+        displayNameController.text != originalDisplayName;
     final hasCityChanged = cityController.text != originalCity;
     final hasCountryChanged = countryController.text != originalCountry;
     final hasPhoneChanged = phoneController.text != originalPhone;
-    final hasCountryCodeChanged = selectedCountryCode.value != originalCountryCode;
-    final hasWorkExperienceChanged = workExperienceController.text != originalWorkExperience;
+    final hasCountryCodeChanged =
+        selectedCountryCode.value != originalCountryCode;
+    final hasWorkExperienceChanged =
+        workExperienceController.text != originalWorkExperience;
     final hasImageChanged = imagePreviewUrl.value != originalImageUrl;
 
-    hasChanges.value = hasDisplayNameChanged ||
+    hasChanges.value =
+        hasDisplayNameChanged ||
         hasCityChanged ||
         hasCountryChanged ||
         hasPhoneChanged ||
@@ -768,7 +774,7 @@ class EditProfileController extends GetxController {
           newPhotoURL = await _authService.uploadProfileImage(
             selectedImage.value!,
           );
-          
+
           // Update Firebase Auth photoURL
           if (newPhotoURL != null) {
             await currentUser.updatePhotoURL(newPhotoURL);
@@ -808,13 +814,11 @@ class EditProfileController extends GetxController {
         authController.update(); // Force rebuild GetBuilder widgets
 
         isLoading.value = false;
+        Get.back();
+
         Get.snackbar("Success", "Profile updated successfully");
 
         // Navigate back after successful update
-        Future.delayed(Duration(milliseconds: 1500), () {
-          Get.back();
-        });
-
         return true;
       }
 

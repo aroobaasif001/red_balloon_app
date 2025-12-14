@@ -7,8 +7,10 @@ import 'package:red_balloon_app/model/offer_model.dart';
 import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/model/user_model.dart'; // 🔥 Import UserModel
 import 'package:red_balloon_app/services/offer_service.dart';
+import 'package:red_balloon_app/services/offer_service2.dart';
 import 'package:red_balloon_app/services/user_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'dart:async';
 
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../widgets/providercard.dart';
@@ -30,52 +32,73 @@ class TaskDetails2Screen extends StatefulWidget {
 
 class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
   final OfferService _offerService = OfferService();
+  final OfferService2 _offerService2 = OfferService2();
   final UserService _userService = UserService(); // 🔥 Add UserService
   List<OfferModel> offers = [];
   Map<String, UserModel?> offerUsers = {}; // 🔥 Cache for user data
   bool isLoading = true;
+  StreamSubscription? _offersSubscription;
 
   @override
   void initState() {
     super.initState();
-    _fetchOffers();
+    _setupRealtimeOffers();
   }
 
-  Future<void> _fetchOffers() async {
+  void _setupRealtimeOffers() {
     if (!mounted) return;
 
     setState(() => isLoading = true);
     print(
-      '🔍 TaskDetails2Screen: Fetching offers for Task ID: ${widget.task.id}',
+      '🔍 TaskDetails2Screen: Setting up real-time offers for Task ID: ${widget.task.id}',
     );
 
-    try {
-      final fetchedOffers = await _offerService.getOffersForTask(
-        widget.task.id ?? '',
-      );
-
-      // 🔥 Pre-fetch user data for each offer
-      Map<String, UserModel?> usersMap = {};
-      for (var offer in fetchedOffers) {
-        if (!usersMap.containsKey(offer.offeringUserUid)) {
-          final user = await _userService.getUserByUid(offer.offeringUserUid);
-          usersMap[offer.offeringUserUid] = user;
-        }
-      }
-
+    _offersSubscription = _offerService2
+        .streamTaskOffers(widget.task.id ?? '')
+        .listen((offersData) async {
       if (!mounted) return;
 
-      setState(() {
-        offers = fetchedOffers;
-        offerUsers = usersMap;
-        isLoading = false;
-      });
-    } catch (e) {
-      print("Error fetching offers or users: $e");
+      try {
+        final fetchedOffers = offersData
+            .map((data) => OfferModel.fromJson(data, data['offerId'] ?? ''))
+            .toList();
+
+        // 🔥 Pre-fetch user data for each offer
+        Map<String, UserModel?> usersMap = {};
+        for (var offer in fetchedOffers) {
+          if (!usersMap.containsKey(offer.offeringUserUid)) {
+            final user = await _userService.getUserByUid(offer.offeringUserUid);
+            usersMap[offer.offeringUserUid] = user;
+          }
+        }
+
+        if (!mounted) return;
+
+        setState(() {
+          offers = fetchedOffers;
+          offerUsers = usersMap;
+          isLoading = false;
+        });
+
+        print('✅ Real-time offers updated: ${fetchedOffers.length} offers');
+      } catch (e) {
+        print("Error processing real-time offers: $e");
+        if (mounted) {
+          setState(() => isLoading = false);
+        }
+      }
+    }, onError: (error) {
+      print("❌ Error in real-time offers stream: $error");
       if (mounted) {
         setState(() => isLoading = false);
       }
-    }
+    });
+  }
+
+  @override
+  void dispose() {
+    _offersSubscription?.cancel();
+    super.dispose();
   }
 
   String _getTimeAgo(DateTime dateTime) {
@@ -294,7 +317,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                         offerId: offer.offerId,
                         taskId: widget.task.id ?? '',
                         onAccepted: () {
-                          _fetchOffers();
+                          // Real-time listener will automatically update offers
                         },
                       );
                     },

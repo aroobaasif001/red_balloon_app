@@ -37,6 +37,7 @@ Widget buildBottomUploadBar(
             textAlign: TextAlign.center,
           ),
         ),
+        SizedBox(height: 5),
         Obx(() {
           final bool hasProof = controller.hasProof.value;
           final bool isLoading = controller.isCheckingProof.value;

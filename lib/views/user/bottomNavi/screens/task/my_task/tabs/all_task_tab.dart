@@ -26,7 +26,7 @@ class AllTaskTab extends StatelessWidget {
       onRefresh: () => controller.refreshTasks(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.only(right: 15, bottom: 0, left: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -130,7 +130,8 @@ class AllTaskTab extends StatelessWidget {
                         amount: controller.formatBudget(task.budget),
                         status: controller.getStatusText(task.status),
                         postedTime: controller.getTimeAgo(task.createdAt),
-                        image: task.imageUrl != null && task.imageUrl!.isNotEmpty
+                        image:
+                            task.imageUrl != null && task.imageUrl!.isNotEmpty
                             ? task.imageUrl!
                             : "assets/images/sofa.png",
                         isNetworkImage:

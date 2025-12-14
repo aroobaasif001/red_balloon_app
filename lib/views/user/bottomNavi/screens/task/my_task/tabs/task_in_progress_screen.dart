@@ -63,43 +63,50 @@ class TaskInProgressScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(
-                        child: CustomContainer(
-                          borderRadius: BorderRadius.circular(15),
-                          child: ClipRRect(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (task.imageUrl != null && task.imageUrl!.isNotEmpty) {
+                              _showImageFullscreen(context, task.imageUrl!);
+                            }
+                          },
+                          child: CustomContainer(
                             borderRadius: BorderRadius.circular(15),
-                            child:
-                                task.imageUrl != null &&
-                                    task.imageUrl!.isNotEmpty
-                                ? Image.network(
-                                    task.imageUrl!,
-                                    height: 155,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Container(
-                                        height: 155,
-                                        color: bordercolor1,
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child:
+                                  task.imageUrl != null &&
+                                      task.imageUrl!.isNotEmpty
+                                  ? Image.network(
+                                      task.imageUrl!,
+                                      height: 155,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (context, child, loadingProgress) {
+                                        if (loadingProgress == null) return child;
+                                        return Container(
+                                          height: 155,
+                                          color: bordercolor1,
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      print('❌ Error loading task image: $error');
-                                      return Image.asset(
-                                        "assets/images/sofa.png",
-                                        height: 155,
-                                        fit: BoxFit.cover,
-                                      );
-                                    },
-                                  )
-                                : Image.asset(
-                                    "assets/images/sofa.png",
-                                    height: 155,
-                                    fit: BoxFit.cover,
-                                  ),
+                                        );
+                                      },
+                                      errorBuilder: (context, error, stackTrace) {
+                                        print('❌ Error loading task image: $error');
+                                        return Image.asset(
+                                          "assets/images/sofa.png",
+                                          height: 155,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    )
+                                  : Image.asset(
+                                      "assets/images/sofa.png",
+                                      height: 155,
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
                           ),
                         ),
                       ),
@@ -257,20 +264,18 @@ class TaskInProgressScreen extends StatelessWidget {
                                       offer?.offeringUserPhoto;
 
                                   if (helperUid != null) {
-                                    // Delete old controller if exists
-                                    if (Get.isRegistered<ChatController>()) {
-                                      Get.delete<ChatController>();
+                                    // Check if controller already exists for this chat
+                                    if (!Get.isRegistered<ChatController>()) {
+                                      Get.put(
+                                        ChatController(
+                                          taskId: task.id!,
+                                          taskTitle: task.title,
+                                          taskOwnerId: helperUid,
+                                          taskOwnerName: helperName,
+                                          taskOwnerPhoto: helperPhoto,
+                                        ),
+                                      );
                                     }
-
-                                    Get.put(
-                                      ChatController(
-                                        taskId: task.id!,
-                                        taskTitle: task.title,
-                                        taskOwnerId: helperUid,
-                                        taskOwnerName: helperName,
-                                        taskOwnerPhoto: helperPhoto,
-                                      ),
-                                    );
                                     Get.to(() => const ChatScreen());
                                   }
                                 },
@@ -679,6 +684,61 @@ class TaskInProgressScreen extends StatelessWidget {
           );
         }),
       ),
+    );
+  }
+
+  void _showImageFullscreen(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.black,
+          insetPadding: EdgeInsets.zero,
+          child: Stack(
+            children: [
+              Center(
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/sofa.png",
+                      fit: BoxFit.contain,
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                top: 20,
+                right: 20,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(8),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

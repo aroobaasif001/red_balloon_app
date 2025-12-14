@@ -43,35 +43,37 @@ class MyTaskScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TabBar(
-              controller: controller.tabController,
-              isScrollable: true,
-              // padding: const EdgeInsets.symmetric(horizontal: 15),
-              dividerColor: Colors.transparent,
-
-              indicator: BoxDecoration(
-                color: redColor,
-                borderRadius: BorderRadius.circular(999),
+            Container(
+              child: TabBar(
+                controller: controller.tabController,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start, // <-- Add this
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                dividerColor: Colors.transparent,
+                indicator: BoxDecoration(
+                  color: redColor,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelColor: whiteColor,
+                unselectedLabelColor: blackColor,
+                labelStyle: GoogleFonts.instrumentSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                unselectedLabelStyle: GoogleFonts.instrumentSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                onTap: (index) {
+                  controller.changeTab(index);
+                },
+                tabs: const [
+                  Tab(text: "TASKS NEAR ME"),
+                  Tab(text: "MY TASKS"),
+                  Tab(text: "HISTORY"),
+                ],
               ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              labelColor: whiteColor,
-              unselectedLabelColor: blackColor,
-              labelStyle: GoogleFonts.instrumentSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-              unselectedLabelStyle: GoogleFonts.instrumentSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-              onTap: (index) {
-                controller.changeTab(index);
-              },
-              tabs: const [
-                Tab(text: "TASKS NEAR ME"),
-                Tab(text: "MY TASKS"),
-                Tab(text: "HISTORY"),
-              ],
             ),
             SizedBox(height: 35),
             Expanded(

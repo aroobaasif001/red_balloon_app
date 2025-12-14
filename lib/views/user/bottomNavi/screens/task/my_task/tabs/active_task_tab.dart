@@ -28,7 +28,7 @@ class ActiveTab extends StatelessWidget {
           controller.refreshTasks(minDelay: const Duration(seconds: 1)),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.only(right: 15, bottom: 0, left: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -151,7 +151,8 @@ class ActiveTab extends StatelessWidget {
                         amount: controller.formatBudget(task.budget),
                         status: controller.getStatusText(task.status),
                         postedTime: controller.getTimeAgo(task.createdAt),
-                        image: task.imageUrl != null && task.imageUrl!.isNotEmpty
+                        image:
+                            task.imageUrl != null && task.imageUrl!.isNotEmpty
                             ? task.imageUrl!
                             : "assets/images/sofa.png",
                         isNetworkImage:
@@ -172,7 +173,8 @@ class ActiveTab extends StatelessWidget {
                             task.uid,
                           );
 
-                          final userName = userData?['displayName'] ?? 'Unknown';
+                          final userName =
+                              userData?['displayName'] ?? 'Unknown';
 
                           final userPhoto = userData?['photoURL'];
                           final userId = userData?['userId'];
@@ -219,7 +221,8 @@ class ActiveTab extends StatelessWidget {
                                     userId: userId,
                                     userName: userName,
                                     userPhoto: userPhoto,
-                                    taskOwnerAuthId: task.uid, // Pass Auth UID explicitly
+                                    taskOwnerAuthId:
+                                        task.uid, // Pass Auth UID explicitly
                                   ),
                                 );
                         },

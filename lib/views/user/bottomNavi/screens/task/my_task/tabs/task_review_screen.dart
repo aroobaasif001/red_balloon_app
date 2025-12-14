@@ -8,6 +8,7 @@ import 'package:red_balloon_app/utils/colors.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../controller/task_review_controller.dart';
 import '../controller/task_tabs_controller.dart';
+import '../controller/tasks_controller.dart';
 import 'leave_feedback_screen.dart';
 
 class TaskReviewScreen extends StatelessWidget {
@@ -54,6 +55,14 @@ class TaskReviewScreen extends StatelessWidget {
       while (Navigator.of(context).canPop() && 
              (Get.isDialogOpen == true || Get.isBottomSheetOpen == true)) {
         Navigator.of(context).pop();
+      }
+      
+      // Refresh the tasks controller to update task list
+      try {
+        final tasksController = Get.find<TasksController>();
+        tasksController.refreshTasks();
+      } catch (e) {
+        print('⚠️ Could not refresh tasks controller: $e');
       }
       
       // Navigate back twice (close screens)

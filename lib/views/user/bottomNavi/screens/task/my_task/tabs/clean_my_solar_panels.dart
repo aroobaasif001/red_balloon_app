@@ -13,11 +13,12 @@ import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
 import '../../../profile/tabs/controller/chat_controller.dart';
 import '../controller/task_detail_controller.dart';
+import '../controller/task_tabs_controller.dart';
 import '../widgets/offer_card.dart';
 import '../widgets/task_info_top_row.dart';
 import '../widgets/task_owner_tile.dart';
 
-class Cleanmysolarpanels extends StatelessWidget {
+class Cleanmysolarpanels extends StatefulWidget {
   final String? appBarTitle;
   final String? taskType;
   final String? taskId; // Required for offer submission
@@ -36,8 +37,6 @@ class Cleanmysolarpanels extends StatelessWidget {
   final String? userName;
   final String? userPhoto;
   final String? taskOwnerAuthId; // New field for robust Auth UID
-
-  final controller = Get.put(TaskDetailController());
 
   Cleanmysolarpanels({
     super.key,
@@ -58,6 +57,52 @@ class Cleanmysolarpanels extends StatelessWidget {
   });
 
   @override
+  State<Cleanmysolarpanels> createState() => _CleanmysolarpanelsState();
+}
+
+class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
+  final controller = Get.put(TaskDetailController());
+  StreamSubscription? _taskStatusListener;
+
+  @override
+  void initState() {
+    super.initState();
+    // Setup listener for task status changes
+    if (widget.taskId != null && widget.taskId!.isNotEmpty) {
+      _setupTaskStatusListener(widget.taskId!);
+    }
+  }
+
+  void _setupTaskStatusListener(String taskId) {
+    _taskStatusListener = FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(taskId)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        final status = data?['status']?.toString().toLowerCase() ?? '';
+        
+        // If status changed from "active" to something else (accepted, in progress, etc)
+        if (status.isNotEmpty && status != 'active') {
+          print('✅ Task status changed to: $status');
+          
+          // Navigate back
+          if (mounted) {
+            Navigator.of(context).pop();
+          }
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _taskStatusListener?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
@@ -72,7 +117,7 @@ class Cleanmysolarpanels extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomAppBar(
-                      titleText: taskTitle ?? "Clean my Solar Panels",
+                      titleText: widget.taskTitle ?? "Clean my Solar Panels",
                       // titleFontSize: 16,
                       // titleFontWeight: FontVariant.semiBold,
                     ),
@@ -84,9 +129,9 @@ class Cleanmysolarpanels extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     TaskInfoTopRow(
-                      price: taskPrice,
-                      timeAgo: taskTimeAgo,
-                      taskId: userId ?? 'task_${taskTimeAgo ?? 'default'}',
+                      price: widget.taskPrice,
+                      timeAgo: widget.taskTimeAgo,
+                      taskId: widget.userId ?? 'task_${widget.taskTimeAgo ?? 'default'}',
                     ),
                     const SizedBox(height: 15),
 
@@ -94,9 +139,9 @@ class Cleanmysolarpanels extends StatelessWidget {
                     const SizedBox(height: 12),
 
                     TaskOwnerTile(
-                      name: userName,
-                      photoUrl: userPhoto,
-                      id: userId,
+                      name: widget.userName,
+                      photoUrl: widget.userPhoto,
+                      id: widget.userId,
                     ),
 
                     const SizedBox(height: 10),
@@ -112,10 +157,10 @@ class Cleanmysolarpanels extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     CustomText(
-                      taskDescription == null
+                      widget.taskDescription == null
                           ? "Need help cleaning my solar panels. Roof access available. "
                                 "Should take around 30–40 minutes."
-                          : taskDescription!,
+                          : widget.taskDescription!,
                       fontSize: 14,
                       color: rbtxColor,
                       fontWeight: FontVariant.regular,
@@ -128,9 +173,9 @@ class Cleanmysolarpanels extends StatelessWidget {
                         Expanded(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: taskImage != null && taskImage!.isNotEmpty
+                            child: widget.taskImage != null && widget.taskImage!.isNotEmpty
                                 ? Image.network(
-                                    taskImage!,
+                                    widget.taskImage!,
                                     height: 160,
                                     fit: BoxFit.cover,
                                     loadingBuilder: (context, child, loadingProgress) {
@@ -236,17 +281,17 @@ class Cleanmysolarpanels extends StatelessWidget {
               child: SafeArea(
                 top: false,
                 child: RefreshButtonWithData(
-                  taskId: taskId,
-                  taskTitle: taskTitle,
-                  taskDescription: taskDescription,
-                  taskTimeAgo: taskTimeAgo,
-                  taskType: taskType,
-                  taskImage: taskImage,
-                  location: location,
-                  taskOwnerUid: taskOwnerAuthId ?? userId, // Prefer AuthUID for functional logic
-                  taskOwnerName: userName,
-                  taskOwnerPhoto: userPhoto,
-                  taskBudget: taskBudget,
+                  taskId: widget.taskId,
+                  taskTitle: widget.taskTitle,
+                  taskDescription: widget.taskDescription,
+                  taskTimeAgo: widget.taskTimeAgo,
+                  taskType: widget.taskType,
+                  taskImage: widget.taskImage,
+                  location: widget.location,
+                  taskOwnerUid: widget.taskOwnerAuthId ?? widget.userId, // Prefer AuthUID for functional logic
+                  taskOwnerName: widget.userName,
+                  taskOwnerPhoto: widget.userPhoto,
+                  taskBudget: widget.taskBudget,
                 ),
               ),
             ),
@@ -258,7 +303,7 @@ class Cleanmysolarpanels extends StatelessWidget {
 
   /// Build real-time offers section
   Widget _buildOffersSection() {
-    if (taskId == null) {
+    if (widget.taskId == null) {
       return const CustomText(
         'No offers available',
         fontSize: 14,
@@ -268,8 +313,8 @@ class Cleanmysolarpanels extends StatelessWidget {
 
     // Initialize the controller
     final offersController = Get.put(
-      TaskOffersController(taskId: taskId!),
-      tag: taskId,
+      TaskOffersController(taskId: widget.taskId!),
+      tag: widget.taskId,
     );
 
     return Obx(() {
@@ -297,7 +342,7 @@ class Cleanmysolarpanels extends StatelessWidget {
           return _OfferCardWithTimer(
             offerData: offer,
             key: ValueKey(offer['offerId']),
-            userId: userId ?? '',
+            userId: widget.userId ?? '',
           );
         }).toList(),
       );

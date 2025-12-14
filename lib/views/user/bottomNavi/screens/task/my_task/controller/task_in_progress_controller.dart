@@ -7,6 +7,7 @@ import 'package:red_balloon_app/model/user_model.dart';
 import 'package:red_balloon_app/services/task_service.dart';
 import 'package:red_balloon_app/services/offer_service.dart';
 import 'package:red_balloon_app/services/user_service.dart';
+import 'dart:async';
 
 class TaskInProgressController extends GetxController {
   final TaskService _taskService = TaskService();
@@ -31,6 +32,10 @@ class TaskInProgressController extends GetxController {
   var requesterHelpRequested = false.obs;
   var helperHelpRequested = false.obs;
 
+  // Real-time listeners
+  StreamSubscription? _taskListener;
+  StreamSubscription? _proofListener;
+
   @override
   void onInit() {
     super.onInit();
@@ -38,7 +43,7 @@ class TaskInProgressController extends GetxController {
   }
 
   void setupTaskListener(String taskId) {
-    FirebaseFirestore.instance
+    _taskListener = FirebaseFirestore.instance
         .collection('tasks')
         .doc(taskId)
         .snapshots()
@@ -54,6 +59,49 @@ class TaskInProgressController extends GetxController {
         }
       }
     });
+    
+    // Setup real-time proof listener
+    setupProofListener(taskId);
+  }
+
+  void setupProofListener(String taskId) {
+    _proofListener = FirebaseFirestore.instance
+        .collection('task_proofs')
+        .where('taskId', isEqualTo: taskId)
+        .orderBy('submittedAt', descending: true)
+        .limit(5)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        hasProof.value = true;
+        
+        // Try to find a proof with images
+        QueryDocumentSnapshot<Map<String, dynamic>>? proofWithImages;
+        
+        for (var doc in snapshot.docs) {
+          final data = doc.data();
+          if (data['beforePhotoUrl'] != null && data['afterPhotoUrl'] != null) {
+            proofWithImages = doc;
+            break;
+          }
+        }
+        
+        // Use proof with images if found, otherwise use the latest one
+        final selectedProof = proofWithImages ?? snapshot.docs.first;
+        
+        proofId.value = selectedProof.id;
+        print('✅ Real-time proof update: ${proofId.value}');
+      } else {
+        hasProof.value = false;
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    _taskListener?.cancel();
+    _proofListener?.cancel();
+    super.onClose();
   }
 
   /// Submit Help Request for Requester
