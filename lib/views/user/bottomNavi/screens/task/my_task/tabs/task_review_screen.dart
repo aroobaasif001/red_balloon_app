@@ -23,6 +23,7 @@ class TaskReviewScreen extends StatelessWidget {
     
     // Try to find existing controller, or create new one with permanent flag
     TaskReviewController controller;
+    bool isNewController = false;
     
     if (Get.isRegistered<TaskReviewController>(tag: controllerTag)) {
       controller = Get.find<TaskReviewController>(tag: controllerTag);
@@ -33,12 +34,17 @@ class TaskReviewScreen extends StatelessWidget {
         tag: controllerTag,
         permanent: true, // 🔥 Keep in memory even when screen disposed
       );
+      isNewController = true;
       print('🔥 Created new controller for $controllerTag');
-      
-      // 🔥 Fetch data when controller is first created
-      if (taskId != null && proofId != null) {
+    }
+    
+    // 🔥 ALWAYS fetch data when screen opens (not just on first creation)
+    if (taskId != null && proofId != null) {
+      // Use WidgetsBinding to ensure this runs after build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        print('🔥 Fetching task and proof data for taskId: $taskId, proofId: $proofId');
         controller.fetchTaskAndProofData(taskId: taskId!, proofId: proofId!);
-      }
+      });
     }
     
     
@@ -101,23 +107,71 @@ class TaskReviewScreen extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        /// RED INITIAL AVATAR
-                        CustomContainer(
-                          height: 45,
-                          width: 45,
-                          borderRadius: BorderRadius.circular(100),
-                          conColor: redColor.withOpacity(0.1),
-                          child: Center(
-                            child: Obx(() => CustomText(
-                              controller.helperInitial.value.isEmpty 
-                                  ? "?" 
-                                  : controller.helperInitial.value,
-                              fontSize: 22,
-                              fontWeight: FontVariant.bold,
-                              color: redColor,
-                            )),
-                          ),
-                        ),
+                        /// HELPER AVATAR (Photo or Initial)
+                        Obx(() {
+                          final hasPhoto = controller.helperPhotoUrl.value.isNotEmpty;
+                          
+                          return CustomContainer(
+                            height: 45,
+                            width: 45,
+                            borderRadius: BorderRadius.circular(100),
+                            conColor: hasPhoto ? Colors.transparent : redColor.withOpacity(0.1),
+                            child: hasPhoto
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(100),
+                                    child: Image.network(
+                                      controller.helperPhotoUrl.value,
+                                      height: 45,
+                                      width: 45,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (context, child, loadingProgress) {
+                                        if (loadingProgress == null) return child;
+                                        return Container(
+                                          height: 45,
+                                          width: 45,
+                                          decoration: BoxDecoration(
+                                            color: redColor.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(100),
+                                          ),
+                                          child: Center(
+                                            child: SizedBox(
+                                              height: 20,
+                                              width: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder: (context, error, stackTrace) {
+                                        // Show initial if image fails to load
+                                        return Center(
+                                          child: CustomText(
+                                            controller.helperInitial.value.isEmpty 
+                                                ? "?" 
+                                                : controller.helperInitial.value,
+                                            fontSize: 22,
+                                            fontWeight: FontVariant.bold,
+                                            color: redColor,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : Center(
+                                    child: CustomText(
+                                      controller.helperInitial.value.isEmpty 
+                                          ? "?" 
+                                          : controller.helperInitial.value,
+                                      fontSize: 22,
+                                      fontWeight: FontVariant.bold,
+                                      color: redColor,
+                                    ),
+                                  ),
+                          );
+                        }),
 
                         const SizedBox(width: 12),
 
@@ -260,7 +314,16 @@ class TaskReviewScreen extends StatelessWidget {
                                     fit: BoxFit.cover,
                                     loadingBuilder: (context, child, loadingProgress) {
                                       if (loadingProgress == null) return child;
-                                      return Center(child: CircularProgressIndicator());
+                                      return Container(
+                                        height: 150,
+                                        width: double.infinity,
+                                        color: bordercolor1,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                          ),
+                                        ),
+                                      );
                                     },
                                     errorBuilder: (context, error, stackTrace) {
                                       return Image.asset(
@@ -337,7 +400,16 @@ class TaskReviewScreen extends StatelessWidget {
                                     fit: BoxFit.cover,
                                     loadingBuilder: (context, child, loadingProgress) {
                                       if (loadingProgress == null) return child;
-                                      return Center(child: CircularProgressIndicator());
+                                      return Container(
+                                        height: 150,
+                                        width: double.infinity,
+                                        color: bordercolor1,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                          ),
+                                        ),
+                                      );
                                     },
                                     errorBuilder: (context, error, stackTrace) {
                                       return Image.asset(

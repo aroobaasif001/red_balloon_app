@@ -372,7 +372,7 @@ class PostNewTaskScreen extends StatelessWidget {
                       fontSize: 20,
                       fontWeight: FontVariant.semiBold,
                     ),
-                    CustomText('(Optional)', fontWeight: FontVariant.light),
+                    CustomText('(Required)', fontWeight: FontVariant.light, color: redColor),
                   ],
                 ),
               ),
@@ -380,6 +380,8 @@ class PostNewTaskScreen extends StatelessWidget {
               Obx(() {
                 final file = controller.pickedFile.value;
                 final hasFile = file != null;
+                final isUploading = controller.isUploadingImage.value;
+                final uploadError = controller.imageError.value;
                 final isPdf =
                     hasFile && (file!.extension ?? '').toLowerCase() == 'pdf';
 
@@ -388,9 +390,19 @@ class PostNewTaskScreen extends StatelessWidget {
                   if (isPdf) return SizedBox.shrink();
 
                   final imageWidget = file!.bytes != null
-                      ? Image.memory(file.bytes!, fit: BoxFit.fill)
+                      ? Image.memory(
+                          file.bytes!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 180,
+                        )
                       : (file.path != null
-                            ? Image.file(File(file.path!), fit: BoxFit.fill)
+                            ? Image.file(
+                                File(file.path!),
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: 180,
+                              )
                             : Center(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -439,52 +451,89 @@ class PostNewTaskScreen extends StatelessWidget {
                   );
                 }
 
-                return Ink(
-                  decoration: BoxDecoration(
-                    color: white2Color,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: blackColor.withOpacity(0.25),
-                        offset: Offset(0, 4),
-                        blurRadius: 4,
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Ink(
+                      decoration: BoxDecoration(
+                        color: white2Color,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: blackColor.withOpacity(0.25),
+                            offset: Offset(0, 4),
+                            blurRadius: 4,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(15),
-                    onTap: controller.pickMedia,
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
-                      width: double.maxFinite,
-                      padding: hasFile
-                          ? EdgeInsets.all(0)
-                          : EdgeInsets.symmetric(horizontal: 58, vertical: 50),
-                      child: hasFile
-                          ? Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                buildImagePreview(),
-                                buildPdfPreview(),
-                              ],
-                            )
-                          : Column(
-                              children: [
-                                Image(
-                                  image: AssetImage(
-                                    'assets/icons/cloud-plus-Ar.png',
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(15),
+                        onTap: isUploading ? null : controller.pickMedia,
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          width: double.maxFinite,
+                          height: isUploading || hasFile ? 180 : null,
+                          padding: hasFile || isUploading
+                              ? EdgeInsets.all(0)
+                              : EdgeInsets.symmetric(horizontal: 58, vertical: 50),
+                          child: isUploading
+                              ? Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 50,
+                                        width: 50,
+                                        child: CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                        ),
+                                      ),
+                                      SizedBox(height: 12),
+                                      CustomText(
+                                        'Uploading image...',
+                                        fontSize: 14,
+                                        fontWeight: FontVariant.semiBold,
+                                      ),
+                                    ],
                                   ),
-                                  height: 70,
-                                ),
-                                SizedBox(height: 6),
-                                CustomText(
-                                  'JPG, PNG, PDF (Max 5MB)',
-                                  fontSize: 10,
-                                ),
-                              ],
-                            ),
+                                )
+                              : hasFile
+                                  ? Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        buildImagePreview(),
+                                        buildPdfPreview(),
+                                      ],
+                                    )
+                                  : Column(
+                                      children: [
+                                        Image(
+                                          image: AssetImage(
+                                            'assets/icons/cloud-plus-Ar.png',
+                                          ),
+                                          height: 70,
+                                        ),
+                                        SizedBox(height: 6),
+                                        CustomText(
+                                          'JPG, PNG, PDF (Max 5MB)',
+                                          fontSize: 10,
+                                        ),
+                                      ],
+                                    ),
+                        ),
+                      ),
                     ),
-                  ),
+                    if (uploadError.isNotEmpty)
+                      Padding(
+                        padding: EdgeInsets.only(left: 8, top: 6),
+                        child: CustomText(
+                          uploadError,
+                          color: redColor,
+                          fontSize: 12,
+                        ),
+                      ),
+                  ],
                 );
               }),
 

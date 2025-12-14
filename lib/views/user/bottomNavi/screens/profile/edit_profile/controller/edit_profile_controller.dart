@@ -1,10 +1,13 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+import 'package:image_picker/image_picker.dart';
 
 class EditProfileController extends GetxController {
   final AuthService _authService = AuthService();
@@ -93,6 +96,8 @@ class EditProfileController extends GetxController {
 
   // Loading state
   RxBool isLoading = false.obs;
+  RxBool isCompressingImage = false.obs; // For image compression loading
+  RxBool isUploadingImage = false.obs; // For direct upload from profile screen
 
   // Track if any changes have been made
   RxBool hasChanges = false.obs;
@@ -191,32 +196,140 @@ class EditProfileController extends GetxController {
     }
   }
 
+  // Compress image to max 30KB
+  Future<File?> compressImage(File file) async {
+    try {
+      final dir = await getTemporaryDirectory();
+      final targetPath = path.join(
+        dir.path,
+        'compressed_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+
+      // Start with quality 85 and reduce until file size is under 30KB
+      int quality = 85;
+      File? compressedFile;
+      
+      while (quality > 10) {
+        final result = await FlutterImageCompress.compressAndGetFile(
+          file.absolute.path,
+          targetPath,
+          quality: quality,
+          format: CompressFormat.jpeg,
+        );
+
+        if (result != null) {
+          compressedFile = File(result.path);
+          final fileSize = await compressedFile.length();
+          
+          // Check if file size is under 30KB (30 * 1024 bytes)
+          if (fileSize <= 30 * 1024) {
+            print('Image compressed successfully to ${fileSize / 1024} KB');
+            return compressedFile;
+          }
+        }
+        
+        // Reduce quality for next iteration
+        quality -= 10;
+      }
+
+      // If still too large, try with minimum quality
+      final finalResult = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        targetPath,
+        quality: 10,
+        format: CompressFormat.jpeg,
+      );
+
+      if (finalResult != null) {
+        compressedFile = File(finalResult.path);
+        final fileSize = await compressedFile.length();
+        print('Image compressed to minimum quality: ${fileSize / 1024} KB');
+        return compressedFile;
+      }
+
+      return null;
+    } catch (e) {
+      print('Error compressing image: $e');
+      return null;
+    }
+  }
+
   // Pick image from gallery
   Future<void> pickProfileImage() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-        allowedExtensions: ['jpg', 'jpeg', 'png'],
+      final ImagePicker picker = ImagePicker();
+      
+      // Pick image from gallery
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 100, // Get original quality, we'll compress it ourselves
       );
 
-      if (result != null && result.files.isNotEmpty) {
-        final file = result.files.first;
+      if (pickedFile == null) {
+        // User cancelled the picker
+        return;
+      }
 
-        // Max 5MB
-        if (file.size > 5 * 1024 * 1024) {
-          Get.snackbar("Error", "File too large! Max size is 5MB");
-          return;
-        }
+      final File originalFile = File(pickedFile.path);
+      final fileSize = await originalFile.length();
 
-        if (file.path != null) {
-          selectedImage.value = File(file.path!);
-          imagePreviewUrl.value = file.path!;
-          _checkForChanges();
-        }
+      // Max 5MB for original file
+      if (fileSize > 5 * 1024 * 1024) {
+        Get.snackbar(
+          "Error",
+          "File too large! Max size is 5MB",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      // Set loading state instead of showing dialog
+      isCompressingImage.value = true;
+
+      // Compress the image
+      final compressedFile = await compressImage(originalFile);
+      
+      // Stop loading
+      isCompressingImage.value = false;
+
+      if (compressedFile != null) {
+        selectedImage.value = compressedFile;
+        imagePreviewUrl.value = compressedFile.path;
+        _checkForChanges();
+        
+        Get.snackbar(
+          "Success",
+          "Image uploaded successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.withOpacity(0.8),
+          colorText: Colors.white,
+          duration: Duration(seconds: 2),
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          "Failed to compress image. Please try another image.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
       print('Error picking image: $e');
-      Get.snackbar("Error", "Failed to pick image");
+      
+      // Stop loading if error occurs
+      isCompressingImage.value = false;
+      
+      Get.snackbar(
+        "Error",
+        "Failed to pick image: ${e.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+      );
     }
   }
 
@@ -225,6 +338,118 @@ class EditProfileController extends GetxController {
     selectedImage.value = null;
     // Keep the original image URL if no new image is selected
     _loadCurrentUserData();
+  }
+
+  // Pick and upload profile image directly (for profile screen camera icon)
+  Future<void> pickAndUploadProfileImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      
+      // Pick image from gallery
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 100,
+      );
+
+      if (pickedFile == null) {
+        return;
+      }
+
+      final File originalFile = File(pickedFile.path);
+      final fileSize = await originalFile.length();
+
+      // Max 5MB for original file
+      if (fileSize > 5 * 1024 * 1024) {
+        Get.snackbar(
+          "Error",
+          "File too large! Max size is 5MB",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      // Set loading state instead of showing dialog
+      isUploadingImage.value = true;
+
+      // Compress the image
+      final compressedFile = await compressImage(originalFile);
+      
+      if (compressedFile == null) {
+        isUploadingImage.value = false;
+        Get.snackbar(
+          "Error",
+          "Failed to compress image",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      // Upload to Firebase
+      final currentUser = _authService.currentUser;
+      if (currentUser != null) {
+        final newPhotoURL = await _authService.uploadProfileImage(compressedFile);
+        
+        if (newPhotoURL != null) {
+          // Update Firebase Auth photoURL
+          await currentUser.updatePhotoURL(newPhotoURL);
+          await currentUser.reload();
+
+          // Update Firestore
+          await _authService.updateUserProfileWithFields(
+            uid: currentUser.uid,
+            updateData: {
+              'photoURL': newPhotoURL,
+              'updatedAt': DateTime.now().toIso8601String(),
+            },
+          );
+
+          // Refresh user data
+          await refreshUserData();
+
+          // Refresh AuthController
+          final authController = Get.find<AuthController>();
+          await authController.refreshCurrentUser();
+          authController.update();
+
+          // Stop loading
+          isUploadingImage.value = false;
+
+          Get.snackbar(
+            "Success",
+            "Profile picture updated successfully",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green.withOpacity(0.8),
+            colorText: Colors.white,
+            duration: Duration(seconds: 2),
+          );
+        } else {
+          isUploadingImage.value = false;
+          Get.snackbar(
+            "Error",
+            "Failed to upload image",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red.withOpacity(0.8),
+            colorText: Colors.white,
+          );
+        }
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+      isUploadingImage.value = false;
+      
+      Get.snackbar(
+        "Error",
+        "Failed to upload image: ${e.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+      );
+    }
   }
 
   // Validation methods
@@ -543,6 +768,12 @@ class EditProfileController extends GetxController {
           newPhotoURL = await _authService.uploadProfileImage(
             selectedImage.value!,
           );
+          
+          // Update Firebase Auth photoURL
+          if (newPhotoURL != null) {
+            await currentUser.updatePhotoURL(newPhotoURL);
+            await currentUser.reload();
+          }
         }
 
         // Prepare update data for Firestore
@@ -574,8 +805,7 @@ class EditProfileController extends GetxController {
         // Refresh AuthController to update all screens
         final authController = Get.find<AuthController>();
         await authController.refreshCurrentUser();
-
-        Get.back();
+        authController.update(); // Force rebuild GetBuilder widgets
 
         isLoading.value = false;
         Get.snackbar("Success", "Profile updated successfully");

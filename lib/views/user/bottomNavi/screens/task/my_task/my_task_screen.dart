@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/active_task_tab.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/all_task_tab.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/history_tab.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/widgets/custom_tab_bar_task.dart';
+
+// import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/widgets/custom_tab_bar_task.dart';
 
 import '../post_new_task/post_new_task_screen.dart';
 import 'controller/task_tabs_controller.dart';
@@ -41,15 +43,35 @@ class MyTaskScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Obx(
-              () => CustomTabBarTask(
-                selectedIndex: controller
-                    .selectedTab
-                    .value, // ← your GetX or state variable
-                onPostedByMeTap: () => controller.changeTab(0),
-                onTasksNearMeTap: () => controller.changeTab(1),
-                onInProgressTap: () => controller.changeTab(2),
+            TabBar(
+              controller: controller.tabController,
+              isScrollable: true,
+              // padding: const EdgeInsets.symmetric(horizontal: 15),
+              dividerColor: Colors.transparent,
+
+              indicator: BoxDecoration(
+                color: redColor,
+                borderRadius: BorderRadius.circular(999),
               ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              labelColor: whiteColor,
+              unselectedLabelColor: blackColor,
+              labelStyle: GoogleFonts.instrumentSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              unselectedLabelStyle: GoogleFonts.instrumentSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              onTap: (index) {
+                controller.changeTab(index);
+              },
+              tabs: const [
+                Tab(text: "TASKS NEAR ME"),
+                Tab(text: "MY TASKS"),
+                Tab(text: "HISTORY"),
+              ],
             ),
             SizedBox(height: 35),
             Expanded(

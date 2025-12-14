@@ -35,6 +35,7 @@ class Cleanmysolarpanels extends StatelessWidget {
   final String? userId;
   final String? userName;
   final String? userPhoto;
+  final String? taskOwnerAuthId; // New field for robust Auth UID
 
   final controller = Get.put(TaskDetailController());
 
@@ -53,6 +54,7 @@ class Cleanmysolarpanels extends StatelessWidget {
     this.userId,
     this.userName,
     this.userPhoto,
+    this.taskOwnerAuthId,
   });
 
   @override
@@ -126,10 +128,36 @@ class Cleanmysolarpanels extends StatelessWidget {
                         Expanded(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              "assets/images/homedetail.png",
-                              height: 160,
-                            ),
+                            child: taskImage != null && taskImage!.isNotEmpty
+                                ? Image.network(
+                                    taskImage!,
+                                    height: 160,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Container(
+                                        height: 160,
+                                        color: bordercolor1,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        "assets/images/homedetail.png",
+                                        height: 160,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  )
+                                : Image.asset(
+                                    "assets/images/homedetail.png",
+                                    height: 160,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -139,6 +167,7 @@ class Cleanmysolarpanels extends StatelessWidget {
                             child: Image.asset(
                               "assets/images/map.png",
                               height: 160,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
@@ -214,7 +243,7 @@ class Cleanmysolarpanels extends StatelessWidget {
                   taskType: taskType,
                   taskImage: taskImage,
                   location: location,
-                  taskOwnerUid: userId,
+                  taskOwnerUid: taskOwnerAuthId ?? userId, // Prefer AuthUID for functional logic
                   taskOwnerName: userName,
                   taskOwnerPhoto: userPhoto,
                   taskBudget: taskBudget,
@@ -563,20 +592,29 @@ class RefreshButtonWithData extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: InkWell(
+            child: GestureDetector(
               onTap: () {
                 if (taskId != null && taskOwnerUid != null) {
+                  print("Navigating to ChatScreen with taskId: $taskId, ownerId: $taskOwnerUid");
                   Get.to(
                     () => const ChatScreen(),
                     binding: BindingsBuilder(() {
                       Get.put(ChatController(
                         taskId: taskId!,
-                        taskTitle: taskTitle ?? 'Task',
+                        taskTitle: taskTitle ?? 'Clean my Solar Panels',
                         taskOwnerId: taskOwnerUid!,
                         taskOwnerName: taskOwnerName ?? 'User',
                         taskOwnerPhoto: taskOwnerPhoto,
                       ));
                     }),
+                  );
+                } else {
+                  print("Chat tap failed: taskId=$taskId, taskOwnerUid=$taskOwnerUid");
+                   Get.snackbar(
+                    "Error",
+                    "Cannot start chat: Missing task details",
+                     backgroundColor: Colors.redAccent,
+                    colorText: Colors.white,
                   );
                 }
               },
@@ -653,20 +691,29 @@ class RefreshButtonWithData extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: InkWell(
+            child: GestureDetector(
               onTap: () {
                 if (taskId != null && taskOwnerUid != null) {
+                  print("Navigating to ChatScreen with taskId: $taskId, ownerId: $taskOwnerUid");
                   Get.to(
                     () => const ChatScreen(),
                     binding: BindingsBuilder(() {
                       Get.put(ChatController(
                         taskId: taskId!,
-                        taskTitle: taskTitle ?? 'Task',
+                        taskTitle: taskTitle ?? 'Clean my Solar Panels',
                         taskOwnerId: taskOwnerUid!,
                         taskOwnerName: taskOwnerName ?? 'User',
                         taskOwnerPhoto: taskOwnerPhoto,
                       ));
                     }),
+                  );
+                } else {
+                  print("Chat tap failed: taskId=$taskId, taskOwnerUid=$taskOwnerUid");
+                  Get.snackbar(
+                    "Error",
+                    "Cannot start chat: Missing task details",
+                    backgroundColor: Colors.redAccent,
+                    colorText: Colors.white,
                   );
                 }
               },

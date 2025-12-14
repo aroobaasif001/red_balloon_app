@@ -146,7 +146,8 @@ class AllTaskTab extends StatelessWidget {
                         onViewDetails: () {
                           // 🔥 Navigate based on task status
                           if (isInProgress) {
-                            Get.to(() => TaskInProgressScreen());
+                            // 🔥 Pass taskId to load correct task
+                            Get.to(() => TaskInProgressScreen(taskId: task.id));
                           } else {
                             Get.to(() => TaskDetailsScreen(task: task));
                           }

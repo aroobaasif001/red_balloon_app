@@ -74,7 +74,20 @@ class TaskInProgressScreen extends StatelessWidget {
                                     task.imageUrl!,
                                     height: 155,
                                     fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Container(
+                                        height: 155,
+                                        color: bordercolor1,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                     errorBuilder: (context, error, stackTrace) {
+                                      print('❌ Error loading task image: $error');
                                       return Image.asset(
                                         "assets/images/sofa.png",
                                         height: 155,

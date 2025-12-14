@@ -10,6 +10,7 @@ import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../auth/view/onboarding/onboarding_screen.dart';
 import '../edit_profile/edit_profile_screen.dart';
+import '../edit_profile/controller/edit_profile_controller.dart';
 import '../widgets/help_section.dart';
 import '../widgets/menu_section.dart';
 import '../widgets/profile_card.dart';
@@ -45,21 +46,22 @@ class ProfileScreen extends StatelessWidget {
             child: GetBuilder<AuthController>(
               init: AuthController(),
               builder: (authController) {
-                final currentUser = authController.currentUser.value;
-                final displayName = currentUser?.displayName ?? 'User';
-                final photoURL = currentUser?.photoURL;
-                final initials = displayName.isNotEmpty
-                    ? displayName
-                          .split(' ')
-                          .map((e) => e[0])
-                          .join()
-                          .toUpperCase()
-                    : 'RB';
-
                 return Column(
                   children: [
                     // Profile Card
                     Obx(() {
+                      // Get reactive values inside Obx
+                      final currentUser = authController.currentUser.value;
+                      final displayName = currentUser?.displayName ?? 'User';
+                      final photoURL = currentUser?.photoURL;
+                      final initials = displayName.isNotEmpty
+                          ? displayName
+                                .split(' ')
+                                .map((e) => e[0])
+                                .join()
+                                .toUpperCase()
+                          : 'RB';
+                      
                       // Build location string from city and country
                       String? locationText;
                       final city = authController.userCity.value;
@@ -91,8 +93,10 @@ class ProfileScreen extends StatelessWidget {
                         avatarSize: 100,
                         namefontSize: 22,
                         locationFontSize: 14,
-                        onAvatarTap: () {
-                          // Handle avatar tap
+                        onAvatarTap: () async {
+                          // Import EditProfileController
+                          final editController = Get.put(EditProfileController());
+                          await editController.pickAndUploadProfileImage();
                         },
                       );
                     }),

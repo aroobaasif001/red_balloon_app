@@ -33,7 +33,9 @@ class EditProfileScreen extends StatelessWidget {
                 children: [
                   Obx(
                     () => GestureDetector(
-                      onTap: controller.pickProfileImage,
+                      onTap: controller.isCompressingImage.value 
+                          ? null 
+                          : controller.pickProfileImage,
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
@@ -45,37 +47,46 @@ class EditProfileScreen extends StatelessWidget {
                               color: redColor,
                               shape: BoxShape.circle,
                             ),
-                            child: controller.imagePreviewUrl.isNotEmpty
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(60),
-                                    child:
-                                        controller.selectedImage.value != null
-                                        ? Image.file(
-                                            controller.selectedImage.value!,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : Image.network(
-                                            controller.imagePreviewUrl.value,
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                                  return Center(
-                                                    child: Icon(
-                                                      Icons.person,
-                                                      size: 60,
-                                                      color: whiteColor,
-                                                    ),
-                                                  );
-                                                },
-                                          ),
-                                  )
-                                : Center(
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 60,
-                                      color: whiteColor,
+                            child: controller.isCompressingImage.value
+                                ? Center(
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        redColor,
+                                      ),
+                                      strokeWidth: 3,
                                     ),
-                                  ),
+                                  )
+                                : controller.imagePreviewUrl.isNotEmpty
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(60),
+                                        child:
+                                            controller.selectedImage.value != null
+                                            ? Image.file(
+                                                controller.selectedImage.value!,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.network(
+                                                controller.imagePreviewUrl.value,
+                                                fit: BoxFit.cover,
+                                                errorBuilder:
+                                                    (context, error, stackTrace) {
+                                                      return Center(
+                                                        child: Icon(
+                                                          Icons.person,
+                                                          size: 60,
+                                                          color: whiteColor,
+                                                        ),
+                                                      );
+                                                    },
+                                              ),
+                                      )
+                                    : Center(
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 60,
+                                          color: whiteColor,
+                                        ),
+                                      ),
                           ),
 
                           // 📸 SMALL CAMERA BUTTON (white border like screenshot)

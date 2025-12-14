@@ -121,8 +121,11 @@ class HistoryTab extends StatelessWidget {
                         statusBgColor: statusBgColor,
 
                         onViewDetails: () async {
-                          // 🔥 For rejected tasks, fetch validation data and navigate
+                          // 🔥🔥 TEMPORARILY DISABLED - Restore when needed 🔥🔥
+                          // For rejected tasks, fetch validation data and navigate
                           if (task.status.toLowerCase() == 'rejected') {
+                            Get.snackbar('Info', 'Validation screen temporarily disabled');
+                            /* 🔥 COMMENTED OUT - Restore Later
                             try {
                               // Fetch validation data from validations collection
                               final validationSnapshot = await FirebaseFirestore
@@ -178,7 +181,10 @@ class HistoryTab extends StatelessWidget {
                                 'Failed to load validation details',
                               );
                             }
+                            */ // END COMMENTED VALIDATION
                           } else if (task.status.toLowerCase() == 'disputed') {
+                            Get.snackbar('Info', 'Dispute screen temporarily disabled');
+                            /* 🔥 COMMENTED OUT - Restore Later
                             try {
                               // 1. Fetch Requester Details (using task user uid)
                               Map<String, dynamic> requesterInfo = {};
@@ -265,7 +271,10 @@ class HistoryTab extends StatelessWidget {
                                 'Failed to load dispute details',
                               );
                             }
+                            */ // END COMMENTED DISPUTE
                           } else if (task.status.toLowerCase() == 'completed') {
+                            Get.snackbar('Info', 'Completed screen temporarily disabled');
+                            /* 🔥 COMMENTED OUT - Restore Later
                             final currentUser = FirebaseAuth.instance.currentUser;
                             if (currentUser == null) return;
 
@@ -396,6 +405,7 @@ class HistoryTab extends StatelessWidget {
                               print('❌ Error in completed task navigation: $e');
                               Get.snackbar('Error', 'Something went wrong');
                             }
+                            */ // END COMMENTED COMPLETED
                           }
                         },
                         location: '2.5 km away',

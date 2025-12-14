@@ -225,14 +225,31 @@ class TaskInProgressController extends GetxController {
       final proofSnapshot = await FirebaseFirestore.instance
           .collection('task_proofs')
           .where('taskId', isEqualTo: taskId)
-          .limit(1)
+          .orderBy('submittedAt', descending: true) // 🔥 Get latest first
+          .limit(5) // 🔥 Get top 5 to find one with images
           .get();
 
       hasProof.value = proofSnapshot.docs.isNotEmpty;
       
       if (hasProof.value) {
-        proofId.value = proofSnapshot.docs.first.id; // 🔥 Store proof ID
+        // 🔥 Try to find a proof with images
+        QueryDocumentSnapshot<Map<String, dynamic>>? proofWithImages;
+        
+        for (var doc in proofSnapshot.docs) {
+          final data = doc.data();
+          if (data['beforePhotoUrl'] != null && data['afterPhotoUrl'] != null) {
+            proofWithImages = doc;
+            break;
+          }
+        }
+        
+        // Use proof with images if found, otherwise use the latest one
+        final selectedProof = proofWithImages ?? proofSnapshot.docs.first;
+        
+        proofId.value = selectedProof.id;
+        final proofData = selectedProof.data();
         print('✅ Proof found for task: $taskId, proofId: ${proofId.value}');
+        print('   Has images: ${proofData['beforePhotoUrl'] != null && proofData['afterPhotoUrl'] != null}');
       } else {
         print('❌ No proof found for task: $taskId');
       }

@@ -15,6 +15,7 @@ Widget buildAddPhotoBox() {
   return Obx(() {
     final isBeforeTab = controller.selectedTab.value == ProofTab.before;
     final selectedImage = isBeforeTab ? controller.beforePhoto.value : controller.afterPhoto.value;
+    final isLoading = controller.isSubmitting.value;
 
     return DottedBorderContainer(
       strokeWidth: 2,
@@ -27,10 +28,32 @@ Widget buildAddPhotoBox() {
         conColor: white2Color,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: bordercolor1, width: 1),
-        child: selectedImage != null
+        child: isLoading && selectedImage == null
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    CustomText(
+                      'Loading...',
+                      fontSize: 14,
+                      color: walletGrey600Color,
+                      fontWeight: FontVariant.regular,
+                    ),
+                  ],
+                ),
+              )
+            : selectedImage != null
             ? Stack(
                 children: [
-                  // Display selected image
+                  // Display selected image with BoxFit.cover to prevent stretching
                   ClipRRect(
                     borderRadius: BorderRadius.circular(18),
                     child: Image.file(

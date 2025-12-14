@@ -219,6 +219,7 @@ class ActiveTab extends StatelessWidget {
                                     userId: userId,
                                     userName: userName,
                                     userPhoto: userPhoto,
+                                    taskOwnerAuthId: task.uid, // Pass Auth UID explicitly
                                   ),
                                 );
                         },

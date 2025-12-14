@@ -25,6 +25,7 @@ class TaskReviewController extends GetxController {
   var taskTitle = ''.obs;
   var helperName = ''.obs;
   var helperInitial = ''.obs;
+  var helperPhotoUrl = ''.obs; // 🔥 Helper's photo URL
   var location = ''.obs;
   var submittedTime = ''.obs;
   var beforeImageUrl = ''.obs;
@@ -226,6 +227,7 @@ class TaskReviewController extends GetxController {
         if (offersQuery.docs.isNotEmpty) {
           final offerData = offersQuery.docs.first.data();
           helperName.value = offerData['offeringUserName'] ?? 'Unknown Helper';
+          helperPhotoUrl.value = offerData['offeringUserPhoto'] ?? ''; // 🔥 Get helper photo
           
           // Get first letter for initial
           if (helperName.value.isNotEmpty && helperName.value != 'Unknown Helper') {
@@ -233,6 +235,10 @@ class TaskReviewController extends GetxController {
           } else {
             helperInitial.value = 'U';
           }
+          
+          // 🔥 Debug: Print helper info
+          print('👤 Helper Name: ${helperName.value}');
+          print('📸 Helper Photo URL: ${helperPhotoUrl.value}');
         }
       }
 
@@ -244,8 +250,32 @@ class TaskReviewController extends GetxController {
 
       if (proofDoc.exists) {
         final proofData = proofDoc.data()!;
-        beforeImageUrl.value = proofData['beforePhotoUrl'] ?? '';
-        afterImageUrl.value = proofData['afterPhotoUrl'] ?? '';
+        
+        // 🔥 Debug: Print all proof data
+        print('🔍 Proof Data Keys: ${proofData.keys.toList()}');
+        print('🔍 Full Proof Data: $proofData');
+        
+        // 🔥 Try multiple possible field names for before image
+        String? rawBeforeUrl = proofData['beforePhotoUrl'] ?? 
+                               proofData['beforeImageUrl'] ?? 
+                               proofData['before_photo_url'] ?? 
+                               proofData['beforePhoto'];
+        
+        // 🔥 Try multiple possible field names for after image
+        String? rawAfterUrl = proofData['afterPhotoUrl'] ?? 
+                              proofData['afterImageUrl'] ?? 
+                              proofData['after_photo_url'] ?? 
+                              proofData['afterPhoto'];
+        
+        // 🔥 Clean and validate URLs
+        beforeImageUrl.value = (rawBeforeUrl?.trim() ?? '').isEmpty ? '' : rawBeforeUrl!.trim();
+        afterImageUrl.value = (rawAfterUrl?.trim() ?? '').isEmpty ? '' : rawAfterUrl!.trim();
+        
+        // 🔥 Debug: Print image URLs
+        print('🖼️ Before Image URL: ${beforeImageUrl.value}');
+        print('🖼️ After Image URL: ${afterImageUrl.value}');
+        print('🖼️ Before Image Empty: ${beforeImageUrl.value.isEmpty}');
+        print('🖼️ After Image Empty: ${afterImageUrl.value.isEmpty}');
         
         // Calculate submitted time
         try {
@@ -276,6 +306,8 @@ class TaskReviewController extends GetxController {
           print('❌ Error parsing submittedAt: $e');
           submittedTime.value = 'Just now';
         }
+      } else {
+        print('❌ Proof document does not exist for proofId: $proofId');
       }
 
       isLoading.value = false;

@@ -15,15 +15,14 @@ class TaskService {
   // Get current user ID
   String? get currentUserId => _auth.currentUser?.uid;
 
-  /// Upload image to Firebase Storage (Optional)
-  Future<String?> uploadTaskImage(File imageFile, String taskId) async {
+  /// Upload image to Firebase Storage
+  Future<String?> uploadTaskImage(File imageFile, String fileName) async {
     try {
       if (currentUserId == null) {
         print('User not authenticated');
         return null;
       }
 
-      final fileName = 'task_$taskId.jpg';
       final ref = _storage.ref().child('tasks/$currentUserId/$fileName');
 
       await ref.putFile(imageFile);
@@ -60,7 +59,7 @@ class TaskService {
       // Upload image if provided
       String? imageUrl;
       if (imageFile != null) {
-        imageUrl = await uploadTaskImage(imageFile, taskId);
+        imageUrl = await uploadTaskImage(imageFile, 'task_$taskId.jpg');
       }
 
       // Create task model
@@ -82,6 +81,52 @@ class TaskService {
       await taskRef.set(task.toJson());
 
       print('Task created successfully with ID: $taskId');
+      return taskId;
+    } catch (e) {
+      print('Error creating task: $e');
+      rethrow;
+    }
+  }
+
+  /// Create a new task with pre-uploaded image URL
+  Future<String?> createTaskWithImageUrl({
+    required String taskType,
+    required String title,
+    required String description,
+    required double budget,
+    String? location,
+    String? userId,
+    required String imageUrl,
+  }) async {
+    try {
+      if (currentUserId == null) {
+        print('User not authenticated');
+        return null;
+      }
+
+      // Create task document
+      final taskRef = tasksCollection.doc();
+      final taskId = taskRef.id;
+
+      // Create task model with pre-uploaded image URL
+      final task = TaskModel(
+        id: taskId,
+        uid: currentUserId!,
+        userId: userId,
+        taskType: taskType,
+        title: title,
+        description: description,
+        budget: budget,
+        location: location,
+        imageUrl: imageUrl,
+        createdAt: DateTime.now(),
+        status: 'active',
+      );
+
+      // Save to Firestore
+      await taskRef.set(task.toJson());
+
+      print('Task created successfully with ID: $taskId and image URL: $imageUrl');
       return taskId;
     } catch (e) {
       print('Error creating task: $e');

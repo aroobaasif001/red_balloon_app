@@ -52,6 +52,8 @@ dependencies:
   #Image picker and file picker
   image_picker: ^1.2.1
   file_picker: ^10.3.6
+  flutter_image_compress: ^2.3.0
+  path_provider: ^2.1.5
 
   # URL Launcher for phone calls
   url_launcher: ^6.3.1

@@ -45,7 +45,12 @@ Widget buildHelperInfoCard(
                     )
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(50),
-                      child: Image.network(photoUrl),
+                      child: Image.network(
+                        photoUrl,
+                        fit: BoxFit.fitWidth,
+                        height: 50,
+                        width: 50,
+                      ),
                     ),
             ),
             const SizedBox(width: 12),

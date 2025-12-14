@@ -24,6 +24,7 @@ class PostNewTaskController extends GetxController {
   RxString descriptionError = "".obs;
   RxString budgetError = "".obs;
   RxString locationError = "".obs;
+  RxString imageError = "".obs;
 
   // Character counts
   RxInt titleLength = 0.obs;
@@ -36,6 +37,8 @@ class PostNewTaskController extends GetxController {
 
   // File
   Rx<PlatformFile?> pickedFile = Rx<PlatformFile?>(null);
+  RxString uploadedImageUrl = "".obs;
+  RxBool isUploadingImage = false.obs;
 
   final List<String> taskTypes = ["Offline Task", "Online Task"];
 
@@ -56,11 +59,47 @@ class PostNewTaskController extends GetxController {
         return;
       }
       pickedFile.value = file;
+      imageError.value = "";
+      
+      // Auto-upload to Firebase Storage
+      await uploadImageToFirebase(file);
+    }
+  }
+
+  Future<void> uploadImageToFirebase(PlatformFile file) async {
+    try {
+      isUploadingImage.value = true;
+      imageError.value = "";
+      
+      if (file.path == null) {
+        imageError.value = "Unable to access file";
+        isUploadingImage.value = false;
+        return;
+      }
+
+      final imageFile = File(file.path!);
+      final fileName = 'task_${DateTime.now().millisecondsSinceEpoch}_${file.name}';
+      final uploadUrl = await _taskService.uploadTaskImage(imageFile, fileName);
+
+      if (uploadUrl != null) {
+        uploadedImageUrl.value = uploadUrl;
+        Get.snackbar("Success", "Image uploaded successfully", snackPosition: SnackPosition.BOTTOM);
+      } else {
+        imageError.value = "Failed to upload image. Please try again.";
+        pickedFile.value = null;
+      }
+    } catch (e) {
+      imageError.value = "Error uploading image: ${e.toString()}";
+      pickedFile.value = null;
+    } finally {
+      isUploadingImage.value = false;
     }
   }
 
   void removeFile() {
     pickedFile.value = null;
+    uploadedImageUrl.value = "";
+    imageError.value = "";
   }
 
   // ---------------- VALIDATION ----------------
@@ -137,6 +176,12 @@ class PostNewTaskController extends GetxController {
       }
     }
 
+    // Image validation — now required
+    if (uploadedImageUrl.value.isEmpty) {
+      imageError.value = "Image is required. Please upload an image.";
+      isValid = false;
+    }
+
     return isValid;
   }
 
@@ -144,12 +189,6 @@ class PostNewTaskController extends GetxController {
   Future<bool> submitTask() async {
     try {
       isLoading.value = true;
-
-      // Get image file if available
-      File? imageFile;
-      if (pickedFile.value != null && pickedFile.value!.path != null) {
-        imageFile = File(pickedFile.value!.path!);
-      }
 
       // Parse budget
       final budget = double.tryParse(taskBudget.text.trim()) ?? 0.0;
@@ -162,16 +201,17 @@ class PostNewTaskController extends GetxController {
       print('🚀 Submitting Task...');
       print('   Type: ${selectedTaskType.value}');
       print('   UserID (Custom): $storedUserId');
+      print('   Image URL: ${uploadedImageUrl.value}');
 
-      // Create task
-      final taskId = await _taskService.createTask(
+      // Create task with uploaded image URL
+      final taskId = await _taskService.createTaskWithImageUrl(
         taskType: selectedTaskType.value,
         title: taskTitle.text.trim(),
         description: taskDescription.text.trim(),
         budget: budget,
         location: selectedTaskType.value == "Offline Task" ? location.text.trim() : null,
         userId: storedUserId,
-        imageFile: imageFile,
+        imageUrl: uploadedImageUrl.value,
       );
 
       isLoading.value = false;
@@ -205,6 +245,8 @@ class PostNewTaskController extends GetxController {
     descriptionError.value = "";
     budgetError.value = "";
     locationError.value = "";
+    imageError.value = "";
+    uploadedImageUrl.value = "";
   }
   
   String? storedUserId;
