@@ -65,7 +65,8 @@ class TaskInProgressScreen extends StatelessWidget {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                            if (task.imageUrl != null && task.imageUrl!.isNotEmpty) {
+                            if (task.imageUrl != null &&
+                                task.imageUrl!.isNotEmpty) {
                               _showImageFullscreen(context, task.imageUrl!);
                             }
                           },
@@ -80,20 +81,27 @@ class TaskInProgressScreen extends StatelessWidget {
                                       task.imageUrl!,
                                       height: 155,
                                       fit: BoxFit.cover,
-                                      loadingBuilder: (context, child, loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return Container(
-                                          height: 155,
-                                          color: bordercolor1,
-                                          child: Center(
-                                            child: CircularProgressIndicator(
-                                              valueColor: AlwaysStoppedAnimation<Color>(redColor),
-                                            ),
-                                          ),
-                                        );
-                                      },
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Container(
+                                              height: 155,
+                                              color: bordercolor1,
+                                              child: Center(
+                                                child: CircularProgressIndicator(
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                        Color
+                                                      >(redColor),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                       errorBuilder: (context, error, stackTrace) {
-                                        print('❌ Error loading task image: $error');
+                                        print(
+                                          '❌ Error loading task image: $error',
+                                        );
                                         return Image.asset(
                                           "assets/images/sofa.png",
                                           height: 155,
@@ -209,6 +217,9 @@ class TaskInProgressScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(50),
                                       child: Image.network(
                                         helper!.photoURL.toString(),
+                                        fit: BoxFit.cover,
+                                        height: 50,
+                                        width: 50,
                                       ),
                                     ),
                             ),
@@ -252,9 +263,7 @@ class TaskInProgressScreen extends StatelessWidget {
                               child: GestureDetector(
                                 onTap: () {
                                   // Navigate to chat with helper
-                                  final helperUid =
-                                      offer?.offeringUserUid ??
-                                      task.acceptedOfferUid;
+                                  final helperUid = offer?.offeringUserUid;
                                   final helperName =
                                       helper?.displayName ??
                                       offer?.offeringUserName ??
@@ -263,20 +272,38 @@ class TaskInProgressScreen extends StatelessWidget {
                                       helper?.photoURL ??
                                       offer?.offeringUserPhoto;
 
-                                  if (helperUid != null) {
-                                    // Check if controller already exists for this chat
-                                    if (!Get.isRegistered<ChatController>()) {
-                                      Get.put(
-                                        ChatController(
-                                          taskId: task.id!,
-                                          taskTitle: task.title,
-                                          taskOwnerId: helperUid,
-                                          taskOwnerName: helperName,
-                                          taskOwnerPhoto: helperPhoto,
-                                        ),
-                                      );
-                                    }
-                                    Get.to(() => const ChatScreen());
+                                  print(
+                                    '🔍 Chat Debug: helperUid=$helperUid, offeringUserUid=${offer?.offeringUserUid}',
+                                  );
+
+                                  if (helperUid != null &&
+                                      helperUid.isNotEmpty) {
+                                    print(
+                                      '✅ Opening chat with helperUid: $helperUid',
+                                    );
+                                    Get.to(
+                                      () => const ChatScreen(),
+                                      binding: BindingsBuilder(() {
+                                        Get.put(
+                                          ChatController(
+                                            taskId: task.id!,
+                                            taskTitle: task.title,
+                                            taskOwnerId: helperUid,
+                                            taskOwnerName: helperName,
+                                            taskOwnerPhoto: helperPhoto,
+                                            taskImage: task.imageUrl,
+                                          ),
+                                        );
+                                      }),
+                                    );
+                                  } else {
+                                    print(
+                                      '❌ Chat failed: helperUid is null or empty',
+                                    );
+                                    Get.snackbar(
+                                      'Error',
+                                      'Cannot start chat: Helper information missing',
+                                    );
                                   }
                                 },
                                 child: CustomContainer(
@@ -340,30 +367,16 @@ class TaskInProgressScreen extends StatelessWidget {
                                       await launchUrl(phoneUri);
                                     } else {
                                       // Show error snackbar
-                                      Get.showSnackbar(
-                                        GetSnackBar(
-                                          message:
-                                              'Could not launch phone dialer',
-                                          backgroundColor: Colors.red,
-                                          duration: const Duration(seconds: 2),
-                                          snackPosition: SnackPosition.TOP,
-                                          margin: const EdgeInsets.all(10),
-                                          borderRadius: 8,
-                                        ),
+                                      Get.snackbar(
+                                        'Error',
+                                        'Could not launch phone dialer',
                                       );
                                     }
                                   } else {
                                     // Show snackbar if phone number doesn't exist
-                                    Get.showSnackbar(
-                                      GetSnackBar(
-                                        message:
-                                            "Helper's phone number doesn't exist",
-                                        backgroundColor: Colors.orange,
-                                        duration: const Duration(seconds: 2),
-                                        snackPosition: SnackPosition.TOP,
-                                        margin: const EdgeInsets.all(10),
-                                        borderRadius: 8,
-                                      ),
+                                    Get.snackbar(
+                                      'Error',
+                                      "Helper's phone number doesn't exist",
                                     );
                                   }
                                 },
@@ -599,12 +612,15 @@ class TaskInProgressScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomButton(
-                    label: (controller.requesterHelpRequested.value || controller.helperHelpRequested.value) 
-                        ? "Dispute in Progress" 
+                    label:
+                        (controller.requesterHelpRequested.value ||
+                            controller.helperHelpRequested.value)
+                        ? "Dispute in Progress"
                         : "Review Proof",
-                    onPressed: (controller.hasProof.value && 
-                                !controller.requesterHelpRequested.value && 
-                                !controller.helperHelpRequested.value)
+                    onPressed:
+                        (controller.hasProof.value &&
+                            !controller.requesterHelpRequested.value &&
+                            !controller.helperHelpRequested.value)
                         ? () {
                             Get.to(
                               () => TaskReviewScreen(
@@ -614,9 +630,10 @@ class TaskInProgressScreen extends StatelessWidget {
                             );
                           }
                         : null,
-                    bgColor: (controller.hasProof.value && 
-                              !controller.requesterHelpRequested.value && 
-                              !controller.helperHelpRequested.value)
+                    bgColor:
+                        (controller.hasProof.value &&
+                            !controller.requesterHelpRequested.value &&
+                            !controller.helperHelpRequested.value)
                         ? redColor
                         : Colors.grey,
                     textColor: whiteColor,
@@ -630,11 +647,11 @@ class TaskInProgressScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomButton(
-                    label: controller.requesterHelpRequested.value 
-                        ? "Help Requested" 
+                    label: controller.requesterHelpRequested.value
+                        ? "Help Requested"
                         : "Request Help",
-                    onPressed: controller.requesterHelpRequested.value 
-                        ? null 
+                    onPressed: controller.requesterHelpRequested.value
+                        ? null
                         : () {
                             DialogHelpers().showSupportHelpSheet(
                               context,
@@ -643,7 +660,9 @@ class TaskInProgressScreen extends StatelessWidget {
                               },
                             );
                           },
-                    bgColor: controller.requesterHelpRequested.value ? Colors.grey : redColor,
+                    bgColor: controller.requesterHelpRequested.value
+                        ? Colors.grey
+                        : redColor,
                     textColor: whiteColor,
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -727,11 +746,7 @@ class TaskInProgressScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     padding: EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 28,
-                    ),
+                    child: Icon(Icons.close, color: Colors.white, size: 28),
                   ),
                 ),
               ),

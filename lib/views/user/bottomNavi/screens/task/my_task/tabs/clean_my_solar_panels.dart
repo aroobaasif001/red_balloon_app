@@ -13,7 +13,6 @@ import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
 import '../../../profile/tabs/controller/chat_controller.dart';
 import '../controller/task_detail_controller.dart';
-import '../controller/task_tabs_controller.dart';
 import '../widgets/offer_card.dart';
 import '../widgets/task_info_top_row.dart';
 import '../widgets/task_owner_tile.dart';
@@ -79,21 +78,21 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
         .doc(taskId)
         .snapshots()
         .listen((snapshot) {
-      if (snapshot.exists) {
-        final data = snapshot.data();
-        final status = data?['status']?.toString().toLowerCase() ?? '';
-        
-        // If status changed from "active" to something else (accepted, in progress, etc)
-        if (status.isNotEmpty && status != 'active') {
-          print('✅ Task status changed to: $status');
-          
-          // Navigate back
-          if (mounted) {
-            Navigator.of(context).pop();
+          if (snapshot.exists) {
+            final data = snapshot.data();
+            final status = data?['status']?.toString().toLowerCase() ?? '';
+
+            // If status changed from "active" to something else (accepted, in progress, etc)
+            if (status.isNotEmpty && status != 'active') {
+              print('✅ Task status changed to: $status');
+
+              // Navigate back
+              if (mounted) {
+                Navigator.of(context).pop();
+              }
+            }
           }
-        }
-      }
-    });
+        });
   }
 
   @override
@@ -131,7 +130,9 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                     TaskInfoTopRow(
                       price: widget.taskPrice,
                       timeAgo: widget.taskTimeAgo,
-                      taskId: widget.userId ?? 'task_${widget.taskTimeAgo ?? 'default'}',
+                      taskId:
+                          widget.userId ??
+                          'task_${widget.taskTimeAgo ?? 'default'}',
                     ),
                     const SizedBox(height: 15),
 
@@ -171,38 +172,57 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                     Row(
                       children: [
                         Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: widget.taskImage != null && widget.taskImage!.isNotEmpty
-                                ? Image.network(
-                                    widget.taskImage!,
-                                    height: 160,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Container(
-                                        height: 160,
-                                        color: bordercolor1,
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation<Color>(redColor),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Image.asset(
-                                        "assets/images/homedetail.png",
-                                        height: 160,
-                                        fit: BoxFit.cover,
-                                      );
-                                    },
-                                  )
-                                : Image.asset(
-                                    "assets/images/homedetail.png",
-                                    height: 160,
-                                    fit: BoxFit.cover,
-                                  ),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (widget.taskImage != null &&
+                                  widget.taskImage!.isNotEmpty) {
+                                _showImageFullscreen(
+                                  context,
+                                  widget.taskImage!,
+                                );
+                              }
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child:
+                                  widget.taskImage != null &&
+                                      widget.taskImage!.isNotEmpty
+                                  ? Image.network(
+                                      widget.taskImage!,
+                                      height: 160,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Container(
+                                              height: 160,
+                                              color: bordercolor1,
+                                              child: Center(
+                                                child: CircularProgressIndicator(
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                        Color
+                                                      >(redColor),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return Image.asset(
+                                              "assets/images/homedetail.png",
+                                              height: 160,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                    )
+                                  : Image.asset(
+                                      "assets/images/homedetail.png",
+                                      height: 160,
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -288,7 +308,9 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                   taskType: widget.taskType,
                   taskImage: widget.taskImage,
                   location: widget.location,
-                  taskOwnerUid: widget.taskOwnerAuthId ?? widget.userId, // Prefer AuthUID for functional logic
+                  taskOwnerUid:
+                      widget.taskOwnerAuthId ??
+                      widget.userId, // Prefer AuthUID for functional logic
                   taskOwnerName: widget.userName,
                   taskOwnerPhoto: widget.userPhoto,
                   taskBudget: widget.taskBudget,
@@ -298,6 +320,57 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showImageFullscreen(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.black,
+          insetPadding: EdgeInsets.zero,
+          child: Stack(
+            children: [
+              Center(
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/homedetail.png",
+                      fit: BoxFit.contain,
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                top: 20,
+                right: 20,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(8),
+                    child: Icon(Icons.close, color: Colors.white, size: 28),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -640,26 +713,31 @@ class RefreshButtonWithData extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 if (taskId != null && taskOwnerUid != null) {
-                  print("Navigating to ChatScreen with taskId: $taskId, ownerId: $taskOwnerUid");
+                  print(
+                    "Navigating to ChatScreen with taskId: $taskId, ownerId: $taskOwnerUid",
+                  );
                   Get.to(
                     () => const ChatScreen(),
                     binding: BindingsBuilder(() {
-                      Get.put(ChatController(
-                        taskId: taskId!,
-                        taskTitle: taskTitle ?? 'Clean my Solar Panels',
-                        taskOwnerId: taskOwnerUid!,
-                        taskOwnerName: taskOwnerName ?? 'User',
-                        taskOwnerPhoto: taskOwnerPhoto,
-                      ));
+                      Get.put(
+                        ChatController(
+                          taskId: taskId!,
+                          taskTitle: taskTitle ?? 'Clean my Solar Panels',
+                          taskOwnerId: taskOwnerUid!,
+                          taskOwnerName: taskOwnerName ?? 'User',
+                          taskOwnerPhoto: taskOwnerPhoto,
+                          taskImage: taskImage,
+                        ),
+                      );
                     }),
                   );
                 } else {
-                  print("Chat tap failed: taskId=$taskId, taskOwnerUid=$taskOwnerUid");
-                   Get.snackbar(
+                  print(
+                    "Chat tap failed: taskId=$taskId, taskOwnerUid=$taskOwnerUid",
+                  );
+                  Get.snackbar(
                     "Error",
                     "Cannot start chat: Missing task details",
-                     backgroundColor: Colors.redAccent,
-                    colorText: Colors.white,
                   );
                 }
               },
@@ -739,26 +817,31 @@ class RefreshButtonWithData extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 if (taskId != null && taskOwnerUid != null) {
-                  print("Navigating to ChatScreen with taskId: $taskId, ownerId: $taskOwnerUid");
+                  print(
+                    "Navigating to ChatScreen with taskId: $taskId, ownerId: $taskOwnerUid",
+                  );
                   Get.to(
                     () => const ChatScreen(),
                     binding: BindingsBuilder(() {
-                      Get.put(ChatController(
-                        taskId: taskId!,
-                        taskTitle: taskTitle ?? 'Clean my Solar Panels',
-                        taskOwnerId: taskOwnerUid!,
-                        taskOwnerName: taskOwnerName ?? 'User',
-                        taskOwnerPhoto: taskOwnerPhoto,
-                      ));
+                      Get.put(
+                        ChatController(
+                          taskId: taskId!,
+                          taskTitle: taskTitle ?? 'Clean my Solar Panels',
+                          taskOwnerId: taskOwnerUid!,
+                          taskOwnerName: taskOwnerName ?? 'User',
+                          taskOwnerPhoto: taskOwnerPhoto,
+                          taskImage: taskImage,
+                        ),
+                      );
                     }),
                   );
                 } else {
-                  print("Chat tap failed: taskId=$taskId, taskOwnerUid=$taskOwnerUid");
+                  print(
+                    "Chat tap failed: taskId=$taskId, taskOwnerUid=$taskOwnerUid",
+                  );
                   Get.snackbar(
                     "Error",
                     "Cannot start chat: Missing task details",
-                    backgroundColor: Colors.redAccent,
-                    colorText: Colors.white,
                   );
                 }
               },

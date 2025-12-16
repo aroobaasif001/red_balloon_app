@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -60,7 +61,7 @@ class PostNewTaskController extends GetxController {
       }
       pickedFile.value = file;
       imageError.value = "";
-      
+
       // Auto-upload to Firebase Storage
       await uploadImageToFirebase(file);
     }
@@ -70,7 +71,7 @@ class PostNewTaskController extends GetxController {
     try {
       isUploadingImage.value = true;
       imageError.value = "";
-      
+
       if (file.path == null) {
         imageError.value = "Unable to access file";
         isUploadingImage.value = false;
@@ -78,12 +79,13 @@ class PostNewTaskController extends GetxController {
       }
 
       final imageFile = File(file.path!);
-      final fileName = 'task_${DateTime.now().millisecondsSinceEpoch}_${file.name}';
+      final fileName =
+          'task_${DateTime.now().millisecondsSinceEpoch}_${file.name}';
       final uploadUrl = await _taskService.uploadTaskImage(imageFile, fileName);
 
       if (uploadUrl != null) {
         uploadedImageUrl.value = uploadUrl;
-        Get.snackbar("Success", "Image uploaded successfully", snackPosition: SnackPosition.BOTTOM);
+        Get.snackbar("Success", "Image uploaded successfully");
       } else {
         imageError.value = "Failed to upload image. Please try again.";
         pickedFile.value = null;
@@ -197,7 +199,7 @@ class PostNewTaskController extends GetxController {
       if (storedUserId == null) {
         await fetchUserData();
       }
-      
+
       print('🚀 Submitting Task...');
       print('   Type: ${selectedTaskType.value}');
       print('   UserID (Custom): $storedUserId');
@@ -209,7 +211,9 @@ class PostNewTaskController extends GetxController {
         title: taskTitle.text.trim(),
         description: taskDescription.text.trim(),
         budget: budget,
-        location: selectedTaskType.value == "Offline Task" ? location.text.trim() : null,
+        location: selectedTaskType.value == "Offline Task"
+            ? location.text.trim()
+            : null,
         userId: storedUserId,
         imageUrl: uploadedImageUrl.value,
       );
@@ -248,7 +252,7 @@ class PostNewTaskController extends GetxController {
     imageError.value = "";
     uploadedImageUrl.value = "";
   }
-  
+
   String? storedUserId;
 
   @override
@@ -256,7 +260,7 @@ class PostNewTaskController extends GetxController {
     super.onInit();
     fetchUserData();
   }
-  
+
   Future<void> fetchUserData() async {
     try {
       final currentUser = _authService.getCurrentUserModel();

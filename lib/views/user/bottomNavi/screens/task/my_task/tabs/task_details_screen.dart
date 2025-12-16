@@ -63,36 +63,43 @@ class TaskDetailsScreen extends StatelessWidget {
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CustomContainer(
-                  borderRadius: BorderRadius.circular(14),
-                  conColor: whiteColor,
-                  height: 150,
-                  width: double.infinity,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.40),
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                  child: ClipRRect(
+                child: GestureDetector(
+                  onTap: () {
+                    if (isNetworkImage) {
+                      _showImageFullscreen(context, displayImage);
+                    }
+                  },
+                  child: CustomContainer(
                     borderRadius: BorderRadius.circular(14),
-                    child: isNetworkImage
-                        ? Image.network(
-                            displayImage,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              // Fallback to asset image if network image fails
-                              return Image.asset(
-                                "assets/images/sofa.png",
-                                fit: BoxFit.cover,
-                              );
-                            },
-                          )
-                        : Image.asset(
-                            displayImage,
-                            fit: BoxFit.cover,
-                          ),
+                    conColor: whiteColor,
+                    height: 150,
+                    width: double.infinity,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.40),
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: isNetworkImage
+                          ? Image.network(
+                              displayImage,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                // Fallback to asset image if network image fails
+                                return Image.asset(
+                                  "assets/images/sofa.png",
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              displayImage,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
                   ),
                 ),
               ),
@@ -231,6 +238,60 @@ class TaskDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+  void _showImageFullscreen(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.black,
+          insetPadding: EdgeInsets.zero,
+          child: Stack(
+            children: [
+              Center(
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/homedetail.png",
+                      fit: BoxFit.contain,
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                top: 20,
+                right: 20,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(8),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

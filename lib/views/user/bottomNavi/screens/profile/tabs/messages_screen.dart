@@ -116,6 +116,7 @@ class MessagesScreen extends StatelessWidget {
                             taskOwnerId: otherParticipant['uid'],
                             taskOwnerName: otherParticipant['name'],
                             taskOwnerPhoto: otherParticipant['photo'],
+                            taskImage: conversation.taskImage,
                           ),
                         );
                         Get.to(() => const ChatScreen());

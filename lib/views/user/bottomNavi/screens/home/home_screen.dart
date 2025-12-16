@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
               backgroundColor: whiteColor,
 
               onRefresh: () async {
-                final tasksController = Get.find<TasksForYouController>();
+                final tasksController = Get.put(TasksForYouController());
                 await tasksController.refreshTasks();
               },
               color: redColor,

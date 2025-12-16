@@ -41,7 +41,7 @@ class ValidationScreenController extends GetxController {
   // 🔥 Participant Names
   var requesterName = 'Requester'.obs;
   var helperName = 'Helper'.obs;
-  
+
   // 🔥 Track Current User's Vote
   var myVote = ''.obs; // 'helper' or 'requester'
 
@@ -227,7 +227,7 @@ class ValidationScreenController extends GetxController {
         final myVoteData = voters.firstWhereOrNull(
           (voter) => voter['userId'] == currentUserId,
         );
-        
+
         hasVoted.value = myVoteData != null;
         if (hasVoted.value) {
           myVote.value = myVoteData!['voteType'] ?? '';
@@ -311,7 +311,6 @@ class ValidationScreenController extends GetxController {
       // Get.snackbar(
       //   'Voting Closed',
       //   'The $winner has won! Waiting for timer to complete.',
-      //   snackPosition: SnackPosition.BOTTOM,
       // );
     }
   }
@@ -368,7 +367,6 @@ class ValidationScreenController extends GetxController {
       Get.snackbar(
         'Validation Complete',
         'Timer expired. Final result: $winner wins!',
-        snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
       print('❌ Error finalizing voting: $e');
@@ -394,7 +392,6 @@ class ValidationScreenController extends GetxController {
       Get.snackbar(
         'Admin Review',
         'Votes are tied. Sent to admin for manual review.',
-        snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
       print('❌ Error sending to admin: $e');
@@ -466,7 +463,7 @@ class ValidationScreenController extends GetxController {
       votesReceived.value++;
       hasVoted.value = true;
       myVote.value = voteType; // 🔥 Update local vote state
-      
+
       // 🔥 Update helper/requester vote counts
       if (voteType == 'helper') {
         helperVotes.value++;
@@ -474,11 +471,7 @@ class ValidationScreenController extends GetxController {
         requesterVotes.value++;
       }
 
-      Get.snackbar(
-        'Success',
-        'Your vote has been recorded',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Success', 'Your vote has been recorded');
 
       print('✅ Vote submitted: $voteType');
       print(

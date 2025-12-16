@@ -102,31 +102,31 @@ class ProfileCard extends StatelessWidget {
                         ),
                 ),
               ),
-              GestureDetector(
-                onTap: onAvatarTap,
-                child: CustomContainer(
-                  width: 32,
-                  height: 32,
-                  conColor: avatarColor ?? redColor,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: whiteColor, width: 2),
-                  child: CustomContainer(
-                    width: 30,
-                    height: 30,
-                    conColor: avatarColor ?? redColor,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: avatarColor ?? redColor,
-                      width: 2,
-                    ),
-                    child: Icon(
-                      Icons.camera_alt_outlined,
-                      color: whiteColor,
-                      size: 15,
-                    ),
-                  ),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: onAvatarTap,
+              //   child: CustomContainer(
+              //     width: 32,
+              //     height: 32,
+              //     conColor: avatarColor ?? redColor,
+              //     shape: BoxShape.circle,
+              //     border: Border.all(color: whiteColor, width: 2),
+              //     child: CustomContainer(
+              //       width: 30,
+              //       height: 30,
+              //       conColor: avatarColor ?? redColor,
+              //       shape: BoxShape.circle,
+              //       border: Border.all(
+              //         color: avatarColor ?? redColor,
+              //         width: 2,
+              //       ),
+              //       child: Icon(
+              //         Icons.camera_alt_outlined,
+              //         color: whiteColor,
+              //         size: 15,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           const SizedBox(height: 16),

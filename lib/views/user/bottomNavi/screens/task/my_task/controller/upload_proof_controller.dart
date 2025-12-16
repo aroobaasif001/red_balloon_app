@@ -69,11 +69,7 @@ class UploadProofController extends GetxController {
       }
     } catch (e) {
       print('Error picking image from camera: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to capture image',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', 'Failed to capture image');
     }
   }
 
@@ -95,11 +91,7 @@ class UploadProofController extends GetxController {
       }
     } catch (e) {
       print('Error picking image from gallery: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to select image',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', 'Failed to select image');
     }
   }
 
@@ -189,9 +181,6 @@ class UploadProofController extends GetxController {
       Get.snackbar(
         'Success',
         'Proof has been uploaded successfully!',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
       );
     } catch (e) {
       isSubmitting.value = false;
@@ -199,9 +188,6 @@ class UploadProofController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to submit proof. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
       );
     }
   }

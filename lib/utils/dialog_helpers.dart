@@ -1864,16 +1864,6 @@ class DialogHelpers {
                               Get.snackbar(
                                 "Success",
                                 "Offer accepted successfully!",
-                                snackPosition: SnackPosition.TOP,
-                                backgroundColor: Color(0xffDA3331),
-                                colorText: Colors.white,
-                                borderRadius: 10,
-                                margin: EdgeInsets.all(12),
-                                duration: Duration(seconds: 2),
-                                icon: Icon(
-                                  Icons.check_circle,
-                                  color: Colors.white,
-                                ),
                               );
                             } catch (e) {
                               print('❌ Error updating offer/task status: $e');
@@ -2082,7 +2072,12 @@ class DialogHelpers {
                                           borderRadius: BorderRadius.circular(
                                             50,
                                           ),
-                                          child: Image.network(image),
+                                          child: Image.network(
+                                            image,
+                                            fit: BoxFit.cover,
+                                            height: 100,
+                                            width: 100,
+                                          ),
                                         ),
                                 ),
                                 Positioned(

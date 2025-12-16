@@ -44,25 +44,13 @@ class TaskDetailController extends GetxController {
       // Validate price input
       final priceText = offerPriceController.text.trim();
       if (priceText.isEmpty) {
-        Get.snackbar(
-          'Error',
-          'Please enter your offer price',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Get.snackbar('Error', 'Please enter your offer price');
         return;
       }
 
       final offerPrice = double.tryParse(priceText);
       if (offerPrice == null || offerPrice <= 0) {
-        Get.snackbar(
-          'Error',
-          'Please enter a valid price',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Get.snackbar('Error', 'Please enter a valid price');
         return;
       }
 
@@ -71,13 +59,7 @@ class TaskDetailController extends GetxController {
       // Get current user data
       final currentUser = _authService.currentUser;
       if (currentUser == null) {
-        Get.snackbar(
-          'Error',
-          'You must be logged in to submit an offer',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Get.snackbar('Error', 'You must be logged in to submit an offer');
         isSubmitting.value = false;
         return;
       }
@@ -115,31 +97,13 @@ class TaskDetailController extends GetxController {
       if (success) {
         offerPriceController.clear();
         Get.back(); // Close dialog
-        Get.snackbar(
-          'Success',
-          'Your offer has been submitted successfully!',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        Get.snackbar('Success', 'Your offer has been submitted successfully!');
       } else {
-        Get.snackbar(
-          'Error',
-          'Failed to submit offer. Please try again.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Get.snackbar('Error', 'Failed to submit offer. Please try again.');
       }
     } catch (e) {
       isSubmitting.value = false;
-      Get.snackbar(
-        'Error',
-        'An error occurred: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('Error', 'An error occurred: ${e.toString()}');
     }
   }
 

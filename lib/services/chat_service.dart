@@ -17,6 +17,7 @@ class ChatService {
     required String otherUserId,
     required String otherUserName,
     String? otherUserPhoto,
+    String? taskImage,
   }) async {
     try {
       final currentUid = currentUserId;
@@ -54,6 +55,7 @@ class ChatService {
           conversationId: conversationId,
           taskId: taskId,
           taskTitle: taskTitle,
+          taskImage: taskImage,
           participant1Uid: sortedUids[0],
           participant2Uid: sortedUids[1],
           participant1Name: sortedUids[0] == currentUid

@@ -70,7 +70,7 @@ class ProviderCard extends StatelessWidget {
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(50),
-                          child: Image.network(userPhoto!),
+                          child: Image.network(userPhoto!, fit: BoxFit.contain),
                         ),
                 ),
 
@@ -85,10 +85,14 @@ class ProviderCard extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomText(
-                            name,
-                            fontSize: 18,
-                            fontWeight: FontVariant.bold,
+                          Expanded(
+                            child: CustomText(
+                              name,
+                              fontSize: 18,
+                              fontWeight: FontVariant.bold,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
 
                           CustomContainer(

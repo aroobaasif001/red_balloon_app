@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -180,6 +181,12 @@ class ActiveTab extends StatelessWidget {
                           final userId = userData?['userId'];
                           final phone = userData?['phoneNumber'];
 
+                          // Use task.uid as the other user's UID (stored in task document)
+                          final otherUserUid = task.uid;
+                          print('🔍 Other user UID from task: $otherUserUid');
+
+                          print('🔍 Navigating to InProgressViewDetails with otherUserUid: $otherUserUid');
+
                           isAccepted
                               ? Get.to(
                                   () => InProgressViewDetails(
@@ -194,6 +201,8 @@ class ActiveTab extends StatelessWidget {
                                     photoUrl: userPhoto,
                                     location: task.location,
                                     phoneNumber: phone,
+                                    helperUid: otherUserUid,
+                                    taskImage: task.imageUrl,
                                   ),
                                 )
                               : Get.to(

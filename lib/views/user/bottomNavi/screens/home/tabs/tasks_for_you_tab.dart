@@ -16,10 +16,10 @@ import 'controller/tasks_for_you_controller.dart';
 class TasksForYouTab extends StatelessWidget {
   const TasksForYouTab({super.key});
 
-  static final controller = Get.put(TasksForYouController());
-
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(TasksForYouController());
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -223,16 +223,19 @@ class TasksForYouTab extends StatelessWidget {
                             isInProgress
                                 ? Get.to(
                                     () => InProgressViewDetails(
+                                      userId: userId,
                                       taskId: task.id,
-                                      photoUrl: userPhoto,
-                                      userName: userName,
-                                      taskTitle: task.title,
                                       timeAgo: controller.getTimeAgo(
                                         task.createdAt,
                                       ),
+                                      taskTitle: task.title,
                                       price: task.budget.toString(),
+                                      userName: userName,
+                                      photoUrl: userPhoto,
                                       location: task.location,
                                       phoneNumber: phone,
+                                      helperUid: task.uid,
+                                      taskImage: task.imageUrl,
                                     ),
                                   )
                                 : Get.to(

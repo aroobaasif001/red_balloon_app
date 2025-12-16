@@ -167,8 +167,8 @@ class TasksController extends GetxController {
   /// Fetch all tasks (both my tasks and tasks near me)
   Future<void> fetchAllTasks({Duration minDelay = Duration.zero}) async {
     await Future.wait([
-      fetchMyTasks(minDelay: minDelay), 
-      fetchTasksNearMe(minDelay: minDelay)
+      fetchMyTasks(minDelay: minDelay),
+      fetchTasksNearMe(minDelay: minDelay),
     ]);
   }
 
@@ -176,7 +176,7 @@ class TasksController extends GetxController {
   Future<void> fetchMyTasks({Duration minDelay = Duration.zero}) async {
     try {
       isLoadingMyTasks.value = true;
-      
+
       final delayFuture = Future.delayed(minDelay);
 
       final currentUserId = _auth.currentUser?.uid;
@@ -190,7 +190,7 @@ class TasksController extends GetxController {
 
       // Fetch tasks where uid matches current user
       final tasksFuture = _taskService.getUserTasks(currentUserId);
-      
+
       await Future.wait([delayFuture, tasksFuture]);
       final tasks = await tasksFuture;
 
@@ -214,11 +214,7 @@ class TasksController extends GetxController {
       print('✅ My Tasks Count (Active only): ${myTasks.length}');
     } catch (e) {
       print('❌ Error fetching my tasks: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to load your tasks',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', 'Failed to load your tasks');
     } finally {
       isLoadingMyTasks.value = false;
     }
@@ -228,7 +224,7 @@ class TasksController extends GetxController {
   Future<void> fetchTasksNearMe({Duration minDelay = Duration.zero}) async {
     try {
       isLoadingTasksNearMe.value = true;
-      
+
       final delayFuture = Future.delayed(minDelay);
 
       final currentUserId = _auth.currentUser?.uid;
@@ -242,7 +238,7 @@ class TasksController extends GetxController {
 
       // Fetch all tasks
       final allTasksFuture = _taskService.getAllTasks();
-      
+
       await Future.wait([delayFuture, allTasksFuture]);
       final allTasks = await allTasksFuture;
 
@@ -260,11 +256,7 @@ class TasksController extends GetxController {
       print('✅ Tasks Near Me Count: ${tasksNearMe.length}');
     } catch (e) {
       print('❌ Error fetching tasks near me: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to load tasks near you',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', 'Failed to load tasks near you');
     } finally {
       isLoadingTasksNearMe.value = false;
     }
@@ -274,7 +266,7 @@ class TasksController extends GetxController {
   Future<void> fetchHistoryTasks({Duration minDelay = Duration.zero}) async {
     try {
       isLoadingHistoryTasks.value = true;
-      
+
       final delayFuture = Future.delayed(minDelay);
 
       final currentUserId = _auth.currentUser?.uid;
@@ -288,7 +280,7 @@ class TasksController extends GetxController {
 
       // Fetch ALL tasks (not just user's tasks)
       final allTasksFuture = _taskService.getAllTasks();
-      
+
       await Future.wait([delayFuture, allTasksFuture]);
       final allTasks = await allTasksFuture;
 
@@ -320,11 +312,7 @@ class TasksController extends GetxController {
       print('✅ History Tasks Count: ${historyTasks.length}');
     } catch (e) {
       print('❌ Error fetching history tasks: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to load history tasks',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', 'Failed to load history tasks');
     } finally {
       isLoadingHistoryTasks.value = false;
     }

@@ -20,6 +20,7 @@ Widget buildHelperInfoCard(
   String? taskId,
   String? taskTitle,
   String? phoneNumber,
+  String? taskImage,
 }) {
   return CustomContainer(
     conColor: white2Color,
@@ -86,22 +87,35 @@ Widget buildHelperInfoCard(
               child: InkWell(
                 onTap: () {
                   // Navigate to chat with helper
-                  if (taskId != null && userId.isNotEmpty) {
-                    // Delete old controller if exists
-                    if (Get.isRegistered<ChatController>()) {
-                      Get.delete<ChatController>();
-                    }
+                  print(
+                    '🔍 Chat Debug (buildHelperInfoCard): taskId=$taskId, userId=${userId}, userName=$userName',
+                  );
 
-                    Get.put(
-                      ChatController(
-                        taskId: taskId,
-                        taskTitle: taskTitle ?? 'Task',
-                        taskOwnerId: userId,
-                        taskOwnerName: userName,
-                        taskOwnerPhoto: photoUrl,
-                      ),
+                  if (taskId != null &&
+                      taskId!.isNotEmpty &&
+                      userId.isNotEmpty) {
+                    print('✅ Opening chat with userId: ${userId}');
+                    Get.to(
+                      () => const ChatScreen(),
+                      binding: BindingsBuilder(() {
+                        Get.put(
+                          ChatController(
+                            taskId: taskId,
+                            taskTitle: taskTitle ?? 'Task',
+                            taskOwnerId: userId,
+                            taskOwnerName: userName,
+                            taskOwnerPhoto: photoUrl,
+                            taskImage: taskImage,
+                          ),
+                        );
+                      }),
                     );
-                    Get.to(() => const ChatScreen());
+                  } else {
+                    print('❌ Chat failed: taskId=$taskId, userId=$userId');
+                    Get.snackbar(
+                      'Error',
+                      'Cannot start chat: Missing task or user information',
+                    );
                   }
                 },
                 child: CustomContainer(
@@ -141,28 +155,16 @@ Widget buildHelperInfoCard(
                       await launchUrl(phoneUri);
                     } else {
                       // Show error snackbar
-                      Get.showSnackbar(
-                        GetSnackBar(
-                          message: 'Could not launch phone dialer',
-                          backgroundColor: Colors.red,
-                          duration: const Duration(seconds: 2),
-                          snackPosition: SnackPosition.TOP,
-                          margin: const EdgeInsets.all(10),
-                          borderRadius: 8,
-                        ),
+                      Get.snackbar(
+                        'Error',
+                        'Could not launch phone dialer',
                       );
                     }
                   } else {
                     // Show snackbar if phone number doesn't exist
-                    Get.showSnackbar(
-                      GetSnackBar(
-                        message: "Helper's phone number doesn't exist",
-                        backgroundColor: Colors.orange,
-                        duration: const Duration(seconds: 2),
-                        snackPosition: SnackPosition.TOP,
-                        margin: const EdgeInsets.all(10),
-                        borderRadius: 8,
-                      ),
+                    Get.snackbar(
+                      'Error',
+                      "Helper's phone number doesn't exist",
                     );
                   }
                 },
@@ -186,12 +188,14 @@ Widget buildHelperInfoCard(
         const SizedBox(height: 12),
         InkWell(
           onTap: () {
-            DialogHelpers.showHelperProfileDialog(
-              Get.context!,
-              userName,
-              photoUrl!,
-              userId,
-            );
+            if (photoUrl != null && photoUrl!.isNotEmpty) {
+              DialogHelpers.showHelperProfileDialog(
+                Get.context!,
+                userName,
+                photoUrl!,
+                userId,
+              );
+            }
           },
           child: const Center(
             child: CustomText(

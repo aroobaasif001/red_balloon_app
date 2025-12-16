@@ -155,6 +155,9 @@ class ProfileScreen extends StatelessWidget {
                         DialogHelpers.showLogoutDialog(
                           context,
                           onConfirm: () async {
+                            // Clear all GetX controllers before logout
+                            Get.deleteAll(force: true);
+                            
                             await FirebaseAuth.instance.signOut();
                             await GoogleSignIn().signOut();
                             Get.offAll(() => OnboardingScreen());

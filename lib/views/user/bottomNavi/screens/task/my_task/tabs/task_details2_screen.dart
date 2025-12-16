@@ -331,6 +331,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                             taskOwnerId: offer.offeringUserUid,
                             taskOwnerName: offer.offeringUserName,
                             taskOwnerPhoto: user?.photoURL,
+                            taskImage: widget.task.imageUrl,
                           ));
                         }),
                       );

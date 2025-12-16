@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/model/message_model.dart';
@@ -9,6 +10,7 @@ class ChatController extends GetxController {
   final String taskOwnerId;
   final String taskOwnerName;
   final String? taskOwnerPhoto;
+  final RxnString taskImage = RxnString();
 
   final ChatService _chatService = ChatService();
   final ScrollController scrollController = ScrollController();
@@ -24,12 +26,38 @@ class ChatController extends GetxController {
     required this.taskOwnerId,
     required this.taskOwnerName,
     this.taskOwnerPhoto,
-  });
+    String? taskImage,
+  }) {
+    this.taskImage.value = taskImage;
+  }
 
   @override
   void onInit() {
     super.onInit();
     _initializeConversation();
+    _fetchTaskDetailsIfNeeded();
+  }
+
+  /// Fetch task details if image is missing
+  Future<void> _fetchTaskDetailsIfNeeded() async {
+    if (taskImage.value == null || taskImage.value!.isEmpty) {
+      try {
+        final doc = await FirebaseFirestore.instance
+            .collection('tasks')
+            .doc(taskId)
+            .get();
+        
+        if (doc.exists) {
+          final data = doc.data();
+          if (data != null && data['imageUrl'] != null) {
+            taskImage.value = data['imageUrl'];
+            print('✅ Fetched missing task image: ${taskImage.value}');
+          }
+        }
+      } catch (e) {
+        print('Error fetching task details: $e');
+      }
+    }
   }
 
   /// Initialize or get existing conversation
@@ -47,8 +75,9 @@ class ChatController extends GetxController {
         otherUserId: taskOwnerId,
         otherUserName: taskOwnerName,
         otherUserPhoto: taskOwnerPhoto,
+        taskImage: taskImage.value,
       );
-
+      
       if (convId != null) {
         conversationId.value = convId;
         print('   ✅ ConversationID set: $convId');

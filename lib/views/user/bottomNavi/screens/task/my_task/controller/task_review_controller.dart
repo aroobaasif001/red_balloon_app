@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -53,7 +54,7 @@ class TaskReviewController extends GetxController {
       print('⏰ Timer already running, skipping start');
       return;
     }
-    
+
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (remainingSeconds.value > 0) {
         remainingSeconds.value--;
@@ -63,7 +64,7 @@ class TaskReviewController extends GetxController {
         print('⏰ Timer expired - Auto validation');
       }
     });
-    
+
     print('⏰ Timer started from ${formattedTime}');
   }
 
@@ -86,7 +87,7 @@ class TaskReviewController extends GetxController {
   }) async {
     try {
       isSubmitting.value = true; // 🔥 Show loading
-      
+
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser == null) {
         print('❌ No user logged in');
@@ -113,17 +114,17 @@ class TaskReviewController extends GetxController {
         'rejectedAt': FieldValue.serverTimestamp(),
         'status': 'rejected',
         'beforePhotoUrl': beforeImageUrl.value, // 🔥 Add before image
-        'afterPhotoUrl': afterImageUrl.value,   // 🔥 Add after image
-        'isVotingCompleted': false, // 🔥 Initially false, will be true when voting reaches threshold
+        'afterPhotoUrl': afterImageUrl.value, // 🔥 Add after image
+        'isVotingCompleted':
+            false, // 🔥 Initially false, will be true when voting reaches threshold
       });
 
       print('✅ Added to validations collection');
 
       // 2. Update task status to rejected
-      await FirebaseFirestore.instance
-          .collection('tasks')
-          .doc(taskId)
-          .update({'status': 'rejected'});
+      await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
+        'status': 'rejected',
+      });
 
       print('✅ Task status updated to rejected');
 
@@ -135,12 +136,7 @@ class TaskReviewController extends GetxController {
 
       print('✅ Proof status updated to rejected');
 
-      Get.snackbar(
-        'Success',
-        'Rejection submitted successfully',
-        snackPosition: SnackPosition.TOP,
-        duration: Duration(seconds: 2),
-      );
+      Get.snackbar('Success', 'Rejection submitted successfully');
 
       // 🔥 Trigger navigation callback
       if (onSubmissionComplete != null) {
@@ -162,12 +158,11 @@ class TaskReviewController extends GetxController {
   }) async {
     try {
       isSubmitting.value = true; // 🔥 Show loading
-      
+
       // Update task status to completed
-      await FirebaseFirestore.instance
-          .collection('tasks')
-          .doc(taskId)
-          .update({'status': 'completed'});
+      await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
+        'status': 'completed',
+      });
 
       // Update proof status to accepted
       await FirebaseFirestore.instance
@@ -177,12 +172,7 @@ class TaskReviewController extends GetxController {
 
       print('✅ Proof accepted successfully');
 
-      Get.snackbar(
-        'Success',
-        'Proof accepted successfully',
-        snackPosition: SnackPosition.TOP,
-        duration: Duration(seconds: 2),
-      );
+      Get.snackbar('Success', 'Proof accepted successfully');
 
       // 🔥 Trigger navigation callback
       if (onSubmissionComplete != null) {
@@ -227,15 +217,17 @@ class TaskReviewController extends GetxController {
         if (offersQuery.docs.isNotEmpty) {
           final offerData = offersQuery.docs.first.data();
           helperName.value = offerData['offeringUserName'] ?? 'Unknown Helper';
-          helperPhotoUrl.value = offerData['offeringUserPhoto'] ?? ''; // 🔥 Get helper photo
-          
+          helperPhotoUrl.value =
+              offerData['offeringUserPhoto'] ?? ''; // 🔥 Get helper photo
+
           // Get first letter for initial
-          if (helperName.value.isNotEmpty && helperName.value != 'Unknown Helper') {
+          if (helperName.value.isNotEmpty &&
+              helperName.value != 'Unknown Helper') {
             helperInitial.value = helperName.value[0].toUpperCase();
           } else {
             helperInitial.value = 'U';
           }
-          
+
           // 🔥 Debug: Print helper info
           print('👤 Helper Name: ${helperName.value}');
           print('📸 Helper Photo URL: ${helperPhotoUrl.value}');
@@ -250,39 +242,45 @@ class TaskReviewController extends GetxController {
 
       if (proofDoc.exists) {
         final proofData = proofDoc.data()!;
-        
+
         // 🔥 Debug: Print all proof data
         print('🔍 Proof Data Keys: ${proofData.keys.toList()}');
         print('🔍 Full Proof Data: $proofData');
-        
+
         // 🔥 Try multiple possible field names for before image
-        String? rawBeforeUrl = proofData['beforePhotoUrl'] ?? 
-                               proofData['beforeImageUrl'] ?? 
-                               proofData['before_photo_url'] ?? 
-                               proofData['beforePhoto'];
-        
+        String? rawBeforeUrl =
+            proofData['beforePhotoUrl'] ??
+            proofData['beforeImageUrl'] ??
+            proofData['before_photo_url'] ??
+            proofData['beforePhoto'];
+
         // 🔥 Try multiple possible field names for after image
-        String? rawAfterUrl = proofData['afterPhotoUrl'] ?? 
-                              proofData['afterImageUrl'] ?? 
-                              proofData['after_photo_url'] ?? 
-                              proofData['afterPhoto'];
-        
+        String? rawAfterUrl =
+            proofData['afterPhotoUrl'] ??
+            proofData['afterImageUrl'] ??
+            proofData['after_photo_url'] ??
+            proofData['afterPhoto'];
+
         // 🔥 Clean and validate URLs
-        beforeImageUrl.value = (rawBeforeUrl?.trim() ?? '').isEmpty ? '' : rawBeforeUrl!.trim();
-        afterImageUrl.value = (rawAfterUrl?.trim() ?? '').isEmpty ? '' : rawAfterUrl!.trim();
-        
+        beforeImageUrl.value = (rawBeforeUrl?.trim() ?? '').isEmpty
+            ? ''
+            : rawBeforeUrl!.trim();
+        afterImageUrl.value = (rawAfterUrl?.trim() ?? '').isEmpty
+            ? ''
+            : rawAfterUrl!.trim();
+
         // 🔥 Debug: Print image URLs
         print('🖼️ Before Image URL: ${beforeImageUrl.value}');
         print('🖼️ After Image URL: ${afterImageUrl.value}');
         print('🖼️ Before Image Empty: ${beforeImageUrl.value.isEmpty}');
         print('🖼️ After Image Empty: ${afterImageUrl.value.isEmpty}');
-        
+
         // Calculate submitted time
         try {
           final dynamic submittedAtData = proofData['submittedAt'];
           if (submittedAtData != null) {
             DateTime submittedDate;
-            
+
             // Handle both Timestamp and String types
             if (submittedAtData is Timestamp) {
               submittedDate = submittedAtData.toDate();
@@ -291,9 +289,11 @@ class TaskReviewController extends GetxController {
             } else {
               submittedDate = DateTime.now();
             }
-            
-            final Duration difference = DateTime.now().difference(submittedDate);
-            
+
+            final Duration difference = DateTime.now().difference(
+              submittedDate,
+            );
+
             if (difference.inMinutes < 60) {
               submittedTime.value = '${difference.inMinutes} min ago';
             } else if (difference.inHours < 24) {

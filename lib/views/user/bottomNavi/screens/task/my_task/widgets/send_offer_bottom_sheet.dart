@@ -172,9 +172,6 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
     //   Get.snackbar(
     //     'Error',
     //     'Missing task information',
-    //     snackPosition: SnackPosition.BOTTOM,
-    //     backgroundColor: Colors.red,
-    //     colorText: Colors.white,
     //   );
     //   return;
     // }
@@ -182,25 +179,13 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
     // Validate price input
     final priceText = _priceController.text.trim();
     if (priceText.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please enter your offer price',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('Error', 'Please enter your offer price');
       return;
     }
 
     final offerPrice = int.tryParse(priceText);
     if (offerPrice == null || offerPrice <= 0) {
-      Get.snackbar(
-        'Error',
-        'Please enter a valid price (integers only)',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('Error', 'Please enter a valid price (integers only)');
       return;
     }
 
@@ -214,9 +199,6 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
         Get.snackbar(
           'Invalid Offer',
           'Offer cannot be less than SAR ${minLimit.toInt()} (70% of budget)',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
         return;
       }
@@ -225,9 +207,6 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
         Get.snackbar(
           'Invalid Offer',
           'Offer cannot be more than SAR ${maxLimit.toInt()} (3x of budget)',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
         return;
       }
@@ -239,13 +218,7 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
       // Get current user data
       final currentUser = _authService.currentUser;
       if (currentUser == null) {
-        Get.snackbar(
-          'Error',
-          'You must be logged in to submit an offer',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Get.snackbar('Error', 'You must be logged in to submit an offer');
         setState(() => _isSubmitting = false);
         return;
       }
@@ -288,23 +261,11 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
           showButton: false,
         );
       } else {
-        Get.snackbar(
-          'Error',
-          'Failed to submit offer. Please try again.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        Get.snackbar('Error', 'Failed to submit offer. Please try again.');
       }
     } catch (e) {
       setState(() => _isSubmitting = false);
-      Get.snackbar(
-        'Error',
-        'An error occurred: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('Error', 'An error occurred: ${e.toString()}');
     }
   }
 }

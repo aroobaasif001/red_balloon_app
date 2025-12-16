@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 
 class EditProfileController extends GetxController {
@@ -270,18 +272,36 @@ class EditProfileController extends GetxController {
         return;
       }
 
-      final File originalFile = File(pickedFile.path);
+      // Crop the image
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Image',
+            toolbarColor: redColor,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true,
+          ),
+          IOSUiSettings(
+            title: 'Crop Image',
+            aspectRatioLockEnabled: true,
+            resetAspectRatioEnabled: true,
+          ),
+        ],
+      );
+
+      if (croppedFile == null) {
+        return;
+      }
+
+      final File originalFile = File(croppedFile.path);
       final fileSize = await originalFile.length();
 
       // Max 5MB for original file
       if (fileSize > 5 * 1024 * 1024) {
-        Get.snackbar(
-          "Error",
-          "File too large! Max size is 5MB",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
-          colorText: Colors.white,
-        );
+        Get.snackbar("Error", "File too large! Max size is 5MB");
         return;
       }
 
@@ -299,21 +319,11 @@ class EditProfileController extends GetxController {
         imagePreviewUrl.value = compressedFile.path;
         _checkForChanges();
 
-        Get.snackbar(
-          "Success",
-          "Image uploaded successfully",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: Colors.white,
-          duration: Duration(seconds: 2),
-        );
+        Get.snackbar("Success", "Image uploaded successfully");
       } else {
         Get.snackbar(
           "Error",
           "Failed to compress image. Please try another image.",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
-          colorText: Colors.white,
         );
       }
     } catch (e) {
@@ -322,14 +332,7 @@ class EditProfileController extends GetxController {
       // Stop loading if error occurs
       isCompressingImage.value = false;
 
-      Get.snackbar(
-        "Error",
-        "Failed to pick image: ${e.toString()}",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
-        duration: Duration(seconds: 3),
-      );
+      Get.snackbar("Error", "Failed to pick image: ${e.toString()}");
     }
   }
 
@@ -355,18 +358,36 @@ class EditProfileController extends GetxController {
         return;
       }
 
-      final File originalFile = File(pickedFile.path);
+      // Crop the image
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Image',
+            toolbarColor: redColor,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true,
+          ),
+          IOSUiSettings(
+            title: 'Crop Image',
+            aspectRatioLockEnabled: true,
+            resetAspectRatioEnabled: true,
+          ),
+        ],
+      );
+
+      if (croppedFile == null) {
+        return;
+      }
+
+      final File originalFile = File(croppedFile.path);
       final fileSize = await originalFile.length();
 
       // Max 5MB for original file
       if (fileSize > 5 * 1024 * 1024) {
-        Get.snackbar(
-          "Error",
-          "File too large! Max size is 5MB",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
-          colorText: Colors.white,
-        );
+        Get.snackbar("Error", "File too large! Max size is 5MB");
         return;
       }
 
@@ -378,13 +399,7 @@ class EditProfileController extends GetxController {
 
       if (compressedFile == null) {
         isUploadingImage.value = false;
-        Get.snackbar(
-          "Error",
-          "Failed to compress image",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
-          colorText: Colors.white,
-        );
+        Get.snackbar("Error", "Failed to compress image");
         return;
       }
 
@@ -420,37 +435,17 @@ class EditProfileController extends GetxController {
           // Stop loading
           isUploadingImage.value = false;
 
-          Get.snackbar(
-            "Success",
-            "Profile picture updated successfully",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green.withOpacity(0.8),
-            colorText: Colors.white,
-            duration: Duration(seconds: 2),
-          );
+          Get.snackbar("Success", "Profile picture updated successfully");
         } else {
           isUploadingImage.value = false;
-          Get.snackbar(
-            "Error",
-            "Failed to upload image",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red.withOpacity(0.8),
-            colorText: Colors.white,
-          );
+          Get.snackbar("Error", "Failed to upload image");
         }
       }
     } catch (e) {
       print('Error uploading image: $e');
       isUploadingImage.value = false;
 
-      Get.snackbar(
-        "Error",
-        "Failed to upload image: ${e.toString()}",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
-        duration: Duration(seconds: 3),
-      );
+      Get.snackbar("Error", "Failed to upload image: ${e.toString()}");
     }
   }
 

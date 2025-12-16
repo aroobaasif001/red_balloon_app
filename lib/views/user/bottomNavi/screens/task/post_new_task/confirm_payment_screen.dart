@@ -219,7 +219,6 @@ class ConfirmPaymentScreen extends StatelessWidget {
                               Get.snackbar(
                                 'Error',
                                 'Failed to submit task. Please try again.',
-                                snackPosition: SnackPosition.BOTTOM,
                               );
                             }
                           },

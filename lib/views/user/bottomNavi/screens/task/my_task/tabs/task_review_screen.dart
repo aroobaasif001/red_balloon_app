@@ -291,7 +291,9 @@ class TaskReviewScreen extends StatelessWidget {
                   /// BEFORE
                   InkWell(
                     onTap: () {
-                      // View image code here
+                      if (controller.beforeImageUrl.value.isNotEmpty) {
+                        _showImageFullscreen(context, controller.beforeImageUrl.value);
+                      }
                     },
                     child: CustomContainer(
                       height: 150,
@@ -375,8 +377,9 @@ class TaskReviewScreen extends StatelessWidget {
                   /// AFTER
                   InkWell(
                     onTap: () {
-                      /// REJECT → Support BottomSheet
-                      DialogHelpers().showNoVoteDialog(context: context);
+                      if (controller.afterImageUrl.value.isNotEmpty) {
+                        _showImageFullscreen(context, controller.afterImageUrl.value);
+                      }
                     },
                     child: CustomContainer(
                       height: 150,
@@ -629,6 +632,60 @@ class TaskReviewScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+  void _showImageFullscreen(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.black,
+          insetPadding: EdgeInsets.zero,
+          child: Stack(
+            children: [
+              Center(
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/homedetail.png",
+                      fit: BoxFit.contain,
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                top: 20,
+                right: 20,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(8),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

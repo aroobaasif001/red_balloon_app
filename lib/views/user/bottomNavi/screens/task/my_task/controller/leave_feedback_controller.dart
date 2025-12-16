@@ -51,13 +51,11 @@ class LeaveFeedbackController extends GetxController {
   Future<void> submitFeedback() async {
     // Validation
     if (rating.value == 0) {
-      Get.snackbar('Error', 'Please select a star rating',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar('Error', 'Please select a star rating');
       return;
     }
     if (reviewController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please write a short review',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar('Error', 'Please write a short review');
       return;
     }
 
@@ -74,13 +72,11 @@ class LeaveFeedbackController extends GetxController {
       await _updateFirestore(feedbackData);
       
        Get.back(); 
-       Get.snackbar('Success', 'Feedback submitted successfully',
-          backgroundColor: Colors.green, colorText: Colors.white);
+       Get.snackbar('Success', 'Feedback submitted successfully');
 
     } catch (e) {
       print("Error submitting feedback: $e");
-      Get.snackbar('Error', 'Failed to submit feedback',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar('Error', 'Failed to submit feedback');
     } finally {
       isLoading.value = false;
     }
@@ -102,8 +98,7 @@ class LeaveFeedbackController extends GetxController {
 
     } catch (e) {
       print("Error skipping feedback: $e");
-      Get.snackbar('Error', 'Failed to skip feedback',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar('Error', 'Failed to skip feedback');
     } finally {
       isLoading.value = false;
     }

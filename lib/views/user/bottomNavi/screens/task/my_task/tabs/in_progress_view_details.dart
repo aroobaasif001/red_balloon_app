@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
+import '../../../../../../../custom_widgets/custom_container.dart';
 import '../controller/in_progress_task_controller.dart';
 import '../widgets/build_bottom_upload_bar.dart';
 import '../widgets/build_helper_info_card.dart';
@@ -20,7 +21,9 @@ class InProgressViewDetails extends StatelessWidget {
   final String? location;
   final String? userId;
   final String? phoneNumber;
-  
+  final String? helperUid;
+  final String? taskImage;
+
   const InProgressViewDetails({
     super.key,
     this.taskId,
@@ -32,6 +35,8 @@ class InProgressViewDetails extends StatelessWidget {
     this.location,
     this.userId,
     this.phoneNumber,
+    this.helperUid,
+    this.taskImage,
   });
 
   @override
@@ -39,13 +44,21 @@ class InProgressViewDetails extends StatelessWidget {
     final InProgressTaskController controller = Get.put(
       InProgressTaskController(),
     );
-    
+
     // Check if proof exists and start listening for task updates
     if (taskId != null && taskId!.isNotEmpty) {
       controller.checkProofExists(taskId!);
       controller.startTaskListener(taskId!);
+      controller.startStatusListener(taskId!);
     }
-    
+
+    // Debug: Log the helper UID being used
+    print('🔍 InProgressViewDetails Debug:');
+    print('   taskId: $taskId');
+    print('   helperUid (Firebase Auth UID): $helperUid');
+    print('   userId (custom ID): $userId');
+    print('   Using for chat: $helperUid');
+
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -59,6 +72,7 @@ class InProgressViewDetails extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     buildStatusCard(controller),
                     const SizedBox(height: 16),
                     buildRouteCard(),
@@ -68,18 +82,22 @@ class InProgressViewDetails extends StatelessWidget {
                       timeAgo!,
                       price!,
                       userName,
-                      taskTitle,
+                      taskTitle!, // Ensure taskTitle is not null or handled
                       location ?? '',
+                      taskImage: taskImage,
                     ),
+                    const SizedBox(height: 16),
+
                     const SizedBox(height: 16),
                     buildHelperInfoCard(
                       controller,
                       photoUrl,
                       userName ?? '',
-                      userId ?? '',
+                      userId ?? '', // 🔥 Changed from helperUid to userId
                       taskId: taskId,
                       taskTitle: taskTitle,
                       phoneNumber: phoneNumber,
+                      taskImage: taskImage,
                     ),
                     const SizedBox(height: 100),
                   ],

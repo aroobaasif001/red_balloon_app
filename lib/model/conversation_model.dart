@@ -4,6 +4,7 @@ class ConversationModel {
   final String conversationId;
   final String taskId;
   final String taskTitle;
+  final String? taskImage;
   final String participant1Uid;
   final String participant2Uid;
   final String participant1Name;
@@ -18,6 +19,7 @@ class ConversationModel {
     required this.conversationId,
     required this.taskId,
     required this.taskTitle,
+    this.taskImage,
     required this.participant1Uid,
     required this.participant2Uid,
     required this.participant1Name,
@@ -35,6 +37,7 @@ class ConversationModel {
       'conversationId': conversationId,
       'taskId': taskId,
       'taskTitle': taskTitle,
+      'taskImage': taskImage,
       'participant1Uid': participant1Uid,
       'participant2Uid': participant2Uid,
       'participant1Name': participant1Name,
@@ -53,6 +56,7 @@ class ConversationModel {
       conversationId: json['conversationId'] ?? '',
       taskId: json['taskId'] ?? '',
       taskTitle: json['taskTitle'] ?? '',
+      taskImage: json['taskImage'],
       participant1Uid: json['participant1Uid'] ?? '',
       participant2Uid: json['participant2Uid'] ?? '',
       participant1Name: json['participant1Name'] ?? '',

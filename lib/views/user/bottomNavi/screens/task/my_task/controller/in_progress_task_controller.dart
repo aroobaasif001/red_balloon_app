@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/services/task_service.dart';
-import 'dart:async';
 
 class InProgressTaskController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -23,9 +25,11 @@ class InProgressTaskController extends GetxController {
   // Track if proof has been uploaded
   RxBool hasProof = false.obs;
   RxBool isCheckingProof = true.obs;
-  
+
   // Real-time proof listener
   StreamSubscription? _proofListener;
+  StreamSubscription? _taskStatusListener;
+  RxString proofId = ''.obs;
 
   /// Check if proof exists in task_proofs collection for given taskId
   Future<void> checkProofExists(String taskId) async {
@@ -46,7 +50,7 @@ class InProgressTaskController extends GetxController {
 
       // If any proof exists, set hasProof to true
       hasProof.value = querySnapshot.docs.isNotEmpty;
-      
+
       // Setup real-time listener for proof updates
       setupProofListener(taskId);
     } catch (e) {
@@ -64,9 +68,40 @@ class InProgressTaskController extends GetxController {
         .where('taskId', isEqualTo: taskId)
         .snapshots()
         .listen((snapshot) {
-      hasProof.value = snapshot.docs.isNotEmpty;
-      print('✅ Real-time proof update: ${snapshot.docs.length} proofs found');
-    });
+          hasProof.value = snapshot.docs.isNotEmpty;
+          if (snapshot.docs.isNotEmpty) {
+            proofId.value = snapshot.docs.first.id;
+          }
+          print(
+            '✅ Real-time proof update: ${snapshot.docs.length} proofs found',
+          );
+        });
+  }
+
+  /// Start real-time listener for task status changes
+  void startStatusListener(String taskId) {
+    if (taskId.isEmpty) return;
+
+    _taskStatusListener = _firestore
+        .collection('tasks')
+        .doc(taskId)
+        .snapshots()
+        .listen((snapshot) {
+          if (snapshot.exists) {
+            final data = snapshot.data();
+            final taskStatus = data?['status']?.toString().toLowerCase() ?? '';
+
+            // If status changed from "in_progress" to something else (completed, cancelled, etc)
+            if (taskStatus.isNotEmpty && taskStatus != 'in progress') {
+              print('✅ Task status changed to: $taskStatus');
+
+              // Navigate back
+              if (Get.context != null) {
+                Navigator.of(Get.context!).pop();
+              }
+            }
+          }
+        });
   }
 
   // Help Request Status for Helper view
@@ -109,6 +144,7 @@ class InProgressTaskController extends GetxController {
   @override
   void onClose() {
     _proofListener?.cancel();
+    _taskStatusListener?.cancel();
     super.onClose();
   }
 }

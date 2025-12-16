@@ -10,7 +10,7 @@ class AuthController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var currentUser = Rxn<AuthModel>();
-  
+
   // User profile data
   var userPhone = ''.obs;
   var userCity = ''.obs;
@@ -59,7 +59,7 @@ class AuthController extends GetxController {
           } else {
             userPhone.value = '';
           }
-          
+
           // Get city and country
           userCity.value = userData['city'] ?? '';
           userCountry.value = userData['country'] ?? '';
@@ -86,11 +86,7 @@ class AuthController extends GetxController {
       return null;
     } catch (e) {
       errorMessage.value = 'Failed to sign in with Google: ${e.toString()}';
-      Get.snackbar(
-        'Error',
-        errorMessage.value,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', errorMessage.value);
       return null;
     } finally {
       isLoading.value = false;
@@ -113,11 +109,7 @@ class AuthController extends GetxController {
       return null;
     } catch (e) {
       errorMessage.value = 'Failed to sign in with Apple: ${e.toString()}';
-      Get.snackbar(
-        'Error',
-        errorMessage.value,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', errorMessage.value);
       return null;
     } finally {
       isLoading.value = false;
@@ -130,13 +122,12 @@ class AuthController extends GetxController {
       isLoading.value = true;
       await _authService.signOut();
       currentUser.value = null;
+      userPhone.value = '';
+      userCity.value = '';
+      userCountry.value = '';
     } catch (e) {
       errorMessage.value = 'Failed to sign out: ${e.toString()}';
-      Get.snackbar(
-        'Error',
-        errorMessage.value,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', errorMessage.value);
     } finally {
       isLoading.value = false;
     }
@@ -150,11 +141,7 @@ class AuthController extends GetxController {
       currentUser.value = null;
     } catch (e) {
       errorMessage.value = 'Failed to delete account: ${e.toString()}';
-      Get.snackbar(
-        'Error',
-        errorMessage.value,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', errorMessage.value);
     } finally {
       isLoading.value = false;
     }
