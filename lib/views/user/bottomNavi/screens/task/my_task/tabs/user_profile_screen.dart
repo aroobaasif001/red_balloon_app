@@ -24,553 +24,215 @@ class UserProfileScreen extends StatelessWidget {
     this.userPhoto,
   });
 
-  Widget _ratingBar(String label, double value) {
-    return Row(
-      children: [
-        CustomText(
-          label,
-          fontSize: 12,
-          color: whiteColor,
-          fontWeight: FontVariant.medium,
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: LinearProgressIndicator(
-            value: value,
-            backgroundColor: whiteColor.withOpacity(0.3),
-            valueColor: AlwaysStoppedAnimation(yellow),
-            minHeight: 6,
-            borderRadius: BorderRadius.circular(3),
-          ),
-        ),
-        const SizedBox(width: 8),
-        CustomText(
-          "${(value * 100).toInt()}%",
-          fontSize: 11,
-          color: whiteColor,
-          fontWeight: FontVariant.medium,
-        ),
-      ],
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(titleText: 'User Profile'),
+      backgroundColor: whiteColor,
+      appBar: CustomAppBar(
+        titleText: 'User Profile',
+        leadingIcon: Icons.arrow_back,
+        titleFontSize: 24,
+        titleFontWeight: FontVariant.bold,
+      ),
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /// MAIN PROFILE CARD
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: CustomContainer(
-                conColor: whiteColor,
-                borderRadius: BorderRadius.circular(24),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 24,
+            const SizedBox(height: 40),
+
+            /// AVATAR SECTION
+            Stack(
+              children: [
+                CustomContainer(
+                  height: 120,
+                  width: 120,
+                  shape: BoxShape.circle,
+                  conColor: redColor,
+                  alignment: Alignment.center,
+                  child:
+                      userPhoto == null || userPhoto!.isEmpty
+                          ? CustomText(
+                            userInitials,
+                            fontSize: 48,
+                            fontWeight: FontVariant.bold,
+                            color: whiteColor,
+                          )
+                          : ClipRRect(
+                            borderRadius: BorderRadius.circular(60),
+                            child: Image.network(
+                              userPhoto!,
+                              height: 120,
+                              width: 120,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                 ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      /// RED AVATAR WITH BADGE
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          CustomContainer(
-                            height: 100,
-                            width: 100,
-                            shape: BoxShape.circle,
-                            conColor: redColor,
-                            alignment: Alignment.center,
-                            child: userPhoto == null
-                                ? CustomText(
-                                    userInitials, // 🔥 Real initials
-                                    fontSize: 45,
-                                    fontWeight: FontVariant.bold,
-                                    color: whiteColor,
-                                  )
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(50),
-                                    child: Image.network(userPhoto!),
-                                  ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: CustomContainer(
-                              height: 24,
-                              width: 24,
-                              conColor: redColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: whiteColor, width: 2),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      /// NAME
-                      CustomText(
-                        userName, // 🔥 Real name
-                        fontSize: 22,
-                        fontWeight: FontVariant.bold,
-                      ),
-                      const SizedBox(height: 12),
-
-                      /// BADGES ROW
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          /// RB TAG
-                          CustomContainer(
-                            conColor: lightredcolor2,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                            child: CustomText(
-                              userId ?? "RB-452",
-                              fontSize: 11,
-                              color: redColor,
-                              fontWeight: FontVariant.semiBold,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-
-                          /// VERIFIED BADGE
-                          CustomContainer(
-                            conColor: greenBg,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.verified, color: redColor, size: 14),
-                                const SizedBox(width: 4),
-                                const CustomText(
-                                  "Verified",
-                                  fontSize: 11,
-                                  color: walletSuccessColor,
-                                  fontWeight: FontVariant.semiBold,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-
-                          /// ELITE TASKER BADGE
-                          CustomContainer(
-                            conColor: const Color(0xFFFFF3E0),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Image.asset(
-                                  "assets/icons/star.png",
-                                  height: 14,
-                                  width: 14,
-                                ),
-                                const SizedBox(width: 4),
-                                const CustomText(
-                                  "Elite Tasker",
-                                  fontSize: 11,
-                                  color: Color(0xFFF57C00),
-                                  fontWeight: FontVariant.semiBold,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 18),
-
-                      /// USER RATING CARD
-                      CustomContainer(
-                        conColor: white2Color,
-                        borderRadius: BorderRadius.circular(14),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const CustomText(
-                              "User's Rating",
-                              fontSize: 14,
-                              color: textcolord,
-                              fontWeight: FontVariant.medium,
-                            ),
-                            Row(
-                              children: [
-                                Icon(Icons.star, color: redColor, size: 20),
-                                const SizedBox(width: 6),
-                                CustomText(
-                                  rating.toStringAsFixed(1), // 🔥 Real rating
-                                  fontSize: 18,
-                                  fontWeight: FontVariant.bold,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      /// STATS CARD (RED BACKGROUND)
-                      CustomContainer(
-                        conColor: redColor,
-                        borderRadius: BorderRadius.circular(16),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 18,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const CustomText(
-                                          "Total Tasks Completed",
-                                          fontSize: 13,
-                                          color: whiteColor,
-                                          fontWeight: FontVariant.medium,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        CustomText(
-                                          tasksCompleted.toString().padLeft(
-                                            2,
-                                            '0',
-                                          ), // 🔥 Real count
-                                          fontSize: 28,
-                                          fontWeight: FontVariant.bold,
-                                          color: whiteColor,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const CustomText(
-                                          "Total Tasks Requested",
-                                          fontSize: 13,
-                                          color: whiteColor,
-                                          fontWeight: FontVariant.medium,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        CustomText(
-                                          tasksRequested.toString().padLeft(
-                                            2,
-                                            '0',
-                                          ), // 🔥 Real count
-                                          fontSize: 28,
-                                          fontWeight: FontVariant.bold,
-                                          color: whiteColor,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Center(
-                              child: Image.asset(
-                                "assets/icons/white_balloon.png",
-                                height: 90,
-                                width: 90,
-                                color: whiteColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      /// USER RATING BREAKDOWN
-                      CustomContainer(
-                        conColor: redColor,
-                        borderRadius: BorderRadius.circular(16),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 18,
-                        ),
-                        child: Column(
-                          children: [
-                            CustomContainer(
-                              conColor: redColor,
-                              borderRadius: BorderRadius.circular(16),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 18,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const CustomText(
-                                    "User Rating",
-                                    fontSize: 16,
-                                    fontWeight: FontVariant.bold,
-                                    color: whiteColor,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Row(
-                                    children: [
-                                      Column(
-                                        children: [
-                                          const CustomText(
-                                            "4.8",
-                                            fontSize: 28,
-                                            fontWeight: FontVariant.bold,
-                                            color: whiteColor,
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.star,
-                                                color: yellow,
-                                                size: 24,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: yellow,
-                                                size: 24,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: yellow,
-                                                size: 24,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: yellow,
-                                                size: 24,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: yellow,
-                                                size: 24,
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          const CustomText(
-                                            "234 reviews",
-                                            fontSize: 12,
-                                            color: whiteColor,
-                                            fontWeight: FontVariant.medium,
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(width: 20),
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            _ratingBar("5 ★", 0.75),
-                                            const SizedBox(height: 8),
-                                            _ratingBar("4 ★", 0.15),
-                                            const SizedBox(height: 8),
-                                            _ratingBar("3 ★", 0.07),
-                                            const SizedBox(height: 8),
-                                            _ratingBar("2 ★", 0.02),
-                                            const SizedBox(height: 8),
-                                            _ratingBar("1 ★", 0.01),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            /// REVIEWS SECTION
-                            CustomContainer(
-                              conColor: redColor,
-                              borderRadius: BorderRadius.circular(16),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                              child: Column(
-                                children: [
-                                  /// REVIEW 1
-                                  CustomContainer(
-                                    conColor: whiteColor,
-                                    borderRadius: BorderRadius.circular(12),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 12,
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const CustomText(
-                                              "Michael Chen",
-                                              fontSize: 14,
-                                              fontWeight: FontVariant.bold,
-                                            ),
-                                            const CustomText(
-                                              "2 weeks ago",
-                                              fontSize: 11,
-                                              color: timeColor,
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            Row(
-                                              children: List.generate(
-                                                5,
-                                                (index) => Icon(
-                                                  Icons.star,
-                                                  color: yellow,
-                                                  size: 14,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 8),
-                                        const CustomText(
-                                          "Absolutely stunning paint! They arrived healthy and vibrant. The colors are even better in person. The seller packaged them perfectly with the pots and the fish adapted quickly to my tank. Highly recommended!",
-                                          fontSize: 12,
-                                          color: textcolord,
-                                          fontWeight: FontVariant.regular,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-
-                                  /// REVIEW 2
-                                  CustomContainer(
-                                    conColor: whiteColor,
-                                    borderRadius: BorderRadius.circular(12),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 12,
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const CustomText(
-                                              "Sarah Johnson",
-                                              fontSize: 14,
-                                              fontWeight: FontVariant.bold,
-                                            ),
-                                            const CustomText(
-                                              "1 month ago",
-                                              fontSize: 11,
-                                              color: timeColor,
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              children: List.generate(
-                                                5,
-                                                (index) => Icon(
-                                                  Icons.star,
-                                                  color: yellow,
-                                                  size: 14,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 8),
-                                        const CustomText(
-                                          "Beautiful discus pair. Arrived on time and in perfect condition. They're eating well and have great temperament. The seller was very responsive to questions.",
-                                          fontSize: 12,
-                                          color: textcolord,
-                                          fontWeight: FontVariant.regular,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-
-                                  /// READ ALL REVIEWS BUTTON
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        const CustomText(
-                                          "Read All 234 Reviews",
-                                          fontSize: 13,
-                                          color: whiteColor,
-                                          fontWeight: FontVariant.semiBold,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Icon(
-                                          Icons.arrow_forward,
-                                          color: whiteColor,
-                                          size: 16,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-                    ],
+                Positioned(
+                  bottom: 5,
+                  right: 5,
+                  child: CustomContainer(
+                    height: 28,
+                    width: 28,
+                    shape: BoxShape.circle,
+                    conColor: const Color(0xffDC4137), // Status dot color
+                    border: Border.all(color: whiteColor, width: 3),
                   ),
                 ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            /// NAME
+            CustomText(
+              userName,
+              fontSize: 26,
+              fontWeight: FontVariant.bold,
+              color: const Color(0xff333333),
+            ),
+
+            const SizedBox(height: 12),
+
+            /// BADGES ROW 1 (ID & VERIFIED)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildBadge(
+                  text: userId ?? "RB-452",
+                  bgColor: const Color(0xffFFF1F1),
+                  textColor: const Color(0xffFE7062),
+                ),
+                const SizedBox(width: 8),
+                _buildBadge(
+                  text: "Verified",
+                  bgColor: const Color(0xffE9F8F1),
+                  textColor: const Color(0xff43A047),
+                  icon: Icons.verified,
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            /// ELITE TASKER BADGE
+            _buildBadge(
+              text: "Elite Tasker",
+              bgColor: const Color(0xffE9F8F1),
+              textColor: const Color(0xff43A047),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    "assets/icons/star.png", // Assuming this exists or using a substitute icon
+                    height: 20,
+                    width: 20,
+                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.stars, size: 20, color: Colors.orange),
+                  ),
+                  const SizedBox(width: 6),
+                  const CustomText(
+                    "Elite Tasker",
+                    fontSize: 14,
+                    color: Color(0xff43A047),
+                    fontWeight: FontVariant.medium,
+                  ),
+                ],
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 32),
+
+            /// STATS CARDS
+            _buildStatCard(
+              label: "Total Tasks Completed",
+              value: tasksCompleted.toString().padLeft(2, '0'),
+            ),
+            _buildStatCard(
+              label: "Total Tasks Requested",
+              value: tasksRequested.toString().padLeft(2, '0'),
+            ),
+            _buildStatCard(
+              label: "User's Rating",
+              value: rating.toStringAsFixed(1),
+              isRating: true,
+            ),
+
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBadge({
+    required String text,
+    required Color bgColor,
+    required Color textColor,
+    IconData? icon,
+    Widget? child,
+  }) {
+    return CustomContainer(
+      conColor: bgColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      borderRadius: BorderRadius.circular(10),
+      child: child ?? Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, color: Colors.red, size: 18),
+            const SizedBox(width: 6),
+          ],
+          CustomText(
+            text,
+            fontSize: 14,
+            color: textColor,
+            fontWeight: FontVariant.medium,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard({
+    required String label,
+    required String value,
+    bool isRating = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: CustomContainer(
+        conColor: whiteColor,
+        borderRadius: BorderRadius.circular(15),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CustomText(
+              label,
+              fontSize: 18,
+              color: const Color(0xff666666),
+              fontWeight: FontVariant.medium,
+            ),
+            Row(
+              children: [
+                if (isRating) ...[
+                  const Icon(Icons.star, color: Color(0xffDC4137), size: 28),
+                  const SizedBox(width: 8),
+                ],
+                CustomText(
+                  value,
+                  fontSize: 32,
+                  fontWeight: FontVariant.bold,
+                  color: const Color(0xff333333),
+                ),
+              ],
+            ),
           ],
         ),
       ),

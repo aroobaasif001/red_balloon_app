@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/tabs/controller/tasks_for_you_controller.dart';
@@ -181,7 +182,48 @@ class HomeScreen extends StatelessWidget {
                     ),
                     // Tasks Section
                     const TasksForYouTab(),
-                    SizedBox(height: 80),
+                    const SizedBox(height: 20),
+                    // Menu Section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: CustomContainer(
+                        conColor: rbcolor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: blackColor.withOpacity(0.25),
+                            blurRadius: 4,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                        child: Column(
+                          children: [
+                            _buildMenuItem(
+                              Icons.info_outline,
+                              "About the app",
+                              () {
+                                // TODO: Navigate to About
+                              },
+                            ),
+                            _buildMenuItem(
+                              Icons.chat_outlined,
+                              "Contact Us",
+                              () {
+                                // TODO: Navigate to Contact Us
+                              },
+                            ),
+                            _buildMenuItem(Icons.help_outline, "FAQ's", () {
+                              // TODO: Navigate to FAQ
+                            }),
+                            _buildMenuItem(Icons.history, "How it works", () {
+                              // TODO: Navigate to How it works
+                            }),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 100),
                   ],
                 ),
               ),
@@ -189,6 +231,30 @@ class HomeScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+        child: Row(
+          children: [
+            Icon(icon, size: 24, color: Colors.black),
+            const SizedBox(width: 15),
+            Expanded(
+              child: CustomText(
+                title,
+                fontSize: 16,
+                fontWeight: FontVariant.medium,
+                color: Colors.black,
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 20, color: Colors.black),
+          ],
+        ),
+      ),
     );
   }
 }

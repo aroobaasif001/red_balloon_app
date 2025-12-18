@@ -35,53 +35,56 @@ class ProviderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: CustomContainer(
         conColor: whiteColor,
-        borderRadius: BorderRadius.circular(22),
-        padding: const EdgeInsets.all(18),
+        borderRadius: BorderRadius.circular(15),
+        padding: const EdgeInsets.all(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.20),
-            blurRadius: 6,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// TOP ROW
+            /// TOP SECTION: AVATAR & INFO
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// AVATAR CIRCLE
+                /// AVATAR
                 CustomContainer(
-                  height: 50,
-                  width: 50,
+                  height: 60,
+                  width: 60,
                   shape: BoxShape.circle,
-                  conColor: redColor.withOpacity(0.12),
+                  conColor: redColor,
                   alignment: Alignment.center,
-                  child: userPhoto == null
+                  child: userPhoto == null || userPhoto!.isEmpty
                       ? CustomText(
                           initials,
-                          fontSize: 20,
+                          fontSize: 24,
                           fontWeight: FontVariant.bold,
-                          color: redColor,
+                          color: whiteColor,
                         )
                       : ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.network(userPhoto!, fit: BoxFit.contain),
+                          borderRadius: BorderRadius.circular(30),
+                          child: Image.network(
+                            userPhoto!,
+                            height: 60,
+                            width: 60,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                 ),
+                const SizedBox(width: 12),
 
-                const SizedBox(width: 14),
-
-                /// NAME + TAG + RATING
+                /// NAME, ID, RATING
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// NAME + TAG
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -90,65 +93,36 @@ class ProviderCard extends StatelessWidget {
                               name,
                               fontSize: 18,
                               fontWeight: FontVariant.bold,
+                              color: const Color(0xff333333),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-
-                          CustomContainer(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 6,
-                            ),
-                            conColor: rdBgColor,
-                            borderRadius: BorderRadius.circular(10),
-                            child: CustomText(
-                              id == '' ? 'RB-124' : id,
-                              fontSize: 12,
-                              color: redColor,
-                            ),
+                          _buildBadge(
+                            text: id.isEmpty ? 'RB-124' : id,
+                            bgColor: const Color(0xffFFF1F1),
+                            textColor: const Color(0xffFE7062),
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 8),
-
-                      /// RATING ROW
+                      const SizedBox(height: 6),
                       Row(
                         children: [
-                          const Icon(Icons.star, size: 20, color: starcolor),
-                          const SizedBox(width: 1),
+                          const Icon(Icons.star, size: 18, color: Color(0xffDC4137)),
+                          const SizedBox(width: 4),
                           CustomText(
                             rating,
-                            fontSize: 12,
-                            fontWeight: FontVariant.semiBold,
-                            color: redColor,
+                            fontSize: 14,
+                            fontWeight: FontVariant.bold,
+                            color: const Color(0xff333333),
                           ),
-                          const SizedBox(width: 3),
+                          const SizedBox(width: 8),
                           CustomText(
                             description,
-                            fontSize: 12,
-                            color: redColor,
+                            fontSize: 13,
+                            color: const Color(0xff666666),
                           ),
                         ],
-                      ),
-
-                      const SizedBox(height: 1),
-
-                      /// PRICE + DISTANCE
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            CustomText(
-                              price,
-                              fontSize: 17,
-                              fontWeight: FontVariant.bold,
-                            ),
-                            CustomText(distance, fontSize: 12, color: redColor),
-                          ],
-                        ),
                       ),
                     ],
                   ),
@@ -156,12 +130,46 @@ class ProviderCard extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
+
+            /// PRICE & DISTANCE ROW
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomText(
+                      distance,
+                      fontSize: 13,
+                      color: const Color(0xffFE7062),
+                      fontWeight: FontVariant.medium,
+                    ),
+                  ],
+                ),
+                CustomText(
+                  price,
+                  fontSize: 20,
+                  fontWeight: FontVariant.bold,
+                  color: const Color(0xff333333),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            /// ACTION BUTTONS
             Row(
               children: [
-                buildButton("View Profile", onViewProfile),
-                buildButton("Accept", onAccept),
-                buildButton("Chat", onChat),
+                _buildActionButton(
+                  "View Profile",
+                  onViewProfile,
+                  isSecondary: true,
+                ),
+                const SizedBox(width: 8),
+                _buildActionButton("Accept", onAccept),
+                const SizedBox(width: 8),
+                _buildActionButton("Chat", onChat, isSecondary: true),
               ],
             ),
           ],
@@ -170,24 +178,43 @@ class ProviderCard extends StatelessWidget {
     );
   }
 
-  /// BUTTON WIDGET WITH onTap SUPPORT
-  Widget buildButton(String label, VoidCallback? onTap) {
+  Widget _buildBadge({
+    required String text,
+    required Color bgColor,
+    required Color textColor,
+  }) {
+    return CustomContainer(
+      conColor: bgColor,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      borderRadius: BorderRadius.circular(6),
+      child: CustomText(
+        text,
+        fontSize: 12,
+        color: textColor,
+        fontWeight: FontVariant.medium,
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    String label,
+    VoidCallback? onTap, {
+    bool isSecondary = false,
+  }) {
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: GestureDetector(
-          onTap: onTap,
-          child: CustomContainer(
-            height: 40,
-            borderRadius: BorderRadius.circular(15),
-            alignment: Alignment.center,
-            conColor: redColor,
-            child: CustomText(
-              label,
-              color: whiteColor,
-              fontSize: 12,
-              fontWeight: FontVariant.regular,
-            ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: CustomContainer(
+          height: 44,
+          borderRadius: BorderRadius.circular(10),
+          alignment: Alignment.center,
+          conColor: isSecondary ? const Color(0xffF5F5F5) : redColor,
+          child: CustomText(
+            label,
+            color: isSecondary ? const Color(0xff666666) : whiteColor,
+            fontSize: 13,
+            fontWeight: FontVariant.semiBold,
           ),
         ),
       ),
