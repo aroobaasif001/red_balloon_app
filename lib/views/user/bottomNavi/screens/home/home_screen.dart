@@ -15,6 +15,11 @@ import '../profile/tabs/messages_screen.dart';
 import '../profile/tabs/profile_screen.dart';
 import '../task/post_new_task/post_new_task_screen.dart';
 import 'controller/home_controller.dart';
+import 'info/about_app_screen.dart';
+import 'info/contact_us_screen.dart';
+import 'info/faq_screen.dart';
+import 'info/how_it_works_screen.dart';
+
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -203,21 +208,21 @@ class HomeScreen extends StatelessWidget {
                               Icons.info_outline,
                               "About the app",
                               () {
-                                // TODO: Navigate to About
+                                Get.to(() => const AboutAppScreen());
                               },
                             ),
                             _buildMenuItem(
                               Icons.chat_outlined,
                               "Contact Us",
                               () {
-                                // TODO: Navigate to Contact Us
+                                Get.to(() => const ContactUsScreen());
                               },
                             ),
                             _buildMenuItem(Icons.help_outline, "FAQ's", () {
-                              // TODO: Navigate to FAQ
+                              Get.to(() => const FAQScreen());
                             }),
                             _buildMenuItem(Icons.history, "How it works", () {
-                              // TODO: Navigate to How it works
+                              Get.to(() => const HowItWorksScreen());
                             }),
                           ],
                         ),
