@@ -16,15 +16,12 @@ import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/t
 
 class UserProfileDetailsScreen extends StatelessWidget {
   final String userId;
-
   const UserProfileDetailsScreen({super.key, required this.userId});
-
   @override
   Widget build(BuildContext context) {
     // Initialize controller with userId
     final controller = Get.put(UserProfileDetailsController(), tag: userId);
     controller.fetchUserProfileData(userId);
-
     return Scaffold(
       appBar: CustomAppBar(titleText: 'User Profile Details'),
       body: Obx(() {
@@ -33,7 +30,6 @@ class UserProfileDetailsScreen extends StatelessWidget {
             child: CircularProgressIndicator(color: redColor),
           );
         }
-
         return SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -49,9 +45,7 @@ class UserProfileDetailsScreen extends StatelessWidget {
                   verified: controller.isVerified.value,
                   photoUrl: controller.userPhoto.value,
                 ),
-
                 const SizedBox(height: 25),
-
                 // USER PROGRESS SECTION
                 CustomContainer(
                   margin: EdgeInsets.only(bottom: 10),
@@ -75,7 +69,6 @@ class UserProfileDetailsScreen extends StatelessWidget {
                     children: [
                       SectionTitle("User Progress"),
                       SizedBox(height: 10),
-
                       ProgressBarTile(
                         title: "Work as a Requester",
                         percent: controller.requesterProgress.value,
@@ -93,15 +86,12 @@ class UserProfileDetailsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 // RATING CARD
                 RatingSummaryCard(
                   rating: controller.rating.value,
                   completed: controller.tasksCompleted.value,
                 ),
-
                 const SizedBox(height: 25),
 
                 /// STATS CARDS
@@ -114,7 +104,6 @@ class UserProfileDetailsScreen extends StatelessWidget {
                       title: "Validation Accuracy",
                       value: controller.validationAccuracy.value,
                     ),
-
                     StatsSmallCard(
                       imagePath: "assets/icons/response1.png",
                       title: "Response Time",
@@ -142,7 +131,6 @@ class UserProfileDetailsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 30),
 
                 /// ADMIN ANALYTICS
@@ -164,21 +152,17 @@ class UserProfileDetailsScreen extends StatelessWidget {
                     ),
                   ],
                   padding: const EdgeInsets.all(18),
-
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SectionTitle("Admin Analytics"),
-
                       CustomContainer(
                         padding: EdgeInsets.all(18),
                         conColor: whiteColor,
                         borderRadius: BorderRadius.circular(15),
-
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
-
                           children: [
                             const CustomText(
                               "Task Breakdown",
@@ -186,7 +170,6 @@ class UserProfileDetailsScreen extends StatelessWidget {
                               fontWeight: FontVariant.semiBold,
                             ),
                             const SizedBox(height: 10),
-
                             KeyValueRow(
                               title: "Total Tasks",
                               value: controller.totalTasks.value.toString(),
@@ -213,12 +196,10 @@ class UserProfileDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-
                       CustomContainer(
                         padding: EdgeInsets.all(18),
                         conColor: whiteColor,
                         borderRadius: BorderRadius.circular(15),
-
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,7 +210,6 @@ class UserProfileDetailsScreen extends StatelessWidget {
                               fontWeight: FontVariant.bold,
                             ),
                             const SizedBox(height: 10),
-
                             KeyValueRow(
                               title: "Total Earned",
                               value:
@@ -257,9 +237,7 @@ class UserProfileDetailsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
                 Row(
                   children: [
                     DangerButton(
@@ -273,7 +251,6 @@ class UserProfileDetailsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 30),
               ],
             ),
