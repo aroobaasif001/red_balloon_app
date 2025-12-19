@@ -19,8 +19,7 @@ class TaskHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isNetworkImage =
-        taskImage != null && taskImage!.startsWith('http');
+    final isNetworkImage = taskImage != null && taskImage!.startsWith('http');
 
     return CustomContainer(
       conColor: rbcolor,
@@ -28,7 +27,7 @@ class TaskHeaderCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.20),
+          color: blackColor.withOpacity(0.20),
           blurRadius: 4,
           offset: const Offset(0, 4),
         ),
@@ -89,8 +88,11 @@ class TaskHeaderCard extends StatelessWidget {
 
                     const SizedBox(width: 25),
 
-                    const Icon(Icons.watch_later_outlined,
-                        size: 16, color: grey4Color),
+                    const Icon(
+                      Icons.watch_later_outlined,
+                      size: 16,
+                      color: grey4Color,
+                    ),
 
                     const SizedBox(width: 4),
 

@@ -11,32 +11,28 @@ class AdminAnalyticsSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color:white4Color,
+        color: white4Color,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: blackColor.withOpacity(0.25),
             blurRadius: 12,
             offset: const Offset(0, 3),
-          )
+          ),
         ],
       ),
 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           // 🔴 SECTION TITLE
           Row(
             children: const [
-              Icon(Icons.show_chart, color:redColor),
+              Icon(Icons.show_chart, color: redColor),
               SizedBox(width: 8),
               Text(
                 "Admin Analytics",
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -48,14 +44,14 @@ class AdminAnalyticsSection extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color:whiteColor,
+              color: whiteColor,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: blackColor.withOpacity(0.06),
                   blurRadius: 10,
                   offset: const Offset(0, 3),
-                )
+                ),
               ],
             ),
             child: Column(
@@ -63,10 +59,7 @@ class AdminAnalyticsSection extends StatelessWidget {
               children: const [
                 Text(
                   "Task Breakdown",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 SizedBox(height: 12),
 
@@ -86,14 +79,14 @@ class AdminAnalyticsSection extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color:whiteColor,
+              color: whiteColor,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: blackColor.withOpacity(0.06),
                   blurRadius: 10,
                   offset: const Offset(0, 3),
-                )
+                ),
               ],
             ),
             child: Column(
@@ -101,10 +94,7 @@ class AdminAnalyticsSection extends StatelessWidget {
               children: const [
                 Text(
                   "Wallet Overview",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 SizedBox(height: 12),
 

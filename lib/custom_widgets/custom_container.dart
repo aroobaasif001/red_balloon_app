@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/colors.dart';
+
 /// ✅ Reusable overflow-safe container with gradient, shadow, and rounded corners
 class CustomContainer extends StatelessWidget {
   final double? height;
@@ -18,7 +20,6 @@ class CustomContainer extends StatelessWidget {
   final backgroundColor;
   final color;
 
-
   const CustomContainer({
     super.key,
     this.height,
@@ -36,7 +37,6 @@ class CustomContainer extends StatelessWidget {
     this.padding,
     this.backgroundColor,
     this.color,
-
   });
 
   @override
@@ -53,19 +53,17 @@ class CustomContainer extends StatelessWidget {
         borderRadius: shape == BoxShape.rectangle ? borderRadius : null,
         shape: shape,
         border: border,
-        boxShadow: boxShadow ??
+        boxShadow:
+            boxShadow ??
             [
               BoxShadow(
-                color: Colors.black.withOpacity(0),
+                color: blackColor.withOpacity(0),
                 blurRadius: 8,
                 offset: const Offset(0, 3),
               ),
             ],
       ),
-      child: Padding(
-        padding: padding ?? EdgeInsets.zero,
-        child: child,
-      ),
+      child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
     );
   }
 }

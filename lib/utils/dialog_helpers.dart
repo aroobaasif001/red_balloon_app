@@ -437,7 +437,7 @@ class DialogHelpers {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.12),
+                    color: blackColor.withOpacity(0.12),
                     blurRadius: 10,
                   ),
                 ],
@@ -564,7 +564,7 @@ class DialogHelpers {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.12),
+                    color: blackColor.withOpacity(0.12),
                     blurRadius: 10,
                   ),
                 ],
@@ -689,7 +689,7 @@ class DialogHelpers {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.12),
+                    color: blackColor.withOpacity(0.12),
                     blurRadius: 10,
                   ),
                 ],
@@ -748,7 +748,7 @@ class DialogHelpers {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: blackColor.withOpacity(0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -865,7 +865,7 @@ class DialogHelpers {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.12),
+                    color: blackColor.withOpacity(0.12),
                     blurRadius: 10,
                   ),
                 ],
@@ -1044,7 +1044,7 @@ class DialogHelpers {
                           /// SAME SHADOW AS ORIGINAL
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: blackColor.withOpacity(0.05),
                               blurRadius: 8,
                               offset: const Offset(0, 3),
                             ),
@@ -1101,7 +1101,7 @@ class DialogHelpers {
                     /// SHADOW ADDED EXACTLY LIKE YOUR OPTION BOXES
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.20),
+                        color: blackColor.withOpacity(0.20),
                         blurRadius: 3,
                         offset: const Offset(0, 3),
                       ),
@@ -1222,7 +1222,7 @@ class DialogHelpers {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: blackColor.withOpacity(0.05),
                               blurRadius: 8,
                               offset: const Offset(0, 3),
                             ),
@@ -1564,7 +1564,7 @@ class DialogHelpers {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: blackColor.withOpacity(0.15),
                 blurRadius: 10,
                 offset: Offset(0, 4),
               ),
@@ -1614,7 +1614,7 @@ class DialogHelpers {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: blackColor.withOpacity(0.15),
                     blurRadius: 10,
                     offset: Offset(0, 4),
                   ),
@@ -1684,7 +1684,7 @@ class DialogHelpers {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: blackColor.withOpacity(0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -1764,7 +1764,7 @@ class DialogHelpers {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: blackColor.withOpacity(0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -1929,7 +1929,7 @@ class DialogHelpers {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: blackColor.withOpacity(0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -2717,7 +2717,7 @@ class DialogHelpers {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.12),
+                    color: blackColor.withOpacity(0.12),
                     blurRadius: 10,
                   ),
                 ],

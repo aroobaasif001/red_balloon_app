@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controller/admin_all_tasks_controller.dart';
+import 'package:red_balloon_app/utils/colors.dart';
+
 import '../../widget/task_item_card.dart';
+import '../controller/admin_all_tasks_controller.dart';
 
 class AllTasksTab extends StatelessWidget {
   const AllTasksTab({super.key});
@@ -10,29 +12,29 @@ class AllTasksTab extends StatelessWidget {
   Widget build(BuildContext context) {
     print('📱 AllTasksTab build() called');
     final controller = Get.put(AdminAllTasksController());
-    print('📊 Controller state - isLoading: ${controller.isLoading.value}, tasks count: ${controller.allTasks.length}');
+    print(
+      '📊 Controller state - isLoading: ${controller.isLoading.value}, tasks count: ${controller.allTasks.length}',
+    );
 
     return Obx(() {
-      print('🔄 Obx rebuilding - isLoading: ${controller.isLoading.value}, tasks: ${controller.allTasks.length}');
-      
+      print(
+        '🔄 Obx rebuilding - isLoading: ${controller.isLoading.value}, tasks: ${controller.allTasks.length}',
+      );
+
       if (controller.isLoading.value) {
         print('⏳ Showing loading indicator');
-        return const Center(
-          child: CircularProgressIndicator(color: Colors.red,),
-        );
+        return const Center(child: CircularProgressIndicator(color: redColor));
       }
 
       if (controller.allTasks.isEmpty) {
         print('📭 Showing empty state');
-        return const Center(
-          child: Text('No tasks available'),
-        );
+        return const Center(child: Text('No tasks available'));
       }
 
       print('✅ Showing ${controller.allTasks.length} tasks');
 
       return RefreshIndicator(
-        color: Colors.red,
+        color: redColor,
         onRefresh: () => controller.fetchAllTasks(),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

@@ -36,7 +36,7 @@ const Color borderno = Color(0xff003AC14F);
 const Color beforecolor = Color(0xffE5E7EB);
 const Color tasktext = Color(0xDD00000);
 const Color rbcolor = Color(0xFFF7F7F7);
-const Color rbnewcolor = Color(0xffBDBDBDFF);
+const Color rbnewcolor = Color(0xffBDBDBD);
 const Color orangecolor = Color(0xffFFB300);
 const Color starcolor = Color(0xfff7d400);
 const Color taskstatus = Color(0xffF1F1F5);
@@ -47,10 +47,7 @@ const Color redColor2 = Color(0xffDA3331);
 const Color lightredcolor2 = Color(0xffFFE8E8);
 const Color lightgray3 = Color(0xffFAFAFA);
 const Color pinklight4 = Color(0xffFFE4E4);
-
-
-
-
+const Color blueAccentColor = Color(0xff448aff);
 
 const Color pinkColor = Color(0xffFEE2E2);
 
@@ -64,6 +61,8 @@ const LinearGradient redOrangeGradientColor = LinearGradient(
   ],
 );
 // Wallet Colors
+const Color dotColor = Color(0xffDC4137);
+const Color orangeColor = Color(0xffff9800);
 const Color walletPrimaryColor = Color(0xFFE53935);
 const Color walletCardBgColor = Color(0xffF8F8F8);
 const Color walletCardBorderColor = Color(0xffF0F0F0);
@@ -91,6 +90,7 @@ const Color walletProgressBgColor = Color(0xffE0E0E0);
 const Color walletBlackColor = Color(0xff000000);
 const Color timeColor = Color(0xff6B7280);
 const Color textColor2 = Color(0xff333333);
+const Color whiteLightColor = Color(0xffFFF1F1);
 const Color walletBalanceTextColor = Color(0xff1F2937);
 const Color proBgColor = Color(0xffFFF3E0);
 const Color helpBgColor = Color(0xfff9dedc);
@@ -105,6 +105,7 @@ const Color pricecolor = Color(0xffE63946);
 const Color bordercolor1 = Color(0xffF3F4F6);
 const Color greenBg = Color(0xffE8F5E9);
 const Color grayColor = Color(0xff5D5757);
+const Color grey6Color = Color(0xff757575);
 const Color borderColor = Color(0xffD1D5DB);
 const Color white4Color = Color(0xffF5F6FA);
 const Color black4Color = Color(0xff111827);
@@ -119,4 +120,3 @@ const Color iconBg5 = Color(0xFFFFEAEA);
 const Color gray6Color = Color(0xff616161);
 const Color iconBg6 = Color(0xffFFE5E5);
 const Color amber = Color(0xffffc107);
-

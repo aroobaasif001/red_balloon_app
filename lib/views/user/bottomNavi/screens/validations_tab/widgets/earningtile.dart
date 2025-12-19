@@ -24,7 +24,7 @@ class EarningTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.20),
+          color: blackColor.withOpacity(0.20),
           blurRadius: 5,
           offset: const Offset(0, 3),
         ),
@@ -51,11 +51,7 @@ class EarningTile extends StatelessWidget {
                     width: 15,
                   ),
                   const SizedBox(width: 6),
-                  CustomText(
-                    date,
-                    fontSize: 12,
-                    color: grey5Color,
-                  ),
+                  CustomText(date, fontSize: 12, color: grey5Color),
                 ],
               ),
             ],
@@ -66,17 +62,12 @@ class EarningTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               CustomContainer(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 borderRadius: BorderRadius.circular(10),
                 conColor: white3Color,
                 child: Row(
                   children: const [
-                    Icon(
-                      Icons.check_circle,
-                      size: 14,
-                      color:greenColor,
-                    ),
+                    Icon(Icons.check_circle, size: 14, color: greenColor),
                     SizedBox(width: 4),
                     CustomText(
                       "Correct",

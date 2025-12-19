@@ -4,6 +4,7 @@ import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+
 import '../../../../../../custom_widgets/custom_button.dart';
 import 'controller/admin_all_task_details_controller.dart';
 import 'widgets/admin_all_task_details_widgets.dart';
@@ -14,7 +15,8 @@ class AdminAllTaskDetailsScreen extends StatefulWidget {
   const AdminAllTaskDetailsScreen({super.key, this.taskId});
 
   @override
-  State<AdminAllTaskDetailsScreen> createState() => _AdminAllTaskDetailsScreenState();
+  State<AdminAllTaskDetailsScreen> createState() =>
+      _AdminAllTaskDetailsScreenState();
 }
 
 class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
@@ -195,14 +197,14 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
               ),
 
               const SizedBox(height: 30),
-              
+
               /// BEFORE & AFTER EVIDENCE SECTION (Only show if proof exists)
               Obx(() {
                 // Only show this section if task has proof document in database
                 if (!controller.hasProofDocument.value) {
                   return const SizedBox.shrink(); // Hide section
                 }
-                
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
@@ -223,7 +225,7 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
                         conColor: whiteColor,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.10),
+                            color: blackColor.withOpacity(0.10),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -331,10 +333,11 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
 
                               // Show placeholder if no image from database
                               if (imageUrl.isEmpty) {
-                                final placeholderImage = controller.selectedProofTab.value == 0
+                                final placeholderImage =
+                                    controller.selectedProofTab.value == 0
                                     ? 'assets/images/Rectangle 34625290.png'
                                     : 'assets/images/Rectangle 34625290 (1).png';
-                                
+
                                 return ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
                                   child: Image.asset(
@@ -354,29 +357,39 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
                                   height: 250,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return CustomContainer(
-                                      height: 250,
-                                      borderRadius: BorderRadius.circular(12),
-                                      conColor: Colors.grey[200],
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          color: redColor,
-                                          value: loadingProgress.expectedTotalBytes != null
-                                              ? loadingProgress.cumulativeBytesLoaded /
-                                                  loadingProgress.expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return CustomContainer(
+                                          height: 250,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          conColor: conBgColor,
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              color: redColor,
+                                              value:
+                                                  loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                  : null,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                   errorBuilder: (context, error, stackTrace) {
                                     // Show placeholder on error
-                                    final placeholderImage = controller.selectedProofTab.value == 0
+                                    final placeholderImage =
+                                        controller.selectedProofTab.value == 0
                                         ? 'assets/images/Rectangle 34625290.png'
                                         : 'assets/images/Rectangle 34625290 (1).png';
-                                    
+
                                     return ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
                                       child: Image.asset(
@@ -399,7 +412,6 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
               }),
 
               const SizedBox(height: 20),
-
 
               // Action Buttons
               Padding(
@@ -437,7 +449,6 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
             ],
           ),
         );
@@ -453,7 +464,7 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
         conColor: whiteColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: blackColor.withOpacity(0.15),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -507,10 +518,10 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
                 Icon(
                   Icons.local_offer_outlined,
                   size: 64,
-                  color: Colors.grey[300],
+                  color: fundCardBorderColor,
                 ),
                 const SizedBox(height: 16),
-                CustomText("No offers yet", fontSize: 16, color: Colors.grey),
+                CustomText("No offers yet", fontSize: 16, color: taskstatus3),
               ],
             ),
           ),
@@ -523,7 +534,7 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
         conColor: whiteColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.10),
+            color: blackColor.withOpacity(0.10),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -548,14 +559,15 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
                     const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final offer = controller.offers[index];
-                  
+
                   // Get formatted user ID from map, fallback to truncated UID
                   return Obx(() {
-                    final formattedUserId = controller.offerUserIds[offer.offeringUserUid] ?? 
+                    final formattedUserId =
+                        controller.offerUserIds[offer.offeringUserUid] ??
                         (offer.offeringUserUid.length > 8
                             ? '...${offer.offeringUserUid.substring(offer.offeringUserUid.length - 8)}'
                             : offer.offeringUserUid);
-                    
+
                     return OfferCard(
                       name: offer.offeringUserName,
                       userId: formattedUserId,

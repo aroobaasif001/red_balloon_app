@@ -32,7 +32,7 @@ class AdminCustomTabBarTask extends StatelessWidget {
       ),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.25),
+          color: blackColor.withOpacity(0.25),
           blurRadius: 1,
           offset: const Offset(0, 4),
           spreadRadius: 0,

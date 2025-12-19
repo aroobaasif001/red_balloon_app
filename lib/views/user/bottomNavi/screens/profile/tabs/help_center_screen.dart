@@ -45,7 +45,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                         'Common Topics',
                         fontSize: 16,
                         fontWeight: FontVariant.bold,
-                        color:blackColor,
+                        color: blackColor,
                       ),
                       const SizedBox(height: 15),
 
@@ -122,7 +122,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                         'More Options',
                         fontSize: 16,
                         fontWeight: FontVariant.bold,
-                        color:blackColor,
+                        color: blackColor,
                       ),
                       const SizedBox(height: 15),
 
@@ -136,7 +136,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.20),
+                            color: blackColor.withOpacity(0.20),
                             blurRadius: 4,
                             offset: const Offset(0, 3),
                           ),
@@ -155,7 +155,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                               'Still need help?',
                               fontSize: 16,
                               fontWeight: FontVariant.bold,
-                              color:blackColor,
+                              color: blackColor,
                             ),
                             const SizedBox(height: 20),
                             CustomText(

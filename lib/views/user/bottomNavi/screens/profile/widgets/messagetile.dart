@@ -38,7 +38,7 @@ class MessageTile extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.20),
+              color: blackColor.withOpacity(0.20),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),

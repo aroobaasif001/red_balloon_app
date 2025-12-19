@@ -24,7 +24,6 @@ class UserProfileScreen extends StatelessWidget {
     this.userPhoto,
   });
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,23 +48,22 @@ class UserProfileScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                   conColor: redColor,
                   alignment: Alignment.center,
-                  child:
-                      userPhoto == null || userPhoto!.isEmpty
-                          ? CustomText(
-                            userInitials,
-                            fontSize: 48,
-                            fontWeight: FontVariant.bold,
-                            color: whiteColor,
-                          )
-                          : ClipRRect(
-                            borderRadius: BorderRadius.circular(60),
-                            child: Image.network(
-                              userPhoto!,
-                              height: 120,
-                              width: 120,
-                              fit: BoxFit.cover,
-                            ),
+                  child: userPhoto == null || userPhoto!.isEmpty
+                      ? CustomText(
+                          userInitials,
+                          fontSize: 48,
+                          fontWeight: FontVariant.bold,
+                          color: whiteColor,
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(60),
+                          child: Image.network(
+                            userPhoto!,
+                            height: 120,
+                            width: 120,
+                            fit: BoxFit.cover,
                           ),
+                        ),
                 ),
                 Positioned(
                   bottom: 5,
@@ -74,7 +72,7 @@ class UserProfileScreen extends StatelessWidget {
                     height: 28,
                     width: 28,
                     shape: BoxShape.circle,
-                    conColor: const Color(0xffDC4137), // Status dot color
+                    conColor: dotColor, // Status dot color
                     border: Border.all(color: whiteColor, width: 3),
                   ),
                 ),
@@ -88,7 +86,7 @@ class UserProfileScreen extends StatelessWidget {
               userName,
               fontSize: 26,
               fontWeight: FontVariant.bold,
-              color: const Color(0xff333333),
+              color: textColor2,
             ),
 
             const SizedBox(height: 12),
@@ -99,14 +97,14 @@ class UserProfileScreen extends StatelessWidget {
               children: [
                 _buildBadge(
                   text: userId ?? "RB-452",
-                  bgColor: const Color(0xffFFF1F1),
-                  textColor: const Color(0xffFE7062),
+                  bgColor: whiteLightColor,
+                  textColor: redLightColor,
                 ),
                 const SizedBox(width: 8),
                 _buildBadge(
                   text: "Verified",
-                  bgColor: const Color(0xffE9F8F1),
-                  textColor: const Color(0xff43A047),
+                  bgColor: greenbgColor,
+                  textColor: greenColor,
                   icon: Icons.verified,
                 ),
               ],
@@ -117,8 +115,8 @@ class UserProfileScreen extends StatelessWidget {
             /// ELITE TASKER BADGE
             _buildBadge(
               text: "Elite Tasker",
-              bgColor: const Color(0xffE9F8F1),
-              textColor: const Color(0xff43A047),
+              bgColor: greenbgColor,
+              textColor: greenColor,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -126,13 +124,14 @@ class UserProfileScreen extends StatelessWidget {
                     "assets/icons/star.png", // Assuming this exists or using a substitute icon
                     height: 20,
                     width: 20,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.stars, size: 20, color: Colors.orange),
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.stars, size: 20, color: orangeColor),
                   ),
                   const SizedBox(width: 6),
                   const CustomText(
                     "Elite Tasker",
                     fontSize: 14,
-                    color: Color(0xff43A047),
+                    color: greenColor,
                     fontWeight: FontVariant.medium,
                   ),
                 ],
@@ -174,21 +173,23 @@ class UserProfileScreen extends StatelessWidget {
       conColor: bgColor,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       borderRadius: BorderRadius.circular(10),
-      child: child ?? Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(icon, color: Colors.red, size: 18),
-            const SizedBox(width: 6),
-          ],
-          CustomText(
-            text,
-            fontSize: 14,
-            color: textColor,
-            fontWeight: FontVariant.medium,
+      child:
+          child ??
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, color: redColor, size: 18),
+                const SizedBox(width: 6),
+              ],
+              CustomText(
+                text,
+                fontSize: 14,
+                color: textColor,
+                fontWeight: FontVariant.medium,
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -205,7 +206,7 @@ class UserProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: blackColor.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -216,20 +217,20 @@ class UserProfileScreen extends StatelessWidget {
             CustomText(
               label,
               fontSize: 18,
-              color: const Color(0xff666666),
+              color: lastTextColor,
               fontWeight: FontVariant.medium,
             ),
             Row(
               children: [
                 if (isRating) ...[
-                  const Icon(Icons.star, color: Color(0xffDC4137), size: 28),
+                  const Icon(Icons.star, color: dotColor, size: 28),
                   const SizedBox(width: 8),
                 ],
                 CustomText(
                   value,
                   fontSize: 32,
                   fontWeight: FontVariant.bold,
-                  color: const Color(0xff333333),
+                  color: textColor2,
                 ),
               ],
             ),

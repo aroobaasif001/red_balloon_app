@@ -4,15 +4,13 @@ import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+
 import '../controller/admin_task_details_controller.dart';
 
 class AdminTaskVotingDetailsWidget extends StatelessWidget {
   final AdminTaskDetailsController controller;
 
-  const AdminTaskVotingDetailsWidget({
-    super.key,
-    required this.controller,
-  });
+  const AdminTaskVotingDetailsWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +32,7 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 13),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.20),
+                color: blackColor.withOpacity(0.20),
                 blurRadius: 3,
                 offset: const Offset(0, 4),
               ),
@@ -60,7 +58,7 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                         conColor: conBgColor,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.20),
+                            color: blackColor.withOpacity(0.20),
                             blurRadius: 3,
                             offset: const Offset(0, 3),
                           ),
@@ -69,23 +67,25 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                           children: [
                             Icon(Icons.arrow_upward, color: redColor, size: 30),
                             const SizedBox(width: 3),
-                            Obx(() => Column(
-                                  children: [
-                                    const CustomText(
-                                      "Support\nRequester",
-                                      fontSize: 16,
-                                      maxLines: 2,
-                                      fontWeight: FontVariant.medium,
-                                      color: timeColor,
-                                    ),
-                                    const SizedBox(height: 2),
-                                    CustomText(
-                                      "Total Votes: ${controller.supportRequesterVotes.value.toString().padLeft(2, '0')}",
-                                      fontSize: 14,
-                                      color: timeColor,
-                                    ),
-                                  ],
-                                )),
+                            Obx(
+                              () => Column(
+                                children: [
+                                  const CustomText(
+                                    "Support\nRequester",
+                                    fontSize: 16,
+                                    maxLines: 2,
+                                    fontWeight: FontVariant.medium,
+                                    color: timeColor,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  CustomText(
+                                    "Total Votes: ${controller.supportRequesterVotes.value.toString().padLeft(2, '0')}",
+                                    fontSize: 14,
+                                    color: timeColor,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -99,31 +99,37 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                         conColor: conBgColor,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.20),
+                            color: blackColor.withOpacity(0.20),
                             blurRadius: 3,
                             offset: const Offset(0, 3),
                           ),
                         ],
                         child: Row(
                           children: [
-                            Icon(Icons.arrow_downward, color: redColor, size: 30),
+                            Icon(
+                              Icons.arrow_downward,
+                              color: redColor,
+                              size: 30,
+                            ),
                             const SizedBox(width: 3),
-                            Obx(() => Column(
-                                  children: [
-                                    const CustomText(
-                                      "Support\nHelper",
-                                      fontSize: 16,
-                                      fontWeight: FontVariant.medium,
-                                      color: timeColor,
-                                    ),
-                                    const SizedBox(height: 2),
-                                    CustomText(
-                                      "Total Votes: ${controller.supportHelperVotes.value.toString().padLeft(2, '0')}",
-                                      fontSize: 14,
-                                      color: timeColor,
-                                    ),
-                                  ],
-                                )),
+                            Obx(
+                              () => Column(
+                                children: [
+                                  const CustomText(
+                                    "Support\nHelper",
+                                    fontSize: 16,
+                                    fontWeight: FontVariant.medium,
+                                    color: timeColor,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  CustomText(
+                                    "Total Votes: ${controller.supportHelperVotes.value.toString().padLeft(2, '0')}",
+                                    fontSize: 14,
+                                    color: timeColor,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -135,7 +141,7 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                   "Voting is being done by the users, please wait!",
                   fontSize: 13,
                   fontWeight: FontVariant.bold,
-                )
+                ),
               ],
             ),
           ),
@@ -154,7 +160,7 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
             conColor: whiteColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.20),
+                color: blackColor.withOpacity(0.20),
                 blurRadius: 3,
                 offset: const Offset(0, 4),
               ),
@@ -170,12 +176,14 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                 const SizedBox(height: 5),
                 const Divider(thickness: 0.5),
                 const SizedBox(height: 8),
-                Obx(() => CustomText(
-                      controller.taskDescription.value.isEmpty
-                          ? "Loading description..."
-                          : controller.taskDescription.value,
-                      fontSize: 14,
-                    )),
+                Obx(
+                  () => CustomText(
+                    controller.taskDescription.value.isEmpty
+                        ? "Loading description..."
+                        : controller.taskDescription.value,
+                    fontSize: 14,
+                  ),
+                ),
                 const SizedBox(height: 5),
                 const Divider(thickness: 0.5),
                 const SizedBox(height: 10),
@@ -186,20 +194,33 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomText("Escrow Amount",
-                            fontSize: 13, color: timeColor),
+                        CustomText(
+                          "Escrow Amount",
+                          fontSize: 13,
+                          color: timeColor,
+                        ),
                         SizedBox(height: 3),
-                        CustomText("SAR 650",
-                            fontSize: 15, fontWeight: FontVariant.semiBold),
+                        CustomText(
+                          "SAR 650",
+                          fontSize: 15,
+                          fontWeight: FontVariant.semiBold,
+                        ),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        CustomText("Time Taken", fontSize: 13, color: timeColor),
+                        CustomText(
+                          "Time Taken",
+                          fontSize: 13,
+                          color: timeColor,
+                        ),
                         SizedBox(height: 3),
-                        CustomText("3h 20m",
-                            fontSize: 15, fontWeight: FontVariant.semiBold),
+                        CustomText(
+                          "3h 20m",
+                          fontSize: 15,
+                          fontWeight: FontVariant.semiBold,
+                        ),
                       ],
                     ),
                   ],
@@ -212,11 +233,17 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomText("Task Category",
-                            fontSize: 13, color: timeColor),
+                        CustomText(
+                          "Task Category",
+                          fontSize: 13,
+                          color: timeColor,
+                        ),
                         SizedBox(height: 3),
-                        CustomText("Offline Task",
-                            fontSize: 15, fontWeight: FontVariant.semiBold),
+                        CustomText(
+                          "Offline Task",
+                          fontSize: 15,
+                          fontWeight: FontVariant.semiBold,
+                        ),
                       ],
                     ),
                     Column(
@@ -224,8 +251,11 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                       children: [
                         CustomText("Posted At", fontSize: 13, color: timeColor),
                         SizedBox(height: 3),
-                        CustomText("Today, 8:30 AM",
-                            fontSize: 15, fontWeight: FontVariant.semiBold),
+                        CustomText(
+                          "Today, 8:30 AM",
+                          fontSize: 15,
+                          fontWeight: FontVariant.semiBold,
+                        ),
                       ],
                     ),
                   ],

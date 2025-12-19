@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 class ReviewCard extends StatefulWidget {
@@ -32,7 +32,7 @@ class _ReviewCardState extends State<ReviewCard> {
       padding: const EdgeInsets.all(18),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.20),
+          color: blackColor.withOpacity(0.20),
           blurRadius: 3,
           offset: const Offset(0, 3),
         ),
@@ -40,7 +40,6 @@ class _ReviewCardState extends State<ReviewCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// TOP ROW
           Row(
             children: [
@@ -48,8 +47,8 @@ class _ReviewCardState extends State<ReviewCard> {
                 height: 40,
                 width: 40,
 
-                  conColor: rdLight100Color,
-                  shape: BoxShape.circle,
+                conColor: rdLight100Color,
+                shape: BoxShape.circle,
 
                 alignment: Alignment.center,
                 child: CustomText(
@@ -102,19 +101,16 @@ class _ReviewCardState extends State<ReviewCard> {
               fontSize: 14,
               color: grey50Color,
             ),
-            crossFadeState:
-            expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            crossFadeState: expanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
             duration: const Duration(milliseconds: 200),
           ),
 
           const SizedBox(height: 12),
 
           /// TIME
-          CustomText(
-            widget.time,
-            fontSize: 12,
-            color: grey4Color,
-          ),
+          CustomText(widget.time, fontSize: 12, color: grey4Color),
 
           const SizedBox(height: 8),
 

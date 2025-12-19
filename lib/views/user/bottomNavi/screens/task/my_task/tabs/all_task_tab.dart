@@ -22,7 +22,7 @@ class AllTaskTab extends StatelessWidget {
     return RefreshIndicator(
       backgroundColor: whiteColor,
 
-      color: Colors.red,
+      color: redColor,
       onRefresh: () => controller.refreshTasks(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -71,7 +71,7 @@ class AllTaskTab extends StatelessWidget {
                 return const Center(
                   child: Padding(
                     padding: EdgeInsets.all(20.0),
-                    child: CircularProgressIndicator(color: Colors.red),
+                    child: CircularProgressIndicator(color: redColor),
                   ),
                 );
               }
@@ -90,19 +90,19 @@ class AllTaskTab extends StatelessWidget {
                         Icon(
                           Icons.task_alt_outlined,
                           size: 50,
-                          color: Colors.grey[400],
+                          color: rbnewcolor,
                         ),
                         const SizedBox(height: 10),
                         CustomText(
                           'No tasks yet',
                           fontSize: 16,
-                          color: Colors.grey[600]!,
+                          color: grey6Color!,
                         ),
                         const SizedBox(height: 5),
                         CustomText(
                           'Create your first task to get started',
                           fontSize: 14,
-                          color: Colors.grey[500]!,
+                          color: taskstatus3!,
                         ),
                       ],
                     ),

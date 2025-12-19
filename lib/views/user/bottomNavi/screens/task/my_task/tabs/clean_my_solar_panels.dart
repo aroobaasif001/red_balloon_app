@@ -328,7 +328,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          backgroundColor: Colors.black,
+          backgroundColor: blackColor,
           insetPadding: EdgeInsets.zero,
           child: Stack(
             children: [
@@ -359,11 +359,11 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                   onTap: () => Navigator.pop(context),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black54,
+                      color: blackLightColor,
                       shape: BoxShape.circle,
                     ),
                     padding: EdgeInsets.all(8),
-                    child: Icon(Icons.close, color: Colors.white, size: 28),
+                    child: Icon(Icons.close, color: whiteColor, size: 28),
                   ),
                 ),
               ),
@@ -380,7 +380,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
       return const CustomText(
         'No offers available',
         fontSize: 14,
-        color: Colors.grey,
+        color: taskstatus3,
       );
     }
 
@@ -404,7 +404,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
         return const CustomText(
           'No offers received yet',
           fontSize: 14,
-          color: Colors.grey,
+          color: taskstatus3,
         );
       }
 
@@ -796,7 +796,7 @@ class RefreshButtonWithData extends StatelessWidget {
               child: Container(
                 height: 51,
                 decoration: BoxDecoration(
-                  color: isButtonDisabled ? Colors.grey.shade400 : pricecolor,
+                  color: isButtonDisabled ? rbnewcolor : pricecolor,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Center(

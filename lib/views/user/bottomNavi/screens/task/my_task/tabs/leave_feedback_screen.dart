@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart'; // Added for consistent animations if desired, or just standard
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // Import Get
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
@@ -7,8 +6,6 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/leave_feedback_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart'; // To access formatters if needed
-
-import '../../../../../../../utils/dialog_helpers.dart';
 
 class LeaveFeedbackScreen extends StatelessWidget {
   final Map<String, dynamic> taskInfo;
@@ -25,29 +22,31 @@ class LeaveFeedbackScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initialize controller
-    final controller = Get.put(LeaveFeedbackController(
-      taskId: taskInfo['taskId'],
-      isRequester: isRequester,
-      taskInfo: taskInfo,
-      otherUserData: otherUserData,
-    ));
+    final controller = Get.put(
+      LeaveFeedbackController(
+        taskId: taskInfo['taskId'],
+        isRequester: isRequester,
+        taskInfo: taskInfo,
+        otherUserData: otherUserData,
+      ),
+    );
 
-    // Access generic tasks controller for helpers like getTimeAgo if needed, 
+    // Access generic tasks controller for helpers like getTimeAgo if needed,
     // but we can just use the provided function logic.
     // Assuming simple time ago logic or passed string.
-    // Let's use get.find if available or a local helper. 
+    // Let's use get.find if available or a local helper.
     // Actually, taskInfo['completedAt'] is likely a Timestamp.
-    
+
     String getFormattedTime() {
       if (taskInfo['completedAt'] != null) {
-         // Use the TasksController logic or standard
-         // Since we don't have direct access without importing, let's try finding existing TasksController
-         try {
-           final tasksCtrl = Get.find<TasksController>();
-           return "Completed ${tasksCtrl.getTimeAgo(taskInfo['completedAt'])}";
-         } catch(e) {
-           return "Completed recently";
-         }
+        // Use the TasksController logic or standard
+        // Since we don't have direct access without importing, let's try finding existing TasksController
+        try {
+          final tasksCtrl = Get.find<TasksController>();
+          return "Completed ${tasksCtrl.getTimeAgo(taskInfo['completedAt'])}";
+        } catch (e) {
+          return "Completed recently";
+        }
       }
       return "Completed recently";
     }
@@ -109,7 +108,7 @@ class LeaveFeedbackScreen extends StatelessWidget {
                   conColor: whiteColor,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.20),
+                      color: blackColor.withOpacity(0.20),
                       blurRadius: 4,
                       offset: const Offset(0, 3),
                     ),
@@ -124,14 +123,18 @@ class LeaveFeedbackScreen extends StatelessWidget {
                         conColor: redColor.withOpacity(0.15),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
-                          child: otherUserPhoto != null && otherUserPhoto.isNotEmpty
+                          child:
+                              otherUserPhoto != null &&
+                                  otherUserPhoto.isNotEmpty
                               ? Image.network(
                                   otherUserPhoto,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Center(
                                       child: CustomText(
-                                        otherUserName.isNotEmpty ? otherUserName[0].toUpperCase() : "?",
+                                        otherUserName.isNotEmpty
+                                            ? otherUserName[0].toUpperCase()
+                                            : "?",
                                         fontSize: 14,
                                         fontWeight: FontVariant.bold,
                                         color: redColor,
@@ -141,7 +144,9 @@ class LeaveFeedbackScreen extends StatelessWidget {
                                 )
                               : Center(
                                   child: CustomText(
-                                    otherUserName.isNotEmpty ? otherUserName[0].toUpperCase() : "?",
+                                    otherUserName.isNotEmpty
+                                        ? otherUserName[0].toUpperCase()
+                                        : "?",
                                     fontSize: 14,
                                     fontWeight: FontVariant.bold,
                                     color: redColor,
@@ -210,48 +215,50 @@ class LeaveFeedbackScreen extends StatelessWidget {
               const SizedBox(height: 25),
 
               /// ------------------ STAR RATING ------------------
-              Obx(() => Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  int starValue = index + 1;
-                  return GestureDetector(
-                    onTap: () {
-                      controller.setRating(starValue);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Image(
-                        image: AssetImage(
-                            starValue <= controller.rating.value 
-                            ? 'assets/icons/star2.png' // Filled star (assuming)
-                            : 'assets/icons/star_unfilled.png' // You might need an unfilled star asset, otherwise check existing assets. 
-                            // If 'star2.png' is filled, and assuming 'star1.png' or similar is empty? 
-                            // Looking at codebase isn't possible for assets easily. 
+              Obx(
+                () => Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(5, (index) {
+                    int starValue = index + 1;
+                    return GestureDetector(
+                      onTap: () {
+                        controller.setRating(starValue);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Image(
+                          image: AssetImage(
+                            starValue <= controller.rating.value
+                                ? 'assets/icons/star2.png' // Filled star (assuming)
+                                : 'assets/icons/star_unfilled.png', // You might need an unfilled star asset, otherwise check existing assets.
+                            // If 'star2.png' is filled, and assuming 'star1.png' or similar is empty?
+                            // Looking at codebase isn't possible for assets easily.
                             // Assuming 'star2.png' is the highlighted one used in mockup.
-                            // I will use ColorFilter or Opacity for "unselected" if unselected asset unknown, 
-                            // OR just assume user has 'star_gray.png' or similar. 
+                            // I will use ColorFilter or Opacity for "unselected" if unselected asset unknown,
+                            // OR just assume user has 'star_gray.png' or similar.
                             // Let's check the previous code: it just showed 5 star2.png images.
-                            // I'll assume standard behavior: star2 is Gold/Filled. 
+                            // I'll assume standard behavior: star2 is Gold/Filled.
                             // I will use Opacity for unselected simple approach if no other asset known.
+                          ),
+                          // Adjust visual for unselected
+                          color: starValue <= controller.rating.value
+                              ? null
+                              : taskstatus3.withOpacity(0.3),
+                          colorBlendMode: starValue <= controller.rating.value
+                              ? null
+                              : BlendMode.srcATop,
+                          height: 60,
+                          width: 39,
                         ),
-                        // Adjust visual for unselected
-                        color: starValue <= controller.rating.value ? null : Colors.grey.withOpacity(0.3), 
-                        colorBlendMode: starValue <= controller.rating.value ? null : BlendMode.srcATop,
-                        height: 60,
-                        width: 39,
                       ),
-                    ),
-                  );
-                }),
-              )),
+                    );
+                  }),
+                ),
+              ),
 
               const SizedBox(height: 8),
 
-              const CustomText(
-                "Tap to rate",
-                fontSize: 13,
-                color: blackColor,
-              ),
+              const CustomText("Tap to rate", fontSize: 13, color: blackColor),
 
               const SizedBox(height: 25),
 
@@ -312,7 +319,7 @@ class LeaveFeedbackScreen extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           if (!controller.isLoading.value) {
-                             controller.skipFeedback();
+                            controller.skipFeedback();
                           }
                         },
                         child: CustomContainer(
@@ -336,16 +343,20 @@ class LeaveFeedbackScreen extends StatelessWidget {
 
                     /// SUBMIT
                     Expanded(
-                      child: Obx(() => CustomButton(
-                        label: controller.isLoading.value ? 'Sending...' : 'Submit Feedback',
-                        borderRadius: BorderRadius.circular(30),
-                        fontSize: 15,
-                        onPressed: () {
-                          if (!controller.isLoading.value) {
-                            controller.submitFeedback();
-                          }
-                        },
-                      )),
+                      child: Obx(
+                        () => CustomButton(
+                          label: controller.isLoading.value
+                              ? 'Sending...'
+                              : 'Submit Feedback',
+                          borderRadius: BorderRadius.circular(30),
+                          fontSize: 15,
+                          onPressed: () {
+                            if (!controller.isLoading.value) {
+                              controller.submitFeedback();
+                            }
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 ),

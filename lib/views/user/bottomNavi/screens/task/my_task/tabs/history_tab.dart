@@ -1,18 +1,11 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/leave_feedback_screen.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_completed_screen.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_disputed_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/widgets/history_task_card.dart';
-
-import '../../../validations_tab/validation_screen/validation_screen.dart';
 
 class HistoryTab extends StatelessWidget {
   const HistoryTab({super.key});
@@ -54,18 +47,18 @@ class HistoryTab extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.history, size: 50, color: Colors.grey[400]),
+                        Icon(Icons.history, size: 50, color: rbnewcolor),
                         const SizedBox(height: 10),
                         CustomText(
                           'No history yet',
                           fontSize: 16,
-                          color: Colors.grey[600]!,
+                          color: grey6Color!,
                         ),
                         const SizedBox(height: 5),
                         CustomText(
                           'Completed and cancelled tasks \nwill appear here',
                           fontSize: 14,
-                          color: Colors.grey[500]!,
+                          color: taskstatus3!,
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -124,7 +117,10 @@ class HistoryTab extends StatelessWidget {
                           // 🔥🔥 TEMPORARILY DISABLED - Restore when needed 🔥🔥
                           // For rejected tasks, fetch validation data and navigate
                           if (task.status.toLowerCase() == 'rejected') {
-                            Get.snackbar('Info', 'Validation screen temporarily disabled');
+                            Get.snackbar(
+                              'Info',
+                              'Validation screen temporarily disabled',
+                            );
                             /* 🔥 COMMENTED OUT - Restore Later
                             try {
                               // Fetch validation data from validations collection
@@ -183,7 +179,10 @@ class HistoryTab extends StatelessWidget {
                             }
                             */ // END COMMENTED VALIDATION
                           } else if (task.status.toLowerCase() == 'disputed') {
-                            Get.snackbar('Info', 'Dispute screen temporarily disabled');
+                            Get.snackbar(
+                              'Info',
+                              'Dispute screen temporarily disabled',
+                            );
                             /* 🔥 COMMENTED OUT - Restore Later
                             try {
                               // 1. Fetch Requester Details (using task user uid)
@@ -273,7 +272,10 @@ class HistoryTab extends StatelessWidget {
                             }
                             */ // END COMMENTED DISPUTE
                           } else if (task.status.toLowerCase() == 'completed') {
-                            Get.snackbar('Info', 'Completed screen temporarily disabled');
+                            Get.snackbar(
+                              'Info',
+                              'Completed screen temporarily disabled',
+                            );
                             /* 🔥 COMMENTED OUT - Restore Later
                             final currentUser = FirebaseAuth.instance.currentUser;
                             if (currentUser == null) return;

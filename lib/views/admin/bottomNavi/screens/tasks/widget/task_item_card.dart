@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/admin_task_details_tabs_screen/admin_task_details_tabs_screen.dart';
 
 import '../admin_task_center_screen/admin_all_task_details_screen.dart';
 
@@ -36,10 +34,11 @@ class TaskItemCard extends StatelessWidget {
         bottom: BorderSide(color: bordercol, width: 1),
         right: BorderSide(color: bordercol, width: 1),
         left: BorderSide(color: bordercol, width: 1),
-      ),       conColor: whiteColor,
+      ),
+      conColor: whiteColor,
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.25),
+          color: blackColor.withOpacity(0.25),
           blurRadius: 1,
           offset: const Offset(0, 4),
         ),
@@ -48,12 +47,10 @@ class TaskItemCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// TOP ROW — TEXT LEFT + IMAGE RIGHT
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               /// TEXT
               Expanded(
                 child: Column(
@@ -95,7 +92,7 @@ class TaskItemCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.20),
+                    color: blackColor.withOpacity(0.20),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
@@ -118,7 +115,6 @@ class TaskItemCard extends StatelessWidget {
           /// BOTTOM ROW
           Row(
             children: [
-
               /// Offline Task Badge
               // CustomContainer(
               //   padding: const EdgeInsets.symmetric(
@@ -140,7 +136,6 @@ class TaskItemCard extends StatelessWidget {
               //     color: walletTextGreyColor,
               //   ),
               // ),
-
               const Spacer(),
 
               /// VIEW DETAILS BUTTON

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controller/admin_validation_tasks_controller.dart';
+import 'package:red_balloon_app/utils/colors.dart';
+
 import '../../widget/validation_task_item_card.dart';
+import '../controller/admin_validation_tasks_controller.dart';
 
 class ValidationTasksTab extends StatelessWidget {
   const ValidationTasksTab({super.key});
@@ -21,7 +23,7 @@ class ValidationTasksTab extends StatelessWidget {
 
       if (controller.isLoading.value) {
         print('⏳ Showing loading indicator');
-        return const Center(child: CircularProgressIndicator(color:Colors.red));
+        return const Center(child: CircularProgressIndicator(color: redColor));
       }
 
       if (controller.validationTasks.isEmpty) {
@@ -32,7 +34,7 @@ class ValidationTasksTab extends StatelessWidget {
       print('✅ Showing ${controller.validationTasks.length} validation tasks');
 
       return RefreshIndicator(
-        color: Colors.red,
+        color: redColor,
         onRefresh: () => controller.fetchValidationTasks(),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -43,7 +45,8 @@ class ValidationTasksTab extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 16),
                   child: ValidationTaskItemCard(
                     title: validation['title'] ?? 'No Title',
-                    price: "SAR ${(validation['budget'] ?? 0).toStringAsFixed(2)}",
+                    price:
+                        "SAR ${(validation['budget'] ?? 0).toStringAsFixed(2)}",
                     startedAgo: controller.getTimeAgo(validation['rejectedAt']),
                     image: "assets/images/Rectangle 34625307.png",
                     validationId: validation['validationId'],

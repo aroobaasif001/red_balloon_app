@@ -13,7 +13,7 @@ Widget adminBannerImageCard(BuildContext context) {
     border: Border.all(color: beforecolor),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.25),
+        color: blackColor.withOpacity(0.25),
         blurRadius: 1,
         spreadRadius: 0,
         offset: const Offset(0, 4),

@@ -20,7 +20,7 @@ Widget adminBuildTransactionCard2(
     border: Border.all(color: bordercol),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.09),
+        color: blackColor.withOpacity(0.09),
         blurRadius: 1,
         spreadRadius: 0,
         offset: const Offset(0, 1),

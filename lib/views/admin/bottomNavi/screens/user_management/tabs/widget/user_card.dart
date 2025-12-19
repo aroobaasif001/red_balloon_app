@@ -46,9 +46,10 @@ class UserCard extends StatelessWidget {
           bottom: BorderSide(color: bordercol, width: 1),
           right: BorderSide(color: bordercol, width: 1),
           left: BorderSide(color: bordercol, width: 1),
-        ),         boxShadow: [
+        ),
+        boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: blackColor.withOpacity(0.25),
             blurRadius: 1,
             offset: const Offset(0, 4),
             spreadRadius: 0,
@@ -90,10 +91,7 @@ class UserCard extends StatelessWidget {
                     const SizedBox(width: 12),
 
                     /// RIGHT SIDE (Avatar + Button)
-                    ProfileCircle(
-                      initials: initials,
-                      imageUrl: imageUrl,
-                    ),
+                    ProfileCircle(initials: initials, imageUrl: imageUrl),
                   ],
                 ),
 

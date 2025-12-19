@@ -30,7 +30,7 @@ class FaqTile extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.20),
+            color: blackColor.withOpacity(0.20),
             blurRadius: 3,
             offset: const Offset(0, 3),
           ),
@@ -50,7 +50,7 @@ class FaqTile extends StatelessWidget {
                 ),
                 Icon(
                   isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                  color:blackColor,
+                  color: blackColor,
                 ),
               ],
             ),

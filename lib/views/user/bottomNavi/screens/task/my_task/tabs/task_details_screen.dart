@@ -19,22 +19,28 @@ class TaskDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use provided task or create dummy fallback
-    final TaskModel displayTask = task ?? TaskModel(
-      id: 'dummy',
-      uid: 'dummy',
-      taskType: 'Offline Task',
-      title: 'Help Move Furniture',
-      description: 'Need help moving furniture from my apartment to a new location. Items include a sofa, dining table, and several boxes. Helper should have a truck or van. Estimated time: 2-3 hours.',
-      budget: 500,
-      location: 'Riyadh, King Fahd Road',
-      imageUrl: null,
-      createdAt: DateTime.now(),
-      status: 'active',
-    );
+    final TaskModel displayTask =
+        task ??
+        TaskModel(
+          id: 'dummy',
+          uid: 'dummy',
+          taskType: 'Offline Task',
+          title: 'Help Move Furniture',
+          description:
+              'Need help moving furniture from my apartment to a new location. Items include a sofa, dining table, and several boxes. Helper should have a truck or van. Estimated time: 2-3 hours.',
+          budget: 500,
+          location: 'Riyadh, King Fahd Road',
+          imageUrl: null,
+          createdAt: DateTime.now(),
+          status: 'active',
+        );
 
     // Helper to check if image is network or asset
-    final bool isNetworkImage = displayTask.imageUrl != null && displayTask.imageUrl!.isNotEmpty;
-    final String displayImage = isNetworkImage ? displayTask.imageUrl! : "assets/images/sofa.png";
+    final bool isNetworkImage =
+        displayTask.imageUrl != null && displayTask.imageUrl!.isNotEmpty;
+    final String displayImage = isNetworkImage
+        ? displayTask.imageUrl!
+        : "assets/images/sofa.png";
 
     return SafeArea(
       top: false,
@@ -76,7 +82,7 @@ class TaskDetailsScreen extends StatelessWidget {
                     width: double.infinity,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.40),
+                        color: blackColor.withOpacity(0.40),
                         blurRadius: 5,
                         offset: const Offset(0, 3),
                       ),
@@ -95,10 +101,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                 );
                               },
                             )
-                          : Image.asset(
-                              displayImage,
-                              fit: BoxFit.cover,
-                            ),
+                          : Image.asset(displayImage, fit: BoxFit.cover),
                     ),
                   ),
                 ),
@@ -116,7 +119,7 @@ class TaskDetailsScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(18),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.20),
+                      color: blackColor.withOpacity(0.20),
                       blurRadius: 4,
                       offset: const Offset(0, 4),
                     ),
@@ -162,7 +165,7 @@ class TaskDetailsScreen extends StatelessWidget {
                         fontSize: 13,
                         color: blackLightColor,
                       ),
-                      
+
                       // 🔥 Only show location section if NOT Online Task
                       if (displayTask.taskType != 'Online Task') ...[
                         const SizedBox(height: 25),
@@ -207,7 +210,8 @@ class TaskDetailsScreen extends StatelessWidget {
                                   vertical: 12,
                                 ),
                                 child: CustomText(
-                                  displayTask.location ?? "Location not specified", // 🔥 Real location
+                                  displayTask.location ??
+                                      "Location not specified", // 🔥 Real location
                                   fontSize: 13,
                                   fontWeight: FontVariant.regular,
                                 ),
@@ -228,7 +232,9 @@ class TaskDetailsScreen extends StatelessWidget {
                   width: 263,
                   label: 'View Offers',
                   onPressed: () {
-                    Get.to(() => TaskDetails2Screen(task: displayTask)); // 🔥 Pass task object
+                    Get.to(
+                      () => TaskDetails2Screen(task: displayTask),
+                    ); // 🔥 Pass task object
                   },
                 ),
               ),
@@ -240,12 +246,13 @@ class TaskDetailsScreen extends StatelessWidget {
       ),
     );
   }
+
   void _showImageFullscreen(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          backgroundColor: Colors.black,
+          backgroundColor: blackColor,
           insetPadding: EdgeInsets.zero,
           child: Stack(
             children: [
@@ -276,15 +283,11 @@ class TaskDetailsScreen extends StatelessWidget {
                   onTap: () => Navigator.pop(context),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black54,
+                      color: blackLightColor,
                       shape: BoxShape.circle,
                     ),
                     padding: EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 28,
-                    ),
+                    child: Icon(Icons.close, color: whiteColor, size: 28),
                   ),
                 ),
               ),

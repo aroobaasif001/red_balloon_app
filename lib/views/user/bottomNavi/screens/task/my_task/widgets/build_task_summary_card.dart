@@ -99,7 +99,7 @@ void _showImageFullscreen(BuildContext context, String imageUrl) {
     context: context,
     builder: (BuildContext context) {
       return Dialog(
-        backgroundColor: Colors.black,
+        backgroundColor: blackColor,
         insetPadding: EdgeInsets.zero,
         child: Stack(
           children: [
@@ -130,15 +130,11 @@ void _showImageFullscreen(BuildContext context, String imageUrl) {
                 onTap: () => Navigator.pop(context),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black54,
+                    color: blackLightColor,
                     shape: BoxShape.circle,
                   ),
                   padding: EdgeInsets.all(8),
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 28,
-                  ),
+                  child: Icon(Icons.close, color: whiteColor, size: 28),
                 ),
               ),
             ),

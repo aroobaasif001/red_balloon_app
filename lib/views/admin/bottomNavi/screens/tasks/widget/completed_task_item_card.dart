@@ -3,6 +3,7 @@ import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+
 class CompletedTaskItemCard extends StatelessWidget {
   final String title;
   final String price;
@@ -24,10 +25,11 @@ class CompletedTaskItemCard extends StatelessWidget {
         bottom: BorderSide(color: bordercol, width: 1),
         right: BorderSide(color: bordercol, width: 1),
         left: BorderSide(color: bordercol, width: 1),
-      ),       conColor: whiteColor,
+      ),
+      conColor: whiteColor,
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.25),
+          color: blackColor.withOpacity(0.25),
           blurRadius: 1,
           offset: const Offset(0, 4),
         ),
@@ -71,7 +73,7 @@ class CompletedTaskItemCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.20),
+                    color: blackColor.withOpacity(0.20),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
@@ -85,7 +87,7 @@ class CompletedTaskItemCard extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-              )
+              ),
             ],
           ),
           const SizedBox(height: 18),

@@ -42,20 +42,18 @@ class RBInputField extends StatelessWidget {
             color: rbcolor,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: hasError ? Colors.red : bordercol,
+              color: hasError ? redColor : bordercol,
               width: 1,
             ),
           ),
           child: Row(
-            crossAxisAlignment:
-            maxLines == 1 ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+            crossAxisAlignment: maxLines == 1
+                ? CrossAxisAlignment.center
+                : CrossAxisAlignment.start,
             children: [
               // ---------------- PREFIX ICON ----------------
               if (prefix != null) ...[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: prefix!,
-                ),
+                Align(alignment: Alignment.centerLeft, child: prefix!),
                 const SizedBox(width: 10),
               ],
 
@@ -71,10 +69,7 @@ class RBInputField extends StatelessWidget {
                       : MaxLengthEnforcement.none,
                   keyboardType: keyboardType,
                   onChanged: onChanged,
-                  style: const TextStyle(
-                    color: blackColor,
-                    fontSize: 16,
-                  ),
+                  style: const TextStyle(color: blackColor, fontSize: 16),
                   decoration: InputDecoration(
                     isCollapsed: true, // Better alignment
                     border: InputBorder.none,
@@ -96,10 +91,7 @@ class RBInputField extends StatelessWidget {
             padding: const EdgeInsets.only(top: 6, left: 8),
             child: Text(
               errorText!,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: redColor, fontSize: 12),
             ),
           ),
       ],

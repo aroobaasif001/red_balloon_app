@@ -280,7 +280,7 @@ class EditProfileController extends GetxController {
           AndroidUiSettings(
             toolbarTitle: 'Crop Image',
             toolbarColor: redColor,
-            toolbarWidgetColor: Colors.white,
+            toolbarWidgetColor: whiteColor,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
           ),
@@ -366,7 +366,7 @@ class EditProfileController extends GetxController {
           AndroidUiSettings(
             toolbarTitle: 'Crop Image',
             toolbarColor: redColor,
-            toolbarWidgetColor: Colors.white,
+            toolbarWidgetColor: whiteColor,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
           ),

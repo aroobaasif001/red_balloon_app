@@ -11,23 +11,21 @@ import '../../../../../../utils/colors.dart';
 class DisputeCard extends StatelessWidget {
   final TaskModel task;
   final String timeAgo;
-  
-  const DisputeCard({
-    super.key,
-    required this.task,
-    required this.timeAgo,
-  });
+
+  const DisputeCard({super.key, required this.task, required this.timeAgo});
 
   @override
   Widget build(BuildContext context) {
     // Determine dispute reason based on who requested help
     String disputeReason = "Dispute in progress";
-    if (task.requesterHelpRequested == true && task.requesterHelpReason != null) {
+    if (task.requesterHelpRequested == true &&
+        task.requesterHelpReason != null) {
       disputeReason = task.requesterHelpReason!;
-    } else if (task.helperHelpRequested == true && task.helperHelpReason != null) {
+    } else if (task.helperHelpRequested == true &&
+        task.helperHelpReason != null) {
       disputeReason = task.helperHelpReason!;
     }
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: CustomContainer(
@@ -41,7 +39,7 @@ class DisputeCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: blackColor.withOpacity(0.25),
             blurRadius: 1,
             offset: const Offset(0, 4),
             spreadRadius: 0,
@@ -115,11 +113,15 @@ class DisputeCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                           child: Row(
                             children: [
-                              Icon(Icons.location_on, size: 14, color: redColor),
+                              Icon(
+                                Icons.location_on,
+                                size: 14,
+                                color: redColor,
+                              ),
                               const SizedBox(width: 4),
                               CustomText(
-                                task.location!.length > 15 
-                                    ? "${task.location!.substring(0, 15)}..." 
+                                task.location!.length > 15
+                                    ? "${task.location!.substring(0, 15)}..."
                                     : task.location!,
                                 fontSize: 12,
                                 color: redColor,
@@ -136,7 +138,7 @@ class DisputeCard extends StatelessWidget {
                   CustomContainer(
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.20),
+                        color: blackColor.withOpacity(0.20),
                         blurRadius: 3,
                         offset: const Offset(0, 3),
                       ),
@@ -156,11 +158,7 @@ class DisputeCard extends StatelessWidget {
                           color: timeColor,
                         ),
                         const SizedBox(width: 4),
-                        CustomText(
-                          timeAgo,
-                          fontSize: 12,
-                          color: timeColor,
-                        ),
+                        CustomText(timeAgo, fontSize: 12, color: timeColor),
                       ],
                     ),
                   ),

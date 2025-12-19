@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 class ReceiverImageBubble extends StatelessWidget {
   final String imgPath;
 
-  const ReceiverImageBubble({
-    super.key,
-    required this.imgPath,
-  });
+  const ReceiverImageBubble({super.key, required this.imgPath});
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +24,12 @@ class ReceiverImageBubble extends StatelessWidget {
 
         Expanded(
           child: CustomContainer(
-            conColor:whiteColor,
+            conColor: whiteColor,
             padding: const EdgeInsets.all(12),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.07),
+                color: blackColor.withOpacity(0.07),
                 blurRadius: 6,
                 offset: const Offset(0, 3),
               ),

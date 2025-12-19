@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -33,10 +32,11 @@ class ValidationTaskItemCard extends StatelessWidget {
         bottom: BorderSide(color: bordercol, width: 1),
         right: BorderSide(color: bordercol, width: 1),
         left: BorderSide(color: bordercol, width: 1),
-      ),       conColor: whiteColor,
+      ),
+      conColor: whiteColor,
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.25),
+          color: blackColor.withOpacity(0.25),
           blurRadius: 1,
           offset: const Offset(0, 4),
         ),
@@ -44,12 +44,10 @@ class ValidationTaskItemCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// 🔵 TOP ROW
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               /// TEXT (Flexible to avoid overflow)
               Flexible(
                 child: Column(
@@ -86,7 +84,7 @@ class ValidationTaskItemCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.20),
+                    color: blackColor.withOpacity(0.20),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
@@ -109,7 +107,6 @@ class ValidationTaskItemCard extends StatelessWidget {
           /// 🔴 BOTTOM ROW
           Row(
             children: [
-
               /// BADGE
               CustomContainer(
                 padding: const EdgeInsets.symmetric(
@@ -117,10 +114,10 @@ class ValidationTaskItemCard extends StatelessWidget {
                   vertical: 8,
                 ),
                 borderRadius: BorderRadius.circular(30),
-                conColor:conBgColor,
+                conColor: conBgColor,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.18),
+                    color: blackColor.withOpacity(0.18),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -144,7 +141,11 @@ class ValidationTaskItemCard extends StatelessWidget {
                   fontSize: 14,
                   borderRadius: BorderRadius.circular(10),
                   onPressed: () {
-                    Get.to(() => AdminTaskDetailsTabsScreen(validationId: validationId));
+                    Get.to(
+                      () => AdminTaskDetailsTabsScreen(
+                        validationId: validationId,
+                      ),
+                    );
                   },
                 ),
               ),

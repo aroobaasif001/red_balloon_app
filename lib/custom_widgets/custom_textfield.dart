@@ -23,7 +23,7 @@ class CustomTextField extends StatefulWidget {
   final bool? autocorrect;
   final bool? enableSuggestions;
   final Brightness? keyboardAppearance;
-final border;
+  final border;
   // 🏷️ Label
   final String? label;
   final String? labelIcon;
@@ -37,7 +37,7 @@ final border;
   // ⭐ Optional Suffix / Prefix Widgets
   final Widget? suffixWidget;
   final Widget? prefixWidget;
-final borderColor;
+  final borderColor;
   // ⭐ NEW: Optional Radius
   final double? radius;
   final prefixIcon;
@@ -110,7 +110,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 ),
                 if (widget.isRequired) ...[
                   const SizedBox(width: 4),
-                  const CustomText("*", fontSize: 12, color:redColor),
+                  const CustomText("*", fontSize: 12, color: redColor),
                 ],
               ],
             ),
@@ -147,7 +147,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             autocorrect: widget.autocorrect ?? !widget.isPassword,
             enableSuggestions: widget.enableSuggestions ?? !widget.isPassword,
             keyboardAppearance: widget.keyboardAppearance,
-            cursorColor: Colors.red,
+            cursorColor: redColor,
             style: const TextStyle(
               color: blackColor,
               fontSize: 13,
@@ -211,7 +211,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         _obscure
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color:grey5Color,
+                        color: grey5Color,
                       ),
                       onPressed: () => setState(() => _obscure = !_obscure),
                     )

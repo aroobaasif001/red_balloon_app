@@ -26,7 +26,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
   final GlobalKey _fieldKey = GlobalKey();
 
   OverlayEntry _createOverlay() {
-    RenderBox renderBox = _fieldKey.currentContext!.findRenderObject() as RenderBox;
+    RenderBox renderBox =
+        _fieldKey.currentContext!.findRenderObject() as RenderBox;
     Size size = renderBox.size;
 
     return OverlayEntry(
@@ -42,7 +43,11 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 color: whiteColor,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 10, offset: Offset(0, 4)),
+                  BoxShadow(
+                    color: blackColor.withOpacity(0.15),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
                 ],
               ),
               child: Column(
@@ -55,10 +60,17 @@ class _CustomDropdownState extends State<CustomDropdown> {
                       _overlayEntry = null;
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 14,
+                      ),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: CustomText(item, fontSize: 16, color: Colors.black),
+                        child: CustomText(
+                          item,
+                          fontSize: 16,
+                          color: blackColor,
+                        ),
                       ),
                     ),
                   );
@@ -84,7 +96,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
   @override
   Widget build(BuildContext context) {
     // FINAL unified logic
-    bool isEmpty = widget.selectedValue == null || widget.selectedValue!.trim().isEmpty;
+    bool isEmpty =
+        widget.selectedValue == null || widget.selectedValue!.trim().isEmpty;
 
     return CompositedTransformTarget(
       link: _layerLink,
@@ -97,7 +110,11 @@ class _CustomDropdownState extends State<CustomDropdown> {
             color: white2Color,
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.25), blurRadius: 4, offset: Offset(0, 4)),
+              BoxShadow(
+                color: blackColor.withOpacity(0.25),
+                blurRadius: 4,
+                offset: Offset(0, 4),
+              ),
             ],
           ),
           child: Row(
@@ -106,10 +123,10 @@ class _CustomDropdownState extends State<CustomDropdown> {
               CustomText(
                 isEmpty ? widget.hint : widget.selectedValue!,
                 fontSize: 16,
-                color: isEmpty ? Colors.black.withOpacity(0.45) : Colors.black,
+                color: isEmpty ? blackColor.withOpacity(0.45) : blackColor,
               ),
 
-              Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black54),
+              Icon(Icons.keyboard_arrow_down_rounded, color: blackLightColor),
             ],
           ),
         ),

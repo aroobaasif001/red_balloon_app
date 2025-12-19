@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,10 +10,12 @@ import '../controller/upload_proof_controller.dart';
 /// Add Photo Box - displays selected image or placeholder
 Widget buildAddPhotoBox() {
   final controller = Get.find<UploadProofController>();
-  
+
   return Obx(() {
     final isBeforeTab = controller.selectedTab.value == ProofTab.before;
-    final selectedImage = isBeforeTab ? controller.beforePhoto.value : controller.afterPhoto.value;
+    final selectedImage = isBeforeTab
+        ? controller.beforePhoto.value
+        : controller.afterPhoto.value;
     final isLoading = controller.isSubmitting.value;
 
     return DottedBorderContainer(
@@ -78,14 +79,10 @@ Widget buildAddPhotoBox() {
                       child: Container(
                         padding: EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: redColor,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 20,
-                        ),
+                        child: Icon(Icons.close, color: whiteColor, size: 20),
                       ),
                     ),
                   ),

@@ -36,7 +36,7 @@ class RBPhoneField extends StatelessWidget {
             color: rbcolor,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: hasError ? Colors.red : bordercol,
+              color: hasError ? redColor : bordercol,
               width: 1,
             ),
           ),
@@ -50,29 +50,35 @@ class RBPhoneField extends StatelessWidget {
                   onCountryCodeChanged?.call(value);
                 },
                 itemBuilder: (BuildContext context) {
-                  return (countryCodes ?? ['+1', '+44', '+91', '+92', '+94', '+971'])
-                      .map((code) => PopupMenuItem<String>(
-                            value: code,
-                            child: Row(
-                              children: [
-                                Text(
-                                  _getCountryFlag(code),
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                SizedBox(width: 8),
-                                CustomText(
-                                  code,
-                                  fontSize: 12,
-                                  fontWeight: FontVariant.regular,
-                                  color: blackColor,
-                                ),
-                              ],
-                            ),
-                          ))
+                  return (countryCodes ??
+                          ['+1', '+44', '+91', '+92', '+94', '+971'])
+                      .map(
+                        (code) => PopupMenuItem<String>(
+                          value: code,
+                          child: Row(
+                            children: [
+                              Text(
+                                _getCountryFlag(code),
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              SizedBox(width: 8),
+                              CustomText(
+                                code,
+                                fontSize: 12,
+                                fontWeight: FontVariant.regular,
+                                color: blackColor,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
                       .toList();
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: whiteColor,
                     borderRadius: BorderRadius.circular(12),
@@ -142,10 +148,7 @@ class RBPhoneField extends StatelessWidget {
             padding: const EdgeInsets.only(top: 6, left: 8),
             child: Text(
               errorText!,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: redColor, fontSize: 12),
             ),
           ),
       ],
@@ -250,48 +253,90 @@ class RBPhoneField extends StatelessWidget {
   // Helper function to get max phone length based on country code
   int _getMaxPhoneLength(String countryCode) {
     switch (countryCode) {
-      case '+91': return 10; // India
-      case '+92': return 10; // Pakistan
-      case '+94': return 9;  // Sri Lanka
-      case '+971': return 9; // UAE
-      case '+966': return 9; // Saudi Arabia
-      case '+86': return 11; // China
-      case '+81': return 10; // Japan
-      case '+880': return 10; // Bangladesh
-      case '+977': return 10; // Nepal
-      case '+93': return 9;  // Afghanistan
-      case '+975': return 8;  // Bhutan
-      case '+960': return 7;  // Maldives
-      case '+95': return 9;   // Myanmar
-      case '+66': return 9;   // Thailand
-      case '+84': return 10;  // Vietnam
-      case '+63': return 10;  // Philippines
-      case '+62': return 11;  // Indonesia
-      case '+60': return 10;  // Malaysia
-      case '+65': return 8;   // Singapore
-      case '+82': return 10;  // South Korea
-      case '+886': return 9;  // Taiwan
-      case '+852': return 8;  // Hong Kong
-      case '+98': return 10;  // Iran
-      case '+964': return 10; // Iraq
-      case '+962': return 9;  // Jordan
-      case '+965': return 8;  // Kuwait
-      case '+961': return 8;  // Lebanon
-      case '+968': return 8;  // Oman
-      case '+974': return 8;  // Qatar
-      case '+973': return 8;  // Bahrain
-      case '+967': return 9;  // Yemen
-      case '+90': return 10;  // Turkey
-      case '+1': return 10;   // USA/Canada
-      case '+44': return 10;  // UK
-      case '+33': return 9;   // France
-      case '+49': return 11;  // Germany
-      case '+39': return 10;  // Italy
-      case '+34': return 9;   // Spain
-      case '+61': return 9;   // Australia
-      case '+64': return 9;   // New Zealand
-      case '+27': return 9;   // South Africa
-      default: return 15;     // Default
+      case '+91':
+        return 10; // India
+      case '+92':
+        return 10; // Pakistan
+      case '+94':
+        return 9; // Sri Lanka
+      case '+971':
+        return 9; // UAE
+      case '+966':
+        return 9; // Saudi Arabia
+      case '+86':
+        return 11; // China
+      case '+81':
+        return 10; // Japan
+      case '+880':
+        return 10; // Bangladesh
+      case '+977':
+        return 10; // Nepal
+      case '+93':
+        return 9; // Afghanistan
+      case '+975':
+        return 8; // Bhutan
+      case '+960':
+        return 7; // Maldives
+      case '+95':
+        return 9; // Myanmar
+      case '+66':
+        return 9; // Thailand
+      case '+84':
+        return 10; // Vietnam
+      case '+63':
+        return 10; // Philippines
+      case '+62':
+        return 11; // Indonesia
+      case '+60':
+        return 10; // Malaysia
+      case '+65':
+        return 8; // Singapore
+      case '+82':
+        return 10; // South Korea
+      case '+886':
+        return 9; // Taiwan
+      case '+852':
+        return 8; // Hong Kong
+      case '+98':
+        return 10; // Iran
+      case '+964':
+        return 10; // Iraq
+      case '+962':
+        return 9; // Jordan
+      case '+965':
+        return 8; // Kuwait
+      case '+961':
+        return 8; // Lebanon
+      case '+968':
+        return 8; // Oman
+      case '+974':
+        return 8; // Qatar
+      case '+973':
+        return 8; // Bahrain
+      case '+967':
+        return 9; // Yemen
+      case '+90':
+        return 10; // Turkey
+      case '+1':
+        return 10; // USA/Canada
+      case '+44':
+        return 10; // UK
+      case '+33':
+        return 9; // France
+      case '+49':
+        return 11; // Germany
+      case '+39':
+        return 10; // Italy
+      case '+34':
+        return 9; // Spain
+      case '+61':
+        return 9; // Australia
+      case '+64':
+        return 9; // New Zealand
+      case '+27':
+        return 9; // South Africa
+      default:
+        return 15; // Default
     }
   }
 

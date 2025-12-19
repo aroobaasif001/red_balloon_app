@@ -13,7 +13,7 @@ class TaskInfoCard extends StatelessWidget {
   final String budget;
   final String status;
   final String? imageUrl;
-  
+
   const TaskInfoCard({
     super.key,
     required this.title,
@@ -34,7 +34,7 @@ class TaskInfoCard extends StatelessWidget {
       conColor: whiteColor,
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.20),
+          color: blackColor.withOpacity(0.20),
           blurRadius: 3,
           offset: const Offset(0, 4),
         ),
@@ -46,8 +46,11 @@ class TaskInfoCard extends StatelessWidget {
             top: 0,
             child: Row(
               children: [
-                Icon(Icons.location_on_rounded,
-                    size: 15, color: walletTextGreyColor),
+                Icon(
+                  Icons.location_on_rounded,
+                  size: 15,
+                  color: walletTextGreyColor,
+                ),
                 const SizedBox(width: 1),
                 CustomText(
                   location,
@@ -67,10 +70,7 @@ class TaskInfoCard extends StatelessWidget {
                 color: rdBgColor,
                 borderRadius: BorderRadius.circular(14),
                 alignment: Alignment.center,
-                child: Image.asset(
-                  "assets/icons/div (3).png",
-                  height: 28,
-                ),
+                child: Image.asset("assets/icons/div (3).png", height: 28),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -114,7 +114,9 @@ class TaskInfoCard extends StatelessWidget {
                         const SizedBox(width: 12),
                         CustomContainer(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                           conColor: _getStatusColor(status).withOpacity(0.1),
                           child: CustomText(
@@ -135,17 +137,17 @@ class TaskInfoCard extends StatelessWidget {
       ),
     );
   }
-  
+
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'completed':
         return historyGreenColor;
       case 'in progress':
-        return Colors.orange;
+        return orangeColor;
       case 'disputed':
-        return Colors.red;
+        return redColor;
       default:
-        return Colors.grey;
+        return taskstatus3;
     }
   }
 }
@@ -157,7 +159,7 @@ class ParticipantCard extends StatelessWidget {
   final String? imageUrl;
   final String role; // "Requester" or "Helper"
   final Map<String, String> stats; // {"label": "value"}
-  
+
   const ParticipantCard({
     super.key,
     required this.name,
@@ -175,7 +177,7 @@ class ParticipantCard extends StatelessWidget {
       conColor: whiteColor,
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.20),
+          color: blackColor.withOpacity(0.20),
           blurRadius: 4,
           offset: const Offset(0, 3),
         ),
@@ -216,8 +218,11 @@ class ParticipantCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        const Icon(Icons.check_circle,
-                            color: historyGreenColor, size: 18),
+                        const Icon(
+                          Icons.check_circle,
+                          color: historyGreenColor,
+                          size: 18,
+                        ),
                       ],
                     ),
                     CustomText(
@@ -231,13 +236,15 @@ class ParticipantCard extends StatelessWidget {
               CustomContainer(
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
+                    color: blackColor.withOpacity(0.25),
                     blurRadius: 4,
                     offset: const Offset(0, 4),
                   ),
                 ],
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 6),
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 borderRadius: BorderRadius.circular(10),
                 conColor: role == "Helper" ? helpBgColor : rdBgColor,
                 child: CustomText(
@@ -245,7 +252,7 @@ class ParticipantCard extends StatelessWidget {
                   fontSize: 12,
                   color: role == "Helper" ? blackColor : redColor,
                 ),
-              )
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -254,13 +261,16 @@ class ParticipantCard extends StatelessWidget {
             children: stats.entries.map((entry) {
               return Column(
                 children: [
-                  CustomText(entry.value,
-                      fontSize: 16, fontWeight: FontVariant.semiBold),
+                  CustomText(
+                    entry.value,
+                    fontSize: 16,
+                    fontWeight: FontVariant.semiBold,
+                  ),
                   CustomText(entry.key, fontSize: 12, color: timeColor),
                 ],
               );
             }).toList(),
-          )
+          ),
         ],
       ),
     );
@@ -274,7 +284,7 @@ class OfferCard extends StatelessWidget {
   final String amount;
   final bool isAccepted;
   final String? imageUrl;
-  
+
   const OfferCard({
     super.key,
     required this.name,
@@ -296,7 +306,7 @@ class OfferCard extends StatelessWidget {
       ),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.10),
+          color: blackColor.withOpacity(0.10),
           blurRadius: 4,
           offset: const Offset(0, 2),
         ),
@@ -328,11 +338,7 @@ class OfferCard extends StatelessWidget {
                   fontSize: 15,
                   fontWeight: FontVariant.semiBold,
                 ),
-                CustomText(
-                  userId,
-                  fontSize: 12,
-                  color: timeColor,
-                ),
+                CustomText(userId, fontSize: 12, color: timeColor),
               ],
             ),
           ),
@@ -364,12 +370,8 @@ class OfferCard extends StatelessWidget {
 class InfoRow extends StatelessWidget {
   final String label;
   final String value;
-  
-  const InfoRow({
-    super.key,
-    required this.label,
-    required this.value,
-  });
+
+  const InfoRow({super.key, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -378,11 +380,7 @@ class InfoRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CustomText(
-            label,
-            fontSize: 14,
-            color: timeColor,
-          ),
+          CustomText(label, fontSize: 14, color: timeColor),
           Flexible(
             child: CustomText(
               value,

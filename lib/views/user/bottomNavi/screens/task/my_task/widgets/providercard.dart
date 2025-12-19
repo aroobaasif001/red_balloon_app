@@ -42,7 +42,7 @@ class ProviderCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: blackColor.withOpacity(0.08),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -108,7 +108,11 @@ class ProviderCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          const Icon(Icons.star, size: 18, color: Color(0xffDC4137)),
+                          const Icon(
+                            Icons.star,
+                            size: 18,
+                            color: Color(0xffDC4137),
+                          ),
                           const SizedBox(width: 4),
                           CustomText(
                             rating,

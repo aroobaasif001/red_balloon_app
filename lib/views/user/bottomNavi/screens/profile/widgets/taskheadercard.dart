@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/custom_textfield.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
-import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -16,16 +16,17 @@ class ChatScreen extends StatelessWidget {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             /// 🔹 TOP APP BAR (unchanged)
             CustomAppBar1(title: 'Messages', showRightImage: false),
 
             /// 🔹 CHAT CONTENT
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 10,
+                ),
                 children: [
-
                   /// 🔥 TASK HEADER CARD
                   CustomContainer(
                     conColor: whiteColor,
@@ -33,7 +34,7 @@ class ChatScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.07),
+                        color: blackColor.withOpacity(0.07),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),
@@ -75,11 +76,17 @@ class ChatScreen extends StatelessWidget {
 
                         Row(
                           children: [
-                            Icon(Icons.watch_later_rounded,
-                                size: 14, color: timeColor),
+                            Icon(
+                              Icons.watch_later_rounded,
+                              size: 14,
+                              color: timeColor,
+                            ),
                             const SizedBox(width: 4),
-                            CustomText("2 min ago",
-                                fontSize: 12, color: timeColor),
+                            CustomText(
+                              "2 min ago",
+                              fontSize: 12,
+                              color: timeColor,
+                            ),
                           ],
                         ),
                       ],
@@ -91,8 +98,10 @@ class ChatScreen extends StatelessWidget {
                   /// 🔥 TODAY LABEL
                   Center(
                     child: CustomContainer(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       borderRadius: BorderRadius.circular(20),
                       conColor: greyLiteColor,
                       child: CustomText(
@@ -108,7 +117,7 @@ class ChatScreen extends StatelessWidget {
                   /// 🔸 RECEIVER BUBBLE
                   _receiverBubble(
                     text:
-                    "Hi! I saw your furniture moving task. I have experience with this and can help you this weekend.",
+                        "Hi! I saw your furniture moving task. I have experience with this and can help you this weekend.",
                     time: "10:23 AM",
                   ),
 
@@ -117,7 +126,7 @@ class ChatScreen extends StatelessWidget {
                   /// 🔸 SENDER BUBBLE
                   _senderBubble(
                     text:
-                    "Great! How much experience do you have with furniture moving?",
+                        "Great! How much experience do you have with furniture moving?",
                     time: "10:25 AM",
                   ),
 
@@ -126,7 +135,7 @@ class ChatScreen extends StatelessWidget {
                   /// 🔸 RECEIVER BUBBLE
                   _receiverBubble(
                     text:
-                    "I've helped with 8 moving tasks on Red Balloon. I also have proper equipment and can bring help if needed.",
+                        "I've helped with 8 moving tasks on Red Balloon. I also have proper equipment and can bring help if needed.",
                     time: "10:27 AM",
                   ),
 
@@ -154,16 +163,12 @@ class ChatScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 children: [
-                  Icon(Icons.attach_file_rounded,
-                      size: 26, color: grey4Color),
+                  Icon(Icons.attach_file_rounded, size: 26, color: grey4Color),
 
                   const SizedBox(width: 10),
 
                   Expanded(
-                    child: CustomTextField(
-                      hintText: "Message...",
-                      radius: 30,
-                    ),
+                    child: CustomTextField(hintText: "Message...", radius: 30),
                   ),
 
                   const SizedBox(width: 10),
@@ -185,8 +190,12 @@ class ChatScreen extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText("A",
-            fontSize: 14, fontWeight: FontVariant.bold, color: redColor),
+        CustomText(
+          "A",
+          fontSize: 14,
+          fontWeight: FontVariant.bold,
+          color: redColor,
+        ),
 
         const SizedBox(width: 10),
 
@@ -195,14 +204,10 @@ class ChatScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomContainer(
-                conColor:greyLiteColor,
+                conColor: greyLiteColor,
                 padding: const EdgeInsets.all(12),
                 borderRadius: BorderRadius.circular(12),
-                child: CustomText(
-                  text,
-                  fontSize: 14,
-                  color: grey50Color,
-                ),
+                child: CustomText(text, fontSize: 14, color: grey50Color),
               ),
               const SizedBox(height: 6),
               CustomText(time, fontSize: 11, color: timeColor),
@@ -220,7 +225,8 @@ class ChatScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Expanded( // 🔥 overflow fix
+        Expanded(
+          // 🔥 overflow fix
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -228,11 +234,7 @@ class ChatScreen extends StatelessWidget {
                 conColor: redColor,
                 padding: const EdgeInsets.all(12),
                 borderRadius: BorderRadius.circular(12),
-                child: CustomText(
-                  text,
-                  fontSize: 14,
-                  color:whiteColor,
-                ),
+                child: CustomText(text, fontSize: 14, color: whiteColor),
               ),
               const SizedBox(height: 6),
               CustomText(time, fontSize: 11, color: timeColor),
@@ -250,8 +252,12 @@ class ChatScreen extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText("A",
-            fontSize: 14, fontWeight: FontVariant.bold, color: redColor),
+        CustomText(
+          "A",
+          fontSize: 14,
+          fontWeight: FontVariant.bold,
+          color: redColor,
+        ),
 
         const SizedBox(width: 10),
 
@@ -262,7 +268,7 @@ class ChatScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.07),
+                color: blackColor.withOpacity(0.07),
                 blurRadius: 6,
                 offset: const Offset(0, 3),
               ),

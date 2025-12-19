@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
-import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/tabs/all_tasks_tab_screen.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/tabs/completed_tasks_tab_screen.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/tabs/validation_tasks_tab_screen.dart';
-import '../../../../../../custom_widgets/custom_container.dart';
 
+import '../../../../../../custom_widgets/custom_container.dart';
 
 class AdminTaskCenterScreen extends StatefulWidget {
   const AdminTaskCenterScreen({super.key});
@@ -26,7 +26,11 @@ class _AdminTaskCenterScreenState extends State<AdminTaskCenterScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            CustomAppBar1(title: 'Task Center',showRightImage: false,showLeftImage: false,),
+            CustomAppBar1(
+              title: 'Task Center',
+              showRightImage: false,
+              showLeftImage: false,
+            ),
 
             const SizedBox(height: 10),
 
@@ -41,7 +45,7 @@ class _AdminTaskCenterScreenState extends State<AdminTaskCenterScreen> {
                 padding: const EdgeInsets.all(4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
+                    color: blackColor.withOpacity(0.25),
                     blurRadius: 1,
                     offset: const Offset(0, 4),
                   ),

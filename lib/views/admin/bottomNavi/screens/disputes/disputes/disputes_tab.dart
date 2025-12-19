@@ -14,7 +14,7 @@ class AdminDisputesTab extends StatelessWidget {
     final controller = Get.put(AdminDisputesController());
     
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: whiteColor,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,19 +60,19 @@ class AdminDisputesTab extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.gavel, size: 64, color: Colors.grey[300]),
+                        Icon(Icons.gavel, size: 64, color: fundCardBorderColor),
                         const SizedBox(height: 16),
                         CustomText(
                           "No Active Disputes",
                           fontSize: 18,
                           fontWeight: FontVariant.semiBold,
-                          color: Colors.grey,
+                          color: taskstatus3,
                         ),
                         const SizedBox(height: 8),
                         CustomText(
                           "All disputes have been resolved",
                           fontSize: 14,
-                          color: Colors.grey[400]!,
+                          color: rbnewcolor!,
                         ),
                       ],
                     ),

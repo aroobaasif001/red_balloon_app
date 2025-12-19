@@ -1,5 +1,4 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -24,7 +23,7 @@ class ActiveTab extends StatelessWidget {
     return RefreshIndicator(
       backgroundColor: whiteColor,
 
-      color: Colors.red,
+      color: redColor,
       onRefresh: () =>
           controller.refreshTasks(minDelay: const Duration(seconds: 1)),
       child: SingleChildScrollView(
@@ -111,19 +110,19 @@ class ActiveTab extends StatelessWidget {
                       Icon(
                         Icons.location_on_outlined,
                         size: 50,
-                        color: Colors.grey[400],
+                        color: rbnewcolor,
                       ),
                       const SizedBox(height: 10),
                       CustomText(
                         'No tasks nearby',
                         fontSize: 16,
-                        color: Colors.grey[600]!,
+                        color: grey6Color!,
                       ),
                       const SizedBox(height: 5),
                       CustomText(
                         'Check back later for new tasks',
                         fontSize: 14,
-                        color: Colors.grey[500]!,
+                        color: taskstatus3!,
                       ),
                     ],
                   ),
@@ -185,7 +184,9 @@ class ActiveTab extends StatelessWidget {
                           final otherUserUid = task.uid;
                           print('🔍 Other user UID from task: $otherUserUid');
 
-                          print('🔍 Navigating to InProgressViewDetails with otherUserUid: $otherUserUid');
+                          print(
+                            '🔍 Navigating to InProgressViewDetails with otherUserUid: $otherUserUid',
+                          );
 
                           isAccepted
                               ? Get.to(

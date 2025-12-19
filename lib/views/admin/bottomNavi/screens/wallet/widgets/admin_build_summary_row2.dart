@@ -16,9 +16,10 @@ Widget adminBuildSummaryRow2(BuildContext context) {
             bottom: BorderSide(color: bordercol, width: 1),
             right: BorderSide(color: bordercol, width: 1),
             left: BorderSide(color: bordercol, width: 1),
-          ),           boxShadow: [
+          ),
+          boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
+              color: blackColor.withOpacity(0.25),
               blurRadius: 1,
               spreadRadius: 0,
               offset: const Offset(0, 4),
@@ -70,9 +71,10 @@ Widget adminBuildSummaryRow2(BuildContext context) {
             bottom: BorderSide(color: bordercol, width: 1),
             right: BorderSide(color: bordercol, width: 1),
             left: BorderSide(color: bordercol, width: 1),
-          ),          boxShadow: [
+          ),
+          boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
+              color: blackColor.withOpacity(0.25),
               blurRadius: 1,
               spreadRadius: 0,
               offset: const Offset(0, 4),

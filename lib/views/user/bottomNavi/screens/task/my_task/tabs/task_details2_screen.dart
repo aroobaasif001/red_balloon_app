@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -10,12 +12,11 @@ import 'package:red_balloon_app/services/offer_service.dart';
 import 'package:red_balloon_app/services/offer_service2.dart';
 import 'package:red_balloon_app/services/user_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'dart:async';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/controller/chat_controller.dart';
 
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../widgets/providercard.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/controller/chat_controller.dart';
 import 'user_profile_screen.dart'; // 🔥 Import profile screen
 
 class TaskDetails2Screen extends StatefulWidget {
@@ -55,44 +56,53 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
 
     _offersSubscription = _offerService2
         .streamTaskOffers(widget.task.id ?? '')
-        .listen((offersData) async {
-      if (!mounted) return;
+        .listen(
+          (offersData) async {
+            if (!mounted) return;
 
-      try {
-        final fetchedOffers = offersData
-            .map((data) => OfferModel.fromJson(data, data['offerId'] ?? ''))
-            .toList();
+            try {
+              final fetchedOffers = offersData
+                  .map(
+                    (data) => OfferModel.fromJson(data, data['offerId'] ?? ''),
+                  )
+                  .toList();
 
-        // 🔥 Pre-fetch user data for each offer
-        Map<String, UserModel?> usersMap = {};
-        for (var offer in fetchedOffers) {
-          if (!usersMap.containsKey(offer.offeringUserUid)) {
-            final user = await _userService.getUserByUid(offer.offeringUserUid);
-            usersMap[offer.offeringUserUid] = user;
-          }
-        }
+              // 🔥 Pre-fetch user data for each offer
+              Map<String, UserModel?> usersMap = {};
+              for (var offer in fetchedOffers) {
+                if (!usersMap.containsKey(offer.offeringUserUid)) {
+                  final user = await _userService.getUserByUid(
+                    offer.offeringUserUid,
+                  );
+                  usersMap[offer.offeringUserUid] = user;
+                }
+              }
 
-        if (!mounted) return;
+              if (!mounted) return;
 
-        setState(() {
-          offers = fetchedOffers;
-          offerUsers = usersMap;
-          isLoading = false;
-        });
+              setState(() {
+                offers = fetchedOffers;
+                offerUsers = usersMap;
+                isLoading = false;
+              });
 
-        print('✅ Real-time offers updated: ${fetchedOffers.length} offers');
-      } catch (e) {
-        print("Error processing real-time offers: $e");
-        if (mounted) {
-          setState(() => isLoading = false);
-        }
-      }
-    }, onError: (error) {
-      print("❌ Error in real-time offers stream: $error");
-      if (mounted) {
-        setState(() => isLoading = false);
-      }
-    });
+              print(
+                '✅ Real-time offers updated: ${fetchedOffers.length} offers',
+              );
+            } catch (e) {
+              print("Error processing real-time offers: $e");
+              if (mounted) {
+                setState(() => isLoading = false);
+              }
+            }
+          },
+          onError: (error) {
+            print("❌ Error in real-time offers stream: $error");
+            if (mounted) {
+              setState(() => isLoading = false);
+            }
+          },
+        );
   }
 
   @override
@@ -147,7 +157,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                   padding: const EdgeInsets.all(14),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.20),
+                      color: blackColor.withOpacity(0.20),
                       blurRadius: 4,
                       offset: const Offset(0, 4),
                     ),
@@ -243,23 +253,19 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                     padding: const EdgeInsets.all(40.0),
                     child: Column(
                       children: [
-                        Icon(
-                          Icons.inbox_outlined,
-                          size: 60,
-                          color: Colors.grey[400],
-                        ),
+                        Icon(Icons.inbox_outlined, size: 60, color: rbnewcolor),
                         const SizedBox(height: 15),
                         CustomText(
                           'No offers yet',
                           fontSize: 18,
                           fontWeight: FontVariant.bold,
-                          color: Colors.grey[600]!,
+                          color: grey6Color!,
                         ),
                         const SizedBox(height: 8),
                         CustomText(
                           'Offers from helpers will appear here',
                           fontSize: 14,
-                          color: Colors.grey[500]!,
+                          color: taskstatus3!,
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -322,17 +328,19 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                       );
                     },
                     onChat: () {
-                       Get.to(
+                      Get.to(
                         () => const ChatScreen(),
                         binding: BindingsBuilder(() {
-                          Get.put(ChatController(
-                            taskId: widget.task.id ?? '',
-                            taskTitle: widget.task.title,
-                            taskOwnerId: offer.offeringUserUid,
-                            taskOwnerName: offer.offeringUserName,
-                            taskOwnerPhoto: user?.photoURL,
-                            taskImage: widget.task.imageUrl,
-                          ));
+                          Get.put(
+                            ChatController(
+                              taskId: widget.task.id ?? '',
+                              taskTitle: widget.task.title,
+                              taskOwnerId: offer.offeringUserUid,
+                              taskOwnerName: offer.offeringUserName,
+                              taskOwnerPhoto: user?.photoURL,
+                              taskImage: widget.task.imageUrl,
+                            ),
+                          );
                         }),
                       );
                     },

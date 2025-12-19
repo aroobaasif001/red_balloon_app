@@ -62,7 +62,7 @@ Widget buildBottomUploadBar(
             child: CustomContainer(
               height: 52,
               width: double.infinity,
-              conColor: isDisabled ? Colors.grey : redColor,
+              conColor: isDisabled ? taskstatus3 : redColor,
               borderRadius: BorderRadius.circular(14),
               alignment: Alignment.center,
               child: isLoading
@@ -109,7 +109,7 @@ Widget buildBottomUploadBar(
             child: CustomContainer(
               height: 52,
               width: double.infinity,
-              conColor: helperReq ? Colors.grey : redColor,
+              conColor: helperReq ? taskstatus3 : redColor,
               borderRadius: BorderRadius.circular(14),
               alignment: Alignment.center,
               child: CustomText(

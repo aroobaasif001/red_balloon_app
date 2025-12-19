@@ -165,7 +165,7 @@ class TaskInProgressScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomContainer(
                     height: 4,
-                    conColor: Colors.red.withOpacity(0.2),
+                    conColor: redColor.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
                     child: Align(
                       alignment: Alignment.centerLeft,
@@ -190,7 +190,7 @@ class TaskInProgressScreen extends StatelessWidget {
                     conColor: whiteColor,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.20),
+                        color: blackColor.withOpacity(0.20),
                         blurRadius: 3,
                         offset: Offset(0, 4),
                       ),
@@ -315,7 +315,7 @@ class TaskInProgressScreen extends StatelessWidget {
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.04),
+                                      color: blackColor.withOpacity(0.04),
                                       blurRadius: 8,
                                       offset: Offset(0, 3),
                                     ),
@@ -386,7 +386,7 @@ class TaskInProgressScreen extends StatelessWidget {
                                   conColor: redColor,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: blackColor.withOpacity(0.05),
                                       blurRadius: 8,
                                       offset: Offset(0, 3),
                                     ),
@@ -431,7 +431,7 @@ class TaskInProgressScreen extends StatelessWidget {
                     conColor: whiteColor,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.20),
+                        color: blackColor.withOpacity(0.20),
                         blurRadius: 3,
                         offset: Offset(0, 4),
                       ),
@@ -476,7 +476,7 @@ class TaskInProgressScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(30),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: blackColor.withOpacity(0.04),
                                   blurRadius: 6,
                                   offset: Offset(0, 2),
                                 ),
@@ -592,7 +592,7 @@ class TaskInProgressScreen extends StatelessWidget {
                     conColor: rbcolor,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
+                        color: blackColor.withOpacity(0.03),
                         blurRadius: 10,
                         offset: Offset(0, 3),
                       ),
@@ -635,7 +635,7 @@ class TaskInProgressScreen extends StatelessWidget {
                             !controller.requesterHelpRequested.value &&
                             !controller.helperHelpRequested.value)
                         ? redColor
-                        : Colors.grey,
+                        : taskstatus3,
                     textColor: whiteColor,
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -661,7 +661,7 @@ class TaskInProgressScreen extends StatelessWidget {
                             );
                           },
                     bgColor: controller.requesterHelpRequested.value
-                        ? Colors.grey
+                        ? taskstatus3
                         : redColor,
                     textColor: whiteColor,
                     borderRadius: BorderRadius.circular(30),
@@ -711,7 +711,7 @@ class TaskInProgressScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          backgroundColor: Colors.black,
+          backgroundColor: blackColor,
           insetPadding: EdgeInsets.zero,
           child: Stack(
             children: [
@@ -742,11 +742,11 @@ class TaskInProgressScreen extends StatelessWidget {
                   onTap: () => Navigator.pop(context),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black54,
+                      color: blackLightColor,
                       shape: BoxShape.circle,
                     ),
                     padding: EdgeInsets.all(8),
-                    child: Icon(Icons.close, color: Colors.white, size: 28),
+                    child: Icon(Icons.close, color: whiteColor, size: 28),
                   ),
                 ),
               ),

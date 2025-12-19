@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/custom_widgets/customappbar.dart';
-import 'package:red_balloon_app/custom_widgets/custom_container.dart';
-import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
-import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/custom_widgets/customappbar.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/model/task_model.dart';
+import 'package:red_balloon_app/utils/colors.dart';
+
 import 'controller/dispute_details_controller.dart';
 
 class DisputeDetailsScreen extends StatefulWidget {
@@ -38,70 +39,64 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: whiteColor,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-
+      backgroundColor: whiteColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
               /// 🔴 TOP BAR
-              CustomAppBar1(
-              title: 'Dispute Details',
-              showRightImage: false,
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  ////////////////////////////////////////////////////////
-                  /// 🔴 1 — MAIN DISPUTE CARD (Help Move Furniture)
-                  ////////////////////////////////////////////////////////
-                  CustomContainer(
-                    padding: const EdgeInsets.all(16),
-                    borderRadius: BorderRadius.circular(16),
-                    conColor: whiteColor,
-                    border: Border(
-                      bottom: BorderSide(color: bordercol, width: 1),
-                      right: BorderSide(color: bordercol, width: 1),
-                      left: BorderSide(color: bordercol, width: 1),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        blurRadius: 1,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-
-                            /// Icon
-                            CustomContainer(
-                              padding: const EdgeInsets.all(8),
-                              borderRadius: BorderRadius.circular(12),
-                              conColor: rdBgColor,
-                              height: 40,
-                              width: 32,
-                              image: const DecorationImage(
+              CustomAppBar1(title: 'Dispute Details', showRightImage: false),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    ////////////////////////////////////////////////////////
+                    /// 🔴 1 — MAIN DISPUTE CARD (Help Move Furniture)
+                    ////////////////////////////////////////////////////////
+                    CustomContainer(
+                      padding: const EdgeInsets.all(16),
+                      borderRadius: BorderRadius.circular(16),
+                      conColor: whiteColor,
+                      border: Border(
+                        bottom: BorderSide(color: bordercol, width: 1),
+                        right: BorderSide(color: bordercol, width: 1),
+                        left: BorderSide(color: bordercol, width: 1),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: blackColor.withOpacity(0.25),
+                          blurRadius: 1,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              /// Icon
+                              CustomContainer(
+                                padding: const EdgeInsets.all(8),
+                                borderRadius: BorderRadius.circular(12),
+                                conColor: rdBgColor,
+                                height: 40,
+                                width: 32,
+                                image: const DecorationImage(
                                   image: AssetImage("assets/icons/svg.png"),
-                                  scale: 4
+                                  scale: 4,
+                                ),
                               ),
-                            ),
 
+                              const SizedBox(width: 12),
 
-                            const SizedBox(width: 12),
-
-                            /// Title + Subtitle
-                            Expanded(
-                              child: Obx(() =>
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
+                              /// Title + Subtitle
+                              Expanded(
+                                child: Obx(
+                                  () => Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       CustomText(
                                         controller.taskTitle.value.isEmpty
@@ -116,9 +111,7 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                                       CustomText(
                                         controller.submittedTime.value.isEmpty
                                             ? "Recently"
-                                            : "Submitted ${controller
-                                            .submittedTime
-                                            .value}",
+                                            : "Submitted ${controller.submittedTime.value}",
                                         fontSize: 13,
                                         color: timeColor,
                                       ),
@@ -126,98 +119,101 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                                       CustomText(
                                         controller.requesterUserId.value.isEmpty
                                             ? "User: Loading..."
-                                            : "User: ${controller
-                                            .requesterUserId
-                                            .value} (Requester)",
+                                            : "User: ${controller.requesterUserId.value} (Requester)",
                                         fontSize: 13,
                                         color: timeColor,
                                       ),
                                     ],
-                                  )),
-                            ),
-
-                            /// Open Badge
-                            CustomContainer(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 5),
-                              conColor: rdBgColor,
-                              borderRadius: BorderRadius.circular(20),
-                              child: CustomText(
-                                "Open",
-                                fontSize: 13,
-                                color: redColor,
+                                  ),
+                                ),
                               ),
-                            )
-                          ],
+
+                              /// Open Badge
+                              CustomContainer(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                conColor: rdBgColor,
+                                borderRadius: BorderRadius.circular(20),
+                                child: CustomText(
+                                  "Open",
+                                  fontSize: 13,
+                                  color: redColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    ////////////////////////////////////////////////////////
+                    /// 🔵 2 — REQUESTER INFORMATION CARD
+                    ////////////////////////////////////////////////////////
+                    CustomContainer(
+                      padding: const EdgeInsets.all(16),
+                      borderRadius: BorderRadius.circular(16),
+                      conColor: whiteColor,
+                      border: Border(
+                        bottom: BorderSide(color: bordercol, width: 1),
+                        right: BorderSide(color: bordercol, width: 1),
+                        left: BorderSide(color: bordercol, width: 1),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: blackColor.withOpacity(0.25),
+                          blurRadius: 1,
+                          offset: const Offset(0, 4),
+                          spreadRadius: 0,
                         ),
                       ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  ////////////////////////////////////////////////////////
-                  /// 🔵 2 — REQUESTER INFORMATION CARD
-                  ////////////////////////////////////////////////////////
-                  CustomContainer(
-                    padding: const EdgeInsets.all(16),
-                    borderRadius: BorderRadius.circular(16),
-                    conColor: whiteColor,
-                    border: Border(
-                      bottom: BorderSide(color: bordercol, width: 1),
-                      right: BorderSide(color: bordercol, width: 1),
-                      left: BorderSide(color: bordercol, width: 1),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        blurRadius: 1,
-                        offset: const Offset(0, 4),
-                        spreadRadius: 0,
-                      )
-                    ],
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-
-                        /// Header row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomText(
-                              "Requester Information",
-                              fontSize: 16,
-                              fontWeight: FontVariant.semiBold,
-                            ),
-                            CustomContainer(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              conColor: greenBg,
-                              borderRadius: BorderRadius.circular(20),
-                              child: CustomText(
-                                "Verified",
-                                fontSize: 12,
-                                color: redColor,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Header row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                "Requester Information",
+                                fontSize: 16,
+                                fontWeight: FontVariant.semiBold,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        Obx(() =>
-                            Column(
+                              CustomContainer(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                conColor: greenBg,
+                                borderRadius: BorderRadius.circular(20),
+                                child: CustomText(
+                                  "Verified",
+                                  fontSize: 12,
+                                  color: redColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Obx(
+                            () => Column(
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.person, color: redColor,
-                                        size: 20),
+                                    Icon(
+                                      Icons.person,
+                                      color: redColor,
+                                      size: 20,
+                                    ),
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: CustomText(
                                         controller.requesterName.value.isEmpty
                                             ? "User Name:   Loading..."
-                                            : "User Name:   ${controller
-                                            .requesterName
-                                            .value}",
+                                            : "User Name:   ${controller.requesterName.value}",
                                         fontSize: 14,
                                       ),
                                     ),
@@ -228,16 +224,17 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
 
                                 Row(
                                   children: [
-                                    Icon(Icons.location_on, color: redColor,
-                                        size: 20),
+                                    Icon(
+                                      Icons.location_on,
+                                      color: redColor,
+                                      size: 20,
+                                    ),
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: CustomText(
                                         controller.requesterCity.value.isEmpty
                                             ? "City:   Loading..."
-                                            : "City:   ${controller
-                                            .requesterCity
-                                            .value}",
+                                            : "City:   ${controller.requesterCity.value}",
                                         fontSize: 14,
                                       ),
                                     ),
@@ -254,82 +251,79 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                                       child: CustomText(
                                         controller.requesterUserId.value.isEmpty
                                             ? "Request ID:   Loading..."
-                                            : "Request ID:   ${controller
-                                            .requesterUserId.value}",
+                                            : "Request ID:   ${controller.requesterUserId.value}",
                                         fontSize: 14,
                                       ),
                                     ),
                                   ],
                                 ),
                               ],
-                            )),
-                      ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
 
-                  ),
+                    const SizedBox(height: 20),
 
-
-                  const SizedBox(height: 20),
-
-                  ////////////////////////////////////////////////////////
-                  /// 🟣 3 — HELPER INFORMATION CARD
-                  ////////////////////////////////////////////////////////
-                  CustomContainer(
-                    padding: const EdgeInsets.all(16),
-                    borderRadius: BorderRadius.circular(16),
-                    conColor: whiteColor,
-                    border: Border(
-                      bottom: BorderSide(color: bordercol, width: 1),
-                      right: BorderSide(color: bordercol, width: 1),
-                      left: BorderSide(color: bordercol, width: 1),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        blurRadius: 1,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomText(
-                              "Helper Information",
-                              fontSize: 16,
-                              fontWeight: FontVariant.semiBold,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: rdBgColor,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: CustomText(
-                                "Verified Helper",
-                                fontSize: 12,
-                                color: redColor,
-                              ),
-                            ),
-                          ],
+                    ////////////////////////////////////////////////////////
+                    /// 🟣 3 — HELPER INFORMATION CARD
+                    ////////////////////////////////////////////////////////
+                    CustomContainer(
+                      padding: const EdgeInsets.all(16),
+                      borderRadius: BorderRadius.circular(16),
+                      conColor: whiteColor,
+                      border: Border(
+                        bottom: BorderSide(color: bordercol, width: 1),
+                        right: BorderSide(color: bordercol, width: 1),
+                        left: BorderSide(color: bordercol, width: 1),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: blackColor.withOpacity(0.25),
+                          blurRadius: 1,
+                          offset: const Offset(0, 4),
                         ),
+                      ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                "Helper Information",
+                                fontSize: 16,
+                                fontWeight: FontVariant.semiBold,
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: rdBgColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: CustomText(
+                                  "Verified Helper",
+                                  fontSize: 12,
+                                  color: redColor,
+                                ),
+                              ),
+                            ],
+                          ),
 
-                        const SizedBox(height: 14),
+                          const SizedBox(height: 14),
 
-                        Obx(() =>
-                            Column(
+                          Obx(
+                            () => Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CustomText(
                                   controller.helperName.value.isEmpty
                                       ? "Loading..."
-                                      : "${controller.helperName
-                                      .value}     ${controller
-                                      .helperUserId.value}",
+                                      : "${controller.helperName.value}     ${controller.helperUserId.value}",
                                   fontSize: 15,
                                 ),
 
@@ -346,8 +340,7 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                                     ),
                                     const SizedBox(width: 2),
                                     CustomText(
-                                      "(${controller.helperTasksCompleted
-                                          .value} tasks completed)",
+                                      "(${controller.helperTasksCompleted.value} tasks completed)",
                                       fontSize: 14,
                                       color: timeColor,
                                     ),
@@ -355,12 +348,12 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         CustomText(
                                           "Validation Accuracy",
@@ -376,8 +369,8 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                                       ],
                                     ),
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         CustomText(
                                           "Response Time",
@@ -395,143 +388,147 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                                   ],
                                 ),
                               ],
-                            )),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    ////////////////////////////////////////////////////////
+                    /// 🟡 4 — REQUEST REPORTS CARD
+                    ////////////////////////////////////////////////////////
+                    CustomContainer(
+                      padding: const EdgeInsets.all(16),
+                      borderRadius: BorderRadius.circular(16),
+                      conColor: whiteColor,
+                      border: Border(
+                        bottom: BorderSide(color: bordercol, width: 1),
+                        right: BorderSide(color: bordercol, width: 1),
+                        left: BorderSide(color: bordercol, width: 1),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: blackColor.withOpacity(0.25),
+                          blurRadius: 1,
+                          offset: const Offset(0, 4),
+                        ),
                       ],
-                    ),
-                  ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomText(
+                            "Requester's Report",
+                            fontSize: 16,
+                            fontWeight: FontVariant.semiBold,
+                          ),
+                          const SizedBox(height: 5),
+                          const Divider(thickness: 0.5),
+                          const SizedBox(height: 5),
+                          Obx(
+                            () => CustomText(
+                              controller.requesterReport.value.isEmpty
+                                  ? "No report provided"
+                                  : controller.requesterReport.value,
+                              fontSize: 14,
+                              color: timeColor,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          const Divider(thickness: 0.5),
+                          const SizedBox(height: 10),
+                          CustomText(
+                            "Helper's Report",
+                            fontSize: 15,
+                            fontWeight: FontVariant.semiBold,
+                          ),
 
-                  const SizedBox(height: 20),
+                          const SizedBox(height: 10),
+                          const Divider(thickness: 0.5),
+                          const SizedBox(height: 10),
 
-                  ////////////////////////////////////////////////////////
-                  /// 🟡 4 — REQUEST REPORTS CARD
-                  ////////////////////////////////////////////////////////
-                  CustomContainer(
-                    padding: const EdgeInsets.all(16),
-                    borderRadius: BorderRadius.circular(16),
-                    conColor: whiteColor,
-                    border: Border(
-                      bottom: BorderSide(color: bordercol, width: 1),
-                      right: BorderSide(color: bordercol, width: 1),
-                      left: BorderSide(color: bordercol, width: 1),
+                          Obx(
+                            () => CustomText(
+                              controller.helperReport.value.isEmpty
+                                  ? "No report provided"
+                                  : controller.helperReport.value,
+                              fontSize: 14,
+                              color: timeColor,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        blurRadius: 1,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+
+                    const SizedBox(height: 30),
+
+                    ////////////////////////////////////////////////////////
+                    /// 🔴 BOTTOM ACTION BUTTONS
+                    ////////////////////////////////////////////////////////
+                    Row(
                       children: [
-
-                        CustomText(
-                          "Requester's Report",
-                          fontSize: 16,
-                          fontWeight: FontVariant.semiBold,
+                        Expanded(
+                          child: CustomButton(
+                            height: 50,
+                            label: "Warn Helper",
+                            fontSize: 15,
+                            onPressed: () {},
+                          ),
                         ),
-                        const SizedBox(height: 5),
-                        const Divider(thickness: 0.5),
-                        const SizedBox(height: 5),
-                        Obx(() => CustomText(
-                          controller.requesterReport.value.isEmpty
-                              ? "No report provided"
-                              : controller.requesterReport.value,
-                          fontSize: 14,
-                          color: timeColor,
-                        )),
-                        const SizedBox(height: 15),
-                        const Divider(thickness: 0.5),
-                        const SizedBox(height: 10),
-                        CustomText(
-                          "Helper's Report",
-                          fontSize: 15,
-                          fontWeight: FontVariant.semiBold,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: CustomButton(
+                            height: 50,
+                            label: "Warn Requester",
+                            fontSize: 15,
+                            onPressed: () {},
+                            bgColor: whiteColor,
+                            textColor: walletBlackColor,
+                            border: Border.all(color: walletBlackColor),
+                          ),
                         ),
-
-                        const SizedBox(height: 10),
-                        const Divider(thickness: 0.5),
-                        const SizedBox(height: 10),
-
-                        Obx(() => CustomText(
-                          controller.helperReport.value.isEmpty
-                              ? "No report provided"
-                              : controller.helperReport.value,
-                          fontSize: 14,
-                          color: timeColor,
-                        )),
                       ],
                     ),
-                  ),
 
-                  const SizedBox(height: 30),
+                    const SizedBox(height: 12),
 
-                  ////////////////////////////////////////////////////////
-                  /// 🔴 BOTTOM ACTION BUTTONS
-                  ////////////////////////////////////////////////////////
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomButton(
-                          height: 50,
-                          label: "Warn Helper",
-                          fontSize: 15,
-                          onPressed: () {},
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            height: 50,
+                            label: "Refund Payment",
+                            fontSize: 15,
+                            onPressed: () {},
+                            bgColor: whiteColor,
+                            textColor: blackColor,
+                            border: Border.all(color: blackColor),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: CustomButton(
-                          height: 50,
-                          label: "Warn Requester",
-                          fontSize: 15,
-                          onPressed: () {},
-                          bgColor: whiteColor,
-                          textColor: walletBlackColor,
-                          border: Border.all(color: walletBlackColor),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: CustomButton(
+                            height: 50,
+                            label: "Dismiss Dispute",
+                            fontSize: 15,
+                            onPressed: () {},
+                            bgColor: whiteColor,
+                            textColor: blackColor,
+                            border: Border.all(color: blackColor),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
 
-                  const SizedBox(height: 12),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomButton(
-                          height: 50,
-                          label: "Refund Payment",
-                          fontSize: 15,
-                          onPressed: () {},
-                          bgColor: whiteColor,
-                          textColor: blackColor,
-                          border: Border.all(color: blackColor),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: CustomButton(
-                          height: 50,
-                          label: "Dismiss Dispute",
-                          fontSize: 15,
-                          onPressed: () {},
-                          bgColor: whiteColor,
-                          textColor: blackColor,
-                          border: Border.all(color: blackColor),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 40),
-                ],
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),)
+      ),
     );
   }
 }

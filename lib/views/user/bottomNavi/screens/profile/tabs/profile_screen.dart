@@ -7,10 +7,15 @@ import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/utils/dialog_helpers.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
 
+import '../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../auth/view/onboarding/onboarding_screen.dart';
-import '../edit_profile/edit_profile_screen.dart';
+import '../../home/info/about_app_screen.dart';
+import '../../home/info/contact_us_screen.dart';
+import '../../home/info/faq_screen.dart';
+import '../../home/info/how_it_works_screen.dart';
 import '../edit_profile/controller/edit_profile_controller.dart';
+import '../edit_profile/edit_profile_screen.dart';
 import '../widgets/help_section.dart';
 import '../widgets/menu_section.dart';
 import '../widgets/profile_card.dart';
@@ -61,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
                                 .join()
                                 .toUpperCase()
                           : 'RB';
-                      
+
                       // Build location string from city and country
                       String? locationText;
                       final city = authController.userCity.value;
@@ -95,7 +100,9 @@ class ProfileScreen extends StatelessWidget {
                         locationFontSize: 14,
                         onAvatarTap: () async {
                           // Import EditProfileController
-                          final editController = Get.put(EditProfileController());
+                          final editController = Get.put(
+                            EditProfileController(),
+                          );
                           await editController.pickAndUploadProfileImage();
                         },
                       );
@@ -129,6 +136,75 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // Menu Section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
+                      child: CustomContainer(
+                        conColor: rbcolor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: blackColor.withOpacity(0.25),
+                            blurRadius: 4,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                        child: Column(
+                          children: [
+                            _buildMenuItem(
+                              Icons.info_outline,
+                              "About the app",
+                              () {
+                                Get.to(() => const AboutAppScreen());
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0,
+                              ),
+                              child: Divider(
+                                height: 1,
+                                color: walletCardBorderColor,
+                              ),
+                            ),
+                            _buildMenuItem(
+                              Icons.chat_outlined,
+                              "Contact Us",
+                              () {
+                                Get.to(() => const ContactUsScreen());
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0,
+                              ),
+                              child: Divider(
+                                height: 1,
+                                color: walletCardBorderColor,
+                              ),
+                            ),
+                            _buildMenuItem(Icons.help_outline, "FAQ's", () {
+                              Get.to(() => const FAQScreen());
+                            }),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0,
+                              ),
+                              child: Divider(
+                                height: 1,
+                                color: walletCardBorderColor,
+                              ),
+                            ),
+                            _buildMenuItem(Icons.history, "How it works", () {
+                              Get.to(() => const HowItWorksScreen());
+                            }),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Menu Section
                     MenuSection(
                       containerColor: white2Color,
                       shadowColor: walletBlackColor,
@@ -157,7 +233,7 @@ class ProfileScreen extends StatelessWidget {
                           onConfirm: () async {
                             // Clear all GetX controllers before logout
                             Get.deleteAll(force: true);
-                            
+
                             await FirebaseAuth.instance.signOut();
                             await GoogleSignIn().signOut();
                             Get.offAll(() => OnboardingScreen());
@@ -171,6 +247,30 @@ class ProfileScreen extends StatelessWidget {
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+        child: Row(
+          children: [
+            Icon(icon, size: 24, color: redColor),
+            const SizedBox(width: 15),
+            Expanded(
+              child: CustomText(
+                title,
+                fontSize: 14,
+                fontWeight: FontVariant.regular,
+                color: blackColor,
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 20, color: arrowColor),
+          ],
         ),
       ),
     );

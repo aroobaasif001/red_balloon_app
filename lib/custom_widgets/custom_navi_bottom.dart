@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 
 typedef _LetIndexPage = bool Function(int value);
 
@@ -53,9 +54,9 @@ class CurvedNavigationBar extends StatefulWidget {
     Key? key,
     required this.items,
     this.index = 0,
-    this.color = Colors.white,
+    this.color = whiteColor,
     this.buttonBackgroundColor,
-    this.backgroundColor = Colors.blueAccent,
+    this.backgroundColor = blueAccentColor,
     this.onTap,
     _LetIndexPage? letIndexChange,
     this.animationCurve = Curves.easeOut,
@@ -75,7 +76,8 @@ class CurvedNavigationBar extends StatefulWidget {
   CurvedNavigationBarState createState() => CurvedNavigationBarState();
 }
 
-class CurvedNavigationBarState extends State<CurvedNavigationBar> with SingleTickerProviderStateMixin {
+class CurvedNavigationBarState extends State<CurvedNavigationBar>
+    with SingleTickerProviderStateMixin {
   late double _startingPos;
   late int _endingIndex;
   late double _pos;
@@ -101,7 +103,8 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar> with SingleTic
         if ((endingPos - _pos).abs() < (_startingPos - _pos).abs()) {
           _icon = widget.items[_endingIndex].child;
         }
-        _buttonHide = (1 - ((middle - _pos) / (_startingPos - middle)).abs()).abs();
+        _buttonHide = (1 - ((middle - _pos) / (_startingPos - middle)).abs())
+            .abs();
       });
     });
   }
@@ -137,13 +140,21 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar> with SingleTic
       height: widget.height,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final maxWidth = min(constraints.maxWidth, widget.maxWidth ?? constraints.maxWidth);
+          final maxWidth = min(
+            constraints.maxWidth,
+            widget.maxWidth ?? constraints.maxWidth,
+          );
           return Align(
-            alignment: textDirection == TextDirection.ltr ? Alignment.bottomLeft : Alignment.bottomRight,
+            alignment: textDirection == TextDirection.ltr
+                ? Alignment.bottomLeft
+                : Alignment.bottomRight,
             child: CustomContainer(
               width: maxWidth,
               conColor: widget.backgroundColor,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
               child: Stack(
                 clipBehavior: Clip.none,
                 alignment: Alignment.bottomCenter,
@@ -151,8 +162,12 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar> with SingleTic
                   // FLOATING BUTTON
                   Positioned(
                     bottom: widget.height - 105.0,
-                    left: textDirection == TextDirection.rtl ? null : _pos * maxWidth,
-                    right: textDirection == TextDirection.rtl ? _pos * maxWidth : null,
+                    left: textDirection == TextDirection.rtl
+                        ? null
+                        : _pos * maxWidth,
+                    right: textDirection == TextDirection.rtl
+                        ? _pos * maxWidth
+                        : null,
                     width: maxWidth / _length,
                     child: Center(
                       child: Transform.translate(
@@ -160,7 +175,10 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar> with SingleTic
                         child: Material(
                           color: widget.buttonBackgroundColor ?? widget.color,
                           type: MaterialType.circle,
-                          child: Padding(padding: EdgeInsets.all(widget.iconPadding), child: _icon),
+                          child: Padding(
+                            padding: EdgeInsets.all(widget.iconPadding),
+                            child: _icon,
+                          ),
                         ),
                       ),
                     ),
@@ -263,7 +281,9 @@ class NavCustomPainter extends CustomPainter {
     final span = 1.0 / itemsLength;
     final l = startingLoc + (span - s) / 2;
     loc = textDirection == TextDirection.rtl ? 0.8 - l : l;
-    bottom = hasLabel ? (Platform.isAndroid ? 0.55 : 0.45) : (Platform.isAndroid ? 0.6 : 0.5);
+    bottom = hasLabel
+        ? (Platform.isAndroid ? 0.55 : 0.45)
+        : (Platform.isAndroid ? 0.6 : 0.5);
   }
 
   @override
@@ -314,7 +334,11 @@ class CurvedNavigationBarItem {
   /// TextStyle for [label].
   final TextStyle? labelStyle;
 
-  const CurvedNavigationBarItem({required this.child, this.label, this.labelStyle});
+  const CurvedNavigationBarItem({
+    required this.child,
+    this.label,
+    this.labelStyle,
+  });
 }
 
 class NavBarItemWidget extends StatelessWidget {
@@ -379,7 +403,10 @@ class NavBarItemWidget extends StatelessWidget {
     final opacity = length * difference;
     return Transform.translate(
       offset: Offset(0, difference < 1.0 / length ? verticalAlignment * 40 : 0),
-      child: Opacity(opacity: difference < 1.0 / length * 0.99 ? opacity : 1.0, child: child),
+      child: Opacity(
+        opacity: difference < 1.0 / length * 0.99 ? opacity : 1.0,
+        child: child,
+      ),
     );
   }
 }
