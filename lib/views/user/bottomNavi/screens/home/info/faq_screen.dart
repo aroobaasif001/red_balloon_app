@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/custom_widgets/formatted_text.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import '../../profile/controllers/user_app_content_controller.dart';
 
-class FAQScreen extends StatelessWidget {
+import '../../profile/widgets/faqtile.dart';
+
+class FAQScreen extends StatefulWidget {
   const FAQScreen({super.key});
 
   @override
+  State<FAQScreen> createState() => _FAQScreenState();
+}
+
+class _FAQScreenState extends State<FAQScreen> {
+  /// Track dropdown open/close states
+  List<bool> isOpenList = [false, false, false, false, false];
+
+  @override
   Widget build(BuildContext context) {
+    final contentController = Get.put(UserAppContentController());
+
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -15,70 +29,67 @@ class FAQScreen extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: blackColor),
+          icon: const Icon(Icons.arrow_back, color: blackColor, size: 20),
           onPressed: () => Get.back(),
         ),
         centerTitle: true,
-        title: CustomText(
-          "FAQ's",
-          fontSize: 24,
+        title: Obx(() => CustomText(
+          contentController.getTitle('faq', "FAQ's"),
+          fontSize: 20,
           fontWeight: FontVariant.bold,
           color: blackColor,
-        ),
+        )),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          _buildFAQItem(
-            "How do I post a task?",
-            "To post a task, click on the '+' button on the home screen, fill in the details like title, description, budget, and location, then submit.",
-          ),
-          _buildFAQItem(
-            "Is my payment secure?",
-            "Yes, we use secure payment gateways to ensure your transactions are safe. Funds are held in escrow until the task is completed and approved.",
-          ),
-          _buildFAQItem(
-            "How do I become a helper?",
-            "Simply complete your profile and start browsing available tasks. You can place offers on tasks that match your skills.",
-          ),
-          _buildFAQItem(
-            "What if I'm not satisfied with the work?",
-            "You can communicate with the helper through our chat system. If the issue persists, our support team can assist with dispute resolution.",
-          ),
-          _buildFAQItem(
-            "How do I change my location?",
-            "You can update your location settings in your profile section to find tasks near you.",
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFAQItem(String question, String answer) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(
-        color: rbcolor.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: rbcolor.withOpacity(0.1)),
-      ),
-      child: ExpansionTile(
-        title: CustomText(
-          question,
-          fontSize: 16,
-          fontWeight: FontVariant.semiBold,
-          color: blackColor,
-        ),
-        childrenPadding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 10,
-        ),
-        expandedAlignment: Alignment.topLeft,
-        tilePadding: const EdgeInsets.symmetric(horizontal: 15),
-        children: [
-          CustomText(answer, fontSize: 14, color: blackColor.withOpacity(0.7)),
-        ],
-      ),
+      body: Obx(() {
+        final faqItems = contentController.getList('faq', 'items');
+        final dynamicContent = contentController.getContent('faq', '');
+        
+        return ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            if (dynamicContent.isNotEmpty) ...[
+              FormattedText(
+                text: dynamicContent,
+                fontSize: 14,
+                color: blackColor.withOpacity(0.7),
+              ),
+              const SizedBox(height: 20),
+              const Divider(),
+              const SizedBox(height: 20),
+            ],
+            
+            ...List.generate(faqItems.length, (index) {
+              final item = faqItems[index];
+              // Use a local state for each item if needed, but since FAQ list can change, 
+              // we might need a better way to track isOpen states.
+              // For now, let's just use the index if it exists in isOpenList.
+              if (isOpenList.length <= index) {
+                isOpenList.add(false);
+              }
+              
+              return Column(
+                children: [
+                  FaqTile(
+                    index: index,
+                    question: item['question'] ?? '',
+                    isOpen: isOpenList[index],
+                    answer: item['answer'] ?? '',
+                    onTap: () {
+                      setState(() {
+                        isOpenList[index] = !isOpenList[index];
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              );
+            }),
+            
+            if (faqItems.isEmpty && dynamicContent.isEmpty)
+              const Center(child: CustomText('No FAQ items found.')),
+          ],
+        );
+      }),
     );
   }
 }

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import '../controllers/user_app_content_controller.dart';
 
 import '../tabs/help_center_screen.dart';
-import '../tabs/messages_screen.dart';
 import '../tabs/reviews_and_feedback_screen.dart';
 import '../tabs/terms_and_policy_screen.dart';
 import 'menu_item.dart';
@@ -61,57 +61,58 @@ class MenuSection extends StatelessWidget {
         Get.to(() => ReviewsAndFeedback());
       },
     ),
-
-    MenuItemData(
-      icon: 'assets/icons/homemessage.png',
-      label: 'Messages',
-      hasArrow: true,
-      onTap: () {
-        Get.to(() => MessagesScreen());
-      },
-    ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final contentController = Get.put(UserAppContentController());
     final items = menuItems ?? defaultMenuItems;
 
-    return CustomContainer(
-      padding: padding,
-      conColor: containerColor ?? white2Color,
-      borderRadius: borderRadius ?? BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: (shadowColor ?? walletBlackColor).withOpacity(
-            shadowOpacity ?? 0.25,
+    return Obx(() {
+      // Filter items based on dynamic visibility
+      final filteredItems = items.where((item) {
+        if (item.label == 'Help Center') return contentController.isVisible('help_center');
+        if (item.label == 'Terms & Privacy') return contentController.isVisible('terms_privacy');
+        return true;
+      }).toList();
+
+      return CustomContainer(
+        padding: padding,
+        conColor: containerColor ?? white2Color,
+        borderRadius: borderRadius ?? BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: (shadowColor ?? walletBlackColor).withOpacity(
+              shadowOpacity ?? 0.25,
+            ),
+            blurRadius: shadowBlur ?? 4,
+            offset: const Offset(0, 4),
           ),
-          blurRadius: shadowBlur ?? 4,
-          offset: const Offset(0, 4),
-        ),
-      ],
-      child: Column(
-        children: List.generate(
-          items.length,
-          (index) => Column(
-            children: [
-              MenuItem(
-                icon: items[index].icon,
-                label: items[index].label,
-                hasArrow: items[index].hasArrow,
-                hasToggle: items[index].hasToggle,
-                onTap: items[index].onTap,
-                onToggleChanged: items[index].onToggleChanged,
-              ),
-              if (index < items.length - 1)
-                Divider(
-                  height: 1,
-                  color: dividerColor ?? walletCardBorderColor,
+        ],
+        child: Column(
+          children: List.generate(
+            filteredItems.length,
+            (index) => Column(
+              children: [
+                MenuItem(
+                  icon: filteredItems[index].icon,
+                  label: filteredItems[index].label,
+                  hasArrow: filteredItems[index].hasArrow,
+                  hasToggle: filteredItems[index].hasToggle,
+                  onTap: filteredItems[index].onTap,
+                  onToggleChanged: filteredItems[index].onToggleChanged,
                 ),
-            ],
+                if (index < filteredItems.length - 1)
+                  Divider(
+                    height: 1,
+                    color: dividerColor ?? walletCardBorderColor,
+                  ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
+import 'package:red_balloon_app/custom_widgets/formatted_text.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import '../controllers/user_app_content_controller.dart';
 
 import '../controller/terms_policy_controller.dart';
 import '../widgets/terms_policy_widgets.dart';
@@ -11,11 +13,15 @@ class TermsAndPolicyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final contentController = Get.put(UserAppContentController());
+
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: whiteColor,
-        appBar: CustomAppBar(titleText: 'Terms & Privacy Policy'),
+        appBar: CustomAppBar(
+          titleText: contentController.getTitle('terms_privacy', 'Terms & Privacy Policy'),
+        ),
         body: GetBuilder<TermsPolicyController>(
           init: TermsPolicyController(),
           builder: (controller) {
@@ -24,6 +30,23 @@ class TermsAndPolicyScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Obx(() {
+                    final dynamicContent = contentController.getContent('terms_privacy', '');
+                    if (dynamicContent.isEmpty) return const SizedBox.shrink();
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FormattedText(
+                          text: dynamicContent,
+                          fontSize: 14,
+                          color: blackColor.withOpacity(0.7),
+                        ),
+                        const SizedBox(height: 20),
+                        const Divider(),
+                        const SizedBox(height: 20),
+                      ],
+                    );
+                  }),
                   buildHeading("1. Introduction"),
 
                   buildBodyRichText(

@@ -14,8 +14,8 @@ import '../../home/info/about_app_screen.dart';
 import '../../home/info/contact_us_screen.dart';
 import '../../home/info/faq_screen.dart';
 import '../../home/info/how_it_works_screen.dart';
-import '../edit_profile/controller/edit_profile_controller.dart';
 import '../edit_profile/edit_profile_screen.dart';
+import '../controllers/user_app_content_controller.dart';
 import '../widgets/help_section.dart';
 import '../widgets/menu_section.dart';
 import '../widgets/profile_card.dart';
@@ -99,11 +99,37 @@ class ProfileScreen extends StatelessWidget {
                         namefontSize: 22,
                         locationFontSize: 14,
                         onAvatarTap: () async {
-                          // Import EditProfileController
-                          final editController = Get.put(
-                            EditProfileController(),
-                          );
-                          await editController.pickAndUploadProfileImage();
+                          // // Import EditProfileController
+                          // final editController = Get.put(
+                          //   EditProfileController(),
+                          // );
+                          // await editController.pickAndUploadProfileImage();
+                        },
+                        onAvatarLongPressStart: (details) {
+                          if (photoURL != null && photoURL!.isNotEmpty) {
+                            Get.dialog(
+                              GestureDetector(
+                                onTap: () => Get.back(),
+                                child: Container(
+                                  color: Colors.black.withOpacity(0.9),
+                                  alignment: Alignment.center,
+                                  child: Image.network(
+                                    photoURL!,
+                                    fit: BoxFit.contain,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+                                ),
+                              ),
+                              barrierDismissible: true,
+                              useSafeArea: false,
+                            );
+                          }
+                        },
+                        onAvatarLongPressEnd: (details) {
+                          if (Get.isDialogOpen ?? false) {
+                            Get.back();
+                          }
                         },
                       );
                     }),
@@ -149,57 +175,71 @@ class ProfileScreen extends StatelessWidget {
                             offset: const Offset(0, 4),
                           ),
                         ],
-                        child: Column(
-                          children: [
-                            _buildMenuItem(
-                              Icons.info_outline,
-                              "About the app",
-                              () {
-                                Get.to(() => const AboutAppScreen());
-                              },
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                              ),
-                              child: Divider(
-                                height: 1,
-                                color: walletCardBorderColor,
-                              ),
-                            ),
-                            _buildMenuItem(
-                              Icons.chat_outlined,
-                              "Contact Us",
-                              () {
-                                Get.to(() => const ContactUsScreen());
-                              },
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                              ),
-                              child: Divider(
-                                height: 1,
-                                color: walletCardBorderColor,
-                              ),
-                            ),
-                            _buildMenuItem(Icons.help_outline, "FAQ's", () {
-                              Get.to(() => const FAQScreen());
-                            }),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                              ),
-                              child: Divider(
-                                height: 1,
-                                color: walletCardBorderColor,
-                              ),
-                            ),
-                            _buildMenuItem(Icons.history, "How it works", () {
-                              Get.to(() => const HowItWorksScreen());
-                            }),
-                          ],
-                        ),
+                        child: Obx(() {
+                          final contentController = Get.put(UserAppContentController());
+                          
+                          return Column(
+                            children: [
+                              if (contentController.isVisible('about_app')) ...[
+                                _buildMenuItem(
+                                  Icons.info_outline,
+                                  contentController.getTitle('about_app', "About the app"),
+                                  () {
+                                    Get.to(() => const AboutAppScreen());
+                                  },
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                  child: Divider(
+                                    height: 1,
+                                    color: walletCardBorderColor,
+                                  ),
+                                ),
+                              ],
+                              if (contentController.isVisible('contact_us')) ...[
+                                _buildMenuItem(
+                                  Icons.chat_outlined,
+                                  contentController.getTitle('contact_us', "Contact Us"),
+                                  () {
+                                    Get.to(() => const ContactUsScreen());
+                                  },
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                  child: Divider(
+                                    height: 1,
+                                    color: walletCardBorderColor,
+                                  ),
+                                ),
+                              ],
+                              if (contentController.isVisible('faq')) ...[
+                                _buildMenuItem(
+                                  Icons.help_outline,
+                                  contentController.getTitle('faq', "FAQ's"),
+                                  () {
+                                    Get.to(() => const FAQScreen());
+                                  },
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                  child: Divider(
+                                    height: 1,
+                                    color: walletCardBorderColor,
+                                  ),
+                                ),
+                              ],
+                              if (contentController.isVisible('how_it_works')) ...[
+                                _buildMenuItem(
+                                  Icons.history,
+                                  contentController.getTitle('how_it_works', "How it works"),
+                                  () {
+                                    Get.to(() => const HowItWorksScreen());
+                                  },
+                                ),
+                              ],
+                            ],
+                          );
+                        }),
                       ),
                     ),
                     const SizedBox(height: 20),

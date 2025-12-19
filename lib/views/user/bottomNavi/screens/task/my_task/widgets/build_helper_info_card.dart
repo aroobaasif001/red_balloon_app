@@ -9,6 +9,7 @@ import '../../../../../../../utils/colors.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
 import '../../../profile/tabs/controller/chat_controller.dart';
+import '../tabs/user_profile_screen.dart';
 import '../controller/in_progress_task_controller.dart';
 
 /// HELPER INFO CARD: initials avatar, name, rating, role, actions
@@ -188,14 +189,17 @@ Widget buildHelperInfoCard(
         const SizedBox(height: 12),
         InkWell(
           onTap: () {
-            if (photoUrl != null && photoUrl!.isNotEmpty) {
-              DialogHelpers.showHelperProfileDialog(
-                Get.context!,
-                userName,
-                photoUrl!,
-                userId,
-              );
-            }
+            Get.to(
+              () => UserProfileScreen(
+                userPhoto: photoUrl,
+                userId: userId,
+                userName: userName,
+                userInitials: controller.helperInitials.value,
+                rating: controller.rating.value,
+                tasksCompleted: 0,
+                tasksRequested: 0,
+              ),
+            );
           },
           child: const Center(
             child: CustomText(

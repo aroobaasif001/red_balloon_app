@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
+import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/tabs/escrow_detail.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/tabs/withdraw_funds.dart';
 
@@ -53,10 +54,17 @@ class WalletTab extends StatelessWidget {
                 // Available Balance Card
                 Obx(
                   () => WalletBalanceCard(
+                    backgroundColor: white2Color,
+                    titleColor: blackColor,
+                    currencyColor: blackColor,
+                    balanceColor: blackColor,
+                    subTitleColor: blackColor,
                     currency: controller.currency.value,
                     balance: controller.availableBalance.value,
                     subtitle: 'Ready to use for new tasks or withdrawal.',
                     onAddFunds: controller.addFunds,
+                    buttonBackgroundColor: redColor,
+                    buttonForegroundColor: whiteColor,
                   ),
                 ),
 

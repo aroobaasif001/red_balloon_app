@@ -59,12 +59,14 @@ class _MyTaskScreenState extends State<MyTaskScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
+              color: whiteColor,
               child: TabBar(
                 controller: controller.tabController,
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 dividerColor: Colors.transparent,
+                indicatorAnimation: TabIndicatorAnimation.elastic,
                 indicator: BoxDecoration(
                   color: redColor,
                   borderRadius: BorderRadius.circular(999),
@@ -77,6 +79,7 @@ class _MyTaskScreenState extends State<MyTaskScreen> {
                   fontWeight: FontWeight.w600,
                 ),
                 unselectedLabelStyle: GoogleFonts.instrumentSans(
+                  color: whiteColor,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

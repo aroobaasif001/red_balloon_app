@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/custom_widgets/formatted_text.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 import '../widgets/faqtile.dart';
+import '../controllers/user_app_content_controller.dart'; // Keep original import for UserAppContentController
 import 'contact_support.dart';
 
 class HelpCenterScreen extends StatefulWidget {
@@ -25,182 +27,200 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final contentController = Get.put(UserAppContentController());
+
     return SafeArea(
       top: false,
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
             children: [
-              CustomAppBar1(title: 'Help Center', showRightImage: false),
+              CustomAppBar1(
+                title: contentController.getTitle('help_center', 'Help Center'), 
+                showRightImage: false,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 40),
-
-                      /// COMMON TOPICS TITLE
-                      CustomText(
-                        'Common Topics',
-                        fontSize: 16,
-                        fontWeight: FontVariant.bold,
-                        color: blackColor,
-                      ),
-                      const SizedBox(height: 15),
-
-                      /// FAQ TILES
-                      FaqTile(
-                        index: 0,
-                        question: "How to post a new task?",
-                        isOpen: isOpenList[0],
-                        answer: mainAnswer,
-                        onTap: () {
-                          setState(() {
-                            isOpenList[0] = !isOpenList[0];
-                          });
-                        },
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      FaqTile(
-                        index: 1,
-                        question: "How does escrow work?",
-                        isOpen: isOpenList[1],
-                        answer: mainAnswer,
-                        onTap: () {
-                          setState(() {
-                            isOpenList[1] = !isOpenList[1];
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 10),
-
-                      FaqTile(
-                        index: 2,
-                        question: "When can I withdraw my balance?",
-                        isOpen: isOpenList[2],
-                        answer: mainAnswer,
-                        onTap: () {
-                          setState(() {
-                            isOpenList[2] = !isOpenList[2];
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 10),
-
-                      FaqTile(
-                        index: 3,
-                        question: "How are validators chosen?",
-                        isOpen: isOpenList[3],
-                        answer: mainAnswer,
-                        onTap: () {
-                          setState(() {
-                            isOpenList[3] = !isOpenList[3];
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 10),
-
-                      FaqTile(
-                        index: 4,
-                        question: "What if my task is rejected?",
-                        isOpen: isOpenList[4],
-                        answer: mainAnswer,
-                        onTap: () {
-                          setState(() {
-                            isOpenList[4] = !isOpenList[4];
-                          });
-                        },
-                      ),
-
-                      const SizedBox(height: 25),
-
-                      /// MORE OPTIONS TITLE
-                      CustomText(
-                        'More Options',
-                        fontSize: 16,
-                        fontWeight: FontVariant.bold,
-                        color: blackColor,
-                      ),
-                      const SizedBox(height: 15),
-
-                      /// CONTACT SUPPORT CARD
-                      CustomContainer(
-                        conColor: whiteColor,
-                        borderRadius: BorderRadius.circular(12),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 25,
-                          horizontal: 16,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: blackColor.withOpacity(0.20),
-                            blurRadius: 4,
-                            offset: const Offset(0, 3),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Obx(() {
+                      final dynamicContent = contentController.getContent('help_center', '');
+                      if (dynamicContent.isEmpty) return const SizedBox.shrink();
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          FormattedText(
+                            text: dynamicContent,
+                            fontSize: 14,
+                            color: blackColor.withOpacity(0.7),
                           ),
                         ],
-                        child: Column(
-                          children: [
-                            Image(
-                              image: AssetImage(
-                                'assets/icons/Mask group (1).png',
-                              ),
-                              height: 28,
-                              width: 28,
-                            ),
-                            const SizedBox(height: 10),
-                            CustomText(
-                              'Still need help?',
-                              fontSize: 16,
-                              fontWeight: FontVariant.bold,
-                              color: blackColor,
-                            ),
-                            const SizedBox(height: 20),
-                            CustomText(
-                              'Chat with our support team.',
-                              fontSize: 14,
-                              fontWeight: FontVariant.regular,
-                              color: timeColor,
-                            ),
-                            const SizedBox(height: 10),
+                      );
+                    }),
+                    const SizedBox(height: 40),
 
-                            /// RED BUTTON
-                            InkWell(
-                              onTap: () {
-                                Get.to(() => contactsupportScreen());
-                              },
-                              child: CustomContainer(
-                                height: 48,
-                                conColor: redColor,
-                                borderRadius: BorderRadius.circular(20),
-                                alignment: Alignment.center,
-                                child: CustomText(
-                                  "Contact Support",
-                                  fontSize: 16,
-                                  fontWeight: FontVariant.semiBold,
-                                  color: whiteColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                    /// COMMON TOPICS TITLE
+                    CustomText(
+                      'Common Topics',
+                      fontSize: 16,
+                      fontWeight: FontVariant.bold,
+                      color: blackColor,
+                    ),
+                    const SizedBox(height: 15),
+
+                    /// FAQ TILES
+                    FaqTile(
+                      index: 0,
+                      question: "How to post a new task?",
+                      isOpen: isOpenList[0],
+                      answer: mainAnswer,
+                      onTap: () {
+                        setState(() {
+                          isOpenList[0] = !isOpenList[0];
+                        });
+                      },
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    FaqTile(
+                      index: 1,
+                      question: "How does escrow work?",
+                      isOpen: isOpenList[1],
+                      answer: mainAnswer,
+                      onTap: () {
+                        setState(() {
+                          isOpenList[1] = !isOpenList[1];
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+
+                    FaqTile(
+                      index: 2,
+                      question: "When can I withdraw my balance?",
+                      isOpen: isOpenList[2],
+                      answer: mainAnswer,
+                      onTap: () {
+                        setState(() {
+                          isOpenList[2] = !isOpenList[2];
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+
+                    FaqTile(
+                      index: 3,
+                      question: "How are validators chosen?",
+                      isOpen: isOpenList[3],
+                      answer: mainAnswer,
+                      onTap: () {
+                        setState(() {
+                          isOpenList[3] = !isOpenList[3];
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+
+                    FaqTile(
+                      index: 4,
+                      question: "What if my task is rejected?",
+                      isOpen: isOpenList[4],
+                      answer: mainAnswer,
+                      onTap: () {
+                        setState(() {
+                          isOpenList[4] = !isOpenList[4];
+                        });
+                      },
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    /// MORE OPTIONS TITLE
+                    CustomText(
+                      'More Options',
+                      fontSize: 16,
+                      fontWeight: FontVariant.bold,
+                      color: blackColor,
+                    ),
+                    const SizedBox(height: 15),
+
+                    /// CONTACT SUPPORT CARD
+                    CustomContainer(
+                      conColor: whiteColor,
+                      borderRadius: BorderRadius.circular(12),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 25,
+                        horizontal: 16,
                       ),
-
-                      const SizedBox(height: 40),
-
-                      Center(
-                        child: CustomText(
-                          "Support available 24/7",
-                          fontSize: 12,
-                          color: walletTextGreyColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: blackColor.withOpacity(0.20),
+                          blurRadius: 4,
+                          offset: const Offset(0, 3),
                         ),
-                      ),
+                      ],
+                      child: Column(
+                        children: [
+                          const Image(
+                            image: AssetImage(
+                              'assets/icons/Mask group (1).png',
+                            ),
+                            height: 28,
+                            width: 28,
+                          ),
+                          const SizedBox(height: 10),
+                          const CustomText(
+                            'Still need help?',
+                            fontSize: 16,
+                            fontWeight: FontVariant.bold,
+                            color: blackColor,
+                          ),
+                          const SizedBox(height: 20),
+                          CustomText(
+                            'Chat with our support team.',
+                            fontSize: 14,
+                            fontWeight: FontVariant.regular,
+                            color: timeColor,
+                          ),
+                          const SizedBox(height: 10),
 
-                      const SizedBox(height: 10),
-                    ],
-                  ),
+                          /// RED BUTTON
+                          InkWell(
+                            onTap: () {
+                              Get.to(() => const contactsupportScreen());
+                            },
+                            child: CustomContainer(
+                              height: 48,
+                              conColor: redColor,
+                              borderRadius: BorderRadius.circular(20),
+                              alignment: Alignment.center,
+                              child: const CustomText(
+                                "Contact Support",
+                                fontSize: 16,
+                                fontWeight: FontVariant.semiBold,
+                                color: whiteColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    Center(
+                      child: CustomText(
+                        "Support available 24/7",
+                        fontSize: 12,
+                        color: walletTextGreyColor,
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+                  ],
                 ),
               ),
             ],

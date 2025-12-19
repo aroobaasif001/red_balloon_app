@@ -5,6 +5,7 @@ import '../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../utils/colors.dart';
 import '../tabs/banner_management_screen.dart';
+import '../content_management_screen.dart';
 import 'admin_setting_row.dart';
 
 Widget adminSettingsCard(
@@ -59,6 +60,18 @@ Widget adminSettingsCard(
           ),
           onTap: () {
             Get.to(() => BannerManagementScreen());
+          },
+        ),
+        const SizedBox(height: 10),
+        adminSettingsRow(
+          label: 'Content Management',
+          trailing: const Icon(
+            Icons.chevron_right,
+            color: arrowColor,
+            size: 30,
+          ),
+          onTap: () {
+            Get.to(() => const ContentManagementScreen());
           },
         ),
       ],

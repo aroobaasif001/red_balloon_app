@@ -20,6 +20,8 @@ class ProfileCard extends StatelessWidget {
   final double? namefontSize;
   final double? locationFontSize;
   final VoidCallback? onAvatarTap;
+  final Function(LongPressStartDetails details)? onAvatarLongPressStart;
+  final Function(LongPressEndDetails details)? onAvatarLongPressEnd;
   final EdgeInsets? padding;
   final BorderRadius? borderRadius;
 
@@ -41,6 +43,8 @@ class ProfileCard extends StatelessWidget {
     this.namefontSize = 22,
     this.locationFontSize = 14,
     this.onAvatarTap,
+    this.onAvatarLongPressStart,
+    this.onAvatarLongPressEnd,
     this.padding = const EdgeInsets.all(20),
     this.borderRadius,
   });
@@ -66,40 +70,45 @@ class ProfileCard extends StatelessWidget {
           Stack(
             alignment: Alignment.bottomRight,
             children: [
-              Container(
-                width: avatarSize,
-                height: avatarSize,
-                decoration: BoxDecoration(
-                  color: avatarColor ?? redColor,
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: photoURL != null && photoURL!.isNotEmpty
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            avatarSize ?? 100,
+              GestureDetector(
+                onTap: onAvatarTap,
+                onLongPressStart: onAvatarLongPressStart,
+                onLongPressEnd: onAvatarLongPressEnd,
+                child: Container(
+                  width: avatarSize,
+                  height: avatarSize,
+                  decoration: BoxDecoration(
+                    color: avatarColor ?? redColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: photoURL != null && photoURL!.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                              avatarSize ?? 100,
+                            ),
+                            child: Image.network(
+                              photoURL!,
+                              width: avatarSize,
+                              height: avatarSize,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return CustomText(
+                                  avatarInitials ?? 'RB',
+                                  fontSize: (avatarSize ?? 100) * 0.4,
+                                  fontWeight: FontVariant.bold,
+                                  color: whiteColor,
+                                );
+                              },
+                            ),
+                          )
+                        : CustomText(
+                            avatarInitials ?? 'RB',
+                            fontSize: (avatarSize ?? 100) * 0.4,
+                            fontWeight: FontVariant.bold,
+                            color: whiteColor,
                           ),
-                          child: Image.network(
-                            photoURL!,
-                            width: avatarSize,
-                            height: avatarSize,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return CustomText(
-                                avatarInitials ?? 'RB',
-                                fontSize: (avatarSize ?? 100) * 0.4,
-                                fontWeight: FontVariant.bold,
-                                color: whiteColor,
-                              );
-                            },
-                          ),
-                        )
-                      : CustomText(
-                          avatarInitials ?? 'RB',
-                          fontSize: (avatarSize ?? 100) * 0.4,
-                          fontWeight: FontVariant.bold,
-                          color: whiteColor,
-                        ),
+                  ),
                 ),
               ),
               // GestureDetector(

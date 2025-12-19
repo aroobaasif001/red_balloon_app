@@ -214,11 +214,15 @@ class UserProfileScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CustomText(
-              label,
-              fontSize: 18,
-              color: lastTextColor,
-              fontWeight: FontVariant.medium,
+            CustomContainer(
+              width: 210,
+              child: CustomText(
+                label,
+                fontSize: 17,
+                color: lastTextColor,
+                fontWeight: FontVariant.medium,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             Row(
               children: [
@@ -228,7 +232,7 @@ class UserProfileScreen extends StatelessWidget {
                 ],
                 CustomText(
                   value,
-                  fontSize: 32,
+                  fontSize: 26,
                   fontWeight: FontVariant.bold,
                   color: textColor2,
                 ),
