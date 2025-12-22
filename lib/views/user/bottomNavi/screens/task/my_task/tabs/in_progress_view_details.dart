@@ -94,6 +94,7 @@ class InProgressViewDetails extends StatelessWidget {
                       photoUrl,
                       userName ?? '',
                       userId ?? '', // 🔥 Changed from helperUid to userId
+                      helperUid: helperUid,
                       taskId: taskId,
                       taskTitle: taskTitle,
                       phoneNumber: phoneNumber,

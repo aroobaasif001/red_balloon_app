@@ -28,6 +28,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final storeController = Get.put(InAppStoreController());
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -159,12 +160,11 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
 
-                    // Dynamic Owned Badges (Top 2 Cheapest)
+                    // Dynamic Selected Badges (Top 2)
                     Obx(() {
-                      final storeController = Get.put(InAppStoreController());
-                      final cheapestBadges = storeController.cheapestTwoBadges;
+                      final selectedBadges = storeController.selectedBadgesData;
 
-                      if (cheapestBadges.isEmpty) {
+                      if (selectedBadges.isEmpty) {
                         return CustomContainer(
                           width: double.infinity,
                           padding: const EdgeInsets.all(20),
@@ -172,7 +172,7 @@ class ProfileScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                           child: const Center(
                             child: CustomText(
-                              "No badges owned yet",
+                              "No badges selected yet",
                               fontSize: 14,
                               color: greyColor,
                             ),
@@ -193,7 +193,7 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ],
                         child: Column(
-                          children: cheapestBadges.map((badge) {
+                          children: selectedBadges.map((badge) {
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: Row(

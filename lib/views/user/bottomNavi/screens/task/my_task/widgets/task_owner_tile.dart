@@ -9,7 +9,8 @@ class TaskOwnerTile extends StatelessWidget {
   final String? photoUrl;
   final String? name;
   final String? id;
-  const TaskOwnerTile({super.key, this.id, this.name, this.photoUrl});
+  final String? authUid;
+  const TaskOwnerTile({super.key, this.id, this.name, this.photoUrl, this.authUid});
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +74,7 @@ class TaskOwnerTile extends StatelessWidget {
                   () => UserProfileScreen(
                     userPhoto: photoUrl,
                     userId: id,
+                    userUid: authUid,
                     userName: name!,
                     userInitials: '',
                     rating: 0,

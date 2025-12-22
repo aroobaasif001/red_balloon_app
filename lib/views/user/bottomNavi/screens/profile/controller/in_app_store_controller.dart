@@ -22,12 +22,15 @@ class InAppStoreController extends GetxController {
 
   // Observable list of owned badge data
   RxList<Map<String, dynamic>> ownedBadges = <Map<String, dynamic>>[].obs;
+  // Observable list of selected badge titles
+  RxList<String> selectedBadges = <String>[].obs;
   RxBool isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     _bindOwnedBadges();
+    _bindSelectedBadges();
   }
 
   void _bindOwnedBadges() {
@@ -35,7 +38,81 @@ class InAppStoreController extends GetxController {
     ownedBadges.bindStream(_walletService.getOwnedBadgesStream());
   }
 
-  /// Returns 2 cheapest badges owned by the user
+  void _bindSelectedBadges() {
+    // Real-time listener for selected badges from Firestore
+    selectedBadges.bindStream(_walletService.getSelectedBadgesStream());
+  }
+
+  /// Toggle selection logic
+  Future<void> toggleBadgeSelection(String title) async {
+    final currentlySelected = List<String>.from(selectedBadges);
+    
+    if (currentlySelected.contains(title)) {
+      currentlySelected.remove(title);
+    } else {
+      if (currentlySelected.length >= 2) {
+        Get.snackbar('Limit Reached', 'You can only select up to 2 badges.');
+        return;
+      }
+      currentlySelected.add(title);
+    }
+
+    final result = await _walletService.toggleBadgeSelection(currentlySelected);
+    if (!result['success']) {
+      Get.snackbar('Error', result['message']);
+    }
+  }
+
+  bool isBadgeSelected(String title) {
+    return selectedBadges.contains(title);
+  }
+
+  /// Returns selected badges data
+  List<Map<String, dynamic>> get selectedBadgesData {
+    return masterBadgeList
+        .where((b) => selectedBadges.contains(b['title']))
+        .toList();
+  }
+
+  /// Returns 1 most expensive badge owned by the user
+  Map<String, dynamic>? get mostExpensiveBadge {
+    if (ownedBadges.isEmpty) return null;
+
+    // 1. Get the titles of owned badges
+    final ownedTitles = ownedBadges.map((b) => b['title']).toList();
+
+    // 2. Filter master list for owned ones
+    final ownedFromMaster =
+        masterBadgeList.where((b) => ownedTitles.contains(b['title'])).toList();
+
+    if (ownedFromMaster.isEmpty) return null;
+
+    // 3. Sort by price (descending)
+    ownedFromMaster
+        .sort((a, b) => (b['price'] as num).compareTo(a['price'] as num));
+
+    // 4. Return top 1
+    return ownedFromMaster.first;
+  }
+
+  /// Static helper to find most expensive badge from a list of owned badges
+  static Map<String, dynamic>? getMostExpensiveFromList(
+      List<Map<String, dynamic>> owned) {
+    if (owned.isEmpty) return null;
+
+    final ownedTitles = owned.map((b) => b['title']).toList();
+    final ownedFromMaster =
+        masterBadgeList.where((b) => ownedTitles.contains(b['title'])).toList();
+
+    if (ownedFromMaster.isEmpty) return null;
+
+    ownedFromMaster
+        .sort((a, b) => (b['price'] as num).compareTo(a['price'] as num));
+
+    return ownedFromMaster.first;
+  }
+
+  /// Returns 2 cheapest badges owned by the user (as fallback or reference)
   List<Map<String, dynamic>> get cheapestTwoBadges {
     // 1. Get the titles of owned badges
     final ownedTitles = ownedBadges.map((b) => b['title']).toList();

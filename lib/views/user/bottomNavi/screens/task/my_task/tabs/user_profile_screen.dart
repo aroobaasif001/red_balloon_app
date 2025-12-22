@@ -3,6 +3,9 @@ import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:get/get.dart';
+import 'package:red_balloon_app/services/wallet_service.dart';
+import '../../../profile/controller/in_app_store_controller.dart';
 
 class UserProfileScreen extends StatelessWidget {
   final String userName;
@@ -11,6 +14,7 @@ class UserProfileScreen extends StatelessWidget {
   final int tasksCompleted;
   final int tasksRequested;
   final String? userId;
+  final String? userUid; // 🔥 Added for DB queries
   final String? userPhoto;
 
   const UserProfileScreen({
@@ -21,6 +25,7 @@ class UserProfileScreen extends StatelessWidget {
     required this.tasksCompleted,
     required this.tasksRequested,
     this.userId,
+    this.userUid,
     this.userPhoto,
   });
 
@@ -96,7 +101,7 @@ class UserProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildBadge(
-                  text: userId ?? "RB-452",
+                  text: userId ?? "RB-001",
                   bgColor: whiteLightColor,
                   textColor: redLightColor,
                 ),
@@ -112,30 +117,71 @@ class UserProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            /// ELITE TASKER BADGE
-            _buildBadge(
-              text: "Elite Tasker",
-              bgColor: greenbgColor,
-              textColor: greenColor,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    "assets/icons/star.png", // Assuming this exists or using a substitute icon
-                    height: 20,
-                    width: 20,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.stars, size: 20, color: orangeColor),
-                  ),
-                  const SizedBox(width: 6),
-                  const CustomText(
-                    "Elite Tasker",
-                    fontSize: 14,
-                    color: greenColor,
-                    fontWeight: FontVariant.medium,
-                  ),
-                ],
+            /// DYNAMIC MOST EXPENSIVE BADGE (Specific to viewed user)
+            StreamBuilder<List<Map<String, dynamic>>>(
+              stream: WalletService().getOwnedBadgesStreamByUid(
+                (userUid != null && userUid!.isNotEmpty)
+                    ? userUid!
+                    : (userId != null && userId!.startsWith('RB-')
+                        ? "" // Can't query by RB-ID directly without search
+                        : (userId ?? "")),
               ),
+              builder: (context, snapshot) {
+                // Debug print for developer console
+                print('🔍 UserProfileScreen Badge Debug:');
+                print('   userUid: $userUid');
+                print('   userId: $userId');
+                if (snapshot.hasError) print('   Error: ${snapshot.error}');
+                if (snapshot.hasData) {
+                  print('   Badges found: ${snapshot.data!.length}');
+                } else {
+                  print('   No data yet');
+                }
+
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                final bestBadge =
+                    InAppStoreController.getMostExpensiveFromList(
+                        snapshot.data!);
+
+                if (bestBadge == null) {
+                  print('   Best badge is null after filtering master list');
+                  return const SizedBox.shrink();
+                }
+
+                print('   Displaying best badge: ${bestBadge['title']}');
+
+                return Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: _buildBadge(
+                    text: bestBadge['title'],
+                    bgColor: greenbgColor,
+                    textColor: greenColor,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          bestBadge['image'],
+                          height: 20,
+                          width: 20,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.stars,
+                                  size: 20, color: orangeColor),
+                        ),
+                        const SizedBox(width: 8),
+                        CustomText(
+                          bestBadge['title'],
+                          fontSize: 14,
+                          color: greenColor,
+                          fontWeight: FontVariant.medium,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
 
             const SizedBox(height: 32),
