@@ -31,19 +31,21 @@ class AddFunds extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Current Balance Card
-                WalletBalanceCard(
-                  currency: 'SAR',
-                  backgroundColor: walletCardBgColor,
-                  title: 'Current Balance',
-                  titleColor: grey5Color,
-                  balanceColor: blackColor,
-                  currencyColor: grey5Color,
-                  subTitleColor: grey5Color,
-                  borderColor: fundCardBorderColor,
-                  balance: 255,
-                  subtitle: 'Funds will be added to this balance.',
-                  onAddFunds: () {},
-                  isButtonAvailable: false,
+                Obx(
+                  () => WalletBalanceCard(
+                    currency: 'SAR',
+                    backgroundColor: walletCardBgColor,
+                    title: 'Current Balance',
+                    titleColor: grey5Color,
+                    balanceColor: blackColor,
+                    currencyColor: grey5Color,
+                    subTitleColor: grey5Color,
+                    borderColor: fundCardBorderColor,
+                    balance: controller.walletController.availableBalance.value,
+                    subtitle: 'Funds will be added to this balance.',
+                    onAddFunds: () {},
+                    isButtonAvailable: false,
+                  ),
                 ),
 
                 // Choose Amount Section
@@ -84,13 +86,16 @@ class AddFunds extends StatelessWidget {
                 // Add Funds Button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: CustomButton(
-                    borderRadius: BorderRadius.circular(20),
-
-                    label: 'Add Funds',
-                    onPressed: () {
-                      controller.addFunds();
-                    },
+                  child: Obx(
+                    () => CustomButton(
+                      borderRadius: BorderRadius.circular(20),
+                      label: 'Add Funds',
+                      isLoading: controller.isLoading.value,
+                      loaderColor: redColor,
+                      onPressed: () {
+                        controller.addFunds(context);
+                      },
+                    ),
                   ),
                 ),
 

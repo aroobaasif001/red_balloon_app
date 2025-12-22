@@ -5,8 +5,13 @@ import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../utils/colors.dart';
 import '../widgets/storeitemcard.dart';
 
+import 'package:get/get.dart';
+import '../controller/in_app_store_controller.dart';
+
 class InAppStoreScreen extends StatelessWidget {
-  const InAppStoreScreen({super.key});
+  InAppStoreScreen({super.key});
+
+  final InAppStoreController controller = Get.put(InAppStoreController());
 
   @override
   Widget build(BuildContext context) {
@@ -40,72 +45,78 @@ class InAppStoreScreen extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   /// 🔥 Grid of store badges
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: childAspectRatio,
-                    children: const [
-                      StoreItemCard(
-                        title: "Elite Tasker",
-                        price: 50,
-                        image: 'assets/icons/image 51.png',
-                        isOwned: true,
-                      ),
-
-                      StoreItemCard(
-                        title: "Pro Performer",
-                        price: 100,
-                        image: 'assets/icons/image 49.png',
-                        isOwned: true,
-                      ),
-
-                      StoreItemCard(
-                        title: "Master Helper",
-                        price: 200,
-                        image: 'assets/icons/image 50.png',
-                      ),
-
-                      StoreItemCard(
-                        title: "Task Expert",
-                        price: 250,
-                        image: 'assets/icons/image 48.png',
-                      ),
-
-                      StoreItemCard(
-                        title: "Reliable Achiever",
-                        price: 300,
-                        image: 'assets/icons/image 52.png',
-                      ),
-
-                      StoreItemCard(
-                        title: "Task Veteran",
-                        price: 350,
-                        image: 'assets/icons/image 53.png',
-                      ),
-                      StoreItemCard(
-                        title: "Seasoned Helper",
-                        price: 400,
-                        image: 'assets/icons/leaf.png',
-                      ),
-                      StoreItemCard(
-                        title: "Highly Experienced",
-                        price: 450,
-                        image: 'assets/icons/flag.png',
-                      ),
-                      StoreItemCard(
-                        title: "Quality Assured",
-                        price: 500,
-                        image: 'assets/icons/micro.png',
-                      ),
-                      StoreItemCard(
-                        title: "Safety Certified",
-                        price: 550,
-                        image: 'assets/icons/safety.png',
-                      ),
-                    ],
+                  Obx(
+                    () => GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: childAspectRatio,
+                      children: [
+                        StoreItemCard(
+                          title: "Elite Tasker",
+                          price: 50,
+                          image: 'assets/icons/image 51.png',
+                          isOwned: controller.isBadgeOwned("Elite Tasker"),
+                        ),
+                        StoreItemCard(
+                          title: "Pro Performer",
+                          price: 100,
+                          image: 'assets/icons/image 49.png',
+                          isOwned: controller.isBadgeOwned("Pro Performer"),
+                        ),
+                        StoreItemCard(
+                          title: "Master Helper",
+                          price: 200,
+                          image: 'assets/icons/image 50.png',
+                          isOwned: controller.isBadgeOwned("Master Helper"),
+                        ),
+                        StoreItemCard(
+                          title: "Task Expert",
+                          price: 250,
+                          image: 'assets/icons/image 48.png',
+                          isOwned: controller.isBadgeOwned("Task Expert"),
+                        ),
+                        StoreItemCard(
+                          title: "Reliable Achiever",
+                          price: 300,
+                          image: 'assets/icons/image 52.png',
+                          isOwned: controller.isBadgeOwned("Reliable Achiever"),
+                        ),
+                        StoreItemCard(
+                          title: "Task Veteran",
+                          price: 350,
+                          image: 'assets/icons/image 53.png',
+                          isOwned: controller.isBadgeOwned("Task Veteran"),
+                        ),
+                        StoreItemCard(
+                          title: "Seasoned Helper",
+                          price: 400,
+                          image: 'assets/icons/leaf.png',
+                          isOwned: controller.isBadgeOwned("Seasoned Helper"),
+                        ),
+                        StoreItemCard(
+                          title: "Highly Experienced",
+                          price: 450,
+                          image: 'assets/icons/flag.png',
+                          isOwned:
+                              controller.isBadgeOwned("Highly Experienced"),
+                        ),
+                        StoreItemCard(
+                          title: "Quality Assured",
+                          price: 500,
+                          image: 'assets/icons/micro.png',
+                          isOwned: controller.isBadgeOwned("Quality Assured"),
+                        ),
+                        StoreItemCard(
+                          title: "Safety Certified",
+                          price: 550,
+                          image: 'assets/icons/safety.png',
+                          isOwned: controller.isBadgeOwned("Safety Certified"),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 100),
                 ],

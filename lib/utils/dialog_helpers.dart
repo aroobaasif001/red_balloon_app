@@ -24,6 +24,133 @@ class DialogHelpers {
     );
   }
 
+  static void showAddFundsConfirmationDialog({
+    required BuildContext context,
+    required String amount,
+    required VoidCallback onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              // MAIN WHITE CARD
+              CustomContainer(
+                padding: const EdgeInsets.only(
+                  top: 90,
+                  left: 25,
+                  right: 25,
+                  bottom: 25,
+                ),
+                conColor: whiteColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: blackColor.withOpacity(0.12),
+                    blurRadius: 10,
+                  ),
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // TEXT
+                    CustomText(
+                      "Are you sure you want to add SAR $amount to your wallet?",
+                      fontSize: 16,
+                      color: blackColor,
+                      textAlign: TextAlign.center,
+                      fontWeight: FontVariant.semiBold,
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // BUTTONS ROW
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // NO BUTTON
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: fundCardBorderColor,
+                                width: 2,
+                              ),
+                              conColor: hColor.withOpacity(0.10),
+                              child: const CustomText(
+                                "No",
+                                fontSize: 12,
+                                color: redColor,
+                                fontWeight: FontVariant.regular,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        // SURE BUTTON
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              onConfirm();
+                            },
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              conColor: redColor,
+                              child: const CustomText(
+                                "Sure",
+                                fontSize: 14,
+                                color: whiteColor,
+                                fontWeight: FontVariant.medium,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // ICON CIRCLE
+              Positioned(
+                top: -70,
+                child: CustomContainer(
+                  width: 140,
+                  height: 140,
+                  conColor: redColor,
+                  shape: BoxShape.circle,
+                  child: Center(
+                    child: Image.asset(
+                      "assets/icons/savechange.png", // Reusing established style icon
+                      width: 55,
+                      height: 55,
+                      color: whiteColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   static void handleWithdrawalRequest() {
     // Handle withdrawal request logic here
     Get.snackbar('Success', 'Withdrawal request submitted');
@@ -540,7 +667,12 @@ class DialogHelpers {
     );
   }
 
-  static void showBuyBadgeDialog(BuildContext context) {
+  static void showBuyBadgeDialog(
+    BuildContext context, {
+    String? title,
+    VoidCallback? onConfirm,
+    RxBool? isLoading,
+  }) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -573,7 +705,9 @@ class DialogHelpers {
                   children: [
                     // TEXT
                     CustomText(
-                      "Are You Sure you want to buy this badge",
+                      title != null
+                          ? "Are you sure you want to buy this $title badge?"
+                          : "Are you sure you want to buy this badge?",
                       fontSize: 16,
                       textAlign: TextAlign.center,
                       fontWeight: FontVariant.semiBold,
@@ -614,20 +748,37 @@ class DialogHelpers {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.pop(context);
-                              // TODO: Add Buy function here
+                              if (onConfirm != null) onConfirm();
                             },
                             child: CustomContainer(
                               height: 48,
                               alignment: Alignment.center,
                               borderRadius: BorderRadius.circular(10),
-                              conColor: redColor, // redColor
-                              child: const CustomText(
-                                "Yes",
-                                fontSize: 14,
-                                color: whiteColor,
-                                fontWeight: FontVariant.medium,
-                              ),
+                              conColor: redColor,
+                              child: isLoading != null
+                                  ? Obx(
+                                      () => isLoading.value
+                                          ? const SizedBox(
+                                              height: 20,
+                                              width: 20,
+                                              child: CircularProgressIndicator(
+                                                color: whiteColor,
+                                                strokeWidth: 2,
+                                              ),
+                                            )
+                                          : const CustomText(
+                                              "Yes",
+                                              fontSize: 14,
+                                              color: whiteColor,
+                                              fontWeight: FontVariant.medium,
+                                            ),
+                                    )
+                                  : const CustomText(
+                                      "Yes",
+                                      fontSize: 14,
+                                      color: whiteColor,
+                                      fontWeight: FontVariant.medium,
+                                    ),
                             ),
                           ),
                         ),
