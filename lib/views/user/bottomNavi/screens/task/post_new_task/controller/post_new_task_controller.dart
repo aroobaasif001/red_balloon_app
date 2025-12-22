@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/services/task_service.dart';
 
 class PostNewTaskController extends GetxController {
@@ -221,6 +223,24 @@ class PostNewTaskController extends GetxController {
       isLoading.value = false;
 
       if (taskId != null) {
+        // Send actual push notification to user using current UID
+        try {
+          final currentUid = FirebaseAuth.instance.currentUser?.uid;
+          if (currentUid != null) {
+            await NotificationService.instance.notifyTaskPosted(
+              userId: currentUid,
+              taskTitle: taskTitle.text.trim(),
+              taskId: taskId,
+            );
+            print('✅ Push notification sent for task: $taskId to user: $currentUid');
+          } else {
+            print('⚠️ Cannot send notification: current user is null');
+          }
+        } catch (e) {
+          print('⚠️ Error sending push notification: $e');
+          // Don't fail the task creation if notification fails
+        }
+        
         // Clear form
         clearForm();
         return true;

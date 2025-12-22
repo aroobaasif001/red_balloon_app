@@ -75,17 +75,19 @@ class AdminHomeTab extends StatelessWidget {
                   color: blackLightColor,
                 ),
                 SizedBox(height: 22),
-                Row(
+                Obx(() => Row(
                   children: [
-                    admin_home_platform_metrics_widget(),
+                    admin_home_platform_metrics_widget(
+                      value: controller.activeTasksCount.value.toString(),
+                    ),
                     SizedBox(width: 10),
                     admin_home_platform_metrics_widget(
                       iconPath: 'assets/icons/dispute.png',
-                      value: '8',
+                      value: controller.disputesCount.value.toString(),
                       title: 'Disputes',
                     ),
                   ],
-                ),
+                )),
                 SizedBox(height: 22),
                 Row(
                   children: [
