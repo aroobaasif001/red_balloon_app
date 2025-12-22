@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:red_balloon_app/model/conversation_model.dart';
 import 'package:red_balloon_app/model/message_model.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
 
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -124,17 +125,73 @@ class ChatService {
           .doc(messageId)
           .set(newMessage.toJson());
 
-      // Update conversation's last message
+      // Update conversation's last message and remove both participants from hiddenBy
+      // so the chat reappears if it was hidden by either
       await _firestore.collection('conversations').doc(conversationId).update({
         'lastMessage': message,
         'lastMessageTime': newMessage.timestamp,
         'unreadCount.$receiverId': FieldValue.increment(1),
+        'hiddenBy': FieldValue.arrayRemove([senderId, receiverId]), // 🔥 Re-show for both
       });
+
+      // 🔥 Send push notification to receiver
+      _sendNotification(conversationId, senderId, receiverId, message);
 
       return true;
     } catch (e) {
       print('Error sending message: $e');
       return false;
+    }
+  }
+
+  /// Helper to send chat notification
+  Future<void> _sendNotification(
+    String conversationId,
+    String senderId,
+    String receiverId,
+    String message,
+  ) async {
+    try {
+      // 1) Fetch conversation to get task title and names
+      final convDoc = await _firestore
+          .collection('conversations')
+          .doc(conversationId)
+          .get();
+
+      if (!convDoc.exists) return;
+
+      final data = convDoc.data();
+      if (data == null) return;
+
+      final taskTitle = data['taskTitle'] ?? 'Chat';
+      final taskId = data['taskId'] ?? '';
+      final taskImage = data['taskImage'];
+
+      // Determine sender's name
+      String senderName = 'Someone';
+      String? senderPhoto;
+      if (data['participant1Uid'] == senderId) {
+        senderName = data['participant1Name'] ?? 'User';
+        senderPhoto = data['participant1Photo'];
+      } else {
+        senderName = data['participant2Name'] ?? 'User';
+        senderPhoto = data['participant2Photo'];
+      }
+
+      // 2) Trigger Notification Service
+      await NotificationService.instance.notifyChatMessage(
+        receiverId: receiverId,
+        senderId: senderId,
+        senderName: senderName,
+        message: message,
+        conversationId: conversationId,
+        taskId: taskId,
+        taskTitle: taskTitle,
+        senderPhoto: senderPhoto,
+        taskImage: taskImage,
+      );
+    } catch (e) {
+      print('Error in chat service notification: $e');
     }
   }
 
@@ -151,6 +208,21 @@ class ChatService {
           .map((doc) => MessageModel.fromJson(doc.data()))
           .toList();
     });
+  }
+
+  /// Hide a conversation for the current user
+  Future<void> hideConversation(String conversationId) async {
+    try {
+      final userId = currentUserId;
+      if (userId == null) return;
+
+      await _firestore.collection('conversations').doc(conversationId).update({
+        'hiddenBy': FieldValue.arrayUnion([userId]),
+      });
+      print('✅ Conversation $conversationId hidden for user $userId');
+    } catch (e) {
+      print('Error hiding conversation: $e');
+    }
   }
 
   /// Stream all conversations for current user
@@ -174,9 +246,10 @@ class ChatService {
       // Combine both results
       final allDocs = [...snapshot1.docs, ...snapshot2.docs];
 
-      // Convert to models and sort by last message time
+      // Convert to models, filter out hidden chats, and sort by last message time
       final conversations = allDocs
           .map((doc) => ConversationModel.fromJson(doc.data()))
+          .where((conv) => !conv.hiddenBy.contains(userId)) // 🔥 Filter hidden
           .toList();
 
       conversations

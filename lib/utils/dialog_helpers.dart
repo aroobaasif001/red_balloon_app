@@ -7,6 +7,7 @@ import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
+import 'package:red_balloon_app/services/notification_services.dart';
 import '../views/user/bottomNavi/screens/task/my_task/tabs/task_in_progress_screen.dart';
 import '../views/user/bottomNavi/screens/task/my_task/widgets/send_offer_bottom_sheet.dart';
 import 'colors.dart';
@@ -1890,6 +1891,7 @@ class DialogHelpers {
     required BuildContext context,
     required String offerId,
     required String taskId, // 🔥 Added taskId parameter
+    required String taskTitle, // 🔥 Added taskTitle parameter
     required VoidCallback onAccepted,
   }) {
     showDialog(
@@ -1996,6 +1998,15 @@ class DialogHelpers {
                               print(
                                 '✅ Task $taskId status updated to in progress with acceptedOfferUid: $offeringUserUid',
                               );
+
+                              // 🔥 Send notification to Helper
+                              if (offeringUserUid.isNotEmpty) {
+                                NotificationService.instance.notifyOfferAccepted(
+                                  helperId: offeringUserUid,
+                                  taskTitle: taskTitle,
+                                  taskId: taskId,
+                                );
+                              }
 
                               // Call the callback
                               onAccepted();

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
@@ -8,7 +11,7 @@ import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details2_screen.dart';
 
-class TaskDetailsScreen extends StatelessWidget {
+class TaskDetailsScreen extends StatefulWidget {
   final TaskModel? task; // 🔥 Made optional
 
   const TaskDetailsScreen({
@@ -17,10 +20,54 @@ class TaskDetailsScreen extends StatelessWidget {
   });
 
   @override
+  State<TaskDetailsScreen> createState() => _TaskDetailsScreenState();
+}
+
+class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
+  StreamSubscription? _taskSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _setupTaskListener();
+  }
+
+  void _setupTaskListener() {
+    if (widget.task?.id == null || widget.task!.id!.isEmpty) return;
+
+    _taskSubscription = FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(widget.task!.id)
+        .snapshots()
+        .listen((snapshot) {
+          if (snapshot.exists) {
+            final data = snapshot.data();
+            final status = data?['status']?.toString().toLowerCase();
+
+            // If task is no longer active (e.g., accepted and moved to in progress)
+            if (status != null && status != 'active') {
+              print(
+                '🚀 TaskDetails: Status changed to $status. Navigating back...',
+              );
+              if (mounted) {
+                Get.back();
+              }
+            }
+          }
+        });
+  }
+
+  @override
+  void dispose() {
+    _taskSubscription?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Use provided task or create dummy fallback
     final TaskModel displayTask =
-        task ??
+        widget.task ??
         TaskModel(
           id: 'dummy',
           uid: 'dummy',

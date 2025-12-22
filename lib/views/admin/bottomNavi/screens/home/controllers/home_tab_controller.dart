@@ -47,7 +47,6 @@ class HomeTabsController extends GetxController
       if (userId != null) {
         // Initialize notification service (handles permissions, token, and listeners)
         await NotificationService.instance.initializeForUser(userId);
-        print('✅ Notification service initialized for admin: $userId');
       } else {
         print('⚠️ Cannot initialize notifications: userId is null');
       }

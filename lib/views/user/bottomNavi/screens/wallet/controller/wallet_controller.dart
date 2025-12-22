@@ -31,6 +31,7 @@ class WalletController extends GetxController {
   void _bindWalletData() {
     // Listen to real-time balance updates
     availableBalance.bindStream(_walletService.getWalletBalance());
+    lockedBalance.bindStream(_walletService.getLockedBalance());
 
     // Listen to real-time transactions
     recentTransactions.bindStream(_walletService.getTransactions().map((list) {

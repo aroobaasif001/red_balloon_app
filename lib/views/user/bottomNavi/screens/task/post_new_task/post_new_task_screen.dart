@@ -372,7 +372,11 @@ class PostNewTaskScreen extends StatelessWidget {
                       fontSize: 20,
                       fontWeight: FontVariant.semiBold,
                     ),
-                    CustomText('(Required)', fontWeight: FontVariant.light, color: redColor),
+                    CustomText(
+                      '(Required)',
+                      fontWeight: FontVariant.light,
+                      color: redColor,
+                    ),
                   ],
                 ),
               ),
@@ -472,10 +476,13 @@ class PostNewTaskScreen extends StatelessWidget {
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 200),
                           width: double.maxFinite,
-                          height: isUploading || hasFile ? 180 : null,
+                          height:
+                              180, // 🔥 Fixed finite height to prevent animation crash
+                          alignment: Alignment
+                              .center, // 🔥 Center content to avoid overflow
                           padding: hasFile || isUploading
                               ? EdgeInsets.all(0)
-                              : EdgeInsets.symmetric(horizontal: 58, vertical: 50),
+                              : EdgeInsets.symmetric(horizontal: 58),
                           child: isUploading
                               ? Center(
                                   child: Column(
@@ -486,7 +493,10 @@ class PostNewTaskScreen extends StatelessWidget {
                                         height: 50,
                                         width: 50,
                                         child: CircularProgressIndicator(
-                                          valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                redColor,
+                                              ),
                                         ),
                                       ),
                                       SizedBox(height: 12),
@@ -499,28 +509,29 @@ class PostNewTaskScreen extends StatelessWidget {
                                   ),
                                 )
                               : hasFile
-                                  ? Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        buildImagePreview(),
-                                        buildPdfPreview(),
-                                      ],
-                                    )
-                                  : Column(
-                                      children: [
-                                        Image(
-                                          image: AssetImage(
-                                            'assets/icons/cloud-plus-Ar.png',
-                                          ),
-                                          height: 70,
-                                        ),
-                                        SizedBox(height: 6),
-                                        CustomText(
-                                          'JPG, PNG, PDF (Max 5MB)',
-                                          fontSize: 10,
-                                        ),
-                                      ],
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    buildImagePreview(),
+                                    buildPdfPreview(),
+                                  ],
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(
+                                      image: AssetImage(
+                                        'assets/icons/cloud-plus-Ar.png',
+                                      ),
+                                      height: 70,
                                     ),
+                                    SizedBox(height: 6),
+                                    CustomText(
+                                      'JPG, PNG, PDF (Max 5MB)',
+                                      fontSize: 10,
+                                    ),
+                                  ],
+                                ),
                         ),
                       ),
                     ),

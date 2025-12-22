@@ -166,14 +166,17 @@ class HomeScreen extends StatelessWidget {
                           CustomBonusSlider(),
                           SizedBox(height: 23.99),
                           // Wallet Card
-                          CustomWalletCard(
-                            availableAmount: '255.00',
-                            onAddFunds: () {
-                              print("Add funds tapped");
-                              Get.offAll(
-                                () => BottomNaviScreen(initialIndex: 4),
-                              );
-                            },
+                          Obx(
+                            () => CustomWalletCard(
+                              availableAmount:
+                                  '${controller.walletBalance.value.toStringAsFixed(2)}',
+                              onAddFunds: () {
+                                print("Add funds tapped");
+                                Get.offAll(
+                                  () => BottomNaviScreen(initialIndex: 4),
+                                );
+                              },
+                            ),
                           ),
                           SizedBox(height: 20),
                         ],

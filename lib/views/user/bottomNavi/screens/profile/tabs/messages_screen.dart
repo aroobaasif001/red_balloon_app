@@ -91,36 +91,61 @@ class MessagesScreen extends StatelessWidget {
                       controller.chatService.currentUserId!,
                     );
 
-                    return MessageTile(
-                      name: otherParticipant['name'] ?? 'Unknown',
-                      subtitle: conversation.taskTitle,
-                      message: conversation.lastMessage,
-                      time: controller.getTimeAgo(
-                        conversation.lastMessageTime.toDate(),
+                    return Dismissible(
+                      key: Key(conversation.conversationId),
+                      direction: DismissDirection.horizontal,
+                      background: Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(left: 20),
+                        color: redColor,
+                        child: const Icon(Icons.delete_outline, color: whiteColor),
                       ),
-                      image:
-                          otherParticipant['photo'] ??
-                          'assets/images/user1.png',
-                      unreadCount: unreadCount,
-                      onTap: () {
-                        // Delete old controller if exists
-                        if (Get.isRegistered<ChatController>()) {
-                          Get.delete<ChatController>();
-                        }
-                        
-                        // Navigate to chat screen
-                        Get.put(
-                          ChatController(
-                            taskId: conversation.taskId,
-                            taskTitle: conversation.taskTitle,
-                            taskOwnerId: otherParticipant['uid'],
-                            taskOwnerName: otherParticipant['name'],
-                            taskOwnerPhoto: otherParticipant['photo'],
-                            taskImage: conversation.taskImage,
-                          ),
+                      secondaryBackground: Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 20),
+                        color: redColor,
+                        child: const Icon(Icons.delete_outline, color: whiteColor),
+                      ),
+                      onDismissed: (direction) {
+                        controller.hideConversation(conversation.conversationId);
+                        Get.snackbar(
+                          'Chat',
+                          'Chat deleted successfully!',
+                          snackPosition: SnackPosition.BOTTOM,
+                          duration: const Duration(seconds: 2),
                         );
-                        Get.to(() => const ChatScreen());
                       },
+                      child: MessageTile(
+                        name: otherParticipant['name'] ?? 'Unknown',
+                        subtitle: conversation.taskTitle,
+                        message: conversation.lastMessage,
+                        time: controller.getTimeAgo(
+                          conversation.lastMessageTime.toDate(),
+                        ),
+                        image:
+                            otherParticipant['photo'] ??
+                            'assets/images/user1.png',
+                        unreadCount: unreadCount,
+                        onTap: () {
+                          // Delete old controller if exists
+                          if (Get.isRegistered<ChatController>()) {
+                            Get.delete<ChatController>();
+                          }
+                          
+                          // Navigate to chat screen
+                          Get.put(
+                            ChatController(
+                              taskId: conversation.taskId,
+                              taskTitle: conversation.taskTitle,
+                              taskOwnerId: otherParticipant['uid'],
+                              taskOwnerName: otherParticipant['name'],
+                              taskOwnerPhoto: otherParticipant['photo'],
+                              taskImage: conversation.taskImage,
+                            ),
+                          );
+                          Get.to(() => const ChatScreen());
+                        },
+                      ),
                     );
                   },
                 );

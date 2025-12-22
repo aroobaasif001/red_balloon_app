@@ -22,6 +22,113 @@ class WalletService {
     });
   }
 
+  /// Get current locked balance (escrow)
+  Stream<double> getLockedBalance() {
+    if (_uid.isEmpty) return Stream.value(0.0);
+    
+    return _walletCollection.doc(_uid).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        return (data['escrowBalance'] ?? 0.0).toDouble();
+      }
+      return 0.0;
+    });
+  }
+
+  /// Get current balance (one-time fetch)
+  Future<double> getCurrentBalance() async {
+    if (_uid.isEmpty) return 0.0;
+    
+    try {
+      final snapshot = await _walletCollection.doc(_uid).get();
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        return (data['balance'] ?? 0.0).toDouble();
+      }
+      return 0.0;
+    } catch (e) {
+      print('Error getting current balance: $e');
+      return 0.0;
+    }
+  }
+
+  /// Deduct funds for escrow when posting a task
+  Future<Map<String, dynamic>> deductForEscrow({
+    required double amount,
+    required String taskId,
+    required String taskTitle,
+  }) async {
+    if (_uid.isEmpty) {
+      return {'success': false, 'message': 'User not logged in'};
+    }
+
+    try {
+      final walletDoc = _walletCollection.doc(_uid);
+
+      final result = await _firestore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(walletDoc);
+
+        double currentBalance = 0.0;
+        double currentEscrowBalance = 0.0;
+        if (snapshot.exists) {
+          final data = snapshot.data() as Map<String, dynamic>;
+          currentBalance = (data['balance'] ?? 0.0).toDouble();
+          currentEscrowBalance = (data['escrowBalance'] ?? 0.0).toDouble();
+        }
+
+        // Check if sufficient balance
+        if (currentBalance < amount) {
+          return {
+            'success': false,
+            'message': 'Insufficient balance',
+            'currentBalance': currentBalance,
+            'required': amount,
+          };
+        }
+
+        final newBalance = currentBalance - amount;
+        final newEscrowBalance = currentEscrowBalance + amount;
+
+        // Update wallet balance and total escrow
+        transaction.set(
+          walletDoc,
+          {
+            'balance': newBalance,
+            'escrowBalance': newEscrowBalance,
+            'uid': _uid,
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true),
+        );
+
+        // Add to transactions subcollection
+        final transactionRef = walletDoc.collection('transactions').doc();
+        transaction.set(transactionRef, {
+          'id': transactionRef.id,
+          'title': 'Task Posted - Escrow',
+          'description': taskTitle,
+          'amount': amount,
+          'type': 'debit',
+          'status': 'completed',
+          'taskId': taskId,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        return {
+          'success': true,
+          'message': 'Funds locked in escrow',
+          'newBalance': newBalance,
+          'escrowBalance': newEscrowBalance,
+        };
+      });
+
+      return result;
+    } catch (e) {
+      print('Error deducting for escrow: $e');
+      return {'success': false, 'message': 'An error occurred: ${e.toString()}'};
+    }
+  }
+
   /// Add funds to wallet
   Future<bool> addFunds(double amount) async {
     if (_uid.isEmpty) return false;

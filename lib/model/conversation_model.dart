@@ -14,6 +14,7 @@ class ConversationModel {
   final String lastMessage;
   final Timestamp lastMessageTime;
   final Map<String, int> unreadCount;
+  final List<String> hiddenBy; // 🔥 List of UIDs who have hidden/deleted this chat
 
   ConversationModel({
     required this.conversationId,
@@ -29,6 +30,7 @@ class ConversationModel {
     required this.lastMessage,
     required this.lastMessageTime,
     required this.unreadCount,
+    this.hiddenBy = const [],
   });
 
   // Convert to JSON for Firestore
@@ -47,6 +49,7 @@ class ConversationModel {
       'lastMessage': lastMessage,
       'lastMessageTime': lastMessageTime,
       'unreadCount': unreadCount,
+      'hiddenBy': hiddenBy,
     };
   }
 
@@ -66,6 +69,7 @@ class ConversationModel {
       lastMessage: json['lastMessage'] ?? '',
       lastMessageTime: json['lastMessageTime'] ?? Timestamp.now(),
       unreadCount: Map<String, int>.from(json['unreadCount'] ?? {}),
+      hiddenBy: List<String>.from(json['hiddenBy'] ?? []),
     );
   }
 

@@ -71,4 +71,14 @@ class MessagesController extends GetxController {
       return 'now';
     }
   }
+
+  /// Hide conversation
+  Future<void> hideConversation(String conversationId) async {
+    // 🔥 Optimistic UI update: Remove from local lists immediately
+    conversations.removeWhere((c) => c.conversationId == conversationId);
+    filteredConversations.removeWhere((c) => c.conversationId == conversationId);
+
+    // Update backend
+    await chatService.hideConversation(conversationId);
+  }
 }

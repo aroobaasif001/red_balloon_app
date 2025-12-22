@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -39,11 +40,36 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
   Map<String, UserModel?> offerUsers = {}; // 🔥 Cache for user data
   bool isLoading = true;
   StreamSubscription? _offersSubscription;
+  StreamSubscription? _taskSubscription; // 🔥 Add task listener
 
   @override
   void initState() {
     super.initState();
     _setupRealtimeOffers();
+    _setupTaskListener(); // 🔥 Start listening to task status
+  }
+
+  void _setupTaskListener() {
+    if (widget.task.id == null || widget.task.id!.isEmpty) return;
+
+    _taskSubscription = FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(widget.task.id)
+        .snapshots()
+        .listen((snapshot) {
+          if (snapshot.exists) {
+            final data = snapshot.data();
+            final status = data?['status']?.toString().toLowerCase();
+
+            // If task is no longer active (e.g., accepted and moved to in progress)
+            if (status != null && status != 'active') {
+              print('🚀 Task status changed to $status. Navigating back...');
+              if (mounted) {
+                Get.back(); // Automatically go back when offer is accepted
+              }
+            }
+          }
+        });
   }
 
   void _setupRealtimeOffers() {
@@ -108,6 +134,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
   @override
   void dispose() {
     _offersSubscription?.cancel();
+    _taskSubscription?.cancel(); // 🔥 Cancel task listener
     super.dispose();
   }
 
@@ -322,6 +349,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                         context: context,
                         offerId: offer.offerId,
                         taskId: widget.task.id ?? '',
+                        taskTitle: widget.task.title, // 🔥 Added taskTitle
                         onAccepted: () {
                           // Real-time listener will automatically update offers
                         },

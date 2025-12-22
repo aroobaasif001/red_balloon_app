@@ -31,6 +31,8 @@ class TaskInProgressController extends GetxController {
   // Help Request Status
   var requesterHelpRequested = false.obs;
   var helperHelpRequested = false.obs;
+  var helperHelpReason = ''.obs;
+  var helperHelpDetails = ''.obs;
 
   // Real-time listeners
   StreamSubscription? _taskListener;
@@ -53,6 +55,8 @@ class TaskInProgressController extends GetxController {
         if (data != null) {
           requesterHelpRequested.value = data['requesterHelpRequested'] ?? false;
           helperHelpRequested.value = data['helperHelpRequested'] ?? false;
+          helperHelpReason.value = data['helperHelpReason'] ?? '';
+          helperHelpDetails.value = data['helperHelpDetails'] ?? '';
           
           // Also update local task model if needed, but these flags are most critical
           // task.value = TaskModel.fromJson(data, snapshot.id); // Optional, might cause rebuilds

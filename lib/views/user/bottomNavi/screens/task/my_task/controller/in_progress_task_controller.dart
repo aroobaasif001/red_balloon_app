@@ -107,6 +107,8 @@ class InProgressTaskController extends GetxController {
   // Help Request Status for Helper view
   RxBool requesterHelpRequested = false.obs;
   RxBool helperHelpRequested = false.obs;
+  RxString requesterHelpReason = ''.obs;
+  RxString requesterHelpDetails = ''.obs;
   final TaskService _taskService = TaskService();
 
   /// Start real-time listener for task help requests
@@ -120,6 +122,8 @@ class InProgressTaskController extends GetxController {
           requesterHelpRequested.value =
               data['requesterHelpRequested'] ?? false;
           helperHelpRequested.value = data['helperHelpRequested'] ?? false;
+          requesterHelpReason.value = data['requesterHelpReason'] ?? '';
+          requesterHelpDetails.value = data['requesterHelpDetails'] ?? '';
         }
       }
     });

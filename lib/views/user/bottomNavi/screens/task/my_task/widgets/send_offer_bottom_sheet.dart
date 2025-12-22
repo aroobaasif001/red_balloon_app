@@ -8,6 +8,7 @@ import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../../../../../services/offer_service2.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 
 class SendOfferBottomSheet extends StatefulWidget {
@@ -254,6 +255,15 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
       setState(() => _isSubmitting = false);
 
       if (success) {
+        // 🔥 Send Notification to Task Owner
+        NotificationService.instance.notifyOfferReceived(
+          taskOwnerId: widget.taskOwnerUid!,
+          helperName: userName,
+          taskTitle: widget.taskTitle ?? 'New Task',
+          taskId: widget.taskId!,
+          offerAmount: offerPrice.toDouble(),
+        );
+
         Get.back(); // Close bottom sheet
         DialogHelpers.showPaymentSuccessDialog(
           context: context,

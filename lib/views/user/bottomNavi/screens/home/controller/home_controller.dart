@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
+import 'package:red_balloon_app/services/wallet_service.dart';
 
 class HomeController extends GetxController with GetTickerProviderStateMixin {
   late TabController tabController;
+  final WalletService _walletService = WalletService();
 
   RxInt selectedTabIndex = 0.obs;
+  RxDouble walletBalance = 0.0.obs;
 
   @override
   void onInit() {
@@ -16,6 +19,11 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
     
     // Check and request notification permissions
     _checkNotificationPermission();
+
+    // Listen to wallet balance
+    _walletService.getWalletBalance().listen((balance) {
+      walletBalance.value = balance;
+    });
   }
   
   Future<void> _checkNotificationPermission() async {
@@ -26,7 +34,6 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
       if (userId != null) {
         // Initialize notification service (handles permissions, token, and listeners)
         await NotificationService.instance.initializeForUser(userId);
-        print('✅ Notification service initialized for user: $userId');
       } else {
         print('⚠️ Cannot initialize notifications: userId is null');
       }

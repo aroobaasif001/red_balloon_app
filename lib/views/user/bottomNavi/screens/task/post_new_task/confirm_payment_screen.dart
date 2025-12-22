@@ -82,11 +82,20 @@ class ConfirmPaymentScreen extends StatelessWidget {
                         fontSize: 16,
                         fontWeight: FontVariant.medium,
                       ),
-                      CustomText(
-                        'SAR 100',
-                        fontSize: 24,
-                        fontWeight: FontVariant.bold,
-                        color: redColor,
+                      GetBuilder<PostNewTaskController>(
+                        builder: (controller) {
+                          return Obx(
+                            () => CustomText(
+                              'SAR ${controller.walletBalance.value.toStringAsFixed(2)}',
+                              fontSize: 24,
+                              fontWeight: FontVariant.bold,
+                              color: controller.walletBalance.value <
+                                      (double.tryParse(controller.taskBudget.text) ?? 0)
+                                  ? redColor
+                                  : Colors.green,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

@@ -12,6 +12,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import 'get_server_key.dart';
+import '../views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
+import '../views/user/bottomNavi/screens/profile/tabs/controller/chat_controller.dart';
 
 /// Notification types used in Firestore + payloads
 enum NoticeType { success, danger, info, warning }
@@ -45,7 +47,8 @@ class NotificationService {
       debugPrint('📤 Sending task posted notification to user: $userId');
 
       final title = '🎉 Task Posted Successfully!';
-      final body = 'Your task "$taskTitle" has been posted. Helpers will be notified.';
+      final body =
+          'Your task "$taskTitle" has been posted. Helpers will be notified.';
 
       // 1) Save notification to Firestore
       await FirebaseFirestore.instance
@@ -53,15 +56,15 @@ class NotificationService {
           .doc(userId)
           .collection('items')
           .add({
-        'title': title,
-        'body': body,
-        'type': NoticeType.success.name,
-        'category': 'task_posted',
-        'taskId': taskId,
-        'taskTitle': taskTitle,
-        'read': false,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+            'title': title,
+            'body': body,
+            'type': NoticeType.success.name,
+            'category': 'task_posted',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
 
       debugPrint('✅ Notification saved to Firestore');
 
@@ -102,6 +105,228 @@ class NotificationService {
   }
 
   // ============================================
+  // 🎯 OFFER NOTIFICATIONS
+  // ============================================
+
+  /// Send push notification to task owner when someone sends an offer
+  /// Also saves notification to Firestore for history
+  Future<void> notifyOfferReceived({
+    required String taskOwnerId,
+    required String helperName,
+    required String taskTitle,
+    required String taskId,
+    required double offerAmount,
+  }) async {
+    try {
+      debugPrint('📤 Sending offer received notification to user: $taskOwnerId');
+
+      final title = '💰 New Offer Received!';
+      final body =
+          '$helperName sent an offer of SAR ${offerAmount.toStringAsFixed(0)} for your task "$taskTitle".';
+
+      // 1) Save notification to Firestore
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(taskOwnerId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.info.name,
+            'category': 'offer_received',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'helperName': helperName,
+            'offerAmount': offerAmount,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      debugPrint('✅ Offer Notification saved to Firestore');
+
+      // 2) Get task owner's device token from Firestore
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(taskOwnerId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+
+      if (deviceToken == null || deviceToken.isEmpty) {
+        debugPrint('⚠️ No device token found for task owner: $taskOwnerId');
+        return;
+      }
+
+      // Get user's Android SDK version (for icon compatibility)
+      final androidSdk = userDoc.data()?['androidSdk'] as int?;
+
+      // 3) Send FCM push notification
+      await _sendFcmDirect(
+        token: deviceToken,
+        title: title,
+        body: body,
+        data: {
+          'category': 'offer_received',
+          'taskId': taskId,
+          'route': 'task_details', // For navigation
+        },
+        recipientSdk: androidSdk,
+      );
+
+      debugPrint('✅ Offer received notification sent successfully');
+    } catch (e) {
+      debugPrint('❌ Error sending offer notification: $e');
+    }
+  }
+
+  /// Send push notification to helper when their offer is accepted
+  /// Also saves notification to Firestore for history
+  Future<void> notifyOfferAccepted({
+    required String helperId,
+    required String taskTitle,
+    required String taskId,
+  }) async {
+    try {
+      debugPrint('📤 Sending offer accepted notification to helper: $helperId');
+
+      final title = '🎊 Offer Accepted!';
+      final body = 'Your offer for the task "$taskTitle" has been accepted. You can now start the task.';
+
+      // 1) Save notification to Firestore
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(helperId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.success.name,
+            'category': 'offer_accepted',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      debugPrint('✅ Acceptance Notification saved to Firestore');
+
+      // 2) Get helper's device token from Firestore
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(helperId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+
+      if (deviceToken == null || deviceToken.isEmpty) {
+        debugPrint('⚠️ No device token found for helper: $helperId');
+        return;
+      }
+
+      // Get user's Android SDK version (for icon compatibility)
+      final androidSdk = userDoc.data()?['androidSdk'] as int?;
+
+      // 3) Send FCM push notification
+      await _sendFcmDirect(
+        token: deviceToken,
+        title: title,
+        body: body,
+        data: {
+          'category': 'offer_accepted',
+          'taskId': taskId,
+          'route': 'task_in_progress', // For navigation
+        },
+        recipientSdk: androidSdk,
+      );
+
+      debugPrint('✅ Offer accepted notification sent successfully');
+    } catch (e) {
+      debugPrint('❌ Error sending offer accepted notification: $e');
+    }
+  }
+
+  /// Send push notification for chat messages
+  Future<void> notifyChatMessage({
+    required String receiverId,
+    required String senderId,
+    required String senderName,
+    required String message,
+    required String conversationId,
+    required String taskId,
+    required String taskTitle,
+    String? senderPhoto,
+    String? taskImage,
+  }) async {
+    try {
+      debugPrint('📤 Sending chat notification to user: $receiverId');
+
+      final title = senderName; // Name as title like most chat apps
+      final body = message;
+
+      // 1) Save notification to Firestore - Optional for chat as they are in the chat list,
+      // but let's save it for consistency in notification history if desired.
+      // Many apps don't save chat messages in "Notification history", only system alerts.
+      // But user asked "db ma bhi store ho" in previous task, let's keep it consistent.
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(receiverId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.info.name,
+            'category': 'chat_message',
+            'senderId': senderId,
+            'conversationId': conversationId,
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'senderPhoto': senderPhoto,
+            'taskImage': taskImage,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      // 2) Get receiver's device token
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(receiverId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+
+      if (deviceToken == null || deviceToken.isEmpty) {
+        debugPrint('⚠️ No device token found for receiver: $receiverId');
+        return;
+      }
+
+      final androidSdk = userDoc.data()?['androidSdk'] as int?;
+
+      // 3) Send FCM push notification
+      await _sendFcmDirect(
+        token: deviceToken,
+        title: title,
+        body: body,
+        data: {
+          'category': 'chat_message',
+          'senderId': senderId,
+          'senderName': senderName,
+          'senderPhoto': senderPhoto ?? '',
+          'conversationId': conversationId,
+          'taskId': taskId,
+          'taskTitle': taskTitle,
+          'taskImage': taskImage ?? '',
+          'route': 'chat_screen',
+        },
+        recipientSdk: androidSdk,
+      );
+
+      debugPrint('✅ Chat notification sent successfully');
+    } catch (e) {
+      debugPrint('❌ Error sending chat notification: $e');
+    }
+  }
+
+  // ============================================
   // 🔧 INITIALIZATION & TOKEN MANAGEMENT
   // ============================================
 
@@ -112,7 +337,7 @@ class NotificationService {
       await _ensureLocalInit();
       await _requestPermissions();
       await saveUserDeviceToken(userId);
-      
+
       // Setup foreground message handler
       FirebaseMessaging.onMessage.listen((message) async {
         if (Platform.isIOS) {
@@ -147,28 +372,77 @@ class NotificationService {
       final data = message.data;
       final category = data['category'] as String?;
       final route = data['route'] as String?;
-      
+
       debugPrint('📱 Notification tapped: $category, route: $route');
-      
+
       if (category == 'task_posted' && route == 'all_task_tab') {
-        // Navigate to all tasks tab
-        // Import the screen at the top of this file when ready
-        debugPrint('🔄 Navigating to all tasks tab');
-        
-        // Delayed navigation to ensure app is ready
-        Future.delayed(Duration(milliseconds: 500), () {
-          try {
-            // Navigate to bottom navigation with tasks tab selected
-            Get.offAllNamed('/home', arguments: {'initialTab': 2}); // Adjust tab index as needed
-            debugPrint('✅ Navigation completed');
-          } catch (e) {
-            debugPrint('❌ Navigation error: $e');
-          }
-        });
+        // ... (existing task_posted logic)
+        _navigateToAllTasks();
+      } else if (category == 'chat_message' && route == 'chat_screen') {
+        _navigateToChat(data);
+      } else if (category == 'offer_received' || category == 'offer_accepted') {
+        _navigateToMyTasks();
       }
     } catch (e) {
       debugPrint('❌ Error handling notification tap: $e');
     }
+  }
+
+  void _navigateToAllTasks() {
+    debugPrint('🔄 Navigating to all tasks tab');
+    Future.delayed(Duration(milliseconds: 500), () {
+      try {
+        Get.offAllNamed('/home', arguments: {'initialTab': 2});
+      } catch (e) {
+        debugPrint('❌ Navigation error: $e');
+      }
+    });
+  }
+
+  void _navigateToMyTasks() {
+    debugPrint('🔄 Navigating to my tasks');
+    Future.delayed(Duration(milliseconds: 500), () {
+      try {
+        Get.offAllNamed('/home', arguments: {'initialTab': 1}); // My Tasks tab
+      } catch (e) {
+        debugPrint('❌ Navigation error: $e');
+      }
+    });
+  }
+
+  void _navigateToChat(Map<String, dynamic> data) {
+    final taskId = data['taskId'] as String?;
+    final taskTitle = data['taskTitle'] as String?;
+    final senderId = data['senderId'] as String?;
+    final senderName = data['senderName'] as String?;
+    final senderPhoto = data['senderPhoto'] as String?;
+    final taskImage = data['taskImage'] as String?;
+
+    if (taskId == null || senderId == null) return;
+
+    debugPrint('🔄 Navigating to chat screen with $senderName');
+
+    Future.delayed(Duration(milliseconds: 600), () {
+      try {
+        Get.to(
+          () => const ChatScreen(),
+          binding: BindingsBuilder(() {
+            Get.put(
+              ChatController(
+                taskId: taskId,
+                taskTitle: taskTitle ?? 'Chat',
+                taskOwnerId: senderId,
+                taskOwnerName: senderName ?? 'User',
+                taskOwnerPhoto: senderPhoto,
+                taskImage: taskImage,
+              ),
+            );
+          }),
+        );
+      } catch (e) {
+        debugPrint('❌ Chat Navigation error: $e');
+      }
+    });
   }
 
   Future<void> _setIOSForegroundPresentation() {
@@ -304,7 +578,6 @@ class NotificationService {
   }
 
   // ---------- Permissions & init ----------
-
   Future<void> _ensureAndroidChannel() async {
     final android = _fln
         .resolvePlatformSpecificImplementation<

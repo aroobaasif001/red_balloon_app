@@ -99,6 +99,14 @@ class ChatController extends GetxController {
         messages.value = messagesList;
         isLoading.value = false;
         _scrollToBottom();
+
+        // 🔥 If there are new unread messages from other user while chat is open, mark them as read
+        final hasUnread = messagesList.any(
+          (m) => m.receiverId == _chatService.currentUserId && !m.isRead,
+        );
+        if (hasUnread) {
+          _markMessagesAsRead();
+        }
       },
       onError: (error) {
         print('Error streaming messages: $error');
@@ -165,6 +173,7 @@ class ChatController extends GetxController {
 
   @override
   void onClose() {
+    _markMessagesAsRead(); // 🔥 Final mark as read when leaving
     scrollController.dispose();
     messageController.dispose();
     super.onClose();

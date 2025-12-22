@@ -140,22 +140,26 @@ class TaskInProgressScreen extends StatelessWidget {
 
                 /// ------------------ STATUS TEXT ------------------
                 Center(
-                  child: RichText(
-                    text: TextSpan(
-                      text: "Helper is on the way ",
-                      style: const TextStyle(fontSize: 14, color: timeColor),
-                      children: [
-                        TextSpan(
-                          text:
-                              "(3.2 km away)", // TODO: Calculate real distance
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: blackColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: Obx(() {
+                    final bool isDispute = controller.requesterHelpRequested.value ||
+                        controller.helperHelpRequested.value;
+                    return RichText(
+                      text: TextSpan(
+                        text: isDispute ? "Dispute In Progress " : "Helper is on the way ",
+                        style: const TextStyle(fontSize: 14, color: timeColor),
+                        children: [
+                          if (!isDispute)
+                            TextSpan(
+                              text: "(3.2 km away)",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: blackColor,
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  }),
                 ),
 
                 const SizedBox(height: 6),
@@ -467,29 +471,60 @@ class TaskInProgressScreen extends StatelessWidget {
                               ),
                             ),
 
-                            CustomContainer(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              conColor: proBgColor,
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: blackColor.withOpacity(0.04),
-                                  blurRadius: 6,
-                                  offset: Offset(0, 2),
+                            Obx(() {
+                              final bool isDispute = controller.requesterHelpRequested.value ||
+                                  controller.helperHelpRequested.value;
+                              return CustomContainer(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
                                 ),
-                              ],
-                              child: CustomText(
-                                "In Progress",
-                                fontWeight: FontVariant.bold,
-                                fontSize: 12,
-                                color: redColor,
-                              ),
-                            ),
+                                conColor: proBgColor,
+                                borderRadius: BorderRadius.circular(30),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: blackColor.withOpacity(0.04),
+                                    blurRadius: 6,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                                child: CustomText(
+                                  isDispute ? "Dispute In Progress" : "In Progress",
+                                  fontWeight: FontVariant.bold,
+                                  fontSize: 12,
+                                  color: redColor,
+                                ),
+                              );
+                            }),
                           ],
                         ),
+
+                        Obx(() {
+                          final bool isDispute = controller.requesterHelpRequested.value ||
+                              controller.helperHelpRequested.value;
+                          if (isDispute && controller.helperHelpReason.value.isNotEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomText(
+                                    "Helper's Reason:",
+                                    fontWeight: FontVariant.bold,
+                                    fontSize: 13,
+                                    color: redColor,
+                                  ),
+                                  CustomText(
+                                    "${controller.helperHelpReason.value}: ${controller.helperHelpDetails.value}",
+                                    fontSize: 13,
+                                    color: timeColor,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          return SizedBox.shrink();
+                        }),
 
                         SizedBox(height: 12),
 
@@ -612,15 +647,8 @@ class TaskInProgressScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: CustomButton(
-                    label:
-                        (controller.requesterHelpRequested.value ||
-                            controller.helperHelpRequested.value)
-                        ? "Dispute in Progress"
-                        : "Review Proof",
-                    onPressed:
-                        (controller.hasProof.value &&
-                            !controller.requesterHelpRequested.value &&
-                            !controller.helperHelpRequested.value)
+                    label: "Review Proof",
+                    onPressed: controller.hasProof.value
                         ? () {
                             Get.to(
                               () => TaskReviewScreen(
@@ -630,12 +658,7 @@ class TaskInProgressScreen extends StatelessWidget {
                             );
                           }
                         : null,
-                    bgColor:
-                        (controller.hasProof.value &&
-                            !controller.requesterHelpRequested.value &&
-                            !controller.helperHelpRequested.value)
-                        ? redColor
-                        : taskstatus3,
+                    bgColor: controller.hasProof.value ? redColor : taskstatus3,
                     textColor: whiteColor,
                     borderRadius: BorderRadius.circular(30),
                   ),

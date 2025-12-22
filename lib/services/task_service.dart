@@ -123,10 +123,19 @@ class TaskService {
         status: 'active',
       );
 
+      // Convert to JSON and add escrow field
+      final taskData = task.toJson();
+      taskData['escrow'] = {
+        'amount': budget,
+        'status': 'locked',
+        'lockedAt': DateTime.now().toIso8601String(),
+      };
+
       // Save to Firestore
-      await taskRef.set(task.toJson());
+      await taskRef.set(taskData);
 
       print('Task created successfully with ID: $taskId and image URL: $imageUrl');
+      print('Escrow locked: SAR $budget');
       return taskId;
     } catch (e) {
       print('Error creating task: $e');

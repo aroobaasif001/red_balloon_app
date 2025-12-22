@@ -22,12 +22,31 @@ Widget buildStatusCard(InProgressTaskController controller) {
             conColor: appbard,
             borderRadius: BorderRadius.circular(20),
             child: CustomText(
-              controller.status.value,
+              (controller.requesterHelpRequested.value || controller.helperHelpRequested.value)
+                  ? 'Dispute In Progress'
+                  : controller.status.value,
               fontSize: 13,
               fontWeight: FontVariant.semiBold,
               color: redColor,
             ),
           ),
+          if (controller.requesterHelpRequested.value || controller.helperHelpRequested.value) ...[
+            if (controller.requesterHelpReason.value.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              CustomText(
+                "Requester's Reason:",
+                fontWeight: FontVariant.bold,
+                fontSize: 13,
+                color: redColor,
+              ),
+              CustomText(
+                "${controller.requesterHelpReason.value}: ${controller.requesterHelpDetails.value}",
+                fontSize: 13,
+                color: walletGrey600Color,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ],
           const SizedBox(height: 10),
           CustomText(
             '${controller.distance.value} 	 ${controller.eta.value}',

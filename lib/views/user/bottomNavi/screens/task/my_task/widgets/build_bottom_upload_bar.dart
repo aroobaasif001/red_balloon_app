@@ -41,11 +41,8 @@ Widget buildBottomUploadBar(
         Obx(() {
           final bool hasProof = controller.hasProof.value;
           final bool isLoading = controller.isCheckingProof.value;
-          final bool helperReq = controller.helperHelpRequested.value;
-          final bool requesterReq = controller.requesterHelpRequested.value;
 
-          final bool isDispute = helperReq || requesterReq;
-          final bool isDisabled = hasProof || isLoading || isDispute;
+          final bool isDisabled = hasProof || isLoading;
 
           return InkWell(
             onTap: !isDisabled
@@ -75,9 +72,7 @@ Widget buildBottomUploadBar(
                       ),
                     )
                   : CustomText(
-                      isDispute
-                          ? 'Dispute in Progress'
-                          : (hasProof ? 'Mark as Complete' : 'Upload Proof'),
+                      hasProof ? 'Mark as Complete' : 'Upload Proof',
                       fontSize: 16,
                       fontWeight: FontVariant.semiBold,
                       color: whiteColor,

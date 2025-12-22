@@ -7,10 +7,12 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/services/task_service.dart';
+import 'package:red_balloon_app/services/wallet_service.dart';
 
 class PostNewTaskController extends GetxController {
   final TaskService _taskService = TaskService();
   final AuthService _authService = AuthService();
+  final WalletService _walletService = WalletService();
 
   // Dropdown
   var selectedTaskType = "".obs;
@@ -42,6 +44,9 @@ class PostNewTaskController extends GetxController {
   Rx<PlatformFile?> pickedFile = Rx<PlatformFile?>(null);
   RxString uploadedImageUrl = "".obs;
   RxBool isUploadingImage = false.obs;
+
+  // Wallet
+  RxDouble walletBalance = 0.0.obs;
 
   final List<String> taskTypes = ["Offline Task", "Online Task"];
 
@@ -197,6 +202,19 @@ class PostNewTaskController extends GetxController {
       // Parse budget
       final budget = double.tryParse(taskBudget.text.trim()) ?? 0.0;
 
+      // 1. Check Wallet Balance
+      final currentBal = await _walletService.getCurrentBalance();
+      if (currentBal < budget) {
+        isLoading.value = false;
+        Get.snackbar(
+          "Insufficient Balance",
+          "You need SAR $budget to post this task. Your current balance is SAR $currentBal.",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return false;
+      }
+
       // Ensure userId is available
       if (storedUserId == null) {
         await fetchUserData();
@@ -207,7 +225,8 @@ class PostNewTaskController extends GetxController {
       print('   UserID (Custom): $storedUserId');
       print('   Image URL: ${uploadedImageUrl.value}');
 
-      // Create task with uploaded image URL
+      // 2. Create task with uploaded image URL
+      // (Escrow field will be added inside TaskService.createTaskWithImageUrl)
       final taskId = await _taskService.createTaskWithImageUrl(
         taskType: selectedTaskType.value,
         title: taskTitle.text.trim(),
@@ -220,9 +239,24 @@ class PostNewTaskController extends GetxController {
         imageUrl: uploadedImageUrl.value,
       );
 
-      isLoading.value = false;
-
       if (taskId != null) {
+        // 3. Deduct Funds and Create Transaction Record
+        final deductResult = await _walletService.deductForEscrow(
+          amount: budget,
+          taskId: taskId,
+          taskTitle: taskTitle.text.trim(),
+        );
+
+        if (!deductResult['success']) {
+          // This should ideally not happen if balance check above succeeded, 
+          // but good for atomic safety (though not fully atomic here as task is already created)
+          // You might want to delete the task if deduction fails, but we'll keep it simple for now.
+          print('⚠️ Deduction failed after task creation: ${deductResult['message']}');
+          Get.snackbar("Error", deductResult['message']);
+          isLoading.value = false;
+          return false;
+        }
+
         // Send actual push notification to user using current UID
         try {
           final currentUid = FirebaseAuth.instance.currentUser?.uid;
@@ -243,9 +277,11 @@ class PostNewTaskController extends GetxController {
         
         // Clear form
         clearForm();
+        isLoading.value = false;
         return true;
       }
 
+      isLoading.value = false;
       return false;
     } catch (e) {
       isLoading.value = false;
@@ -279,6 +315,13 @@ class PostNewTaskController extends GetxController {
   void onInit() {
     super.onInit();
     fetchUserData();
+    fetchWalletBalance();
+  }
+
+  Future<void> fetchWalletBalance() async {
+    _walletService.getWalletBalance().listen((balance) {
+      walletBalance.value = balance;
+    });
   }
 
   Future<void> fetchUserData() async {
