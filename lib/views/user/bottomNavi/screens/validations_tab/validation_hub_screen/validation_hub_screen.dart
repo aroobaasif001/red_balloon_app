@@ -11,6 +11,9 @@ import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../../../admin/bottomNavi/admin_bottom_navi_screen.dart';
 import '../validation_history_screen/validation_history_screen.dart';
+import '../validation_screen/validation_screen.dart';
+import '../validation_hub_screen/controller/validation_hub_controller.dart';
+import '../../validations_tab/widgets/validationemptywidget.dart';
 
 class ValidationHubScreen extends StatefulWidget {
   const ValidationHubScreen({super.key});
@@ -38,43 +41,16 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 🔥🔥 TEMPORARILY DISABLED - Restore when needed 🔥🔥
-    // final controller = Get.put(ValidationHubController());
-
-    // 🔥 DUMMY DATA - Remove when restoring controller
-    final dummyValidations = [
-      {
-        'validationId': 'val_001',
-        'taskId': 'task_001',
-        'taskTitle': 'Clean My Solar Panels',
-        'userId': 'RB-12345',
-        'beforePhotoUrl': 'https://via.placeholder.com/400',
-        'afterPhotoUrl': 'https://via.placeholder.com/400',
-        'proofId': 'proof_001',
-        'rejectedAt': DateTime.now().subtract(const Duration(minutes: 5)),
-      },
-      {
-        'validationId': 'val_002',
-        'taskId': 'task_002',
-        'taskTitle': 'Fix My Broken Window',
-        'userId': 'RB-67890',
-        'beforePhotoUrl': 'https://via.placeholder.com/400',
-        'afterPhotoUrl': 'https://via.placeholder.com/400',
-        'proofId': 'proof_002',
-        'rejectedAt': DateTime.now().subtract(const Duration(minutes: 30)),
-      },
-    ];
+    final controller = Get.put(ValidationHubController());
 
     return Scaffold(
       body: RefreshIndicator(
         backgroundColor: whiteColor,
         color: redColor,
         onRefresh: () async {
-          // 🔥 COMMENTED OUT - Restore Later
-          // await controller.fetchValidations(
-          //   minDelay: const Duration(seconds: 1),
-          // );
-          await Future.delayed(const Duration(seconds: 1));
+          await controller.fetchValidations(
+            minDelay: const Duration(seconds: 1),
+          );
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -90,167 +66,8 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
 
               const SizedBox(height: 25),
 
-              // 🔥 Show Lottie for first 2 seconds
-              if (_isInitialLoading)
-                Container(
-                  height: 600,
-                  child: Center(
-                    child: Lottie.asset(
-                      'assets/animation/loader.json',
-                      height: double.infinity,
-                      width: double.infinity,
-                    ),
-                  ),
-                )
-              else
-                // 🔥 DUMMY DATA DISPLAY - Replace with controller when restoring
-                ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: dummyValidations.length,
-                  itemBuilder: (_, index) {
-                    final validation = dummyValidations[index];
-                    String time = DateFormat(
-                      'dd MMM \'at\' hh:mm a',
-                    ).format(validation['rejectedAt'] as DateTime);
-
-                    return FadeInUp(
-                      duration: const Duration(milliseconds: 700),
-                      delay: Duration(milliseconds: index * 700),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: CustomContainer(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          borderRadius: BorderRadius.circular(20),
-                          conColor: white2Color,
-                          boxShadow: [
-                            BoxShadow(
-                              color: blackColor.withOpacity(0.20),
-                              blurRadius: 3,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              /// TITLE + BADGE
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        CustomText(
-                                          validation['taskTitle'] as String? ??
-                                              'No Title',
-                                          fontSize: 18,
-                                          fontWeight: FontVariant.bold,
-                                          fontType: AppFont.montserrat,
-                                          color: blackColor,
-                                          maxLines: null,
-                                          overflow: TextOverflow.visible,
-                                        ),
-                                        SizedBox(height: 10),
-                                        CustomText(
-                                          validation['userId'] as String? ??
-                                              'RB-00000',
-                                          fontSize: 16,
-                                          fontWeight: FontVariant.bold,
-                                          fontType: AppFont.montserrat,
-                                          color: blackColor,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 15),
-
-                              /// TIMER + BUTTON
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 9,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: walletCardBgColor,
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        CustomText(
-                                          "15 min left to validate", // 🔥 Dummy timer
-                                          fontSize: 14,
-                                          fontWeight: FontVariant.regular,
-                                          color: txColor,
-                                        ),
-                                        SizedBox(height: 10),
-                                        CustomText(
-                                          time.toString(),
-                                          fontSize: 14,
-                                          fontWeight: FontVariant.regular,
-                                          color: txColor,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(width: 30),
-
-                                  Expanded(
-                                    child: CustomButton(
-                                      label: "Review Proof",
-                                      onPressed: () {
-                                        // 🔥 COMMENTED OUT - Restore Later
-                                        Get.snackbar(
-                                          'Info',
-                                          'Validation screen temporarily disabled',
-                                        );
-                                        /*
-                                      Get.to(
-                                        () => ValidationScreen(
-                                          taskId: validation['taskId'] as String,
-                                          userId: validation['userId'] as String,
-                                          beforePhotoUrl:
-                                              validation['beforePhotoUrl'] as String,
-                                          afterPhotoUrl:
-                                              validation['afterPhotoUrl'] as String,
-                                          proofId: validation['proofId'] as String,
-                                        ),
-                                      );
-                                      */
-                                      },
-                                      height: 40,
-                                      width: 80,
-                                      fontSize: 14,
-                                      fontWeight: FontVariant.bold,
-                                      borderRadius: BorderRadius.circular(14),
-                                      bgColor: redColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-
-              /* 🔥 COMMENTED OUT - Restore Later
               Obx(() {
-                if (controller.isLoading.value) {
+                if (controller.isLoading.value && !_isInitialLoading) {
                   return Container(
                     height: 600,
                     child: Center(
@@ -263,8 +80,21 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
                   );
                 }
 
-                if (controller.validations.isEmpty) {
+                if (controller.validations.isEmpty && !_isInitialLoading) {
                   return const ValidationEmptyWidget();
+                }
+
+                if (_isInitialLoading) {
+                  return Container(
+                    height: 600,
+                    child: Center(
+                      child: Lottie.asset(
+                        'assets/animation/loader.json',
+                        height: double.infinity,
+                        width: double.infinity,
+                      ),
+                    ),
+                  );
                 }
 
                 return ListView.builder(
@@ -401,7 +231,6 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
                   },
                 );
               }),
-              */
               // END COMMENTED CONTROLLER
               const SizedBox(height: 140),
             ],
