@@ -10,6 +10,8 @@ class StoreItemCard extends StatelessWidget {
   final String image;
   final num price;
   final bool isOwned;
+  final bool isSelected;
+  final VoidCallback? onSelect;
 
   const StoreItemCard({
     super.key,
@@ -17,6 +19,8 @@ class StoreItemCard extends StatelessWidget {
     required this.price,
     required this.image,
     this.isOwned = false,
+    this.isSelected = false,
+    this.onSelect,
   });
 
   @override
@@ -81,21 +85,26 @@ class StoreItemCard extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          /// 🔥 BUY Button
+          /// 🔥 BUY/SELECT Button
           InkWell(
-            onTap: isOwned
-                ? null
-                : () {
-                    controller.purchaseBadge(context, title, price.toDouble());
-                  },
+            onTap: onSelect ??
+                (isOwned
+                    ? null
+                    : () {
+                        controller.purchaseBadge(context, title, price.toDouble());
+                      }),
             child: CustomContainer(
               width: 111,
               padding: const EdgeInsets.symmetric(vertical: 8),
               borderRadius: BorderRadius.circular(8),
-              conColor: isOwned == false ? redColor : greyColor,
+              conColor: onSelect != null
+                  ? (isSelected ? Colors.green : redColor)
+                  : (isOwned == false ? redColor : greyColor),
               alignment: Alignment.center,
               child: CustomText(
-                isOwned == false ? "Buy" : "Owned",
+                onSelect != null
+                    ? (isSelected ? "Selected" : "Select")
+                    : (isOwned == false ? "Buy" : "Owned"),
                 fontSize: 14,
                 fontWeight: FontVariant.bold,
                 color: whiteColor,

@@ -190,6 +190,43 @@ class WalletService {
     });
   }
 
+  /// Get selected badges stream
+  Stream<List<String>> getSelectedBadgesStream() {
+    if (_uid.isEmpty) return Stream.value([]);
+    return _walletCollection.doc(_uid).snapshots().map((snapshot) {
+      if (!snapshot.exists) return [];
+      final data = snapshot.data() as Map<String, dynamic>;
+      return List<String>.from(data['selectedBadges'] ?? []);
+    });
+  }
+
+  /// Toggle badge selection (Max 2)
+  Future<Map<String, dynamic>> toggleBadgeSelection(List<String> selectedTitles) async {
+    if (_uid.isEmpty) return {'success': false, 'message': 'User not logged in'};
+
+    try {
+      await _walletCollection.doc(_uid).update({
+        'selectedBadges': selectedTitles,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      return {'success': true, 'message': 'Badges updated successfully'};
+    } catch (e) {
+      print('Error toggling badge selection: $e');
+      return {'success': false, 'message': 'An error occurred while updating selection'};
+    }
+  }
+
+  /// Get owned badges by UID
+  Stream<List<Map<String, dynamic>>> getOwnedBadgesStreamByUid(String uid) {
+    if (uid.isEmpty) return Stream.value([]);
+
+    return _walletCollection
+        .doc(uid)
+        .collection('badges')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  }
+
   /// Get owned badges
   Stream<List<Map<String, dynamic>>> getOwnedBadgesStream() {
     if (_uid.isEmpty) return Stream.value([]);

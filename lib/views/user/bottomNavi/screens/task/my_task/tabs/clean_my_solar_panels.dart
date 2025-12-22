@@ -143,6 +143,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                       name: widget.userName,
                       photoUrl: widget.userPhoto,
                       id: widget.userId,
+                      authUid: widget.taskOwnerAuthId,
                     ),
 
                     const SizedBox(height: 10),

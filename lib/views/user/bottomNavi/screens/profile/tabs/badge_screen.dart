@@ -66,11 +66,18 @@ class BadgeScreen extends StatelessWidget {
                       itemCount: ownedBadges.length,
                       itemBuilder: (context, index) {
                         final badge = ownedBadges[index];
-                        return StoreItemCard(
-                          title: badge['title'],
-                          price: badge['price'],
-                          image: badge['image'],
-                          isOwned: true,
+                        final title = badge['title'] ?? '';
+                        return Obx(
+                          () => StoreItemCard(
+                            title: title,
+                            price: badge['price'] ?? 0,
+                            image: badge['image'] ?? '',
+                            isOwned: true,
+                            isSelected: controller.isBadgeSelected(title),
+                            onSelect: () {
+                              controller.toggleBadgeSelection(title);
+                            },
+                          ),
                         );
                       },
                     );

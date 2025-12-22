@@ -334,6 +334,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                               userInitials: user.initials,
                               userPhoto: user.photoURL,
                               userId: user.userId,
+                              userUid: user.uid,
                               rating: (stats['rating'] ?? 4.9).toDouble(),
                               tasksCompleted: stats['tasksCompleted'] ?? 0,
                               tasksRequested: stats['tasksRequested'] ?? 0,

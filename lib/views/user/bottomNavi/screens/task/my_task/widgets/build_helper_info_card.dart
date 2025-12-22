@@ -18,6 +18,7 @@ Widget buildHelperInfoCard(
   String? photoUrl,
   String userName,
   String userId, {
+  String? helperUid, // 🔥 Added for DB queries
   String? taskId,
   String? taskTitle,
   String? phoneNumber,
@@ -193,6 +194,7 @@ Widget buildHelperInfoCard(
               () => UserProfileScreen(
                 userPhoto: photoUrl,
                 userId: userId,
+                userUid: helperUid,
                 userName: userName,
                 userInitials: controller.helperInitials.value,
                 rating: controller.rating.value,
