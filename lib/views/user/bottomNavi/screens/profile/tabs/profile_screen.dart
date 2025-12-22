@@ -14,6 +14,7 @@ import '../../home/info/about_app_screen.dart';
 import '../../home/info/contact_us_screen.dart';
 import '../../home/info/faq_screen.dart';
 import '../../home/info/how_it_works_screen.dart';
+import '../controller/in_app_store_controller.dart';
 import '../edit_profile/edit_profile_screen.dart';
 import '../controllers/user_app_content_controller.dart';
 import '../widgets/help_section.dart';
@@ -157,7 +158,65 @@ class ProfileScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    StatsGrid(postedCount: '50'),
+
+                    // Dynamic Owned Badges (Top 2 Cheapest)
+                    Obx(() {
+                      final storeController = Get.put(InAppStoreController());
+                      final cheapestBadges = storeController.cheapestTwoBadges;
+
+                      if (cheapestBadges.isEmpty) {
+                        return CustomContainer(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          conColor: white2Color,
+                          borderRadius: BorderRadius.circular(16),
+                          child: const Center(
+                            child: CustomText(
+                              "No badges owned yet",
+                              fontSize: 14,
+                              color: greyColor,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return CustomContainer(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        conColor: white2Color,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: walletBlackColor.withOpacity(0.25),
+                            blurRadius: 4,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                        child: Column(
+                          children: cheapestBadges.map((badge) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    badge['image'],
+                                    height: 32,
+                                    width: 32,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  CustomText(
+                                    badge['title'],
+                                    fontSize: 16,
+                                    fontWeight: FontVariant.medium,
+                                    color: textColor2,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      );
+                    }),
                     // StatsGrid(postedCount: '50'),
                     const SizedBox(height: 20),
 

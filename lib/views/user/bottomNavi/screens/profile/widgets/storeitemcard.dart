@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:red_balloon_app/utils/colors.dart';
-import 'package:red_balloon_app/utils/dialog_helpers.dart';
-
+import 'package:get/get.dart';
 import '../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../custom_widgets/customtext.dart';
+import '../../../../../../utils/colors.dart';
+import '../controller/in_app_store_controller.dart';
 
 class StoreItemCard extends StatelessWidget {
   final String title;
   final String image;
-  final int price;
+  final num price;
   final bool isOwned;
 
   const StoreItemCard({
@@ -21,6 +21,8 @@ class StoreItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final InAppStoreController controller = Get.find<InAppStoreController>();
+
     return CustomContainer(
       conColor: white2Color,
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 10),
@@ -81,9 +83,11 @@ class StoreItemCard extends StatelessWidget {
 
           /// 🔥 BUY Button
           InkWell(
-            onTap: () {
-              DialogHelpers.showBuyBadgeDialog(context);
-            },
+            onTap: isOwned
+                ? null
+                : () {
+                    controller.purchaseBadge(context, title, price.toDouble());
+                  },
             child: CustomContainer(
               width: 111,
               padding: const EdgeInsets.symmetric(vertical: 8),

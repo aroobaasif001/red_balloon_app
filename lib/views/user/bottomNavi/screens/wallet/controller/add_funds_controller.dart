@@ -1,11 +1,18 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/services/wallet_service.dart';
 import 'package:red_balloon_app/utils/dialog_helpers.dart';
+import 'wallet_controller.dart';
 
 class AddFundsController extends GetxController {
+  final WalletService _walletService = WalletService();
+  final WalletController walletController = Get.find<WalletController>();
+
   // Observable variables
   RxString selectedAmount = '25'.obs;
   RxString customAmount = ''.obs;
-  RxString selectedPaymentMethod = ''.obs;
+  RxString selectedPaymentMethod = 'card'.obs; // Default to card
+  RxBool isLoading = false.obs;
 
   // Predefined amounts
   final List<String> predefinedAmounts = ['25', '50', '100', '250', '500'];
@@ -67,32 +74,51 @@ class AddFundsController extends GetxController {
     selectedPaymentMethod.value = methodId;
   }
 
-  void addFunds() {
+  void addFunds(BuildContext context) {
     if (!isAmountValid) {
       DialogHelpers.showAddFundsError('Minimum top-up is SAR 15');
       return;
     }
 
-    if (!isPaymentMethodSelected) {
-      DialogHelpers.showAddFundsError('Please select a payment method');
-      return;
-    }
+    // if (!isPaymentMethodSelected) {
+    //   DialogHelpers.showAddFundsError('Please select a payment method');
+    //   return;
+    // }
 
-    // Process payment
-    DialogHelpers.showAddFundsSuccess(
-      finalAmount,
-      selectedPaymentMethod.toString(),
+    // Show confirmation dialog
+    DialogHelpers.showAddFundsConfirmationDialog(
+      context: context,
+      amount: finalAmount,
+      onConfirm: () async {
+        try {
+          isLoading.value = true;
+          final double amountToAdd = double.parse(finalAmount);
+
+          // Process payment
+          final success = await _walletService.addFunds(amountToAdd);
+
+          if (success) {
+            DialogHelpers.showAddFundsSuccess(
+              finalAmount,
+              selectedPaymentMethod.value,
+            );
+            Get.back(); // Navigate back to wallet
+          } else {
+            DialogHelpers.showAddFundsError(
+              'Failed to add funds. Please try again.',
+            );
+          }
+        } finally {
+          isLoading.value = false;
+        }
+      },
     );
-
-    // Here you would typically call an API to process the payment
-    // After successful payment, navigate back
-    // Get.back();
   }
 
   void clearSelection() {
     selectedAmount.value = '25';
     customAmount.value = '';
-    selectedPaymentMethod.value = '';
+    selectedPaymentMethod.value = 'card';
   }
 
   @override

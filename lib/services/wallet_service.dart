@@ -1,0 +1,159 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+class WalletService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String get _uid => _auth.currentUser?.uid ?? '';
+
+  CollectionReference get _walletCollection => _firestore.collection('wallet');
+
+  /// Get current wallet balance
+  Stream<double> getWalletBalance() {
+    if (_uid.isEmpty) return Stream.value(0.0);
+    
+    return _walletCollection.doc(_uid).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        return (data['balance'] ?? 0.0).toDouble();
+      }
+      return 0.0;
+    });
+  }
+
+  /// Add funds to wallet
+  Future<bool> addFunds(double amount) async {
+    if (_uid.isEmpty) return false;
+
+    try {
+      final walletDoc = _walletCollection.doc(_uid);
+      
+      await _firestore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(walletDoc);
+        
+        double currentBalance = 0.0;
+        if (snapshot.exists) {
+          currentBalance = (snapshot.data() as Map<String, dynamic>)['balance'] ?? 0.0;
+        }
+
+        final newBalance = currentBalance + amount;
+
+        transaction.set(walletDoc, {
+          'balance': newBalance,
+          'uid': _uid,
+          'updatedAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+
+        // Add to transactions subcollection
+        final transactionRef = walletDoc.collection('transactions').doc();
+        transaction.set(transactionRef, {
+          'id': transactionRef.id,
+          'title': 'Funds Added',
+          'description': 'Added via App',
+          'amount': amount,
+          'type': 'credit',
+          'status': 'completed',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      });
+
+      return true;
+    } catch (e) {
+      print('Error adding funds: $e');
+      return false;
+    }
+  }
+
+  /// Get transaction history
+  Stream<List<Map<String, dynamic>>> getTransactions() {
+    if (_uid.isEmpty) return Stream.value([]);
+
+    return _walletCollection
+        .doc(_uid)
+        .collection('transactions')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return data;
+      }).toList();
+    });
+  }
+
+  /// Get owned badges
+  Stream<List<Map<String, dynamic>>> getOwnedBadgesStream() {
+    if (_uid.isEmpty) return Stream.value([]);
+
+    return _walletCollection
+        .doc(_uid)
+        .collection('badges')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  }
+
+  /// Purchase a badge
+  Future<Map<String, dynamic>> purchaseBadge(String title, double price) async {
+    if (_uid.isEmpty) return {'success': false, 'message': 'User not logged in'};
+
+    try {
+      final walletDoc = _walletCollection.doc(_uid);
+      final badgeDoc = walletDoc.collection('badges').doc(title);
+
+      final result = await _firestore.runTransaction((transaction) async {
+        final walletSnapshot = await transaction.get(walletDoc);
+        final badgeSnapshot = await transaction.get(badgeDoc);
+
+        if (badgeSnapshot.exists) {
+          return {'success': false, 'message': 'You already own this badge'};
+        }
+
+        double currentBalance = 0.0;
+        if (walletSnapshot.exists) {
+          final data = walletSnapshot.data() as Map<String, dynamic>;
+          currentBalance = (data['balance'] ?? 0.0).toDouble();
+        }
+
+        if (currentBalance < price) {
+          return {'success': false, 'message': 'Insufficient balance'};
+        }
+
+        final newBalance = currentBalance - price;
+
+        // Update balance
+        transaction.update(walletDoc, {
+          'balance': newBalance,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        // Add badge to owned list
+        transaction.set(badgeDoc, {
+          'title': title,
+          'purchasedAt': FieldValue.serverTimestamp(),
+          'price': price,
+        });
+
+        // Add to transactions
+        final transactionRef = walletDoc.collection('transactions').doc();
+        transaction.set(transactionRef, {
+          'id': transactionRef.id,
+          'title': 'Badge Purchased',
+          'description': title,
+          'amount': price,
+          'type': 'debit',
+          'status': 'completed',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        return {'success': true, 'message': 'Badge purchased successfully'};
+      });
+
+      return result;
+    } catch (e) {
+      print('Error purchasing badge: $e');
+      return {'success': false, 'message': 'An error occurred during purchase'};
+    }
+  }
+}

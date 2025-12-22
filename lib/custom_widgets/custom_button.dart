@@ -31,6 +31,7 @@ class CustomButton extends StatelessWidget {
   final FontVariant? fontWeight;
 
   final Border? border;
+  final Color? loaderColor;
 
   const CustomButton({
     super.key,
@@ -54,6 +55,7 @@ class CustomButton extends StatelessWidget {
     this.fontSize,
     this.fontWeight,
     this.border,
+    this.loaderColor,
   });
 
   FontWeight _getFontWeight(FontVariant? variant) {
@@ -97,11 +99,16 @@ class CustomButton extends StatelessWidget {
           child: Padding(
             padding: padding ?? const EdgeInsets.symmetric(horizontal: 16),
             child: Center(
-              child: isLoading
-                  ? const SizedBox(
+                child: isLoading
+                  ? SizedBox(
                       height: 20,
                       width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          loaderColor ?? whiteColor,
+                        ),
+                      ),
                     )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
