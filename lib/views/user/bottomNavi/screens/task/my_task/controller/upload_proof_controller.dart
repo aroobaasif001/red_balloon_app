@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../../../../services/auth_service.dart';
 import '../../../../../../../services/task_service.dart';
+import '../../../../../../../services/notification_services.dart';
 
 enum ProofTab { before, after }
 
@@ -16,6 +17,7 @@ class UploadProofController extends GetxController {
 
   // Task data (received from constructor)
   String? taskId;
+  String? taskOwnerUid; // 🔥 Added owner UID
   RxString taskTitle = 'Help Move Furniture'.obs;
   RxString taskCode = 'RB - 402'.obs;
   RxString taskPrice = '500'.obs;
@@ -45,10 +47,12 @@ class UploadProofController extends GetxController {
     required String id,
     required String title,
     required String price,
+    required String ownerUid,
   }) {
     taskId = id;
     taskTitle.value = title;
     taskPrice.value = price;
+    taskOwnerUid = ownerUid;
   }
 
   /// Pick image from camera
@@ -150,7 +154,7 @@ class UploadProofController extends GetxController {
       }
 
       // Submit proof to Firestore
-      await _taskService.submitTaskProof(
+      final proofId = await _taskService.submitTaskProof(
         taskId: taskId!,
         userId: currentUser.uid,
         username: username,
@@ -163,6 +167,17 @@ class UploadProofController extends GetxController {
         taskTitle: taskTitle.value,
         taskPrice: taskPrice.value,
       );
+
+      // 🔥 Send Notification to Task Owner
+      if (taskOwnerUid != null && proofId != null) {
+        NotificationService.instance.notifyProofUploaded(
+          taskOwnerId: taskOwnerUid!,
+          helperName: username,
+          taskTitle: taskTitle.value,
+          taskId: taskId!,
+          proofId: proofId,
+        );
+      }
 
       isSubmitting.value = false;
 

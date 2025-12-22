@@ -47,6 +47,8 @@ class InProgressViewDetails extends StatelessWidget {
 
     // Check if proof exists and start listening for task updates
     if (taskId != null && taskId!.isNotEmpty) {
+      controller.currentTaskTitle = taskTitle; // 🔥 Store for notification
+      controller.taskOwnerId = helperUid;      // 🔥 Store for notification
       controller.checkProofExists(taskId!);
       controller.startTaskListener(taskId!);
       controller.startStatusListener(taskId!);
@@ -111,6 +113,7 @@ class InProgressViewDetails extends StatelessWidget {
               taskId: taskId,
               taskTitle: taskTitle,
               price: price,
+              taskOwnerUid: helperUid, // 🔥 In this context, helperUid is the owner
             ),
           ],
         ),

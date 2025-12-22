@@ -170,6 +170,15 @@ class ChatScreen extends StatelessWidget {
                                 time: controller.getTimeAgo(
                                   message.timestamp.toDate(),
                                 ),
+                                imageUrl: message.imageUrl, // 🔥 Pass image
+                                onTapImage: () {
+                                  if (message.imageUrl != null) {
+                                    _showImageFullscreen(
+                                      context,
+                                      message.imageUrl!,
+                                    );
+                                  }
+                                },
                               )
                             : ReceiverBubble(
                                 text: message.message,
@@ -178,6 +187,15 @@ class ChatScreen extends StatelessWidget {
                                 ),
                                 profilePhoto: controller.taskOwnerPhoto,
                                 userName: controller.taskOwnerName,
+                                imageUrl: message.imageUrl, // 🔥 Pass image
+                                onTapImage: () {
+                                  if (message.imageUrl != null) {
+                                    _showImageFullscreen(
+                                      context,
+                                      message.imageUrl!,
+                                    );
+                                  }
+                                },
                               ),
                       );
                     }).toList(),
@@ -209,13 +227,66 @@ class ChatScreen extends StatelessWidget {
               }),
             ),
 
+            Obx(
+              () => controller.isUploading.value
+                  ? const LinearProgressIndicator(
+                      color: redColor,
+                      backgroundColor: Colors.transparent,
+                    )
+                  : const SizedBox.shrink(),
+            ),
+
             ChatInputBar(
               controller: controller.messageController,
               onSend: controller.sendMessage,
+              onAttach: controller.pickAndSendImage, // 🔥 Hook up attachment
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showImageFullscreen(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: blackColor,
+          insetPadding: EdgeInsets.zero,
+          child: Stack(
+            children: [
+              Center(
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const Center(
+                      child: CircularProgressIndicator(color: redColor),
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                top: 40,
+                right: 20,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: const Icon(Icons.close, color: whiteColor, size: 24),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

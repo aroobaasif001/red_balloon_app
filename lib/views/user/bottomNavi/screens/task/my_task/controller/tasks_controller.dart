@@ -84,13 +84,14 @@ class TasksController extends GetxController {
         print('❌ User not authenticated');
         isLoadingMyTasks.value = false;
         isLoadingTasksNearMe.value = false;
+        isLoadingHistoryTasks.value = false;
         return;
       }
 
-      // Allow UI to show loader initially
-      isLoadingMyTasks.value = true;
-      isLoadingTasksNearMe.value = true;
-      isLoadingHistoryTasks.value = true;
+      // Allow UI to show loader initially ONLY if tasks are empty
+      if (myTasks.isEmpty) isLoadingMyTasks.value = true;
+      if (tasksNearMe.isEmpty) isLoadingTasksNearMe.value = true;
+      if (historyTasks.isEmpty) isLoadingHistoryTasks.value = true;
 
       // Listen to all tasks stream for real-time updates
       _taskService.streamAllTasks().listen(

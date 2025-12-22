@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import '../../../../../../../services/notification_services.dart';
 
 class TaskReviewController extends GetxController {
   // Timer
@@ -27,6 +27,7 @@ class TaskReviewController extends GetxController {
   var helperName = ''.obs;
   var helperInitial = ''.obs;
   var helperPhotoUrl = ''.obs; // 🔥 Helper's photo URL
+  var helperId = ''.obs; // 🔥 Helper's UID
   var location = ''.obs;
   var submittedTime = ''.obs;
   var beforeImageUrl = ''.obs;
@@ -138,6 +139,25 @@ class TaskReviewController extends GetxController {
 
       Get.snackbar('Success', 'Rejection submitted successfully');
 
+      // 🔥 Trigger Notifications
+      if (helperId.value.isNotEmpty) {
+        final ownerName = currentUser.displayName ?? 'Owner';
+        
+        await NotificationService.instance.notifyProofRejected(
+          helperId: helperId.value.trim(),
+          taskTitle: taskTitle.value,
+          taskId: taskId,
+          rejectedByName: ownerName,
+        );
+      }
+      
+      // 🔥 Broadcast to all users (EXCLUDING helper and current owner)
+      await NotificationService.instance.broadcastValidationTask(
+        taskTitle: taskTitle.value,
+        taskId: taskId,
+        excludeUserIds: [currentUser.uid.trim(), helperId.value.trim()],
+      );
+
       // 🔥 Trigger navigation callback
       if (onSubmissionComplete != null) {
         await Future.delayed(Duration(milliseconds: 500));
@@ -173,6 +193,15 @@ class TaskReviewController extends GetxController {
       print('✅ Proof accepted successfully');
 
       Get.snackbar('Success', 'Proof accepted successfully');
+
+      // 🔥 Trigger Notification
+      if (helperId.value.isNotEmpty) {
+        NotificationService.instance.notifyProofAccepted(
+          helperId: helperId.value,
+          taskTitle: taskTitle.value,
+          taskId: taskId,
+        );
+      }
 
       // 🔥 Trigger navigation callback
       if (onSubmissionComplete != null) {
@@ -219,6 +248,7 @@ class TaskReviewController extends GetxController {
           helperName.value = offerData['offeringUserName'] ?? 'Unknown Helper';
           helperPhotoUrl.value =
               offerData['offeringUserPhoto'] ?? ''; // 🔥 Get helper photo
+          helperId.value = offerData['offeringUserUid'] ?? ''; // 🔥 Get helper UID
 
           // Get first letter for initial
           if (helperName.value.isNotEmpty &&

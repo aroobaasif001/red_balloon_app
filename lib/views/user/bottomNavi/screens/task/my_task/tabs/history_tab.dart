@@ -368,7 +368,10 @@ class HistoryTab extends StatelessWidget {
                               };
 
                               // Close Loading Dialog
-                              if (Get.isDialogOpen ?? false) Get.back();
+                              if (Get.isDialogOpen ?? false) {
+                                await Future.delayed(const Duration(milliseconds: 100));
+                                Get.back();
+                              }
 
                               // 8. Navigate
                               if (!hasFeedback) {
@@ -391,7 +394,10 @@ class HistoryTab extends StatelessWidget {
                                 );
                               }
                             } catch (e) {
-                              if (Get.isDialogOpen ?? false) Get.back();
+                              if (Get.isDialogOpen ?? false) {
+                                await Future.delayed(const Duration(milliseconds: 100));
+                                Get.back();
+                              }
                               print('❌ Error in completed task navigation: $e');
                               Get.snackbar('Error', 'Something went wrong');
                             }

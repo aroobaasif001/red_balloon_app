@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:red_balloon_app/services/task_service.dart';
+import '../../../../../../../services/notification_services.dart';
 
 class InProgressTaskController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -30,6 +32,8 @@ class InProgressTaskController extends GetxController {
   StreamSubscription? _proofListener;
   StreamSubscription? _taskStatusListener;
   RxString proofId = ''.obs;
+  String? taskOwnerId; // 🔥 To notify owner
+  String? currentTaskTitle; // 🔥 For notification body
 
   /// Check if proof exists in task_proofs collection for given taskId
   Future<void> checkProofExists(String taskId) async {
@@ -143,6 +147,19 @@ class InProgressTaskController extends GetxController {
       reason: reason,
       details: details,
     );
+
+    // 🔥 Send Push Notification to owner
+    if (taskOwnerId != null) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      final senderName = currentUser?.displayName ?? 'Helper';
+      
+      NotificationService.instance.notifyHelpRequested(
+        receiverId: taskOwnerId!,
+        senderName: senderName,
+        taskTitle: currentTaskTitle ?? 'Task',
+        taskId: taskId,
+      );
+    }
   }
 
   @override

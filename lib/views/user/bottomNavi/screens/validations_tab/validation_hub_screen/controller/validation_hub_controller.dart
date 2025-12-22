@@ -39,20 +39,99 @@ class ValidationHubController extends GetxController {
 
   void _updateRemainingTimes() {
     for (var validation in validations) {
-      final rejectedAtTimestamp = validation['rejectedAt'];
-      if (rejectedAtTimestamp != null) {
-        final rejectedAt = (rejectedAtTimestamp as Timestamp).toDate();
-        final now = DateTime.now();
-        final difference = now.difference(rejectedAt);
-        final remainingMinutes = 15 - difference.inMinutes;
+        final rejectedAtTimestamp = validation['rejectedAt'];
+        if (rejectedAtTimestamp != null) {
+          DateTime rejectedAt;
+          if (rejectedAtTimestamp is Timestamp) {
+            rejectedAt = rejectedAtTimestamp.toDate();
+          } else if (rejectedAtTimestamp is String) {
+            rejectedAt = DateTime.parse(rejectedAtTimestamp);
+          } else {
+            rejectedAt = DateTime.now();
+          }
+          final now = DateTime.now();
+          final difference = now.difference(rejectedAt);
+          final remainingMinutes = 15 - difference.inMinutes;
 
         if (remainingMinutes <= 0) {
           remainingTimes[validation['validationId']] = "0 min left to validate";
-          // Optional: remove validation if time expired locally or let backend handle it
+          // 🔥 Auto-finalize if time expired
+          _autoFinalizeValidation(validation);
         } else {
-          remainingTimes[validation['validationId']] = "$remainingMinutes min left to validate";
+          remainingTimes[validation['validationId']] =
+              "$remainingMinutes min left to validate";
         }
       }
+    }
+  }
+
+  /// Flag to avoid redundant calls for the same validation in one session
+  final Map<String, bool> _isFinalizing = {};
+
+  Future<void> _autoFinalizeValidation(Map<String, dynamic> validation) async {
+    final validationId = validation['validationId'];
+    final taskId = validation['taskId'];
+
+    if (_isFinalizing[validationId] == true) return;
+    _isFinalizing[validationId] = true;
+
+    try {
+      print('⏰ Validation $validationId expired. Auto-finalizing...');
+
+      // 1. Fetch latest voting data
+      final votingDoc = await _firestore.collection('voting').doc(taskId).get();
+
+      String? winner;
+      int helperVotes = 0;
+      int requesterVotes = 0;
+
+      if (votingDoc.exists) {
+        final data = votingDoc.data()!;
+        final voters = List<Map<String, dynamic>>.from(data['voters'] ?? []);
+        helperVotes = voters.where((v) => v['voteType'] == 'helper').length;
+        requesterVotes = voters.where((v) => v['voteType'] == 'requester').length;
+
+        if (helperVotes >= 5 || requesterVotes >= 5) {
+          winner = helperVotes >= 5 ? 'helper' : 'requester';
+        } else if (helperVotes != requesterVotes) {
+          if (helperVotes <= 4 && requesterVotes <= 4) {
+             winner = null; // Go to admin
+          } else {
+             winner = helperVotes > requesterVotes ? 'helper' : 'requester';
+          }
+        }
+      }
+
+      final validationRef = _firestore.collection('validations').doc(validationId);
+
+      if (winner != null) {
+        // Finalize with winner
+        await validationRef.update({
+          'isVotingCompleted': true,
+          'winner': winner,
+          'helperVotes': helperVotes,
+          'requesterVotes': requesterVotes,
+          'completedAt': FieldValue.serverTimestamp(),
+        });
+        print('✅ Auto-finalized validation $validationId. Winner: $winner');
+      } else {
+        // Send to admin
+        await validationRef.update({
+          'isVotingCompleted': true,
+          'sentToAdmin': true,
+          'helperVotes': helperVotes,
+          'requesterVotes': requesterVotes,
+          'completedAt': FieldValue.serverTimestamp(),
+        });
+        print('📤 Auto-sent validation $validationId to admin');
+      }
+    } catch (e) {
+      print('❌ Error in auto-finalizing validation: $e');
+    } finally {
+      // Keep it true for a while to avoid retries if update fails or takes time
+      Future.delayed(const Duration(minutes: 2), () {
+        _isFinalizing.remove(validationId);
+      });
     }
   }
 
@@ -116,6 +195,8 @@ class ValidationHubController extends GetxController {
                   'proofId': validationData['proofId'] ?? '',
                   'status': validationData['status'] ?? 'pending',
                   'rejectedAt': validationData['rejectedAt'] ?? Timestamp.now(),
+                  'winner': validationData['winner'],
+                  'sentToAdmin': validationData['sentToAdmin'] ?? false,
                 };
                 fetchedValidations.add(validationMap);
               }

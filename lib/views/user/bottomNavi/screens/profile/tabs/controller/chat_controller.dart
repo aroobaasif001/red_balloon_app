@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/model/message_model.dart';
 import 'package:red_balloon_app/services/chat_service.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ChatController extends GetxController {
   final String taskId;
@@ -18,6 +20,7 @@ class ChatController extends GetxController {
 
   final RxList<MessageModel> messages = <MessageModel>[].obs;
   final RxBool isLoading = true.obs;
+  final RxBool isUploading = false.obs; // 🔥 Added for attachment loading
   final RxString conversationId = ''.obs;
 
   ChatController({
@@ -129,6 +132,55 @@ class ChatController extends GetxController {
     if (success) {
       messageController.clear();
       _scrollToBottom();
+    }
+  }
+
+  /// Pick and send an image attachment
+  Future<void> pickAndSendImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024, // Optimized for mobile viewing
+        imageQuality: 70, // Good balance between speed and visibility
+      );
+
+      if (image == null) return;
+
+      isUploading.value = true;
+      final file = File(image.path);
+
+      // 1) Upload image to storage
+      final imageUrl = await _chatService.uploadChatImage(
+        file,
+        conversationId.value,
+      );
+
+      if (imageUrl != null) {
+        // 2) Send message with imageUrl
+        await _chatService.sendMessage(
+          conversationId: conversationId.value,
+          receiverId: taskOwnerId,
+          message: '[Image]',
+          imageUrl: imageUrl,
+        );
+        _scrollToBottom();
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to upload image',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      print('Error sending attachment: $e');
+      Get.snackbar(
+        'Error',
+        'Something went wrong',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isUploading.value = false;
     }
   }
 

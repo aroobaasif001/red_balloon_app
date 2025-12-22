@@ -21,13 +21,13 @@ class AdminValidationTasksController extends GetxController {
       isLoading.value = true;
       print('🔍 Fetching validation tasks from Firestore...');
 
-      // Fetch ALL validations with status 'rejected'
+      // Fetch ALL validations where sentToAdmin is true
       final validationsSnapshot = await _firestore
           .collection('validations')
-          .where('status', isEqualTo: 'rejected')
+          .where('sentToAdmin', isEqualTo: true)
           .get();
 
-      print('📊 Found ${validationsSnapshot.docs.length} validations in Firestore');
+      print('📊 Found ${validationsSnapshot.docs.length} validations referred to Admin');
 
       if (validationsSnapshot.docs.isEmpty) {
         print('⚠️ No validations found in database');

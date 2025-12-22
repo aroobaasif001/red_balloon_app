@@ -8,6 +8,7 @@ import 'package:red_balloon_app/services/task_service.dart';
 import 'package:red_balloon_app/services/offer_service.dart';
 import 'package:red_balloon_app/services/user_service.dart';
 import 'dart:async';
+import '../../../../../../../services/notification_services.dart';
 
 class TaskInProgressController extends GetxController {
   final TaskService _taskService = TaskService();
@@ -118,6 +119,23 @@ class TaskInProgressController extends GetxController {
       reason: reason,
       details: details,
     );
+    
+    // 🔥 Send Push Notification to helper
+    final hUid = acceptedOffer.value?.offeringUserUid;
+    final tTitle = task.value?.title;
+    final tId = task.value?.id;
+    
+    if (hUid != null && tTitle != null && tId != null) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      final senderName = currentUser?.displayName ?? 'Requester';
+      
+      NotificationService.instance.notifyHelpRequested(
+        receiverId: hUid,
+        senderName: senderName,
+        taskTitle: tTitle,
+        taskId: tId,
+      );
+    }
     
     // Refresh local state (listener handles it mostly, but good for immediate feedback if needed)
   }

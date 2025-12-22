@@ -6,8 +6,9 @@ import '../../../../../../utils/colors.dart';
 class ChatInputBar extends StatefulWidget {
   final TextEditingController? controller;
   final VoidCallback? onSend;
+  final VoidCallback? onAttach; // 🔥 Added for attachments
 
-  const ChatInputBar({super.key, this.controller, this.onSend});
+  const ChatInputBar({super.key, this.controller, this.onSend, this.onAttach});
 
   @override
   State<ChatInputBar> createState() => _ChatInputBarState();
@@ -43,7 +44,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
       child: Row(
         children: [
           InkWell(
-            onTap: () {},
+            onTap: widget.onAttach,
             child: Image.asset(
               'assets/icons/attach-btn1.png',
               height: 22,

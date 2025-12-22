@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:red_balloon_app/model/conversation_model.dart';
 import 'package:red_balloon_app/model/message_model.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
+import 'dart:io';
 
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   // Get current user ID
   String? get currentUserId => _auth.currentUser?.uid;
@@ -89,6 +92,23 @@ class ChatService {
     }
   }
 
+  /// Upload image to Firebase Storage for chat
+  Future<String?> uploadChatImage(File imageFile, String conversationId) async {
+    try {
+      final senderId = currentUserId;
+      if (senderId == null) return null;
+
+      final fileName = 'chat_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final ref = _storage.ref().child('chats/$conversationId/$fileName');
+
+      await ref.putFile(imageFile);
+      return await ref.getDownloadURL();
+    } catch (e) {
+      print('Error uploading chat image: $e');
+      return null;
+    }
+  }
+
   /// Send a message in a conversation
   Future<bool> sendMessage({
     required String conversationId,
@@ -128,14 +148,19 @@ class ChatService {
       // Update conversation's last message and remove both participants from hiddenBy
       // so the chat reappears if it was hidden by either
       await _firestore.collection('conversations').doc(conversationId).update({
-        'lastMessage': message,
+        'lastMessage': imageUrl != null ? '📷 Image' : message,
         'lastMessageTime': newMessage.timestamp,
         'unreadCount.$receiverId': FieldValue.increment(1),
         'hiddenBy': FieldValue.arrayRemove([senderId, receiverId]), // 🔥 Re-show for both
       });
 
       // 🔥 Send push notification to receiver
-      _sendNotification(conversationId, senderId, receiverId, message);
+      _sendNotification(
+        conversationId,
+        senderId,
+        receiverId,
+        imageUrl != null ? '📷 Image' : message,
+      );
 
       return true;
     } catch (e) {

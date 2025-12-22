@@ -11,6 +11,8 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/
 
 import '../post_new_task/post_new_task_screen.dart';
 import 'controller/task_tabs_controller.dart';
+import 'controller/tasks_controller.dart';
+import 'package:red_balloon_app/services/auth_service.dart';
 
 class MyTaskScreen extends StatefulWidget {
   const MyTaskScreen({super.key});
@@ -31,6 +33,18 @@ class _MyTaskScreenState extends State<MyTaskScreen> {
     } else {
       controller = Get.put(TaskTabsController());
     }
+
+    // 🔥 Initialize TasksController here so it's ready for all tabs
+    if (!Get.isRegistered<TasksController>()) {
+      Get.put(TasksController());
+    }
+  }
+
+  @override
+  void dispose() {
+    // Optional: Only delete if you want it to refresh every time user enters MyTaskScreen
+    // Get.delete<TasksController>(); 
+    super.dispose();
   }
 
   @override

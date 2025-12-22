@@ -8,6 +8,8 @@ class ReceiverBubble extends StatelessWidget {
   final String time;
   final String? profilePhoto;
   final String? userName;
+  final String? imageUrl; // 🔥 Added for images
+  final VoidCallback? onTapImage; // 🔥 Added for fullscreen
 
   const ReceiverBubble({
     super.key,
@@ -15,6 +17,8 @@ class ReceiverBubble extends StatelessWidget {
     required this.time,
     this.profilePhoto,
     this.userName,
+    this.imageUrl,
+    this.onTapImage,
   });
 
   @override
@@ -97,7 +101,35 @@ class ReceiverBubble extends StatelessWidget {
                 // constraints: const BoxConstraints(
                 //   maxWidth: 262,
                 // ),
-                child: CustomText(text, fontSize: 15, color: grey50Color),
+                child: imageUrl != null && imageUrl!.isNotEmpty
+                    ? GestureDetector(
+                        onTap: onTapImage,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            imageUrl!,
+                            width: 200,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const SizedBox(
+                                width: 200,
+                                height: 200,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: redColor,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.broken_image, color: greyColor);
+                            },
+                          ),
+                        ),
+                      )
+                    : CustomText(text, fontSize: 15, color: grey50Color),
               ),
 
               const SizedBox(height: 6),

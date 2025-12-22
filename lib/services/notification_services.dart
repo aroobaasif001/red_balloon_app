@@ -11,9 +11,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import 'get_server_key.dart';
 import '../views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
 import '../views/user/bottomNavi/screens/profile/tabs/controller/chat_controller.dart';
+import '../views/user/bottomNavi/screens/task/my_task/tabs/task_review_screen.dart';
+import 'get_server_key.dart';
 
 /// Notification types used in Firestore + payloads
 enum NoticeType { success, danger, info, warning }
@@ -22,7 +23,7 @@ class NotificationService {
   NotificationService._();
   static final NotificationService instance = NotificationService._();
 
-  // 🔔 Use ONE consistent channel id everywhere (Android 8+)
+  //Use ONE consistent channel id everywhere (Android 8+)
   static const String kDefaultAndroidChannelId = 'vantagem_high_importance';
   static const String kDefaultAndroidChannelName = 'General Notifications';
 
@@ -33,7 +34,7 @@ class NotificationService {
   var androidSdkInt;
 
   // ============================================
-  // 🎯 TASK POSTING NOTIFICATION
+  //TASK POSTING NOTIFICATION
   // ============================================
 
   /// Send push notification to user when they post a new task
@@ -44,9 +45,9 @@ class NotificationService {
     required String taskId,
   }) async {
     try {
-      debugPrint('📤 Sending task posted notification to user: $userId');
+      debugPrint('Sending task posted notification to user: $userId');
 
-      final title = '🎉 Task Posted Successfully!';
+      final title = 'Task Posted Successfully!';
       final body =
           'Your task "$taskTitle" has been posted. Helpers will be notified.';
 
@@ -66,7 +67,7 @@ class NotificationService {
             'createdAt': FieldValue.serverTimestamp(),
           });
 
-      debugPrint('✅ Notification saved to Firestore');
+      debugPrint('Notification saved to Firestore');
 
       // 2) Get user's device token from Firestore
       final userDoc = await FirebaseFirestore.instance
@@ -77,7 +78,7 @@ class NotificationService {
       final deviceToken = userDoc.data()?['deviceToken'] as String?;
 
       if (deviceToken == null || deviceToken.isEmpty) {
-        debugPrint('⚠️ No device token found for user: $userId');
+        debugPrint('No device token found for user: $userId');
         return;
       }
 
@@ -98,14 +99,304 @@ class NotificationService {
         recipientSdk: androidSdk,
       );
 
-      debugPrint('✅ Task posted notification sent successfully');
+      debugPrint('Task posted notification sent successfully');
     } catch (e) {
-      debugPrint('❌ Error sending task posted notification: $e');
+      debugPrint('Error sending task posted notification: $e');
+    }
+  }
+
+  /// Send push notification to task owner when helper uploads proof
+  /// Also saves notification to Firestore for history
+  Future<void> notifyProofUploaded({
+    required String taskOwnerId,
+    required String helperName,
+    required String taskTitle,
+    required String taskId,
+    required String proofId, // Added proofId
+  }) async {
+    try {
+      debugPrint('Sending proof uploaded notification to owner: $taskOwnerId');
+
+      final title = 'Task Proof Uploaded!';
+      final body =
+          '$helperName has uploaded proof for your task "$taskTitle". Please review it.';
+
+      // 1) Save notification to Firestore
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(taskOwnerId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.info.name,
+            'category': 'proof_uploaded',
+            'taskId': taskId,
+            'proofId': proofId, // Store proofId
+            'taskTitle': taskTitle,
+            'helperName': helperName,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      debugPrint('Proof Notification saved to Firestore');
+
+      // 2) Get task owner's device token
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(taskOwnerId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+
+      if (deviceToken == null || deviceToken.isEmpty) {
+        debugPrint('No device token found for task owner: $taskOwnerId');
+        return;
+      }
+
+      final androidSdk = userDoc.data()?['androidSdk'] as int?;
+
+      // 3) Send FCM push notification
+      await _sendFcmDirect(
+        token: deviceToken,
+        title: title,
+        body: body,
+        data: {
+          'category': 'proof_uploaded',
+          'taskId': taskId,
+          'proofId': proofId, // Pass proofId for navigation
+          'route': 'task_review', // Updated route name
+        },
+        recipientSdk: androidSdk,
+      );
+
+      debugPrint('Proof uploaded notification sent successfully');
+    } catch (e) {
+      debugPrint('Error sending proof uploaded notification: $e');
+    }
+  }
+
+  /// Notify helper that their proof has been ACCEPTED
+  Future<void> notifyProofAccepted({
+    required String helperId,
+    required String taskTitle,
+    required String taskId,
+  }) async {
+    try {
+      final title = 'Proof Accepted!';
+      final body = 'Your proof for "$taskTitle" has been accepted. Great job!';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(helperId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.success.name,
+            'category': 'proof_accepted',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(helperId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: {
+            'category': 'proof_accepted',
+            'taskId': taskId,
+            'route': 'history_tab',
+          },
+          recipientSdk: userDoc.data()?['androidSdk'] as int?,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending proof accepted notification: $e');
+    }
+  }
+
+  /// Notify helper that their proof has been REJECTED
+  Future<void> notifyProofRejected({
+    required String helperId,
+    required String taskTitle,
+    required String taskId,
+    required String rejectedByName, // Added sender name
+  }) async {
+    try {
+      final title = 'Proof Rejected';
+      final body =
+          '$rejectedByName has rejected your proof for "$taskTitle". It is now in the validation hub.';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(helperId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.danger.name,
+            'category': 'proof_rejected',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'rejectedBy': rejectedByName,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(helperId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: {
+            'category': 'proof_rejected',
+            'taskId': taskId,
+            'route': 'history_tab',
+          },
+          recipientSdk: userDoc.data()?['androidSdk'] as int?,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending proof rejected notification: $e');
+    }
+  }
+
+  /// Notify ALL users about a new task in validation hub
+  /// [excludeUserIds] is used to skip helper and requester/owner
+  Future<void> broadcastValidationTask({
+    required String taskTitle,
+    required String taskId,
+    List<String>? excludeUserIds, // Added exclusion list
+  }) async {
+    try {
+      final title = 'New Validation Required';
+      final body =
+          'A new task "$taskTitle" is in validation hub. Help us decide!';
+
+      // Fetch all users with device tokens
+      final usersSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('deviceToken', isNotEqualTo: '')
+          .get();
+
+      debugPrint('Broadcasting to ${usersSnapshot.docs.length} users');
+      debugPrint('Excluding IDs: $excludeUserIds');
+
+      int sentCount = 0;
+      int skipCount = 0;
+
+      for (var doc in usersSnapshot.docs) {
+        final userId = doc.id.trim();
+
+        // Skip excluded users (Helper and Owner)
+        bool shouldSkip = false;
+        if (excludeUserIds != null) {
+          for (var excludeId in excludeUserIds) {
+            if (excludeId.trim() == userId) {
+              shouldSkip = true;
+              break;
+            }
+          }
+        }
+
+        if (shouldSkip) {
+          debugPrint('Skipping excluded user: $userId');
+          skipCount++;
+          continue;
+        }
+
+        final deviceToken = doc.data()['deviceToken'] as String?;
+        if (deviceToken == null || deviceToken.isEmpty) continue;
+
+        sentCount++;
+        _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: {
+            'category': 'validation_hub_alert',
+            'taskId': taskId,
+            'route': 'validation_hub',
+          },
+          recipientSdk: doc.data()['androidSdk'] as int?,
+        );
+      }
+      debugPrint(
+        'Broadcast complete. Sent to $sentCount users, skipped $skipCount.',
+      );
+    } catch (e) {
+      debugPrint('Error broadcasting validation alert: $e');
+    }
+  }
+
+  /// Notify participant that help was requested
+  Future<void> notifyHelpRequested({
+    required String receiverId,
+    required String senderName,
+    required String taskTitle,
+    required String taskId,
+  }) async {
+    try {
+      final title = 'Help Requested';
+      final body = '$senderName requested help regarding task "$taskTitle".';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(receiverId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.warning.name,
+            'category': 'help_requested',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(receiverId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: {
+            'category': 'help_requested',
+            'taskId': taskId,
+            'route': 'task_in_progress',
+          },
+          recipientSdk: userDoc.data()?['androidSdk'] as int?,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending help request notification: $e');
     }
   }
 
   // ============================================
-  // 🎯 OFFER NOTIFICATIONS
+  // CHAT NOTIFICATIONS
   // ============================================
 
   /// Send push notification to task owner when someone sends an offer
@@ -118,9 +409,9 @@ class NotificationService {
     required double offerAmount,
   }) async {
     try {
-      debugPrint('📤 Sending offer received notification to user: $taskOwnerId');
+      debugPrint('Sending offer received notification to user: $taskOwnerId');
 
-      final title = '💰 New Offer Received!';
+      final title = 'New Offer Received!';
       final body =
           '$helperName sent an offer of SAR ${offerAmount.toStringAsFixed(0)} for your task "$taskTitle".';
 
@@ -142,7 +433,7 @@ class NotificationService {
             'createdAt': FieldValue.serverTimestamp(),
           });
 
-      debugPrint('✅ Offer Notification saved to Firestore');
+      debugPrint('Offer Notification saved to Firestore');
 
       // 2) Get task owner's device token from Firestore
       final userDoc = await FirebaseFirestore.instance
@@ -153,7 +444,7 @@ class NotificationService {
       final deviceToken = userDoc.data()?['deviceToken'] as String?;
 
       if (deviceToken == null || deviceToken.isEmpty) {
-        debugPrint('⚠️ No device token found for task owner: $taskOwnerId');
+        debugPrint('No device token found for task owner: $taskOwnerId');
         return;
       }
 
@@ -173,9 +464,9 @@ class NotificationService {
         recipientSdk: androidSdk,
       );
 
-      debugPrint('✅ Offer received notification sent successfully');
+      debugPrint('Offer received notification sent successfully');
     } catch (e) {
-      debugPrint('❌ Error sending offer notification: $e');
+      debugPrint('Error sending offer notification: $e');
     }
   }
 
@@ -187,10 +478,11 @@ class NotificationService {
     required String taskId,
   }) async {
     try {
-      debugPrint('📤 Sending offer accepted notification to helper: $helperId');
+      debugPrint('Sending offer accepted notification to helper: $helperId');
 
-      final title = '🎊 Offer Accepted!';
-      final body = 'Your offer for the task "$taskTitle" has been accepted. You can now start the task.';
+      final title = 'Offer Accepted!';
+      final body =
+          'Your offer for the task "$taskTitle" has been accepted. You can now start the task.';
 
       // 1) Save notification to Firestore
       await FirebaseFirestore.instance
@@ -208,7 +500,7 @@ class NotificationService {
             'createdAt': FieldValue.serverTimestamp(),
           });
 
-      debugPrint('✅ Acceptance Notification saved to Firestore');
+      debugPrint('Acceptance Notification saved to Firestore');
 
       // 2) Get helper's device token from Firestore
       final userDoc = await FirebaseFirestore.instance
@@ -219,7 +511,7 @@ class NotificationService {
       final deviceToken = userDoc.data()?['deviceToken'] as String?;
 
       if (deviceToken == null || deviceToken.isEmpty) {
-        debugPrint('⚠️ No device token found for helper: $helperId');
+        debugPrint('No device token found for helper: $helperId');
         return;
       }
 
@@ -239,9 +531,9 @@ class NotificationService {
         recipientSdk: androidSdk,
       );
 
-      debugPrint('✅ Offer accepted notification sent successfully');
+      debugPrint('Offer accepted notification sent successfully');
     } catch (e) {
-      debugPrint('❌ Error sending offer accepted notification: $e');
+      debugPrint('Error sending offer accepted notification: $e');
     }
   }
 
@@ -258,7 +550,7 @@ class NotificationService {
     String? taskImage,
   }) async {
     try {
-      debugPrint('📤 Sending chat notification to user: $receiverId');
+      debugPrint('Sending chat notification to user: $receiverId');
 
       final title = senderName; // Name as title like most chat apps
       final body = message;
@@ -295,7 +587,7 @@ class NotificationService {
       final deviceToken = userDoc.data()?['deviceToken'] as String?;
 
       if (deviceToken == null || deviceToken.isEmpty) {
-        debugPrint('⚠️ No device token found for receiver: $receiverId');
+        debugPrint('No device token found for receiver: $receiverId');
         return;
       }
 
@@ -320,14 +612,14 @@ class NotificationService {
         recipientSdk: androidSdk,
       );
 
-      debugPrint('✅ Chat notification sent successfully');
+      debugPrint('Chat notification sent successfully');
     } catch (e) {
-      debugPrint('❌ Error sending chat notification: $e');
+      debugPrint('Error sending chat notification: $e');
     }
   }
 
   // ============================================
-  // 🔧 INITIALIZATION & TOKEN MANAGEMENT
+  // INITIALIZATION & TOKEN MANAGEMENT
   // ============================================
 
   /// Initialize notification service for logged-in user
@@ -354,15 +646,15 @@ class NotificationService {
         final initial = await _messaging.getInitialMessage();
         if (initial != null) _handleNotificationTap(initial);
       } catch (e) {
-        debugPrint('❌ Error getting initial message: $e');
+        debugPrint('Error getting initial message: $e');
       }
 
       // Setup background message handler
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-      debugPrint('✅ Notification service initialized for user: $userId');
+      debugPrint('Notification service initialized for user: $userId');
     } catch (e) {
-      debugPrint('❌ Error initializing notification service: $e');
+      debugPrint('Error initializing notification service: $e');
     }
   }
 
@@ -373,39 +665,75 @@ class NotificationService {
       final category = data['category'] as String?;
       final route = data['route'] as String?;
 
-      debugPrint('📱 Notification tapped: $category, route: $route');
+      debugPrint('Notification tapped: $category, route: $route');
 
       if (category == 'task_posted' && route == 'all_task_tab') {
         // ... (existing task_posted logic)
         _navigateToAllTasks();
       } else if (category == 'chat_message' && route == 'chat_screen') {
         _navigateToChat(data);
+      } else if (category == 'proof_uploaded' && route == 'task_review') {
+        _navigateToTaskReview(data);
+      } else if (category == 'validation_hub_alert' &&
+          route == 'validation_hub') {
+        _navigateToValidationHub();
       } else if (category == 'offer_received' || category == 'offer_accepted') {
         _navigateToMyTasks();
       }
     } catch (e) {
-      debugPrint('❌ Error handling notification tap: $e');
+      debugPrint('Error handling notification tap: $e');
     }
   }
 
   void _navigateToAllTasks() {
-    debugPrint('🔄 Navigating to all tasks tab');
+    debugPrint('Navigating to all tasks tab');
     Future.delayed(Duration(milliseconds: 500), () {
       try {
         Get.offAllNamed('/home', arguments: {'initialTab': 2});
       } catch (e) {
-        debugPrint('❌ Navigation error: $e');
+        debugPrint('Navigation error: $e');
       }
     });
   }
 
   void _navigateToMyTasks() {
-    debugPrint('🔄 Navigating to my tasks');
+    debugPrint('Navigating to my tasks');
     Future.delayed(Duration(milliseconds: 500), () {
       try {
         Get.offAllNamed('/home', arguments: {'initialTab': 1}); // My Tasks tab
       } catch (e) {
-        debugPrint('❌ Navigation error: $e');
+        debugPrint('Navigation error: $e');
+      }
+    });
+  }
+
+  void _navigateToValidationHub() {
+    debugPrint('Navigating to validation hub');
+    Future.delayed(Duration(milliseconds: 500), () {
+      try {
+        Get.offAllNamed(
+          '/home',
+          arguments: {'initialTab': 3},
+        ); // Validations tab
+      } catch (e) {
+        debugPrint('Navigation error: $e');
+      }
+    });
+  }
+
+  void _navigateToTaskReview(Map<String, dynamic> data) {
+    final taskId = data['taskId'] as String?;
+    final proofId = data['proofId'] as String?;
+
+    if (taskId == null || proofId == null) return;
+
+    debugPrint('Navigating to task review screen: $taskId');
+
+    Future.delayed(Duration(milliseconds: 600), () {
+      try {
+        Get.to(() => TaskReviewScreen(taskId: taskId, proofId: proofId));
+      } catch (e) {
+        debugPrint('Review Navigation error: $e');
       }
     });
   }
@@ -420,7 +748,7 @@ class NotificationService {
 
     if (taskId == null || senderId == null) return;
 
-    debugPrint('🔄 Navigating to chat screen with $senderName');
+    debugPrint('Navigating to chat screen with $senderName');
 
     Future.delayed(Duration(milliseconds: 600), () {
       try {
@@ -440,7 +768,7 @@ class NotificationService {
           }),
         );
       } catch (e) {
-        debugPrint('❌ Chat Navigation error: $e');
+        debugPrint('Chat Navigation error: $e');
       }
     });
   }
@@ -459,7 +787,7 @@ class NotificationService {
     if (Platform.isAndroid) {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       androidSdkInt = androidInfo.version.sdkInt;
-      debugPrint('📱 Android SDK: $androidSdkInt');
+      debugPrint('Android SDK: $androidSdkInt');
     }
 
     // default init icon = launcher (ye 13+ pe use hoga)
@@ -489,17 +817,17 @@ class NotificationService {
     await androidPlugin?.requestNotificationsPermission(); // <- null-safe
 
     if (settings.authorizationStatus == AuthorizationStatus.denied) {
-      debugPrint('❌ Notifications permission denied.');
+      debugPrint('Notifications permission denied.');
     } else {
       try {
         if (defaultTargetPlatform == TargetPlatform.iOS) {
           final apns = await _messaging.getAPNSToken();
-          debugPrint('📱 APNs Token: $apns');
+          debugPrint('APNs Token: $apns');
         }
         final fcm = await _messaging.getToken();
-        debugPrint('🔗 FCM Token: $fcm');
+        debugPrint('FCM Token: $fcm');
       } catch (e) {
-        debugPrint('❌ Error retrieving FCM/APNs token: $e');
+        debugPrint('Error retrieving FCM/APNs token: $e');
       }
     }
   }
@@ -549,7 +877,7 @@ class NotificationService {
     try {
       final fcm = await _messaging.getToken();
       if (fcm == null) {
-        debugPrint('❌ Could not get FCM token.');
+        debugPrint('Could not get FCM token.');
         return;
       }
 
@@ -565,9 +893,9 @@ class NotificationService {
         'lastTokenUpdate': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
-      debugPrint('✅ Device token saved for user: $userId');
+      debugPrint('Device token saved for user: $userId');
     } catch (e) {
-      debugPrint('❌ Error saving user device token: $e');
+      debugPrint('Error saving user device token: $e');
     }
   }
 
@@ -620,7 +948,7 @@ class NotificationService {
             'sound': 'default',
             'default_sound': true,
             'default_vibrate_timings': true,
-            if (useLegacyIcon) 'icon': 'notification_icon', // 👈 SDK<33
+            if (useLegacyIcon) 'icon': 'notification_icon', // SDK<33
             // SDK>=33 -> omit => launcher ic used
           },
         },
@@ -645,9 +973,9 @@ class NotificationService {
     );
 
     if (res.statusCode < 200 || res.statusCode >= 300) {
-      debugPrint('❌ FCM v1 error ${res.statusCode}: ${res.body}');
+      debugPrint('FCM v1 error ${res.statusCode}: ${res.body}');
     } else {
-      debugPrint('✅ Push sent');
+      debugPrint('Push sent');
     }
   }
 }
@@ -655,5 +983,5 @@ class NotificationService {
 // Top-level background handler (must be a static/global function)
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint('📬 BG message: ${message.notification?.title}');
+  debugPrint('BG message: ${message.notification?.title}');
 }
