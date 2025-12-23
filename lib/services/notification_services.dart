@@ -537,6 +537,59 @@ class NotificationService {
     }
   }
 
+  /// Notify helper that they have received payment for a task
+  Future<void> notifyPaymentReceived({
+    required String helperId,
+    required String taskTitle,
+    required String taskId,
+    required double amount,
+  }) async {
+    try {
+      final title = 'Payment Received!';
+      final body =
+          'You have received SAR ${amount.toStringAsFixed(2)} for completing "$taskTitle". Check your wallet!';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(helperId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.success.name,
+            'category': 'payment_received',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'amount': amount,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(helperId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: {
+            'category': 'payment_received',
+            'taskId': taskId,
+            'amount': amount.toString(),
+            'route': 'wallet_tab', // Navigate to wallet
+          },
+          recipientSdk: userDoc.data()?['androidSdk'] as int?,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending payment received notification: $e');
+    }
+  }
+
   /// Send push notification for chat messages
   Future<void> notifyChatMessage({
     required String receiverId,

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import '../../../../../../../services/notification_services.dart';
+import '../../../../../../../services/wallet_service.dart';
 
 class TaskReviewController extends GetxController {
   // Timer
@@ -179,27 +180,73 @@ class TaskReviewController extends GetxController {
     try {
       isSubmitting.value = true; // 🔥 Show loading
 
-      // Update task status to completed
+      // 1. Fetch task details to get budget and requester UID
+      final taskDoc = await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(taskId)
+          .get();
+
+      if (!taskDoc.exists) {
+        throw 'Task not found';
+      }
+
+      final taskData = taskDoc.data()!;
+      final double budget = (taskData['budget'] ?? 0.0).toDouble();
+      final String requesterUid = taskData['uid'] ?? '';
+      final String title = taskData['title'] ?? 'Task';
+
+      if (requesterUid.isEmpty) {
+        throw 'Requester UID not found';
+      }
+
+      // 2. Distribute funds via WalletService
+      final walletService = WalletService();
+      final walletResult = await walletService.releaseEscrowToHelper(
+        taskId: taskId,
+        requesterUid: requesterUid,
+        helperUid: helperId.value,
+        totalAmount: budget,
+        taskTitle: title,
+      );
+
+      if (!walletResult['success']) {
+        throw walletResult['message'] ?? 'Failed to distribute funds';
+      }
+
+      // 3. Update task status to completed
       await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
         'status': 'completed',
+        'completedAt': FieldValue.serverTimestamp(),
       });
 
-      // Update proof status to accepted
+      // 4. Update proof status to accepted
       await FirebaseFirestore.instance
           .collection('task_proofs')
           .doc(proofId)
-          .update({'status': 'accepted'});
+          .update({
+        'status': 'accepted',
+        'acceptedAt': FieldValue.serverTimestamp(),
+      });
 
-      print('✅ Proof accepted successfully');
+      print('✅ Proof accepted and funds distributed successfully');
 
-      Get.snackbar('Success', 'Proof accepted successfully');
+      Get.snackbar('Success', 'Proof accepted and payment released!');
 
-      // 🔥 Trigger Notification
+      // 5. 🔥 Trigger Notifications
       if (helperId.value.isNotEmpty) {
+        // General proof accepted notification
         NotificationService.instance.notifyProofAccepted(
           helperId: helperId.value,
           taskTitle: taskTitle.value,
           taskId: taskId,
+        );
+
+        // Specific payment received notification (Includes amount)
+        NotificationService.instance.notifyPaymentReceived(
+          helperId: helperId.value,
+          taskTitle: taskTitle.value,
+          taskId: taskId,
+          amount: walletResult['helperAmount'] ?? (budget * 0.85),
         );
       }
 
@@ -212,7 +259,7 @@ class TaskReviewController extends GetxController {
     } catch (e) {
       print('❌ Error accepting proof: $e');
       isSubmitting.value = false; // 🔥 Hide loading on error
-      Get.snackbar('Error', 'Failed to accept proof');
+      Get.snackbar('Error', 'Failed to accept proof: ${e.toString()}');
     }
   }
 

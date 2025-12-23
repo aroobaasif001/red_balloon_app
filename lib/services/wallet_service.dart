@@ -300,4 +300,105 @@ class WalletService {
       return {'success': false, 'message': 'An error occurred during purchase'};
     }
   }
+
+  /// Release escrow to helper after task completion
+  Future<Map<String, dynamic>> releaseEscrowToHelper({
+    required String taskId,
+    required String requesterUid,
+    required String helperUid,
+    required double totalAmount,
+    required String taskTitle,
+  }) async {
+    try {
+      final requesterWalletDoc = _walletCollection.doc(requesterUid);
+      final helperWalletDoc = _walletCollection.doc(helperUid);
+
+      final result = await _firestore.runTransaction((transaction) async {
+        // 1. Read all needed documents FIRST
+        final requesterSnapshot = await transaction.get(requesterWalletDoc);
+        final helperSnapshot = await transaction.get(helperWalletDoc);
+
+        // 2. Validate requester wallet
+        if (!requesterSnapshot.exists) {
+          return {'success': false, 'message': 'Requester wallet not found'};
+        }
+
+        final requesterData = requesterSnapshot.data() as Map<String, dynamic>;
+        double currentEscrow = (requesterData['escrowBalance'] ?? 0.0).toDouble();
+
+        // 3. Calculate amounts
+        double helperAmount = totalAmount * 0.85;
+        double escrowFee = totalAmount * 0.075;
+        double platformFee = totalAmount * 0.075;
+
+        // 4. Prepare helper data
+        double currentHelperBalance = 0.0;
+        if (helperSnapshot.exists) {
+          currentHelperBalance = (helperSnapshot.data() as Map<String, dynamic>)['balance'] ?? 0.0;
+        }
+
+        // 5. PERFORM ALL WRITES AFTER ALL READS
+
+        // Update requester wallet (Subtract from escrowBalance)
+        transaction.update(requesterWalletDoc, {
+          'escrowBalance': currentEscrow - totalAmount,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        // Update helper wallet (Add to balance)
+        transaction.set(
+          helperWalletDoc,
+          {
+            'balance': currentHelperBalance + helperAmount,
+            'uid': helperUid,
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true),
+        );
+
+        // Add transaction records
+        // Requester Transaction (Escrow Released)
+        final reqTransRef = requesterWalletDoc.collection('transactions').doc();
+        transaction.set(reqTransRef, {
+          'id': reqTransRef.id,
+          'title': 'Escrow Released',
+          'description': 'Task "$taskTitle" completed',
+          'amount': totalAmount,
+          'type': 'debit_escrow',
+          'status': 'completed',
+          'taskId': taskId,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        // Helper Transaction (Payment Received)
+        final helpTransRef = helperWalletDoc.collection('transactions').doc();
+        transaction.set(helpTransRef, {
+          'id': helpTransRef.id,
+          'title': 'Payment Received',
+          'description': 'For task "$taskTitle" (85% after fees)',
+          'amount': helperAmount,
+          'type': 'credit',
+          'status': 'completed',
+          'taskId': taskId,
+          'createdAt': FieldValue.serverTimestamp(),
+          'feesDeducted': escrowFee + platformFee,
+          'escrowFee': escrowFee,
+          'platformFee': platformFee,
+        });
+
+        return {
+          'success': true,
+          'helperAmount': helperAmount,
+          'fees': escrowFee + platformFee,
+          'escrowFee': escrowFee,
+          'platformFee': platformFee,
+        };
+      });
+
+      return result;
+    } catch (e) {
+      print('Error releasing escrow: $e');
+      return {'success': false, 'message': 'An error occurred while releasing escrow: ${e.toString()}'};
+    }
+  }
 }
