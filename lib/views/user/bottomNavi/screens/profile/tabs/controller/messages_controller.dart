@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:red_balloon_app/model/conversation_model.dart';
 import 'package:red_balloon_app/services/chat_service.dart';
@@ -12,16 +14,32 @@ class MessagesController extends GetxController {
   final RxString searchQuery = ''.obs;
   final RxInt totalUnreadCount = 0.obs;
 
+  StreamSubscription? _conversationsSubscription;
+
   @override
   void onInit() {
     super.onInit();
+    print('🚀 MessagesController: onInit - Starting stream');
     _streamConversations();
+  }
+
+  @override
+  void onClose() {
+    print('🛑 MessagesController: onClose - Disposing controller');
+    _conversationsSubscription?.cancel();
+    super.onClose();
   }
 
   /// Stream user's conversations
   void _streamConversations() {
-    chatService.streamUserConversations().listen(
+    _conversationsSubscription?.cancel();
+    print('📬 MessagesController: Starting stream listener...');
+
+    _conversationsSubscription = chatService.streamUserConversations().listen(
       (conversationsList) {
+        print(
+          '📬 MessagesController: Stream data received. List size: ${conversationsList.length}',
+        );
         conversations.value = conversationsList;
         _applySearchFilter();
         _calculateTotalUnread();
@@ -42,11 +60,14 @@ class MessagesController extends GetxController {
 
   /// Apply search filter to conversations
   void _applySearchFilter() {
+    // 🔥 Filter out empty conversations (no messages)
+    final nonEmptyConversations = conversations.where((c) => c.lastMessage.trim().isNotEmpty).toList();
+
     if (searchQuery.value.isEmpty) {
-      filteredConversations.assignAll(conversations);
+      filteredConversations.assignAll(nonEmptyConversations);
     } else {
       final results = chatService.searchConversations(
-        conversations,
+        nonEmptyConversations.obs, // Pass the already filtered list
         searchQuery.value,
       );
       filteredConversations.assignAll(results);
@@ -56,16 +77,33 @@ class MessagesController extends GetxController {
   void _calculateTotalUnread() {
     final uid = chatService.currentUserId;
     if (uid == null) {
+      print(
+        '⚠️ MessagesController: No UID found while calculating unread count',
+      );
       totalUnreadCount.value = 0;
       return;
     }
-    
+
     int total = 0;
+    int unreadConvCount = 0;
+
     for (var conversation in conversations) {
-      total += conversation.getUnreadCountForUser(uid);
+      final unread = conversation.getUnreadCountForUser(uid);
+      if (unread > 0) {
+        unreadConvCount++;
+        print(
+          '💬 MessagesController: Conversation ${conversation.conversationId} has $unread unread messages for user $uid',
+        );
+      }
+      total += unread;
     }
-    totalUnreadCount.value = total;
-    print('📊 Total Unread Messages Updated: $total');
+
+    if (total != totalUnreadCount.value) {
+      totalUnreadCount.value = total;
+      print(
+        '📊 MessagesController: Total Unread Count Updated -> $total (across $unreadConvCount conversations)',
+      );
+    }
   }
 
   /// Get time ago string from timestamp
@@ -94,7 +132,9 @@ class MessagesController extends GetxController {
   Future<void> hideConversation(String conversationId) async {
     // 🔥 Optimistic UI update: Remove from local lists immediately
     conversations.removeWhere((c) => c.conversationId == conversationId);
-    filteredConversations.removeWhere((c) => c.conversationId == conversationId);
+    filteredConversations.removeWhere(
+      (c) => c.conversationId == conversationId,
+    );
 
     // Update backend
     await chatService.hideConversation(conversationId);

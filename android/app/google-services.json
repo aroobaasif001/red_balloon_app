@@ -12,7 +12,36 @@
           "package_name": "com.redballoon.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1037639327100-31c4jgrm6ke6usmdkoqjplntdcr2l5e4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redballoon.app",
+            "certificate_hash": "4bc02a170cab94daed9eb68f097f4069b3ad82fa"
+          }
+        },
+        {
+          "client_id": "1037639327100-efgvbt64ke9veapa5nh832qiu0guu24i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redballoon.app",
+            "certificate_hash": "670ccbcb4364163232e15ea37070afaa7c37f049"
+          }
+        },
+        {
+          "client_id": "1037639327100-naihepd25803biceiec7k58189o5ddtt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redballoon.app",
+            "certificate_hash": "b0665e5aad8e4cb157ac2dfa6892229abbee7c07"
+          }
+        },
+        {
+          "client_id": "1037639327100-sh3fkk5daq5ef6u97i04ov466qe1cnsl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB-8afUTWDCdxYvN8m2IVfI6c-9I75Sxpk"
@@ -20,7 +49,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1037639327100-sh3fkk5daq5ef6u97i04ov466qe1cnsl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1037639327100-2ceqifsjdls4npu6iu1ojimd2s6hj8tn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.redballoon.app"
+              }
+            }
+          ]
         }
       }
     }

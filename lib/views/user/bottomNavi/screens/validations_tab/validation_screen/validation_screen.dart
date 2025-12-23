@@ -15,6 +15,7 @@ class ValidationScreen extends StatefulWidget {
   final String? beforePhotoUrl;
   final String? afterPhotoUrl;
   final String? proofId; // 🔥 Added proofId parameter
+  final String? validationId; // 🔥 Added validationId parameter
 
   const ValidationScreen({
     super.key,
@@ -24,6 +25,7 @@ class ValidationScreen extends StatefulWidget {
     this.beforePhotoUrl,
     this.afterPhotoUrl,
     this.proofId, // 🔥 Added to constructor
+    this.validationId, // 🔥 Added to constructor
   });
 
   @override
@@ -49,6 +51,7 @@ class _ValidationScreenState extends State<ValidationScreen> {
         validationBeforePhoto: widget.beforePhotoUrl ?? '',
         validationAfterPhoto: widget.afterPhotoUrl ?? '',
         proofId: widget.proofId, // 🔥 Pass proofId to controller
+        validationDocId: widget.validationId, // 🔥 Pass validationId to controller
       );
     }
   }
@@ -91,7 +94,13 @@ class _ValidationScreenState extends State<ValidationScreen> {
                       children: [
                         CircleAvatar(
                           radius: 24,
-                          backgroundImage: AssetImage("assets/images/prof.png"),
+                          backgroundColor: redColor.withOpacity(0.1),
+                          backgroundImage: controller.requesterPhotoUrl.value.isNotEmpty
+                              ? NetworkImage(controller.requesterPhotoUrl.value)
+                              : const AssetImage("assets/images/prof.png") as ImageProvider,
+                          onBackgroundImageError: (_, __) {
+                            print("❌ Error loading requester photo");
+                          },
                         ),
                         const SizedBox(width: 12),
                         Expanded(

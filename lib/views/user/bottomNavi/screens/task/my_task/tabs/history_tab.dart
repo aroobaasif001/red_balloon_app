@@ -156,6 +156,7 @@ class HistoryTab extends StatelessWidget {
                                 // Navigate with validation data
                                 Get.to(
                                   () => ValidationScreen(
+                                    validationId: validationSnapshot.docs.first.id,
                                     taskId: task.id,
                                     userId: userId,
                                     beforePhotoUrl:

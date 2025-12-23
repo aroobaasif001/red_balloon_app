@@ -118,6 +118,18 @@ class UploadProofController extends GetxController {
       }
 
       isSubmitting.value = true;
+      
+      // 🔥 Verification: Check if both photos are provided
+      if (beforePhoto.value == null) {
+        Get.snackbar('Error', 'Please upload a Before photo');
+        isSubmitting.value = false;
+        return;
+      }
+      if (afterPhoto.value == null) {
+        Get.snackbar('Error', 'Please upload an After photo');
+        isSubmitting.value = false;
+        return;
+      }
 
       // Get current user info
       final currentUser = _authService.currentUser;

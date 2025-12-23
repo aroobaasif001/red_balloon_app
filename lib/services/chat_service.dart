@@ -257,9 +257,14 @@ class ChatService {
   /// Stream all conversations for current user
   Stream<List<ConversationModel>> streamUserConversations() {
     final userId = currentUserId;
-    if (userId == null) return Stream.value([]);
+    if (userId == null) {
+      print('❌ ChatService: No user logged in, returning empty stream');
+      return Stream.value([]);
+    }
 
-    // Using a broadcast controller to allow multiple listeners (Home Screen badge & Messages Screen)
+    print('📡 ChatService: Starting conversation stream for $userId');
+    
+    // Using a broadcast controller to allow multiple listeners
     final controller = StreamController<List<ConversationModel>>.broadcast();
     final Map<String, ConversationModel> allConversations = {};
 
@@ -269,34 +274,51 @@ class ChatService {
           .where((conv) => !conv.hiddenBy.contains(userId))
           .toList()
         ..sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+      
+      print('📥 ChatService: Emitting ${list.length} conversations for $userId');
       controller.add(list);
     }
 
-    // Listener for when user is participant1
+    // Listener for when user is participant 1 or 2
+    // We listen to both fields to ensure absolute compatibility with all documents
     final sub1 = _firestore
         .collection('conversations')
         .where('participant1Uid', isEqualTo: userId)
         .snapshots()
-        .listen((snap) {
-      for (var doc in snap.docs) {
-        allConversations[doc.id] = ConversationModel.fromJson(doc.data());
-      }
-      emit();
-    }, onError: (e) => print('Error in sub1: $e'));
+        .listen(
+          (snap) {
+            print('✅ ChatService: Sub1 received ${snap.docs.length} docs');
+            for (var doc in snap.docs) {
+              allConversations[doc.id] = ConversationModel.fromJson(doc.data());
+            }
+            emit();
+          },
+          onError: (e) {
+            print('❌ ChatService Error in sub1: $e');
+            controller.addError(e);
+          },
+        );
 
-    // Listener for when user is participant2
     final sub2 = _firestore
         .collection('conversations')
         .where('participant2Uid', isEqualTo: userId)
         .snapshots()
-        .listen((snap) {
-      for (var doc in snap.docs) {
-        allConversations[doc.id] = ConversationModel.fromJson(doc.data());
-      }
-      emit();
-    }, onError: (e) => print('Error in sub2: $e'));
+        .listen(
+          (snap) {
+            print('✅ ChatService: Sub2 received ${snap.docs.length} docs');
+            for (var doc in snap.docs) {
+              allConversations[doc.id] = ConversationModel.fromJson(doc.data());
+            }
+            emit();
+          },
+          onError: (e) {
+            print('❌ ChatService Error in sub2: $e');
+            controller.addError(e);
+          },
+        );
 
     controller.onCancel = () {
+      print('🔌 ChatService: Stream cancelled, stopping subscriptions');
       sub1.cancel();
       sub2.cancel();
       if (!controller.hasListener) {

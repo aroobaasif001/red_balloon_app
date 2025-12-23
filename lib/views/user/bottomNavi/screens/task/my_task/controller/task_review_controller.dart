@@ -33,6 +33,10 @@ class TaskReviewController extends GetxController {
   var submittedTime = ''.obs;
   var beforeImageUrl = ''.obs;
   var afterImageUrl = ''.obs;
+  
+  // 🔥 Current IDs for auto-rejection
+  String? currentTaskId;
+  String? currentProofId;
 
   // 🔥 Callback for navigation after submission
   Function()? onSubmissionComplete;
@@ -62,8 +66,12 @@ class TaskReviewController extends GetxController {
         remainingSeconds.value--;
       } else {
         timer.cancel();
-        // Auto-move to validation if no action taken
-        print('⏰ Timer expired - Auto validation');
+        // 🔥 Auto-move to validation if no action taken
+        print('⏰ Timer expired - Auto validation logic starting');
+        if (currentTaskId != null && currentProofId != null && !isSubmitting.value) {
+           selectedRejectionReason.value = 'Work not completed'; // Default reason
+           submitRejection(taskId: currentTaskId!, proofId: currentProofId!);
+        }
       }
     });
 
@@ -270,6 +278,8 @@ class TaskReviewController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      currentTaskId = taskId;
+      currentProofId = proofId;
 
       // 1. Fetch task details
       final taskDoc = await FirebaseFirestore.instance

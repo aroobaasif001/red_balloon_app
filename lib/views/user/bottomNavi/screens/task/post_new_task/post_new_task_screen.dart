@@ -551,26 +551,29 @@ class PostNewTaskScreen extends StatelessWidget {
               SizedBox(height: 21),
 
               // ---------------- Info Box ----------------
-              CustomContainer(
-                padding: EdgeInsets.all(20),
-                conColor: red2Color,
-                borderRadius: BorderRadius.circular(15),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline_rounded,
-                      size: 25,
-                      color: whiteColor,
+              Obx(() => controller.selectedTaskType.value == "Offline Task"
+                ? CustomContainer(
+                    padding: EdgeInsets.all(20),
+                    conColor: red2Color,
+                    borderRadius: BorderRadius.circular(15),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline_rounded,
+                          size: 25,
+                          color: whiteColor,
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: CustomText(
+                            'Your task will be visible to nearby helpers within 20km of your location',
+                            color: whiteColor,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: CustomText(
-                        'Your task will be visible to nearby helpers within 20km of your location',
-                        color: whiteColor,
-                      ),
-                    ),
-                  ],
-                ),
+                  )
+                : SizedBox.shrink(),
               ),
 
               SizedBox(height: 36),
