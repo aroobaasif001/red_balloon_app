@@ -111,7 +111,7 @@ void _showImageFullscreen(BuildContext context, String imageUrl) {
                   if (loadingProgress == null) return child;
                   return Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                      valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
                     ),
                   );
                 },

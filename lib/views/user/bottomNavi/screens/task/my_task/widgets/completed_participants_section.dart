@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
@@ -39,14 +40,14 @@ class CompletedParticipantsSection extends StatelessWidget {
             const SizedBox(height: 16),
             CustomText(controller.isRequester ? "Helper" : "Requester", fontSize: 12, color: grey2Color),
             const SizedBox(height: 8),
-            ParticipantCard(
+            Obx(() => ParticipantCard(
               photoUrl: controller.otherUserPhoto,
               name: controller.otherUserName,
               id: "${controller.isRequester ? 'Helper' : 'Requester'} ID: ${controller.otherUserId}",
               tasksCompleted:
                   "${controller.otherUserTasksCompleted} tasks completed",
               rating: controller.otherUserRating,
-            ),
+            )),
           ],
         ),
       ),

@@ -56,13 +56,17 @@ class TransactionItem extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    CustomText(
-                      description,
-                      color: walletTransactionDescColor,
-                      fontWeight: FontVariant.regular,
-                      fontSize: 12,
+                    Flexible(
+                      child: CustomText(
+                        description,
+                        color: walletTransactionDescColor,
+                        fontWeight: FontVariant.regular,
+                        fontSize: 12,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(width: 8),
                     CustomText(
                       '  •  ${daysAgo}',
                       color: walletTransactionDescColor,

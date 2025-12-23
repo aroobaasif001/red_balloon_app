@@ -45,6 +45,8 @@ class WithdrawalDetailsCard extends StatelessWidget {
   final Color buttonTextColor;
   final double buttonFontSize;
   final FontVariant buttonFontVariant;
+  final VoidCallback? onMethodTap;
+  final VoidCallback? onBankTap;
 
   const WithdrawalDetailsCard({
     super.key,
@@ -86,6 +88,8 @@ class WithdrawalDetailsCard extends StatelessWidget {
     this.buttonFontVariant = FontVariant.bold,
     this.bankAccountController,
     this.bankController,
+    this.onMethodTap,
+    this.onBankTap,
   });
 
   @override
@@ -119,6 +123,8 @@ class WithdrawalDetailsCard extends StatelessWidget {
           TextField(
             controller: amountController,
             keyboardType: TextInputType.number,
+            style: TextStyle(color: blackColor),
+            cursorColor: blackColor,
             decoration: InputDecoration(
               hintText: amountHintText,
               hintStyle: TextStyle(
@@ -191,7 +197,7 @@ class WithdrawalDetailsCard extends StatelessWidget {
               ),
             ),
             readOnly: true,
-            onTap: () {},
+            onTap: onMethodTap,
           ),
           SizedBox(height: 20),
           CustomText(
@@ -232,7 +238,7 @@ class WithdrawalDetailsCard extends StatelessWidget {
               ),
             ),
             readOnly: true,
-            onTap: () {},
+            onTap: onBankTap,
           ),
           SizedBox(height: 20),
           CustomText(
@@ -245,6 +251,8 @@ class WithdrawalDetailsCard extends StatelessWidget {
           TextField(
             controller: bankAccountController,
             keyboardType: TextInputType.number,
+            style: TextStyle(color: blackColor),
+            cursorColor: blackColor,
             decoration: InputDecoration(
               hintText: '00001111222333',
               hintStyle: TextStyle(
@@ -287,8 +295,8 @@ class WithdrawalDetailsCard extends StatelessWidget {
           SizedBox(height: 20),
           CustomButton(
             borderRadius: BorderRadius.circular(20),
-            label: 'Request Withdrawal',
-            onPressed: () {},
+            label: buttonText,
+            onPressed: onButtonPressed,
           ),
         ],
       ),

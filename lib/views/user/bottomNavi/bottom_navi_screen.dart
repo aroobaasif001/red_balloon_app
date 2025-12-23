@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/modern_bottom_nav.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/home_screen.dart';
@@ -6,6 +7,9 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/in_ap
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/my_task_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_hub_screen/validation_hub_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/wallet_tab.dart';
+
+import 'screens/notification/controller/notification_controller.dart';
+import 'screens/profile/tabs/controller/messages_controller.dart';
 
 class BottomNaviScreen extends StatefulWidget {
   final int initialIndex;
@@ -22,6 +26,10 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
   @override
   void initState() {
     super.initState();
+    // Initialize global trackers for badges
+    Get.put(NotificationController());
+    Get.put(MessagesController());
+    
     currentIndex = widget.initialIndex;
     _initializeNavItems();
   }

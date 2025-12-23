@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,6 +11,8 @@ class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  FirebaseFirestore get firestore => _firestore;
 
   // Get current user ID
   String? get currentUserId => _auth.currentUser?.uid;
@@ -62,6 +65,7 @@ class ChatService {
           taskImage: taskImage,
           participant1Uid: sortedUids[0],
           participant2Uid: sortedUids[1],
+          participants: sortedUids,
           participant1Name: sortedUids[0] == currentUid
               ? currentUserName
               : otherUserName,
@@ -226,7 +230,7 @@ class ChatService {
         .collection('conversations')
         .doc(conversationId)
         .collection('messages')
-        .orderBy('timestamp', descending: false)
+        .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
@@ -253,35 +257,54 @@ class ChatService {
   /// Stream all conversations for current user
   Stream<List<ConversationModel>> streamUserConversations() {
     final userId = currentUserId;
-    if (userId == null) {
-      return Stream.value([]);
+    if (userId == null) return Stream.value([]);
+
+    // Using a broadcast controller to allow multiple listeners (Home Screen badge & Messages Screen)
+    final controller = StreamController<List<ConversationModel>>.broadcast();
+    final Map<String, ConversationModel> allConversations = {};
+
+    void emit() {
+      if (controller.isClosed) return;
+      final list = allConversations.values
+          .where((conv) => !conv.hiddenBy.contains(userId))
+          .toList()
+        ..sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+      controller.add(list);
     }
 
-    return _firestore
+    // Listener for when user is participant1
+    final sub1 = _firestore
         .collection('conversations')
         .where('participant1Uid', isEqualTo: userId)
         .snapshots()
-        .asyncMap((snapshot1) async {
-      // Also get conversations where user is participant2
-      final snapshot2 = await _firestore
-          .collection('conversations')
-          .where('participant2Uid', isEqualTo: userId)
-          .get();
+        .listen((snap) {
+      for (var doc in snap.docs) {
+        allConversations[doc.id] = ConversationModel.fromJson(doc.data());
+      }
+      emit();
+    }, onError: (e) => print('Error in sub1: $e'));
 
-      // Combine both results
-      final allDocs = [...snapshot1.docs, ...snapshot2.docs];
+    // Listener for when user is participant2
+    final sub2 = _firestore
+        .collection('conversations')
+        .where('participant2Uid', isEqualTo: userId)
+        .snapshots()
+        .listen((snap) {
+      for (var doc in snap.docs) {
+        allConversations[doc.id] = ConversationModel.fromJson(doc.data());
+      }
+      emit();
+    }, onError: (e) => print('Error in sub2: $e'));
 
-      // Convert to models, filter out hidden chats, and sort by last message time
-      final conversations = allDocs
-          .map((doc) => ConversationModel.fromJson(doc.data()))
-          .where((conv) => !conv.hiddenBy.contains(userId)) // 🔥 Filter hidden
-          .toList();
+    controller.onCancel = () {
+      sub1.cancel();
+      sub2.cancel();
+      if (!controller.hasListener) {
+        controller.close();
+      }
+    };
 
-      conversations
-          .sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
-
-      return conversations;
-    });
+    return controller.stream;
   }
 
   /// Mark messages as read

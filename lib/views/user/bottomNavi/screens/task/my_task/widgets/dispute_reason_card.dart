@@ -37,18 +37,34 @@ class DisputeReasonCard extends StatelessWidget {
               color: textcolord,
             ),
             const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: white2Color,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: CustomText(
-                "\"${dispute['requesterReason'] == '' ? dispute['requesterDetails'] : dispute['requesterReason']}\"",
-                fontSize: 14,
-                color: rbtxColor,
-                fontWeight: FontVariant.regular,
-              ),
+            Builder(
+              builder: (context) {
+                String reason = "No reason provided";
+                if (dispute != null) {
+                  final String? reqReason = dispute['requesterReason'];
+                  final String? reqDetails = dispute['requesterDetails'];
+                  
+                  if (reqReason != null && reqReason.isNotEmpty) {
+                    reason = reqReason;
+                  } else if (reqDetails != null && reqDetails.isNotEmpty) {
+                    reason = reqDetails;
+                  }
+                }
+                
+                return Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: white2Color,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: CustomText(
+                    "\"$reason\"",
+                    fontSize: 14,
+                    color: rbtxColor,
+                    fontWeight: FontVariant.regular,
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 8),
             CustomText(

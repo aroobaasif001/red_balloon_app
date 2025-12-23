@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/custom_widgets/full_screen_image_viewer.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -38,17 +39,51 @@ class BeforeTab extends StatelessWidget {
                 offset: const Offset(0, 4),
               ),
             ],
-            child: CustomContainer(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset(
-                  "assets/images/Rectangle 34625290 (1).png", // <-- replace with your actual image
-                  height: 289,
-                  width: 291,
-                  fit: BoxFit.cover,
+            child: Obx(() {
+              final url = controller.beforePhotoUrl.value;
+              return GestureDetector(
+                onTap: () {
+                  if (url.isNotEmpty) {
+                    Get.to(() => FullScreenImageViewer(imageUrl: url));
+                  }
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: url.isNotEmpty
+                      ? Image.network(
+                          url,
+                          height: 289,
+                          width: 291,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              height: 289,
+                              width: 291,
+                              color: white2Color,
+                              child: const Center(
+                                child:
+                                    CircularProgressIndicator(color: redColor),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) =>
+                              Image.asset(
+                            "assets/images/Rectangle 34625290 (1).png",
+                            height: 289,
+                            width: 291,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : Image.asset(
+                          "assets/images/Rectangle 34625290 (1).png",
+                          height: 289,
+                          width: 291,
+                          fit: BoxFit.cover,
+                        ),
                 ),
-              ),
-            ),
+              );
+            }),
           ),
 
           SizedBox(height: isTask == false ? 20 : 0),
@@ -121,6 +156,7 @@ class BeforeTab extends StatelessWidget {
                       _buildVotingOption(
                         context,
                         "Support ${controller.helperName.value}",
+                        controller.helperRating.value,
                         controller.myVote.value == 'helper',
                         () {
                           DialogHelpers.showVoteConfirmationDialog(
@@ -139,6 +175,7 @@ class BeforeTab extends StatelessWidget {
                       _buildVotingOption(
                         context,
                         "Support ${controller.requesterName.value}",
+                        controller.requesterRating.value,
                         controller.myVote.value == 'requester',
                         () {
                           DialogHelpers.showVoteConfirmationDialog(
@@ -179,6 +216,7 @@ class BeforeTab extends StatelessWidget {
   Widget _buildVotingOption(
     BuildContext context,
     String label,
+    double rating,
     bool isSelected,
     VoidCallback onTap,
   ) {
@@ -187,11 +225,26 @@ class BeforeTab extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CustomText(
-            label,
-            fontSize: 15,
-            fontWeight: FontVariant.medium,
-            color: lastTextColor,
+          Expanded(
+            child: Row(
+              children: [
+                CustomText(
+                  label,
+                  fontSize: 15,
+                  fontWeight: FontVariant.medium,
+                  color: lastTextColor,
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.star, color: dotColor, size: 16),
+                const SizedBox(width: 4),
+                CustomText(
+                  rating.toStringAsFixed(1),
+                  fontSize: 14,
+                  fontWeight: FontVariant.bold,
+                  color: textColor2,
+                ),
+              ],
+            ),
           ),
           Container(
             width: 24,

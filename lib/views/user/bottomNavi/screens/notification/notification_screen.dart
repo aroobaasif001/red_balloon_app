@@ -14,53 +14,53 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<NotificationController>(
-      init: NotificationController(),
-      builder: (NotificationController controller) {
-        return Scaffold(
-          backgroundColor: whiteColor,
+    final NotificationController controller = Get.put(NotificationController());
 
-          appBar: AppBar(
-            backgroundColor: whiteColor,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            centerTitle: true,
-            title: CustomText(
-              "Notifications",
-              fontSize: 24,
-              fontWeight: FontVariant.bold,
-              color:blackColor,
+    // Mark all as read when user enters this screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.markAllAsRead();
+    });
+
+    return Scaffold(
+      backgroundColor: whiteColor,
+      appBar: AppBar(
+        backgroundColor: whiteColor,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        title: CustomText(
+          "Notifications",
+          fontSize: 24,
+          fontWeight: FontVariant.bold,
+          color: blackColor,
+        ),
+      ),
+      body: Column(
+        children: [
+          // ------------------- CUSTOM TABS -------------------
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Obx(
+              () => CustomNotificationTabs(
+                selectedIndex: controller.selectedTabIndex.value,
+                onAllTap: () => controller.switchTab(0),
+                onOffersTap: () => controller.switchTab(1),
+                onValidationTap: () => controller.switchTab(2),
+              ),
             ),
           ),
-
-          body: Column(
-            children: [
-              // ------------------- CUSTOM TABS -------------------
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Obx(
-                  () => CustomNotificationTabs(
-                    selectedIndex: controller.selectedTabIndex.value,
-                    onAllTap: () => controller.switchTab(0),
-                    onOffersTap: () => controller.switchTab(1),
-                    onValidationTap: () => controller.switchTab(2),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: controller.tabController,
-                  children: const [
-                    AllNotificationsTab(),
-                    OfferNotificationsTab(),
-                    ValidationHubNotificationsTab(),
-                  ],
-                ),
-              ),
-            ],
+          Expanded(
+            child: TabBarView(
+              controller: controller.tabController,
+              children: const [
+                AllNotificationsTab(),
+                OfferNotificationsTab(),
+                ValidationHubNotificationsTab(),
+              ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

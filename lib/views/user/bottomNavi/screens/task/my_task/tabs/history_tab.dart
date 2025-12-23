@@ -190,13 +190,14 @@ class HistoryTab extends StatelessWidget {
 
                                 if (reqDoc.docs.isNotEmpty) {
                                   final data = reqDoc.docs.first.data();
-                                  requesterInfo = {
-                                    'id': reqDoc.docs.first.id,
-                                    'name': data['displayName'] ?? data['name'],
-                                    'photoUrl':
-                                        data['photoURL'] ?? data['photoUrl'],
-                                    'userId': data['userId'],
-                                  };
+                                    requesterInfo = {
+                                      'uid': task.uid,
+                                      'id': reqDoc.docs.first.id,
+                                      'name': data['displayName'] ?? data['name'],
+                                      'photoUrl':
+                                          data['photoURL'] ?? data['photoUrl'],
+                                      'userId': data['userId'],
+                                    };
                                 }
                               }
 
@@ -216,6 +217,7 @@ class HistoryTab extends StatelessWidget {
                                 if (helperDoc.docs.isNotEmpty) {
                                   final data = helperDoc.docs.first.data();
                                   helperInfo = {
+                                    'uid': task.acceptedOfferUid,
                                     'id': helperDoc.docs.first.id,
                                     'name': data['displayName'] ?? data['name'],
                                     'photoUrl':
@@ -226,6 +228,52 @@ class HistoryTab extends StatelessWidget {
                               }
 
                               // 3. Prepare Dispute Data
+                              // Fetch validation photos or proof photos for dispute
+                              final validationSnapshot = await FirebaseFirestore.instance
+                                  .collection('validations')
+                                  .where('taskId', isEqualTo: task.id)
+                                  .limit(1)
+                                  .get();
+
+                              String beforeUrl = '';
+                              String afterUrl = '';
+                              if (validationSnapshot.docs.isNotEmpty) {
+                                final vData = validationSnapshot.docs.first.data();
+                                beforeUrl = vData['beforePhotoUrl'] ?? 
+                                           vData['beforeImageUrl'] ?? 
+                                           vData['beforePhoto'] ?? '';
+                                afterUrl = vData['afterPhotoUrl'] ?? 
+                                          vData['afterImageUrl'] ?? 
+                                          vData['afterPhoto'] ?? '';
+                              }
+
+                              // Fallback to task_proofs if validations didn't have photos
+                              if (beforeUrl.isEmpty || afterUrl.isEmpty) {
+                                final proofSnapshot = await FirebaseFirestore.instance
+                                    .collection('task_proofs')
+                                    .where('taskId', isEqualTo: task.id)
+                                    .orderBy('submittedAt', descending: true)
+                                    .limit(5)
+                                    .get();
+                                if (proofSnapshot.docs.isNotEmpty) {
+                                  for (var doc in proofSnapshot.docs) {
+                                    final pData = doc.data();
+                                    final b = pData['beforePhotoUrl'] ?? 
+                                              pData['beforeImageUrl'] ?? 
+                                              pData['beforePhoto'] ?? '';
+                                    final a = pData['afterPhotoUrl'] ?? 
+                                              pData['afterImageUrl'] ?? 
+                                              pData['afterPhoto'] ?? '';
+                                    
+                                    if (b.isNotEmpty || a.isNotEmpty) {
+                                      if (beforeUrl.isEmpty) beforeUrl = b;
+                                      if (afterUrl.isEmpty) afterUrl = a;
+                                      break;
+                                    }
+                                  }
+                                }
+                              }
+
                               final disputeInfo = {
                                 'requesterReason': task.requesterHelpReason,
                                 'requesterDetails': task.requesterHelpDetails,
@@ -235,14 +283,16 @@ class HistoryTab extends StatelessWidget {
                                     task.requesterHelpRequested,
                                 'helperHelpRequested': task.helperHelpRequested,
                                 'disputedStartTime': task.disputedStartTime,
+                                'beforePhotoUrl': beforeUrl,
+                                'afterPhotoUrl': afterUrl,
                               };
 
                               // 4. Prepare Task Data
                               final taskInfo = {
-                                'id': task.id,
+                                'taskId': task.id,
                                 'title': task.title,
-                                'type': task.taskType,
-                                'price': task.budget.toString(),
+                                'category': task.taskType,
+                                'budget': task.budget.toString(),
                                 'createdAt': task.createdAt.toString(),
                               };
 
@@ -342,19 +392,59 @@ class HistoryTab extends StatelessWidget {
                                 }
                               }
 
-                              // 6. Await Validation Data (if not already done)
-                              final validationQuery = await validationFuture;
-                              Map<String, dynamic> validationInfo = {};
-                              if (validationQuery.docs.isNotEmpty) {
-                                final vData = validationQuery.docs.first.data();
+                                // 6. Await Validation Data (if not already done)
+                                final validationQuery = await validationFuture;
+                                Map<String, dynamic> validationInfo = {};
+                                String beforeUrl = '';
+                                String afterUrl = '';
+
+                                if (validationQuery.docs.isNotEmpty) {
+                                  final vData = validationQuery.docs.first.data();
+                                  beforeUrl = vData['beforePhotoUrl'] ?? 
+                                             vData['beforeImageUrl'] ?? 
+                                             vData['beforePhoto'] ?? '';
+                                  afterUrl = vData['afterPhotoUrl'] ?? 
+                                            vData['afterImageUrl'] ?? 
+                                            vData['afterPhoto'] ?? '';
+                                }
+
+                                // Fallback to task_proofs for completed tasks
+                                if (beforeUrl.isEmpty || afterUrl.isEmpty) {
+                                  final proofQuery = await FirebaseFirestore.instance
+                                      .collection('task_proofs')
+                                      .where('taskId', isEqualTo: task.id)
+                                      .orderBy('submittedAt', descending: true)
+                                      .limit(5)
+                                      .get();
+                                  if (proofQuery.docs.isNotEmpty) {
+                                    for (var doc in proofQuery.docs) {
+                                      final pData = doc.data();
+                                      final b = pData['beforePhotoUrl'] ?? 
+                                                pData['beforeImageUrl'] ?? 
+                                                pData['beforePhoto'] ?? '';
+                                      final a = pData['afterPhotoUrl'] ?? 
+                                                pData['afterImageUrl'] ?? 
+                                                pData['afterPhoto'] ?? '';
+                                      
+                                      if (b.isNotEmpty || a.isNotEmpty) {
+                                        if (beforeUrl.isEmpty) beforeUrl = b;
+                                        if (afterUrl.isEmpty) afterUrl = a;
+                                        break;
+                                      }
+                                    }
+                                  }
+                                }
+
                                 validationInfo = {
-                                  'beforePhotoUrl':
-                                      vData['beforePhotoUrl'] ?? '',
-                                  'afterPhotoUrl': vData['afterPhotoUrl'] ?? '',
-                                  'validationId': validationQuery.docs.first.id,
-                                  'approvedAt': vData['approvedAt'],
+                                  'beforePhotoUrl': beforeUrl,
+                                  'afterPhotoUrl': afterUrl,
+                                  'validationId': validationQuery.docs.isNotEmpty
+                                      ? validationQuery.docs.first.id
+                                      : '',
+                                  'approvedAt': validationQuery.docs.isNotEmpty
+                                      ? validationQuery.docs.first.data()['approvedAt']
+                                      : null,
                                 };
-                              }
 
                               // 7. Prepare Final Data Maps
                               final taskInfo = {

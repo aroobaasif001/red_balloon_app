@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
+import 'package:red_balloon_app/services/user_service.dart';
 
 import '../../../../../../../services/offer_service2.dart';
 
@@ -11,6 +13,14 @@ class TaskDetailController extends GetxController {
 
   final OfferService2 _offerService = OfferService2();
   final AuthService _authService = AuthService();
+  final UserService _userService = UserService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  RxString ownerUserId = ''.obs;
+  RxString ownerName = ''.obs;
+  RxString ownerPhotoUrl = ''.obs;
+  RxDouble ownerRating = 4.9.obs;
+  RxBool isLoadingOwner = false.obs;
 
   @override
   void onInit() {
@@ -104,6 +114,31 @@ class TaskDetailController extends GetxController {
     } catch (e) {
       isSubmitting.value = false;
       Get.snackbar('Error', 'An error occurred: ${e.toString()}');
+    }
+  }
+
+  /// Fetch owner data (name, photo, userId, rating) from Firestore
+  Future<void> fetchOwnerData(String uid) async {
+    if (uid.isEmpty) return;
+    
+    try {
+      isLoadingOwner.value = true;
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+      if (userDoc.exists) {
+        final data = userDoc.data();
+        if (data != null) {
+          ownerName.value = data['displayName'] ?? data['name'] ?? 'User';
+          ownerPhotoUrl.value = data['photoURL'] ?? data['photoUrl'] ?? '';
+          ownerUserId.value = data['userId'] ?? '';
+          
+          final stats = await _userService.getUserStatistics(uid);
+          ownerRating.value = (stats['rating'] ?? 5.0).toDouble();
+        }
+      }
+    } catch (e) {
+      print('Error fetching owner data: $e');
+    } finally {
+      isLoadingOwner.value = false;
     }
   }
 

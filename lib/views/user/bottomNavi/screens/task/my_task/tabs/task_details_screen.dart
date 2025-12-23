@@ -311,7 +311,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                     if (loadingProgress == null) return child;
                     return Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
                       ),
                     );
                   },

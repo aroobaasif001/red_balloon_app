@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:red_balloon_app/services/task_service.dart';
+import 'package:red_balloon_app/services/user_service.dart';
 import '../../../../../../../services/notification_services.dart';
 
 class InProgressTaskController extends GetxController {
@@ -23,6 +24,8 @@ class InProgressTaskController extends GetxController {
   RxString helperName = 'Ahmed Al Harbi'.obs;
   RxDouble rating = 4.9.obs;
   RxString role = 'Requester'.obs;
+  RxString helperUserId = ''.obs; // 🔥 Added to fetch custom ID (RB-001)
+  RxString helperPhotoUrl = ''.obs;
 
   // Track if proof has been uploaded
   RxBool hasProof = false.obs;
@@ -114,6 +117,7 @@ class InProgressTaskController extends GetxController {
   RxString requesterHelpReason = ''.obs;
   RxString requesterHelpDetails = ''.obs;
   final TaskService _taskService = TaskService();
+  final UserService _userService = UserService();
 
   /// Start real-time listener for task help requests
   void startTaskListener(String taskId) {
@@ -128,6 +132,18 @@ class InProgressTaskController extends GetxController {
           helperHelpRequested.value = data['helperHelpRequested'] ?? false;
           requesterHelpReason.value = data['requesterHelpReason'] ?? '';
           requesterHelpDetails.value = data['requesterHelpDetails'] ?? '';
+
+          // 🔥 Determine Role (Who is the counter-party?)
+          final currentUser = FirebaseAuth.instance.currentUser;
+          if (currentUser != null) {
+            if (currentUser.uid == data['uid']) {
+              // I am the Requester, the person in the card is the Helper
+              role.value = 'Helper';
+            } else {
+              // I am the Helper, the person in the card is the Requester
+              role.value = 'Requester';
+            }
+          }
         }
       }
     });
@@ -159,6 +175,32 @@ class InProgressTaskController extends GetxController {
         taskTitle: currentTaskTitle ?? 'Task',
         taskId: taskId,
       );
+    }
+  }
+
+  /// Fetch user data (name, photo, userId) from Firestore via helperUid
+  Future<void> fetchUserData(String uid) async {
+    try {
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+      if (userDoc.exists) {
+        final data = userDoc.data();
+        if (data != null) {
+          helperName.value = data['displayName'] ?? data['name'] ?? 'Helper';
+          helperPhotoUrl.value = data['photoURL'] ?? data['photoUrl'] ?? '';
+          helperUserId.value = data['userId'] ?? ''; // 🔥 Fetch custom ID (RB-001)
+          
+          // Generate initials
+          if (helperName.value.isNotEmpty) {
+            helperInitials.value = helperName.value[0].toUpperCase();
+          }
+
+          // 🔥 Fetch dynamic rating and stats
+          final stats = await _userService.getUserStatistics(uid);
+          rating.value = (stats['rating'] ?? 5.0).toDouble();
+        }
+      }
+    } catch (e) {
+      print('Error fetching helper user data: $e');
     }
   }
 

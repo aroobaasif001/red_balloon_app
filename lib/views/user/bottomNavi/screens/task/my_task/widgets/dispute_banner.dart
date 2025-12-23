@@ -21,7 +21,7 @@ class DisputeBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(TasksController());
 
-    String format = controller.getTimeAgo(startedTime!);
+    String format = controller.getTimeAgo(startedTime ?? DateTime.now());
 
     return CustomContainer(
       padding: const EdgeInsets.all(16),

@@ -19,8 +19,9 @@ class WalletController extends GetxController {
   RxInt releaseTimeMinutes = 0.obs;
   RxDouble releaseProgress = 0.0.obs; // 0 to 1
 
-  // Recent transactions list
+  // Recent and all transactions lists
   RxList<Map<String, dynamic>> recentTransactions = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> allTransactions = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
@@ -34,8 +35,8 @@ class WalletController extends GetxController {
     lockedBalance.bindStream(_walletService.getLockedBalance());
 
     // Listen to real-time transactions
-    recentTransactions.bindStream(_walletService.getTransactions().map((list) {
-      return list.map((item) {
+    _walletService.getTransactions().listen((list) {
+      final processedList = list.map((item) {
         final isCredit = item['type'] == 'credit';
         return {
           'type': item['type'],
@@ -47,7 +48,15 @@ class WalletController extends GetxController {
           'icon': isCredit ? 'assets/icons/check_circle.png' : 'assets/icons/arrow_down.png',
         };
       }).toList();
-    }));
+
+      // Update all transactions
+      allTransactions.assignAll(processedList);
+
+      // Update recent transactions (Bss latest 4)
+      recentTransactions.assignAll(
+        processedList.length > 4 ? processedList.take(4).toList() : processedList,
+      );
+    });
   }
 
   String _formatDate(dynamic timestamp) {

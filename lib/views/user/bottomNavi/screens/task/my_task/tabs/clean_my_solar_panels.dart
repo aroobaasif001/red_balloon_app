@@ -16,6 +16,7 @@ import '../controller/task_detail_controller.dart';
 import '../widgets/offer_card.dart';
 import '../widgets/task_info_top_row.dart';
 import '../widgets/task_owner_tile.dart';
+import '../../../../../../../services/user_service.dart';
 
 class Cleanmysolarpanels extends StatefulWidget {
   final String? appBarTitle;
@@ -69,6 +70,11 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
     // Setup listener for task status changes
     if (widget.taskId != null && widget.taskId!.isNotEmpty) {
       _setupTaskStatusListener(widget.taskId!);
+    }
+    
+    // 🔥 Fetch real owner data
+    if (widget.taskOwnerAuthId != null && widget.taskOwnerAuthId!.isNotEmpty) {
+      controller.fetchOwnerData(widget.taskOwnerAuthId!);
     }
   }
 
@@ -139,12 +145,13 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                     Divider(color: bordercolor1, thickness: 1.5, height: 1),
                     const SizedBox(height: 12),
 
-                    TaskOwnerTile(
-                      name: widget.userName,
-                      photoUrl: widget.userPhoto,
-                      id: widget.userId,
+                    Obx(() => TaskOwnerTile(
+                      name: controller.ownerName.value.isEmpty ? widget.userName : controller.ownerName.value,
+                      photoUrl: controller.ownerPhotoUrl.value.isEmpty ? widget.userPhoto : controller.ownerPhotoUrl.value,
+                      id: controller.ownerUserId.value.isEmpty ? widget.userId : controller.ownerUserId.value,
                       authUid: widget.taskOwnerAuthId,
-                    ),
+                      rating: controller.ownerRating.value,
+                    )),
 
                     const SizedBox(height: 10),
                     Divider(color: bordercolor1, thickness: 1.5, height: 1),
@@ -429,6 +436,8 @@ class TaskOffersController extends GetxController {
   final String taskId;
   final RxList<Map<String, dynamic>> offers = <Map<String, dynamic>>[].obs;
   final RxBool isLoading = true.obs;
+  final RxMap<String, Map<String, dynamic>> offerUserStats = <String, Map<String, dynamic>>{}.obs; // 🔥 Store real ratings
+  final UserService _userService = UserService();
 
   // For button cooldown synchronization
   final RxBool isCooldownActive = false.obs;
@@ -451,7 +460,16 @@ class TaskOffersController extends GetxController {
     _offersSubscription = _offerService
         .streamTaskOffers(taskId)
         .listen(
-          (newOffers) {
+          (newOffers) async {
+            // 🔥 Fetch stats for each NEW user we haven't seen yet
+            for (var offer in newOffers) {
+              final uid = offer['offeringUserUid'];
+              if (uid != null && !offerUserStats.containsKey(uid)) {
+                final stats = await _userService.getUserStatistics(uid);
+                offerUserStats[uid] = stats;
+              }
+            }
+
             offers.value = newOffers;
             isLoading.value = false;
             _checkMyLatestOffer();
@@ -602,17 +620,34 @@ class _OfferCardWithTimer extends StatelessWidget {
     final offerPrice = offerData['offerPrice']?.toString() ?? '0';
     final userName = offerData['offeringUserName'] ?? 'Unknown';
     final userPhoto = offerData['offeringUserPhoto'];
+    final offeringUserUid = offerData['offeringUserUid'];
+
+    // Find the TaskOffersController to get pre-fetched stats
+    final TaskOffersController? offersController = Get.isRegistered<TaskOffersController>(tag: offerData['taskId']) 
+        ? Get.find<TaskOffersController>(tag: offerData['taskId']) 
+        : null;
 
     return Obx(() {
       if (!controller.isVisible.value) {
         return const SizedBox.shrink();
       }
 
+      // 🔥 Get real stats from controller if available
+      double rating = 5.0;
+      int completed = 0;
+      if (offersController != null && offeringUserUid != null) {
+        final stats = offersController.offerUserStats[offeringUserUid];
+        if (stats != null) {
+          rating = (stats['rating'] ?? 5.0).toDouble();
+          completed = stats['tasksCompleted'] ?? 0;
+        }
+      }
+
       return OfferCard(
         name: userName,
         price: offerPrice,
-        stars: 5,
-        ratingCount: 0,
+        stars: rating.round(), // OfferCard uses int for stars
+        ratingCount: completed,
         photoUrl: userPhoto,
         userId: userId,
         timerWidget: CustomText(

@@ -34,13 +34,13 @@ class UserService {
       print('🔍 UserService: Fetching statistics for user: $uid');
       
       // Get tasks completed by this user (as helper)
-      final offersSnapshot = await _firestore
-          .collection('offers')
-          .where('offeringUserUid', isEqualTo: uid)
-          .where('status', isEqualTo: 'accepted')
+      final completedSnapshot = await _firestore
+          .collection('tasks')
+          .where('acceptedOfferUid', isEqualTo: uid)
+          .where('status', isEqualTo: 'completed')
           .get();
       
-      final tasksCompleted = offersSnapshot.docs.length;
+      final tasksCompleted = completedSnapshot.docs.length;
 
       // Get tasks requested by this user (as task owner)
       final tasksSnapshot = await _firestore
@@ -50,9 +50,41 @@ class UserService {
       
       final tasksRequested = tasksSnapshot.docs.length;
 
-     // TODO: Implement actual rating calculation from reviews
-      final rating = 4.9; // Placeholder
-      final totalReviews = 234; // Placeholder
+      double sum = 0;
+      int count = 0;
+
+      // 1. Fetch ratings where user was a Helper (Requester left feedback)
+      final helperTasks = await _firestore
+          .collection('tasks')
+          .where('acceptedOfferUid', isEqualTo: uid)
+          .where('status', isEqualTo: 'completed')
+          .get();
+
+      for (var doc in helperTasks.docs) {
+        final data = doc.data();
+        if (data['requesterFeedback'] != null) {
+          sum += (data['requesterFeedback']['rating'] ?? 0).toDouble();
+          count++;
+        }
+      }
+
+      // 2. Fetch ratings where user was a Requester (Helper left feedback)
+      final requesterTasks = await _firestore
+          .collection('tasks')
+          .where('uid', isEqualTo: uid)
+          .where('status', isEqualTo: 'completed')
+          .get();
+
+      for (var doc in requesterTasks.docs) {
+        final data = doc.data();
+        if (data['helperFeedback'] != null) {
+          sum += (data['helperFeedback']['rating'] ?? 0).toDouble();
+          count++;
+        }
+      }
+
+      final rating = count > 0 ? (sum / count) : 5.0;
+      final totalReviews = count;
 
       print('✅ UserService: Stats - Completed: $tasksCompleted, Requested: $tasksRequested');
 

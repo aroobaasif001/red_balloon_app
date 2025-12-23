@@ -49,27 +49,27 @@ class TaskSummaryCard extends StatelessWidget {
             const SizedBox(height: 16),
             _buildDetailRow(
               "Task ID",
-              '#TK-${task['id'].toString().substring(0, 4)}',
+              '#TK-${(task['taskId'] ?? task['id'] ?? '****').toString().substring(0, 4)}',
               false,
             ),
             _buildDetailRow(
               "Amount",
-              '${double.parse('2222.0').toInt().toString()} SAR',
+              '${task['budget'] ?? '0'} SAR',
               true,
             ),
-            _buildDetailRow("Category", task['type'], false),
+            _buildDetailRow("Category", task['category'] ?? task['type'] ?? 'General', false),
             _buildDetailRow(
               "Date Posted",
-              DateFormat(
-                'MMM d, yyyy',
-              ).format(DateTime.parse(task['createdAt'])),
+              DateFormat('MMM d, yyyy').format(
+                controller.parseDateTime(task['createdAt']) ?? DateTime.now(),
+              ),
               false,
             ),
             _buildDetailRow(
               "Date of Issue",
-              DateFormat(
-                'MMM d, yyyy',
-              ).format(DateTime.parse(dispute['disputedStartTime'])),
+              DateFormat('MMM d, yyyy').format(
+                controller.parseDateTime(dispute['disputedStartTime']) ?? DateTime.now(),
+              ),
               false,
             ),
           ],

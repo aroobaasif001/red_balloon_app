@@ -146,9 +146,7 @@ class SocialButton extends StatelessWidget {
                     height: 22,
                     width: 22,
                     child: CircularProgressIndicator(
-                      color: redColor,
-                      // strokeWidth: 2,
-                      // valueColor: AlwaysStoppedAnimation<Color>(effectiveText),
+                      color: surface == blackColor ? whiteColor : redColor,
                     ),
                   ),
               ],

@@ -41,6 +41,8 @@ class ValidationScreenController extends GetxController {
   // 🔥 Participant Names
   var requesterName = 'Requester'.obs;
   var helperName = 'Helper'.obs;
+  var requesterRating = 5.0.obs;
+  var helperRating = 5.0.obs;
 
   // 🔥 Track Current User's Vote
   var myVote = ''.obs; // 'helper' or 'requester'
@@ -118,6 +120,7 @@ class ValidationScreenController extends GetxController {
           if (userDoc.exists) {
             requesterName.value = userDoc.data()?['displayName'] ?? 'Requester';
             print('🔍 Requester Name: ${requesterName.value}');
+            _fetchUserRating(taskOwnerId, isHelper: false);
           }
         }
 
@@ -169,6 +172,7 @@ class ValidationScreenController extends GetxController {
           if (userDoc.exists) {
             helperName.value = userDoc.data()?['displayName'] ?? 'Helper';
             print('🔍 Helper Name: ${helperName.value}');
+            _fetchUserRating(proofSubmitterUserId, isHelper: true);
           }
         }
       }
@@ -478,11 +482,57 @@ class ValidationScreenController extends GetxController {
         '📊 Helper votes: ${helperVotes.value}, Requester votes: ${requesterVotes.value}',
       );
 
-      // 🔥 Check if voting should be completed
       await _checkVotingCompletion();
     } catch (e) {
       print('❌ Error submitting vote: $e');
       Get.snackbar('Error', 'Failed to submit vote');
+    }
+  }
+
+  Future<void> _fetchUserRating(String uid, {required bool isHelper}) async {
+    try {
+      double sum = 0;
+      int count = 0;
+
+      // 1. As Helper
+      final hTasks = await _firestore
+          .collection('tasks')
+          .where('acceptedOfferUid', isEqualTo: uid)
+          .where('status', isEqualTo: 'completed')
+          .get();
+      
+      for (var doc in hTasks.docs) {
+        final data = doc.data();
+        if (data['requesterFeedback'] != null) {
+          sum += (data['requesterFeedback']['rating'] ?? 0).toDouble();
+          count++;
+        }
+      }
+
+      // 2. As Requester
+      final rTasks = await _firestore
+          .collection('tasks')
+          .where('uid', isEqualTo: uid)
+          .where('status', isEqualTo: 'completed')
+          .get();
+
+      for (var doc in rTasks.docs) {
+        final data = doc.data();
+        if (data['helperFeedback'] != null) {
+          sum += (data['helperFeedback']['rating'] ?? 0).toDouble();
+          count++;
+        }
+      }
+
+      if (count > 0) {
+        if (isHelper) {
+          helperRating.value = sum / count;
+        } else {
+          requesterRating.value = sum / count;
+        }
+      }
+    } catch (e) {
+      print("Error fetching user rating: $e");
     }
   }
 }

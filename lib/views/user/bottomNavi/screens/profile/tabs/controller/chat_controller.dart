@@ -1,10 +1,13 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:red_balloon_app/model/message_model.dart';
 import 'package:red_balloon_app/services/chat_service.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 class ChatController extends GetxController {
   final String taskId;
@@ -13,6 +16,7 @@ class ChatController extends GetxController {
   final String taskOwnerName;
   final String? taskOwnerPhoto;
   final RxnString taskImage = RxnString();
+  final RxString taskStatus = 'Active'.obs;
 
   final ChatService _chatService = ChatService();
   final ScrollController scrollController = ScrollController();
@@ -22,6 +26,7 @@ class ChatController extends GetxController {
   final RxBool isLoading = true.obs;
   final RxBool isUploading = false.obs; // 🔥 Added for attachment loading
   final RxString conversationId = ''.obs;
+  StreamSubscription? _taskSubscription;
 
   ChatController({
     required this.taskId,
@@ -39,6 +44,7 @@ class ChatController extends GetxController {
     super.onInit();
     _initializeConversation();
     _fetchTaskDetailsIfNeeded();
+    _listenToTaskStatus();
   }
 
   /// Fetch task details if image is missing
@@ -49,18 +55,40 @@ class ChatController extends GetxController {
             .collection('tasks')
             .doc(taskId)
             .get();
-        
+
         if (doc.exists) {
           final data = doc.data();
-          if (data != null && data['imageUrl'] != null) {
-            taskImage.value = data['imageUrl'];
-            print('✅ Fetched missing task image: ${taskImage.value}');
+          if (data != null) {
+            if (data['imageUrl'] != null) {
+              taskImage.value = data['imageUrl'];
+              print('✅ Fetched missing task image: ${taskImage.value}');
+            }
+            if (data['status'] != null) {
+              taskStatus.value = _capitalize(data['status'].toString());
+              print('✅ Fetched task status: ${taskStatus.value}');
+            }
           }
         }
       } catch (e) {
         print('Error fetching task details: $e');
       }
     }
+  }
+
+  /// Listen to real-time status updates for the task
+  void _listenToTaskStatus() {
+    _taskSubscription = FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(taskId)
+        .snapshots()
+        .listen((doc) {
+          if (doc.exists) {
+            final data = doc.data();
+            if (data != null && data['status'] != null) {
+              taskStatus.value = _capitalize(data['status'].toString());
+            }
+          }
+        });
   }
 
   /// Initialize or get existing conversation
@@ -71,7 +99,7 @@ class ChatController extends GetxController {
       print('   TaskTitle: $taskTitle');
       print('   TaskOwnerId: $taskOwnerId');
       print('   TaskOwnerName: $taskOwnerName');
-      
+
       final convId = await _chatService.getOrCreateConversation(
         taskId: taskId,
         taskTitle: taskTitle,
@@ -80,7 +108,7 @@ class ChatController extends GetxController {
         otherUserPhoto: taskOwnerPhoto,
         taskImage: taskImage.value,
       );
-      
+
       if (convId != null) {
         conversationId.value = convId;
         print('   ✅ ConversationID set: $convId');
@@ -97,25 +125,26 @@ class ChatController extends GetxController {
 
   /// Stream messages in real-time
   void _streamMessages() {
-    _chatService.streamMessages(conversationId.value).listen(
-      (messagesList) {
-        messages.value = messagesList;
-        isLoading.value = false;
-        _scrollToBottom();
+    _chatService
+        .streamMessages(conversationId.value)
+        .listen(
+          (messagesList) {
+            messages.value = messagesList;
+            isLoading.value = false;
 
-        // 🔥 If there are new unread messages from other user while chat is open, mark them as read
-        final hasUnread = messagesList.any(
-          (m) => m.receiverId == _chatService.currentUserId && !m.isRead,
+            // 🔥 If there are new unread messages from other user while chat is open, mark them as read
+            final hasUnread = messagesList.any(
+              (m) => m.receiverId == _chatService.currentUserId && !m.isRead,
+            );
+            if (hasUnread) {
+              _markMessagesAsRead();
+            }
+          },
+          onError: (error) {
+            print('Error streaming messages: $error');
+            isLoading.value = false;
+          },
         );
-        if (hasUnread) {
-          _markMessagesAsRead();
-        }
-      },
-      onError: (error) {
-        print('Error streaming messages: $error');
-        isLoading.value = false;
-      },
-    );
   }
 
   /// Send a new message
@@ -131,7 +160,6 @@ class ChatController extends GetxController {
 
     if (success) {
       messageController.clear();
-      _scrollToBottom();
     }
   }
 
@@ -164,21 +192,12 @@ class ChatController extends GetxController {
           message: '[Image]',
           imageUrl: imageUrl,
         );
-        _scrollToBottom();
       } else {
-        Get.snackbar(
-          'Error',
-          'Failed to upload image',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        Get.snackbar('Error', 'Failed to upload image');
       }
     } catch (e) {
       print('Error sending attachment: $e');
-      Get.snackbar(
-        'Error',
-        'Something went wrong',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', 'Something went wrong');
     } finally {
       isUploading.value = false;
     }
@@ -187,19 +206,6 @@ class ChatController extends GetxController {
   /// Mark messages as read when viewing
   Future<void> _markMessagesAsRead() async {
     await _chatService.markMessagesAsRead(conversationId.value);
-  }
-
-  /// Auto-scroll to bottom
-  void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (scrollController.hasClients) {
-        scrollController.animateTo(
-          scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
   }
 
   /// Check if message is from current user
@@ -223,9 +229,38 @@ class ChatController extends GetxController {
     }
   }
 
+  /// Format date for chat dividers (Today, Yesterday, Date)
+  String getGroupDate(DateTime dateTime) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final msgDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+    if (msgDate == today) {
+      return 'Today';
+    } else if (msgDate == yesterday) {
+      return 'Yesterday';
+    } else {
+      return DateFormat('MMM dd, yyyy').format(dateTime);
+    }
+  }
+
+  /// Check if two message timestamps are on the same day
+  bool isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+
+  String _capitalize(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1).toLowerCase();
+  }
+
   @override
   void onClose() {
     _markMessagesAsRead(); // 🔥 Final mark as read when leaving
+    _taskSubscription?.cancel();
     scrollController.dispose();
     messageController.dispose();
     super.onClose();

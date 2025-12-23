@@ -14,7 +14,7 @@ class EscrowDetailController extends GetxController {
     {
       'split': 'Helper',
       'amount': 85.00,
-      'status': 'Pending release (48h)',
+      'status': 'Released instantly',
       'statusColor': 'pending',
     },
     {

@@ -746,7 +746,7 @@ class TaskInProgressScreen extends StatelessWidget {
                     if (loadingProgress == null) return child;
                     return Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
                       ),
                     );
                   },

@@ -19,6 +19,61 @@ class TaskCompletedController extends GetxController {
 
   // UI State
   RxBool showBefore = true.obs;
+  final RxDouble otherUserRatingObs = 5.0.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _fetchOtherUserRating();
+  }
+
+  Future<void> _fetchOtherUserRating() async {
+    final otherUid = isRequester ? (taskData['acceptedOfferUid'] ?? '') : (taskData['uid'] ?? '');
+    if (otherUid.isEmpty) return;
+
+    try {
+      double sum = 0;
+      int count = 0;
+
+      // 1. As Helper
+      final hTasks = await FirebaseFirestore.instance
+          .collection('tasks')
+          .where('acceptedOfferUid', isEqualTo: otherUid)
+          .where('status', isEqualTo: 'completed')
+          .get();
+      
+      for (var doc in hTasks.docs) {
+        final data = doc.data();
+        if (data['requesterFeedback'] != null) {
+          sum += (data['requesterFeedback']['rating'] ?? 0).toDouble();
+          count++;
+        }
+      }
+
+      // 2. As Requester
+      final rTasks = await FirebaseFirestore.instance
+          .collection('tasks')
+          .where('uid', isEqualTo: otherUid)
+          .where('status', isEqualTo: 'completed')
+          .get();
+
+      for (var doc in rTasks.docs) {
+        final data = doc.data();
+        if (data['helperFeedback'] != null) {
+          sum += (data['helperFeedback']['rating'] ?? 0).toDouble();
+          count++;
+        }
+      }
+
+      if (count > 0) {
+        otherUserRatingObs.value = sum / count;
+      } else {
+        otherUserRatingObs.value = (otherUserData['rating'] ?? 5.0).toDouble();
+      }
+    } catch (e) {
+      print("Error fetching other user rating: $e");
+    }
+  }
 
   // --- Getters for UI ---
 
@@ -87,8 +142,7 @@ class TaskCompletedController extends GetxController {
      return (otherUserData['tasksCompleted'] ?? 0).toString();
   }
   double get otherUserRating {
-     // If fetched user data has it:
-     return (otherUserData['rating'] ?? 5.0).toDouble();
+     return otherUserRatingObs.value;
   }
 
   // 9. Feedback Data logic

@@ -98,20 +98,27 @@ class MessagesScreen extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.only(left: 20),
                         color: redColor,
-                        child: const Icon(Icons.delete_outline, color: whiteColor),
+                        child: const Icon(
+                          Icons.delete_outline,
+                          color: whiteColor,
+                        ),
                       ),
                       secondaryBackground: Container(
                         alignment: Alignment.centerRight,
                         padding: const EdgeInsets.only(right: 20),
                         color: redColor,
-                        child: const Icon(Icons.delete_outline, color: whiteColor),
+                        child: const Icon(
+                          Icons.delete_outline,
+                          color: whiteColor,
+                        ),
                       ),
                       onDismissed: (direction) {
-                        controller.hideConversation(conversation.conversationId);
+                        controller.hideConversation(
+                          conversation.conversationId,
+                        );
                         Get.snackbar(
                           'Chat',
                           'Chat deleted successfully!',
-                          snackPosition: SnackPosition.BOTTOM,
                           duration: const Duration(seconds: 2),
                         );
                       },
@@ -131,7 +138,7 @@ class MessagesScreen extends StatelessWidget {
                           if (Get.isRegistered<ChatController>()) {
                             Get.delete<ChatController>();
                           }
-                          
+
                           // Navigate to chat screen
                           Get.put(
                             ChatController(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -5,6 +6,8 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/services/wallet_service.dart';
+import 'package:intl/intl.dart';
+import '../controller/user_profile_controller.dart';
 import '../../../profile/controller/in_app_store_controller.dart';
 
 class UserProfileScreen extends StatelessWidget {
@@ -31,6 +34,11 @@ class UserProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(
+      UserProfileController(userUid: userUid ?? ''),
+      tag: userUid,
+    );
+
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: CustomAppBar(
@@ -101,7 +109,7 @@ class UserProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildBadge(
-                  text: userId ?? "RB-001",
+                  text: (userId == null || userId!.isEmpty) ? "RB-0000" : userId!,
                   bgColor: whiteLightColor,
                   textColor: redLightColor,
                 ),
@@ -187,23 +195,157 @@ class UserProfileScreen extends StatelessWidget {
             const SizedBox(height: 32),
 
             /// STATS CARDS
-            _buildStatCard(
-              label: "Total Tasks Completed",
-              value: tasksCompleted.toString().padLeft(2, '0'),
-            ),
-            _buildStatCard(
-              label: "Total Tasks Requested",
-              value: tasksRequested.toString().padLeft(2, '0'),
-            ),
-            _buildStatCard(
+            Obx(() => _buildStatCard(
+              label: "Tasks Completed (Helper)",
+              value: (controller.isLoading.value && tasksCompleted > 0)
+                  ? tasksCompleted.toString().padLeft(2, '0')
+                  : controller.tasksCompleted.value.toString().padLeft(2, '0'),
+            )),
+            Obx(() => _buildStatCard(
+              label: "Tasks Requested",
+              value: (controller.isLoading.value && tasksRequested > 0)
+                  ? tasksRequested.toString().padLeft(2, '0')
+                  : controller.tasksRequested.value.toString().padLeft(2, '0'),
+            )),
+            Obx(() => _buildStatCard(
               label: "User's Rating",
-              value: rating.toStringAsFixed(1),
+              value: (controller.isLoading.value) 
+                  ? rating.toStringAsFixed(1)
+                  : (controller.totalReviews.value == 0 ? rating.toStringAsFixed(1) : controller.averageRating.value.toStringAsFixed(1)),
               isRating: true,
+            )),
+
+            const SizedBox(height: 32),
+
+            /// FEEDBACKS SECTION
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    "User Feedbacks",
+                    fontSize: 20,
+                    fontWeight: FontVariant.bold,
+                    color: textColor2,
+                  ),
+                  const SizedBox(height: 16),
+                  Obx(() {
+                    if (controller.isLoading.value) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: redColor),
+                      );
+                    }
+                    if (controller.feedbacks.isEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: CustomText(
+                            "No feedbacks available yet.",
+                            fontSize: 14,
+                            color: grey2Color,
+                          ),
+                        ),
+                      );
+                    }
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.feedbacks.length,
+                      separatorBuilder: (context, index) => const SizedBox(height: 16),
+                      itemBuilder: (context, index) {
+                        final feedback = controller.feedbacks[index];
+                        return _buildFeedbackItem(feedback);
+                      },
+                    );
+                  }),
+                ],
+              ),
             ),
 
             const SizedBox(height: 40),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFeedbackItem(Map<String, dynamic> feedback) {
+    final double ratingValue = (feedback['rating'] ?? 0).toDouble();
+    final DateTime date = feedback['createdAt'] is Timestamp 
+        ? (feedback['createdAt'] as Timestamp).toDate()
+        : DateTime.tryParse(feedback['createdAt']?.toString() ?? '') ?? DateTime.now();
+    
+    return CustomContainer(
+      conColor: whiteColor,
+      borderRadius: BorderRadius.circular(12),
+      padding: const EdgeInsets.all(16),
+      border: Border.all(color: greyLiteColor.withOpacity(0.5)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomText(
+                      feedback['reviewerName'] ?? 'Anonymous',
+                      fontSize: 14,
+                      fontWeight: FontVariant.bold,
+                      color: textColor2,
+                    ),
+                    const SizedBox(height: 4),
+                    CustomText(
+                      "on \"${feedback['taskTitle']}\"",
+                      fontSize: 12,
+                      color: grey2Color,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: dotColor, size: 16),
+                      const SizedBox(width: 4),
+                      CustomText(
+                        ratingValue.toStringAsFixed(1),
+                        fontSize: 14,
+                        fontWeight: FontVariant.bold,
+                        color: textColor2,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  CustomText(
+                    DateFormat('MMM d, yyyy').format(date),
+                    fontSize: 11,
+                    color: grey2Color,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          CustomText(
+            feedback['review'] ?? 'No comment provided.',
+            fontSize: 13,
+            color: lastTextColor,
+            fontWeight: FontVariant.regular,
+          ),
+          const SizedBox(height: 8),
+          _buildBadge(
+            text: feedback['role'] ?? 'User',
+            bgColor: whiteLightColor,
+            textColor: redLightColor,
+          ).paddingOnly(top: 4),
+        ],
       ),
     );
   }

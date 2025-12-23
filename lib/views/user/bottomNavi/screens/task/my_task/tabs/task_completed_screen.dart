@@ -30,16 +30,19 @@ class TaskCompletedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(TaskCompletedController(
-      taskData: taskData,
-      taskId: taskId,
-      isRequester: isRequester,
-      otherUserData: otherUserData,
-      validationInfo: validationInfo,
-    ));
+    // 🔥 Use taskId as tag to prevent reuse of controllers between different tasks
+    final controller = Get.put(
+      TaskCompletedController(
+        taskData: taskData,
+        taskId: taskId,
+        isRequester: isRequester,
+        otherUserData: otherUserData,
+        validationInfo: validationInfo,
+      ),
+      tag: taskId,
+      permanent: false,
+    );
     
-    // Safety check just in case reused
-    // controller.refresh(taskData...); // If needed, but new instance is safer.
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
