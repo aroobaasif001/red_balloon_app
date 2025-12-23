@@ -25,10 +25,19 @@ class TaskDisputedScreen extends StatelessWidget {
     this.taskData,
   });
 
-  final controller = Get.put(TaskDisputedController());
-
   @override
   Widget build(BuildContext context) {
+    final tId = taskData?['taskId'] ?? taskData?['id'] ?? 'default';
+    final controller = Get.put(TaskDisputedController(), tag: tId);
+
+    controller.initialize(
+      task: taskData ?? {},
+      dispute: disputeData ?? {},
+      requester: requesterData ?? {},
+      helper: helperData ?? {},
+    );
+
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -45,7 +54,7 @@ class TaskDisputedScreen extends StatelessWidget {
             // Red Dispute Banner
             DisputeBanner(
               controller: controller,
-              startedTime: DateTime.parse(disputeData?['disputedStartTime']),
+              startedTime: controller.parseDateTime(disputeData?['disputedStartTime']),
             ),
 
             const SizedBox(height: 24),

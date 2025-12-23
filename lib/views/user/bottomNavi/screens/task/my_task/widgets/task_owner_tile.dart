@@ -8,9 +8,18 @@ import '../../../../../../../utils/colors.dart';
 class TaskOwnerTile extends StatelessWidget {
   final String? photoUrl;
   final String? name;
-  final String? id;
+  final String? id; // This is the custom ID (RB-001)
   final String? authUid;
-  const TaskOwnerTile({super.key, this.id, this.name, this.photoUrl, this.authUid});
+  final double rating;
+
+  const TaskOwnerTile({
+    super.key,
+    this.id,
+    this.name,
+    this.photoUrl,
+    this.authUid,
+    this.rating = 4.9,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,22 +27,22 @@ class TaskOwnerTile extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 32,
-          backgroundImage: photoUrl == null
-              ? AssetImage("assets/images/profile3.png")
-              : NetworkImage(photoUrl!),
+          backgroundImage: photoUrl != null && photoUrl!.isNotEmpty
+              ? NetworkImage(photoUrl!)
+              : const AssetImage("assets/images/profile3.png") as ImageProvider,
         ),
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomText(name == null ? "Ahmed Al Harbi" : name!),
+            CustomText(name ?? "Ahmed Al Harbi"),
             const SizedBox(height: 4),
             Row(
               children: [
                 const Icon(Icons.star, color: yellow, size: 20),
                 const SizedBox(width: 4),
-                const CustomText(
-                  "4.9",
+                CustomText(
+                  rating.toStringAsFixed(1),
                   color: textcolord,
                   fontSize: 14,
                   fontWeight: FontVariant.medium,
@@ -45,7 +54,6 @@ class TaskOwnerTile extends StatelessWidget {
                   height: 24,
                   fit: BoxFit.contain,
                 ),
-
                 const SizedBox(width: 4),
                 const CustomText(
                   "Verified",
@@ -62,7 +70,7 @@ class TaskOwnerTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             CustomText(
-              id == null ? "RB-124" : id!,
+              id ?? "RB-124",
               color: textcolord,
               fontSize: 12,
               fontWeight: FontVariant.regular,
@@ -75,15 +83,15 @@ class TaskOwnerTile extends StatelessWidget {
                     userPhoto: photoUrl,
                     userId: id,
                     userUid: authUid,
-                    userName: name!,
-                    userInitials: '',
-                    rating: 0,
+                    userName: name ?? 'User',
+                    userInitials: name != null && name!.isNotEmpty ? name![0].toUpperCase() : 'U',
+                    rating: rating,
                     tasksCompleted: 0,
                     tasksRequested: 0,
                   ),
                 );
               },
-              child: CustomText(
+              child: const CustomText(
                 "View Profile",
                 color: pricecolor,
                 fontSize: 14,

@@ -10,6 +10,7 @@ class MessagesController extends GetxController {
       <ConversationModel>[].obs;
   final RxBool isLoading = true.obs;
   final RxString searchQuery = ''.obs;
+  final RxInt totalUnreadCount = 0.obs;
 
   @override
   void onInit() {
@@ -23,6 +24,7 @@ class MessagesController extends GetxController {
       (conversationsList) {
         conversations.value = conversationsList;
         _applySearchFilter();
+        _calculateTotalUnread();
         isLoading.value = false;
       },
       onError: (error) {
@@ -41,13 +43,29 @@ class MessagesController extends GetxController {
   /// Apply search filter to conversations
   void _applySearchFilter() {
     if (searchQuery.value.isEmpty) {
-      filteredConversations.value = conversations;
+      filteredConversations.assignAll(conversations);
     } else {
-      filteredConversations.value = chatService.searchConversations(
+      final results = chatService.searchConversations(
         conversations,
         searchQuery.value,
       );
+      filteredConversations.assignAll(results);
     }
+  }
+
+  void _calculateTotalUnread() {
+    final uid = chatService.currentUserId;
+    if (uid == null) {
+      totalUnreadCount.value = 0;
+      return;
+    }
+    
+    int total = 0;
+    for (var conversation in conversations) {
+      total += conversation.getUnreadCountForUser(uid);
+    }
+    totalUnreadCount.value = total;
+    print('📊 Total Unread Messages Updated: $total');
   }
 
   /// Get time ago string from timestamp
@@ -80,5 +98,28 @@ class MessagesController extends GetxController {
 
     // Update backend
     await chatService.hideConversation(conversationId);
+  }
+
+  /// Mark all conversations as read
+  Future<void> markAllAsRead() async {
+    final uid = chatService.currentUserId;
+    if (uid == null) return;
+
+    final batch = chatService.firestore.batch();
+    bool hasUpdates = false;
+
+    for (var conversation in conversations) {
+      if (conversation.getUnreadCountForUser(uid) > 0) {
+        final docRef = chatService.firestore
+            .collection('conversations')
+            .doc(conversation.conversationId);
+        batch.update(docRef, {'unreadCount.$uid': 0});
+        hasUpdates = true;
+      }
+    }
+
+    if (hasUpdates) {
+      await batch.commit();
+    }
   }
 }

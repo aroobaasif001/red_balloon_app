@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
-
 import 'package:red_balloon_app/services/notification_services.dart';
+
 import '../views/user/bottomNavi/screens/task/my_task/tabs/task_in_progress_screen.dart';
 import '../views/user/bottomNavi/screens/task/my_task/widgets/send_offer_bottom_sheet.dart';
 import 'colors.dart';
@@ -18,10 +18,85 @@ class DialogHelpers {
     Get.snackbar('Error', message);
   }
 
-  static void showAddFundsSuccess(String amount, String paymentMethod) {
-    Get.snackbar(
-      'Success',
-      'Processing payment of SAR $amount via $paymentMethod',
+  static void showAddFundsSuccess({
+    required BuildContext context,
+    required String amount,
+    required String paymentMethod,
+    required VoidCallback onDone,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              CustomContainer(
+                padding: const EdgeInsets.only(
+                  top: 90,
+                  left: 25,
+                  right: 25,
+                  bottom: 25,
+                ),
+                conColor: whiteColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.12),
+                    blurRadius: 10,
+                  ),
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CustomText(
+                      "Funds Added!",
+                      fontSize: 20,
+                      fontWeight: FontVariant.bold,
+                      color: blackColor,
+                    ),
+                    const SizedBox(height: 10),
+                    CustomText(
+                      "SAR $amount has been successfully added to your wallet via $paymentMethod.",
+                      fontSize: 14,
+                      color: gray6Color,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 25),
+                    CustomButton(
+                      label: "Done",
+                      onPressed: () {
+                        Navigator.pop(context); // Close dialog
+                        onDone(); // Navigate back
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: -70,
+                child: CustomContainer(
+                  width: 140,
+                  height: 140,
+                  conColor: redColor,
+                  shape: BoxShape.circle,
+                  child: const Center(
+                    child: Icon(
+                      Icons.check_rounded,
+                      size: 80,
+                      color: whiteColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -2001,11 +2076,12 @@ class DialogHelpers {
 
                               // 🔥 Send notification to Helper
                               if (offeringUserUid.isNotEmpty) {
-                                NotificationService.instance.notifyOfferAccepted(
-                                  helperId: offeringUserUid,
-                                  taskTitle: taskTitle,
-                                  taskId: taskId,
-                                );
+                                NotificationService.instance
+                                    .notifyOfferAccepted(
+                                      helperId: offeringUserUid,
+                                      taskTitle: taskTitle,
+                                      taskId: taskId,
+                                    );
                               }
 
                               // Call the callback

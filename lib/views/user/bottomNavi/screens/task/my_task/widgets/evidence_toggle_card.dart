@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/custom_widgets/full_screen_image_viewer.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
@@ -99,15 +100,54 @@ class EvidenceToggleCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                "assets/images/homedetail.png",
-                width: double.infinity,
-                height: 250,
-                fit: BoxFit.cover,
-              ),
-            ),
+            Obx(() {
+              final showBefore = controller.showBefore.value;
+              final url = showBefore
+                  ? controller.beforeImageUrl.value
+                  : controller.afterImageUrl.value;
+              return GestureDetector(
+                onTap: () {
+                  if (url.isNotEmpty) {
+                    Get.to(() => FullScreenImageViewer(imageUrl: url));
+                  }
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: url.isNotEmpty
+                      ? Image.network(
+                          url,
+                          width: double.infinity,
+                          height: 250,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              height: 250,
+                              width: double.infinity,
+                              color: white2Color,
+                              child: const Center(
+                                child: CircularProgressIndicator(color: redColor),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) =>
+                              Image.asset(
+                            "assets/images/homedetail.png",
+                            width: double.infinity,
+                            height: 250,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : Image.asset(
+                          "assets/images/homedetail.png",
+                          width: double.infinity,
+                          height: 250,
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              );
+            }),
+
           ],
         ),
       ),

@@ -401,4 +401,92 @@ class WalletService {
       return {'success': false, 'message': 'An error occurred while releasing escrow: ${e.toString()}'};
     }
   }
+
+  /// Submit a withdrawal request
+  Future<bool> requestWithdrawal({
+    required double amount,
+    required String method,
+    required String bank,
+    required String accountNumber,
+  }) async {
+    if (_uid.isEmpty) return false;
+
+    try {
+      final walletDoc = _walletCollection.doc(_uid);
+      final withdrawalRef = walletDoc.collection('withdrawals').doc();
+
+      await _firestore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(walletDoc);
+        
+        double currentBalance = 0.0;
+        if (snapshot.exists) {
+          currentBalance = (snapshot.data() as Map<String, dynamic>)['balance'] ?? 0.0;
+        }
+
+        if (currentBalance < amount) {
+          throw Exception('Insufficient balance');
+        }
+
+        final newBalance = currentBalance - amount;
+
+        // 1. Deduct from balance immediately? 
+        // Typically we hold the funds. Let's deduct and show as "Pending withdrawal" in some scenarios, 
+        // or just let the admin approve and then deduct. 
+        // For this app, let's deduct immediately to avoid double spending.
+        transaction.update(walletDoc, {
+          'balance': newBalance,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        // 2. Create withdrawal record
+        transaction.set(withdrawalRef, {
+          'id': withdrawalRef.id,
+          'uid': _uid,
+          'amount': amount,
+          'method': method,
+          'bank': bank,
+          'accountNumber': accountNumber,
+          'status': 'Pending',
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        // 3. Add to transactions as a debit
+        final transactionRef = walletDoc.collection('transactions').doc();
+        transaction.set(transactionRef, {
+          'id': transactionRef.id,
+          'title': 'Withdrawal Requested',
+          'description': '$method - $bank',
+          'amount': amount,
+          'type': 'debit',
+          'status': 'pending',
+          'withdrawalId': withdrawalRef.id,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      });
+
+      return true;
+    } catch (e) {
+      print('Error requesting withdrawal: $e');
+      return false;
+    }
+  }
+
+  /// Get withdrawal requests stream
+  Stream<List<Map<String, dynamic>>> getWithdrawalRequestsStream() {
+    if (_uid.isEmpty) return Stream.value([]);
+
+    return _walletCollection
+        .doc(_uid)
+        .collection('withdrawals')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return data;
+      }).toList();
+    });
+  }
 }

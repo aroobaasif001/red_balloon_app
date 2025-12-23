@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/services/wallet_service.dart';
 import 'package:red_balloon_app/utils/dialog_helpers.dart';
 import 'wallet_controller.dart';
@@ -98,12 +100,25 @@ class AddFundsController extends GetxController {
           final success = await _walletService.addFunds(amountToAdd);
 
           if (success) {
+            // Send push notification to current user
+            final currentUser = FirebaseAuth.instance.currentUser;
+            if (currentUser != null) {
+              NotificationService.instance.notifyFundsAdded(
+                userId: currentUser.uid,
+                amount: amountToAdd,
+              );
+            }
+
             DialogHelpers.showAddFundsSuccess(
-              finalAmount,
-              selectedPaymentMethod.value,
+              context: context,
+              amount: finalAmount,
+              paymentMethod: selectedPaymentMethod.value,
+              onDone: () {
+                Get.back(); // Navigate back to wallet
+              },
             );
-            Get.back(); // Navigate back to wallet
           } else {
+
             DialogHelpers.showAddFundsError(
               'Failed to add funds. Please try again.',
             );
@@ -114,6 +129,7 @@ class AddFundsController extends GetxController {
       },
     );
   }
+
 
   void clearSelection() {
     selectedAmount.value = '25';

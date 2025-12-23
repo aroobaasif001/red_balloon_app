@@ -12,7 +12,9 @@ import '../../bottom_navi_screen.dart';
 import '../notification/notification_screen.dart';
 import '../profile/tabs/messages_screen.dart';
 import '../profile/tabs/profile_screen.dart';
+import '../notification/controller/notification_controller.dart';
 import '../task/post_new_task/post_new_task_screen.dart';
+import '../profile/tabs/controller/messages_controller.dart';
 import 'controller/home_controller.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -78,29 +80,94 @@ class HomeScreen extends StatelessWidget {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      Get.to(() => MessagesScreen());
-                                    },
-                                    icon: Image(
-                                      image: AssetImage(
-                                        'assets/icons/homemessage.png',
-                                      ),
-
-                                      height: 24,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      Get.to(() => NotificationScreen());
-                                    },
-                                    icon: Image(
-                                      image: AssetImage(
-                                        'assets/icons/notification.png',
-                                      ),
-                                      height: 24,
-                                    ),
-                                  ),
+                                  Obx(() {
+                                    final msgController = Get.find<MessagesController>();
+                                    return Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            Get.to(() => const MessagesScreen());
+                                          },
+                                          icon: const Image(
+                                            image: AssetImage(
+                                              'assets/icons/homemessage.png',
+                                            ),
+                                            height: 24,
+                                          ),
+                                        ),
+                                        if (msgController.totalUnreadCount.value > 0)
+                                          Positioned(
+                                            right: 8,
+                                            top: 8,
+                                            child: Container(
+                                              padding: const EdgeInsets.all(2),
+                                              decoration: BoxDecoration(
+                                                color: redColor,
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              constraints: const BoxConstraints(
+                                                minWidth: 16,
+                                                minHeight: 16,
+                                              ),
+                                              child: Text(
+                                                '${msgController.totalUnreadCount.value}',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    );
+                                  }),
+                                  Obx(() {
+                                    final notiController = Get.find<NotificationController>();
+                                    return Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            Get.to(() => const NotificationScreen());
+                                          },
+                                          icon: const Image(
+                                            image: AssetImage(
+                                              'assets/icons/notification.png',
+                                            ),
+                                            height: 24,
+                                          ),
+                                        ),
+                                        if (notiController.unreadCount.value > 0)
+                                          Positioned(
+                                            right: 8,
+                                            top: 8,
+                                            child: Container(
+                                              padding: const EdgeInsets.all(2),
+                                              decoration: BoxDecoration(
+                                                color: redColor,
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              constraints: const BoxConstraints(
+                                                minWidth: 16,
+                                                minHeight: 16,
+                                              ),
+                                              child: Text(
+                                                '${notiController.unreadCount.value}',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    );
+                                  }),
                                   InkWell(
                                     onTap: () {
                                       Get.to(() => ProfileScreen());

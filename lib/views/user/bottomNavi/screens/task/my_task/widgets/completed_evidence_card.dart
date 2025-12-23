@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/custom_widgets/full_screen_image_viewer.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
@@ -16,13 +17,13 @@ class CompletedEvidenceCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 5),
       conColor: whiteColor,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(6),
       boxShadow: [
         BoxShadow(
-          offset: Offset(0, 4),
+          offset: Offset(0, 1),
           spreadRadius: 0,
-          blurRadius: 4,
-          color: blackColor.withOpacity(0.25),
+          blurRadius: 2,
+          color: blackColor.withOpacity(0.05),
         ),
       ],
       child: Padding(
@@ -33,13 +34,13 @@ class CompletedEvidenceCard extends StatelessWidget {
             CustomText(
               "Before & After Evidence",
               fontSize: 16,
-              fontWeight: FontVariant.bold,
+              fontWeight: FontVariant.semiBold,
               color: textcolord,
             ),
             const SizedBox(height: 12),
             CustomContainer(
               height: 60,
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               conColor: white2Color,
               borderRadius: BorderRadius.circular(6),
               child: Row(
@@ -57,7 +58,7 @@ class CompletedEvidenceCard extends StatelessWidget {
                           child: Center(
                             child: CustomText(
                               "BEFORE",
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontVariant.semiBold,
                               color: controller.showBefore.value
                                   ? whiteColor
@@ -82,7 +83,7 @@ class CompletedEvidenceCard extends StatelessWidget {
                           child: Center(
                             child: CustomText(
                               "AFTER",
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontVariant.semiBold,
                               color: !controller.showBefore.value
                                   ? whiteColor
@@ -101,35 +102,48 @@ class CompletedEvidenceCard extends StatelessWidget {
                final showBefore = controller.showBefore.value;
                final url = showBefore ? controller.beforePhotoUrl : controller.afterPhotoUrl;
                
-               if (url.isNotEmpty) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      url,
-                      width: double.infinity,
-                      height: 250,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          "assets/images/homedetail.png", 
-                          width: double.infinity,
-                          height: 250,
-                          fit: BoxFit.cover,
-                        );
-                      }
-                    ),
-                  );
-               } else {
-                 return ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    "assets/images/homedetail.png",
-                    width: double.infinity,
-                    height: 250,
-                    fit: BoxFit.cover,
-                  ),
-                );
-               }
+               return GestureDetector(
+                 onTap: () {
+                   if (url.isNotEmpty) {
+                     Get.to(() => FullScreenImageViewer(imageUrl: url));
+                   }
+                 },
+                 child: ClipRRect(
+                   borderRadius: BorderRadius.circular(12),
+                   child: url.isNotEmpty
+                       ? Image.network(
+                           url,
+                           width: double.infinity,
+                           height: 250,
+                           fit: BoxFit.cover,
+                           loadingBuilder: (context, child, loadingProgress) {
+                             if (loadingProgress == null) return child;
+                             return Container(
+                               height: 250,
+                               width: double.infinity,
+                               color: white2Color,
+                               child: const Center(
+                                 child: CircularProgressIndicator(color: redColor),
+                               ),
+                             );
+                           },
+                           errorBuilder: (context, error, stackTrace) {
+                             return Image.asset(
+                               "assets/images/homedetail.png",
+                               width: double.infinity,
+                               height: 250,
+                               fit: BoxFit.cover,
+                             );
+                           },
+                         )
+                       : Image.asset(
+                           "assets/images/homedetail.png",
+                           width: double.infinity,
+                           height: 250,
+                           fit: BoxFit.cover,
+                         ),
+                 ),
+               );
             }),
           ],
         ),

@@ -39,7 +39,19 @@ class ParticipantCard extends StatelessWidget {
                   )
                 : ClipRRect(
                     borderRadius: BorderRadius.circular(24),
-                    child: Image.network(photoUrl, fit: BoxFit.cover),
+                    child: Image.network(
+                      photoUrl,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: redColor,
+                            strokeWidth: 2,
+                          ),
+                        );
+                      },
+                    ),
                   ),
           ),
           const SizedBox(width: 12),

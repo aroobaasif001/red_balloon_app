@@ -51,7 +51,7 @@ class EditProfileScreen extends StatelessWidget {
                                 ? Center(
                                     child: CircularProgressIndicator(
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                        redColor,
+                                        whiteColor,
                                       ),
                                       strokeWidth: 3,
                                     ),

@@ -28,9 +28,9 @@ class TransactionHistory extends StatelessWidget {
                   () => ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.recentTransactions.length,
+                    itemCount: controller.allTransactions.length,
                     itemBuilder: (context, index) {
-                      final transaction = controller.recentTransactions[index];
+                      final transaction = controller.allTransactions[index];
                       return TransactionItem(
                         title: transaction['title'],
                         description: transaction['description'],

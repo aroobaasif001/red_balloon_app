@@ -7,6 +7,7 @@ class ConversationModel {
   final String? taskImage;
   final String participant1Uid;
   final String participant2Uid;
+  final List<String> participants; // 🔥 Added for easier querying
   final String participant1Name;
   final String participant2Name;
   final String? participant1Photo;
@@ -23,6 +24,7 @@ class ConversationModel {
     this.taskImage,
     required this.participant1Uid,
     required this.participant2Uid,
+    required this.participants,
     required this.participant1Name,
     required this.participant2Name,
     this.participant1Photo,
@@ -42,6 +44,7 @@ class ConversationModel {
       'taskImage': taskImage,
       'participant1Uid': participant1Uid,
       'participant2Uid': participant2Uid,
+      'participants': participants,
       'participant1Name': participant1Name,
       'participant2Name': participant2Name,
       'participant1Photo': participant1Photo,
@@ -62,6 +65,7 @@ class ConversationModel {
       taskImage: json['taskImage'],
       participant1Uid: json['participant1Uid'] ?? '',
       participant2Uid: json['participant2Uid'] ?? '',
+      participants: List<String>.from(json['participants'] ?? [json['participant1Uid'], json['participant2Uid']]),
       participant1Name: json['participant1Name'] ?? '',
       participant2Name: json['participant2Name'] ?? '',
       participant1Photo: json['participant1Photo'],

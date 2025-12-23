@@ -52,6 +52,11 @@ class InProgressViewDetails extends StatelessWidget {
       controller.checkProofExists(taskId!);
       controller.startTaskListener(taskId!);
       controller.startStatusListener(taskId!);
+
+      // 🔥 Fetch helper details if helperUid is present
+      if (helperUid != null && helperUid!.isNotEmpty) {
+        controller.fetchUserData(helperUid!);
+      }
     }
 
     // Debug: Log the helper UID being used
@@ -91,17 +96,17 @@ class InProgressViewDetails extends StatelessWidget {
                     const SizedBox(height: 16),
 
                     const SizedBox(height: 16),
-                    buildHelperInfoCard(
+                    Obx(() => buildHelperInfoCard(
                       controller,
-                      photoUrl,
-                      userName ?? '',
-                      userId ?? '', // 🔥 Changed from helperUid to userId
+                      controller.helperPhotoUrl.value.isEmpty ? photoUrl : controller.helperPhotoUrl.value,
+                      controller.helperName.value,
+                      controller.helperUserId.value, 
                       helperUid: helperUid,
                       taskId: taskId,
                       taskTitle: taskTitle,
                       phoneNumber: phoneNumber,
                       taskImage: taskImage,
-                    ),
+                    )),
                     const SizedBox(height: 100),
                   ],
                 ),

@@ -11,6 +11,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import '../views/user/bottomNavi/bottom_navi_screen.dart';
 import '../views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
 import '../views/user/bottomNavi/screens/profile/tabs/controller/chat_controller.dart';
 import '../views/user/bottomNavi/screens/task/my_task/tabs/task_review_screen.dart';
@@ -590,6 +591,55 @@ class NotificationService {
     }
   }
 
+  /// Notify current user that funds have been added to their wallet
+  Future<void> notifyFundsAdded({
+    required String userId,
+    required double amount,
+  }) async {
+    try {
+      final title = 'Funds Added Successfully!';
+      final body =
+          'SAR ${amount.toStringAsFixed(2)} has been added to your wallet.';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(userId)
+          .collection('items')
+          .add({
+        'title': title,
+        'body': body,
+        'type': NoticeType.success.name,
+        'category': 'funds_added',
+        'amount': amount,
+        'read': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: {
+            'category': 'funds_added',
+            'amount': amount.toString(),
+            'route': 'wallet_tab',
+          },
+          recipientSdk: userDoc.data()?['androidSdk'] as int?,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending funds added notification: $e');
+    }
+  }
+
+
   /// Send push notification for chat messages
   Future<void> notifyChatMessage({
     required String receiverId,
@@ -732,17 +782,30 @@ class NotificationService {
         _navigateToValidationHub();
       } else if (category == 'offer_received' || category == 'offer_accepted') {
         _navigateToMyTasks();
+      } else if (category == 'funds_added' || route == 'wallet_tab') {
+        _navigateToWallet();
       }
     } catch (e) {
       debugPrint('Error handling notification tap: $e');
     }
   }
 
+  void _navigateToWallet() {
+    debugPrint('Navigating to wallet tab');
+    Future.delayed(const Duration(milliseconds: 500), () {
+      try {
+        Get.offAll(() => const BottomNaviScreen(initialIndex: 4));
+      } catch (e) {
+        debugPrint('Navigation error: $e');
+      }
+    });
+  }
+
   void _navigateToAllTasks() {
     debugPrint('Navigating to all tasks tab');
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       try {
-        Get.offAllNamed('/home', arguments: {'initialTab': 2});
+        Get.offAll(() => const BottomNaviScreen(initialIndex: 1)); // My Tasks list
       } catch (e) {
         debugPrint('Navigation error: $e');
       }
@@ -751,9 +814,9 @@ class NotificationService {
 
   void _navigateToMyTasks() {
     debugPrint('Navigating to my tasks');
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       try {
-        Get.offAllNamed('/home', arguments: {'initialTab': 1}); // My Tasks tab
+        Get.offAll(() => const BottomNaviScreen(initialIndex: 1));
       } catch (e) {
         debugPrint('Navigation error: $e');
       }
@@ -762,12 +825,9 @@ class NotificationService {
 
   void _navigateToValidationHub() {
     debugPrint('Navigating to validation hub');
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       try {
-        Get.offAllNamed(
-          '/home',
-          arguments: {'initialTab': 3},
-        ); // Validations tab
+        Get.offAll(() => const BottomNaviScreen(initialIndex: 3));
       } catch (e) {
         debugPrint('Navigation error: $e');
       }

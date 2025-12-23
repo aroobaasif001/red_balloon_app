@@ -75,7 +75,10 @@ Widget buildHelperInfoCard(
                     color: textcolord,
                   ),
                   const SizedBox(height: 4),
-                  const RatingRow(),
+                  Obx(() => RatingRow(
+                        rating: controller.rating.value,
+                        role: controller.role.value,
+                      )),
                 ],
               ),
             ),
@@ -89,14 +92,12 @@ Widget buildHelperInfoCard(
               child: InkWell(
                 onTap: () {
                   // Navigate to chat with helper
-                  print(
-                    '🔍 Chat Debug (buildHelperInfoCard): taskId=$taskId, userId=${userId}, userName=$userName',
-                  );
+                  final resolvedUserId = userId.isNotEmpty ? userId : (helperUid ?? '');
 
                   if (taskId != null &&
                       taskId!.isNotEmpty &&
-                      userId.isNotEmpty) {
-                    print('✅ Opening chat with userId: ${userId}');
+                      resolvedUserId.isNotEmpty) {
+                    print('✅ Opening chat with userId: ${resolvedUserId}');
                     Get.to(
                       () => const ChatScreen(),
                       binding: BindingsBuilder(() {
@@ -104,7 +105,7 @@ Widget buildHelperInfoCard(
                           ChatController(
                             taskId: taskId,
                             taskTitle: taskTitle ?? 'Task',
-                            taskOwnerId: userId,
+                            taskOwnerId: resolvedUserId,
                             taskOwnerName: userName,
                             taskOwnerPhoto: photoUrl,
                             taskImage: taskImage,

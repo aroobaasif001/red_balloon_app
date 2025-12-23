@@ -695,7 +695,7 @@ class TaskReviewScreen extends StatelessWidget {
                           children: [
                             CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                redColor,
+                                whiteColor,
                               ),
                             ),
                             SizedBox(height: 16),
@@ -734,7 +734,7 @@ class TaskReviewScreen extends StatelessWidget {
                     if (loadingProgress == null) return child;
                     return Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
                       ),
                     );
                   },

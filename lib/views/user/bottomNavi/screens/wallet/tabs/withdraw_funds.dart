@@ -31,28 +31,29 @@ class WithdrawFunds extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  custom_withdraw_balance_card(),
+                  Obx(() => custom_withdraw_balance_card(
+                    availableAmount: controller.formatCurrency(controller.availableBalance.value),
+                    lockedAmount: controller.formatCurrency(controller.escrowBalance.value),
+                    maxWithdrawalLimitMessage: 'Maximum Withdrawal Limit: ${controller.formatCurrency(controller.currentMaxLimit.value)}',
+                  )),
                   SizedBox(height: 20),
                   WithdrawalDetailsCard(
                     amountController: controller.amountController,
                     paymentMethodController: controller.paymentMethodController,
+                    bankController: controller.bankController,
+                    bankAccountController: controller.bankAccountController,
+                    onMethodTap: controller.showMethodSelection,
+                    onBankTap: controller.showBankSelection,
                     onButtonPressed: controller.submitWithdrawal,
                   ),
                   SizedBox(height: 20),
-                  PastWithdrawalRequests(
-                    withdrawalRequests: [
-                      WithdrawalRequest(
-                        date: 'Nov 3, 2025',
-                        amount: 'SAR 150.00',
-                        status: 'Completed',
-                      ),
-                      WithdrawalRequest(
-                        date: 'Oct 31, 2025',
-                        amount: 'SAR 100.00',
-                        status: 'Pending',
-                      ),
-                    ],
-                  ),
+                  Obx(() => PastWithdrawalRequests(
+                    withdrawalRequests: controller.pastWithdrawals.map((w) => WithdrawalRequest(
+                      date: controller.formatDate(w['createdAt']),
+                      amount: controller.formatCurrency((w['amount'] ?? 0.0).toDouble()),
+                      status: w['status'] ?? 'Pending',
+                    )).toList(),
+                  )),
                   SizedBox(height: 20),
                 ],
               ),

@@ -38,6 +38,8 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
   final UserService _userService = UserService(); // 🔥 Add UserService
   List<OfferModel> offers = [];
   Map<String, UserModel?> offerUsers = {}; // 🔥 Cache for user data
+  Map<String, Map<String, dynamic>> offerUserStats =
+      {}; // 🔥 Cache for user stats (rating, tasks completed)
   bool isLoading = true;
   StreamSubscription? _offersSubscription;
   StreamSubscription? _taskSubscription; // 🔥 Add task listener
@@ -93,14 +95,21 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                   )
                   .toList();
 
-              // 🔥 Pre-fetch user data for each offer
+              // 🔥 Pre-fetch user data and stats for each offer
               Map<String, UserModel?> usersMap = {};
+              Map<String, Map<String, dynamic>> statsMap = {};
               for (var offer in fetchedOffers) {
                 if (!usersMap.containsKey(offer.offeringUserUid)) {
                   final user = await _userService.getUserByUid(
                     offer.offeringUserUid,
                   );
                   usersMap[offer.offeringUserUid] = user;
+
+                  // Fetch stats (rating, tasks completed)
+                  final stats = await _userService.getUserStatistics(
+                    offer.offeringUserUid,
+                  );
+                  statsMap[offer.offeringUserUid] = stats;
                 }
               }
 
@@ -109,6 +118,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
               setState(() {
                 offers = fetchedOffers;
                 offerUsers = usersMap;
+                offerUserStats = statsMap;
                 isLoading = false;
               });
 
@@ -271,7 +281,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                 const Center(
                   child: Padding(
                     padding: EdgeInsets.all(40.0),
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(color: redColor),
                   ),
                 )
               else if (offers.isEmpty)
@@ -309,16 +319,21 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                       ? offer.offeringUserName[0].toUpperCase()
                       : 'U';
 
+                  // 🔥 Get pre-fetched stats
+                  final stats = offerUserStats[offer.offeringUserUid] ?? {};
+                  final double userRating = (stats['rating'] ?? 5.0).toDouble();
+                  final int completedTasks = stats['tasksCompleted'] ?? 0;
+
                   return ProviderCard(
                     userPhoto:
                         user?.photoURL ??
                         displayImage, // 🔥 Use user photo if available
                     initials: initials,
                     name: offer.offeringUserName,
-                    id: user!.userId ?? '',
+                    id: user?.userId ?? '',
 
-                    rating: "4.9",
-                    description: "(25 Tasks Completed)",
+                    rating: userRating.toStringAsFixed(1),
+                    description: "($completedTasks Tasks Completed)",
                     price: "SAR ${offer.offerPrice}",
                     distance: "34.5 km away",
                     onViewProfile: () async {
