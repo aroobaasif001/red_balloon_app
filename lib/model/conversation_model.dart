@@ -58,6 +58,18 @@ class ConversationModel {
 
   // Create from Firestore document
   factory ConversationModel.fromJson(Map<String, dynamic> json) {
+    // Safely parse unreadCount map
+    final Map<String, int> parsedUnreadCount = {};
+    if (json['unreadCount'] != null && json['unreadCount'] is Map) {
+      (json['unreadCount'] as Map).forEach((key, value) {
+        if (value is num) {
+          parsedUnreadCount[key.toString()] = value.toInt();
+        } else if (value is String) {
+          parsedUnreadCount[key.toString()] = int.tryParse(value) ?? 0;
+        }
+      });
+    }
+
     return ConversationModel(
       conversationId: json['conversationId'] ?? '',
       taskId: json['taskId'] ?? '',
@@ -65,14 +77,16 @@ class ConversationModel {
       taskImage: json['taskImage'],
       participant1Uid: json['participant1Uid'] ?? '',
       participant2Uid: json['participant2Uid'] ?? '',
-      participants: List<String>.from(json['participants'] ?? [json['participant1Uid'], json['participant2Uid']]),
+      participants: List<String>.from(
+        json['participants'] ?? [json['participant1Uid'], json['participant2Uid']],
+      ),
       participant1Name: json['participant1Name'] ?? '',
       participant2Name: json['participant2Name'] ?? '',
       participant1Photo: json['participant1Photo'],
       participant2Photo: json['participant2Photo'],
       lastMessage: json['lastMessage'] ?? '',
       lastMessageTime: json['lastMessageTime'] ?? Timestamp.now(),
-      unreadCount: Map<String, int>.from(json['unreadCount'] ?? {}),
+      unreadCount: parsedUnreadCount,
       hiddenBy: List<String>.from(json['hiddenBy'] ?? []),
     );
   }

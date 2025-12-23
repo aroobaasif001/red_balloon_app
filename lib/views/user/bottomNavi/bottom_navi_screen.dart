@@ -27,8 +27,9 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
   void initState() {
     super.initState();
     // Initialize global trackers for badges
-    Get.put(NotificationController());
-    Get.put(MessagesController());
+    // Initialize global trackers for badges - set to permanent to ensure they stay active
+    Get.put(NotificationController(), permanent: true);
+    Get.put(MessagesController(), permanent: true);
     
     currentIndex = widget.initialIndex;
     _initializeNavItems();

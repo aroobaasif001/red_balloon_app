@@ -41,6 +41,8 @@ class ValidationScreenController extends GetxController {
   // 🔥 Participant Names
   var requesterName = 'Requester'.obs;
   var helperName = 'Helper'.obs;
+  var requesterPhotoUrl = ''.obs;
+  var helperPhotoUrl = ''.obs;
   var requesterRating = 5.0.obs;
   var helperRating = 5.0.obs;
 
@@ -78,23 +80,70 @@ class ValidationScreenController extends GetxController {
   }
 
   /// Fetch task details using taskId from validation
+  /// Fetch task details using taskId from validation
   Future<void> fetchTaskDetails({
     required String validationTaskId,
     required String validationUserId,
     required String validationBeforePhoto,
     required String validationAfterPhoto,
-    String? proofId, // 🔥 Added proofId parameter
+    String? proofId,
+    String? validationDocId, // 🔥 Added validationDocId
   }) async {
     try {
       isLoading.value = true;
+      print('🔍 ValidationScreenController: Fetching details for Task $validationTaskId');
 
-      // Set validation data
+      // 1. Set initial data from params
       taskId.value = validationTaskId;
       userId.value = validationUserId;
-      beforePhotoUrl.value = validationBeforePhoto;
-      afterPhotoUrl.value = validationAfterPhoto;
+      beforePhotoUrl.value = (validationBeforePhoto == 'null' || !validationBeforePhoto.trim().startsWith('http')) 
+          ? '' : validationBeforePhoto.trim();
+      afterPhotoUrl.value = (validationAfterPhoto == 'null' || !validationAfterPhoto.trim().startsWith('http')) 
+          ? '' : validationAfterPhoto.trim();
 
-      // Fetch task details from tasks collection
+      // 2. 🔥 FETCH VALIDATION DOC FIRST (to get photos from there as shown in screenshot)
+      DocumentSnapshot? vDoc;
+      if (validationDocId != null && validationDocId.isNotEmpty) {
+        vDoc = await _firestore.collection('validations').doc(validationDocId).get();
+      } else {
+        final vSnap = await _firestore
+            .collection('validations')
+            .where('taskId', isEqualTo: validationTaskId)
+            .limit(1)
+            .get();
+        if (vSnap.docs.isNotEmpty) {
+          vDoc = vSnap.docs.first;
+        }
+      }
+
+      if (vDoc != null && vDoc.exists) {
+        final vData = vDoc.data() as Map<String, dynamic>;
+        validationId.value = vDoc.id;
+        
+        // Update photos if found in doc
+        String? b = vData['beforePhotoUrl'] ?? vData['beforeImageUrl'];
+        String? a = vData['afterPhotoUrl'] ?? vData['afterImageUrl'];
+        
+        if (b != null && b.trim().isNotEmpty && b != 'null') {
+          beforePhotoUrl.value = b.trim();
+          print('📸 Photo from Validation Doc (Before): ${beforePhotoUrl.value}');
+        }
+        if (a != null && a.trim().isNotEmpty && a != 'null') {
+          afterPhotoUrl.value = a.trim();
+          print('📸 Photo from Validation Doc (After): ${afterPhotoUrl.value}');
+        }
+
+        // Set timestamps
+        if (vData['completedAt'] != null) {
+          completedAt.value = (vData['completedAt'] as Timestamp).toDate();
+        }
+        if (vData['rejectedAt'] != null) {
+          rejectedAt.value = (vData['rejectedAt'] as Timestamp).toDate();
+          _startTimer();
+        }
+      }
+
+      // 3. Fetch task details from tasks collection
       final taskData = await _taskService.getTaskById(validationTaskId);
 
       if (taskData != null) {
@@ -102,42 +151,56 @@ class ValidationScreenController extends GetxController {
         taskDescription.value =
             taskData['description'] ?? 'No description available';
 
-        // 🔥 Check if current user owns this task
+        // Fallback: If beforePhotoUrl is still empty, use task image
+        if (beforePhotoUrl.value.isEmpty && taskData['imageUrl'] != null) {
+          beforePhotoUrl.value = taskData['imageUrl'];
+          print('📸 Task Image Fallback (Before): ${beforePhotoUrl.value}');
+        }
+
+        // Check if current user owns this task
         final currentUserId = _auth.currentUser?.uid;
-        final taskOwnerId = taskData['uid']; // Task creator's UID
+        final taskOwnerId = taskData['uid'];
         isTaskOwner.value = (currentUserId == taskOwnerId);
 
-        print('🔍 Current User: $currentUserId');
-        print('🔍 Task Owner: $taskOwnerId');
-        print('🔍 Is Task Owner: ${isTaskOwner.value}');
-
-        // 🔥 Fetch Requester Name
+        // Fetch Requester Name & Rating
         if (taskOwnerId != null) {
-          final userDoc = await _firestore
-              .collection('users')
-              .doc(taskOwnerId)
-              .get();
+          final userDoc = await _firestore.collection('users').doc(taskOwnerId).get();
           if (userDoc.exists) {
-            requesterName.value = userDoc.data()?['displayName'] ?? 'Requester';
-            print('🔍 Requester Name: ${requesterName.value}');
+            final data = userDoc.data();
+            requesterName.value = data?['displayName'] ?? 'Requester';
+            requesterPhotoUrl.value = data?['photoURL'] ?? '';
             _fetchUserRating(taskOwnerId, isHelper: false);
           }
         }
 
-        // 🔥 Fetch proof submitter userId from task_proofs
-        if (proofId != null && proofId.isNotEmpty) {
-          await _fetchProofSubmitterUserId(proofId, currentUserId);
+        // 4. Fetch proof submitter data & Proof Image Fallback
+        String finalProofId = proofId ?? vDoc?.get('proofId') ?? '';
+        if (finalProofId.isNotEmpty) {
+          await _fetchProofSubmitterUserId(finalProofId, currentUserId);
         }
 
-        // 🔥 Fetch voting data from voting collection
+        // 5. Final fallback for After photo from task document if still empty
+        if (afterPhotoUrl.value.isEmpty) {
+           afterPhotoUrl.value = taskData['afterPhotoUrl'] ?? 
+                                 taskData['afterImageUrl'] ?? 
+                                 taskData['after_photo_url'] ?? '';
+           if (afterPhotoUrl.value.isNotEmpty) {
+             print('📸 Task Doc Fallback (After): ${afterPhotoUrl.value}');
+           }
+        }
+
+        // Fetch voting data
         await _fetchVotingData(validationTaskId);
       }
+
+      print('✅ ValidationScreenController Fetch Complete:');
+      print('📊 Final Before: "${beforePhotoUrl.value}"');
+      print('📊 Final After: "${afterPhotoUrl.value}"');
 
       isLoading.value = false;
     } catch (e) {
       print('❌ Error fetching task details: $e');
       isLoading.value = false;
-      Get.snackbar('Error', 'Failed to load task details');
     }
   }
 
@@ -157,6 +220,21 @@ class ValidationScreenController extends GetxController {
         final proofSubmitterUserId =
             proofData['userId']; // UID of proof submitter
 
+        // 🔥 Set After Photo if empty - check multiple variants
+        if (afterPhotoUrl.value.isEmpty || afterPhotoUrl.value == 'null') {
+          String? foundUrl = proofData['afterPhotoUrl'] ?? 
+                             proofData['afterImageUrl'] ?? 
+                             proofData['after_photo_url'] ?? 
+                             proofData['afterPhoto'];
+          
+          if (foundUrl != null && foundUrl.trim().isNotEmpty && foundUrl != 'null') {
+            afterPhotoUrl.value = foundUrl.trim();
+            print('📸 Set After Photo from direct proof fetch: ${afterPhotoUrl.value}');
+          } else {
+            print('⚠️ No valid after photo found in Proof Doc ${proofDoc.id}. Available keys: ${proofData.keys.toList()}');
+          }
+        }
+
         // Check if current user is the proof submitter
         isProofSubmitter.value = (currentUserId == proofSubmitterUserId);
 
@@ -170,8 +248,10 @@ class ValidationScreenController extends GetxController {
               .doc(proofSubmitterUserId)
               .get();
           if (userDoc.exists) {
-            helperName.value = userDoc.data()?['displayName'] ?? 'Helper';
-            print('🔍 Helper Name: ${helperName.value}');
+            final data = userDoc.data();
+            helperName.value = data?['displayName'] ?? 'Helper';
+            helperPhotoUrl.value = data?['photoURL'] ?? '';
+            print('🔍 Helper: ${helperName.value}, Photo: ${helperPhotoUrl.value}');
             _fetchUserRating(proofSubmitterUserId, isHelper: true);
           }
         }
@@ -194,17 +274,34 @@ class ValidationScreenController extends GetxController {
       if (validationSnapshot.docs.isNotEmpty) {
         final validationDoc = validationSnapshot.docs.first;
         validationId.value = validationDoc.id;
+        final vData = validationDoc.data();
+
+        // 🔥 Get photos directly from validation doc if not already set
+        if (beforePhotoUrl.value.isEmpty || beforePhotoUrl.value == 'null') {
+          String? bp = vData['beforePhotoUrl'] ?? vData['beforeImageUrl'];
+          if (bp != null && bp.trim().isNotEmpty && bp != 'null') {
+             beforePhotoUrl.value = bp.trim();
+             print('📸 Found Before Photo in Validation Doc: ${beforePhotoUrl.value}');
+          }
+        }
+        
+        if (afterPhotoUrl.value.isEmpty || afterPhotoUrl.value == 'null') {
+          String? ap = vData['afterPhotoUrl'] ?? vData['afterImageUrl'];
+          if (ap != null && ap.trim().isNotEmpty && ap != 'null') {
+             afterPhotoUrl.value = ap.trim();
+             print('📸 Found After Photo in Validation Doc: ${afterPhotoUrl.value}');
+          }
+        }
 
         // Get rejectedAt timestamp
-        final Timestamp? timestamp = validationDoc.data()['rejectedAt'];
+        final Timestamp? timestamp = vData['rejectedAt'];
         if (timestamp != null) {
           rejectedAt.value = timestamp.toDate();
           _startTimer(); // 🔥 Start 15-minute countdown
         }
 
         // 🔥 Get completedAt timestamp for "Submitted time ago"
-        final Timestamp? completedTimestamp = validationDoc
-            .data()['completedAt'];
+        final Timestamp? completedTimestamp = vData['completedAt'];
         if (completedTimestamp != null) {
           completedAt.value = completedTimestamp.toDate();
         }
@@ -491,48 +588,75 @@ class ValidationScreenController extends GetxController {
 
   Future<void> _fetchUserRating(String uid, {required bool isHelper}) async {
     try {
+      print('⭐ ValidationScreenController: Starting Exhaustive Rating Fetch for $uid (isHelper: $isHelper)');
       double sum = 0;
       int count = 0;
 
-      // 1. As Helper
+      // 1. Fetch as Helper (Requester left feedback)
       final hTasks = await _firestore
           .collection('tasks')
           .where('acceptedOfferUid', isEqualTo: uid)
-          .where('status', isEqualTo: 'completed')
           .get();
       
       for (var doc in hTasks.docs) {
         final data = doc.data();
-        if (data['requesterFeedback'] != null) {
-          sum += (data['requesterFeedback']['rating'] ?? 0).toDouble();
-          count++;
+        // Check for any feedback from the requester
+        final feedback = data['requesterFeedback'] ?? data['requester_feedback'];
+        if (feedback != null) {
+          final r = (feedback['rating'] ?? 0).toDouble();
+          if (r > 0) {
+            sum += r;
+            count++;
+            print('   - Found Helper Feedback: $r from Task ${doc.id}');
+          }
         }
       }
 
-      // 2. As Requester
+      // 2. Fetch as Requester (Helper left feedback)
       final rTasks = await _firestore
           .collection('tasks')
           .where('uid', isEqualTo: uid)
-          .where('status', isEqualTo: 'completed')
           .get();
 
       for (var doc in rTasks.docs) {
         final data = doc.data();
-        if (data['helperFeedback'] != null) {
-          sum += (data['helperFeedback']['rating'] ?? 0).toDouble();
-          count++;
+        // Check for any feedback from the helper
+        final feedback = data['helperFeedback'] ?? data['helper_feedback'];
+        if (feedback != null) {
+          final r = (feedback['rating'] ?? 0).toDouble();
+          if (r > 0) {
+            sum += r;
+            count++;
+            print('   - Found Requester Feedback: $r from Task ${doc.id}');
+          }
         }
       }
 
       if (count > 0) {
+        final finalRating = sum / count;
         if (isHelper) {
-          helperRating.value = sum / count;
+          helperRating.value = finalRating;
         } else {
-          requesterRating.value = sum / count;
+          requesterRating.value = finalRating;
+        }
+        print('✅ Final Calculated Rating for $uid: $finalRating (count: $count)');
+      } else {
+        // 3. Fallback: Fetch directly from User document if no task feedback found
+        print('ℹ️ No task feedback found for $uid. Checking user doc...');
+        final userDoc = await _firestore.collection('users').doc(uid).get();
+        if (userDoc.exists) {
+          final userData = userDoc.data();
+          final userRating = (userData?['rating'] ?? userData?['averageRating'] ?? 5.0).toDouble();
+          if (isHelper) {
+            helperRating.value = userRating;
+          } else {
+            requesterRating.value = userRating;
+          }
+          print('✅ Fallback Rating from User Doc for $uid: $userRating');
         }
       }
     } catch (e) {
-      print("Error fetching user rating: $e");
+      print("❌ Error fetching exhaustive rating for $uid: $e");
     }
   }
 }

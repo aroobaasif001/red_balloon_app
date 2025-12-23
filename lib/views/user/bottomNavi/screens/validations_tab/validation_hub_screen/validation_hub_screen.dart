@@ -203,6 +203,7 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
                                       onPressed: () {
                                         Get.to(
                                           () => ValidationScreen(
+                                            validationId: validation['validationId'],
                                             taskId: validation['taskId'],
                                             userId: validation['userId'],
                                             beforePhotoUrl:

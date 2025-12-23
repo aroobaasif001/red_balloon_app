@@ -15,7 +15,9 @@ class MessagesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(MessagesController());
+    final controller = Get.isRegistered<MessagesController>()
+        ? Get.find<MessagesController>()
+        : Get.put(MessagesController());
 
     return SafeArea(
       top: false,
