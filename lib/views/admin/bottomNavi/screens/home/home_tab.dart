@@ -97,11 +97,11 @@ class AdminHomeTab extends StatelessWidget {
                       title: 'Wallet Locked',
                     ),
                     SizedBox(width: 10),
-                    admin_home_platform_metrics_widget(
+                    Obx(() => admin_home_platform_metrics_widget(
                       iconPath: 'assets/icons/clock_2.png',
-                      value: '15',
+                      value: controller.pendingWithdrawalsCount.value.toString(),
                       title: 'Pending Withdrawals',
-                    ),
+                    )),
                   ],
                 ),
                 SizedBox(height: 22),
