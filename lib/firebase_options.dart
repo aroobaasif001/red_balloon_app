@@ -70,6 +70,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1037639327100',
     projectId: 'red-balloon-app',
     storageBucket: 'red-balloon-app.firebasestorage.app',
+    androidClientId: '1037639327100-31c4jgrm6ke6usmdkoqjplntdcr2l5e4.apps.googleusercontent.com',
+    iosClientId: '1037639327100-2ceqifsjdls4npu6iu1ojimd2s6hj8tn.apps.googleusercontent.com',
     iosBundleId: 'com.redballoon.app',
   );
+
 }
