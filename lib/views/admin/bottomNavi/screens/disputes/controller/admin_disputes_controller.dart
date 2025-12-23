@@ -37,7 +37,10 @@ class AdminDisputesController extends GetxController {
           print('❌ Error parsing task ${doc.id}: $e');
         }
       }
-      
+
+      // Sort by dispute time if available, otherwise createdAt (newest first)
+      tasks.sort((a, b) => getDisplayDate(b).compareTo(getDisplayDate(a)));
+
       disputedTasks.value = tasks;
       isLoading.value = false;
       print('✅ Loaded ${tasks.length} disputed tasks');
@@ -46,23 +49,33 @@ class AdminDisputesController extends GetxController {
       isLoading.value = false;
     }
   }
-  
+
+  /// Get the most relevant date for sorting and display
+  DateTime getDisplayDate(TaskModel task) {
+    if (task.disputedStartTime != null) {
+      try {
+        return DateTime.parse(task.disputedStartTime!);
+      } catch (_) {}
+    }
+    return task.createdAt;
+  }
+
   /// Format budget to display
   String formatBudget(int budget) {
     return 'SAR $budget';
   }
-  
+
   /// Calculate time ago from DateTime
   String getTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} mins ago';
+      return '${difference.inMinutes.abs()} mins ago';
     } else if (difference.inHours < 24) {
-      return '${difference.inHours} hours ago';
+      return '${difference.inHours.abs()} hours ago';
     } else {
-      return '${difference.inDays} days ago';
+      return '${difference.inDays.abs()} days ago';
     }
   }
 }

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 
+import 'package:red_balloon_app/model/banner_model.dart';
 import '../controllers/add_new_banner_controller.dart';
 import '../widgets/admin_banner_detail_card.dart';
 import '../widgets/admin_banner_image_card.dart';
@@ -10,16 +11,27 @@ import '../widgets/admin_banner_status_card.dart';
 import '../widgets/admin_save_button.dart';
 
 class AddNewBannerScreen extends StatelessWidget {
-  const AddNewBannerScreen({super.key});
+  final BannerModel? banner;
+  const AddNewBannerScreen({super.key, this.banner});
 
   @override
   Widget build(BuildContext context) {
-    final AddNewBannerController controller =
-        Get.put(AddNewBannerController(), permanent: false);
+    // Initialize controller only once
+    final AddNewBannerController controller = Get.put(AddNewBannerController());
+    
+    // Initialize for edit if banner is provided and not already initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (banner != null && !controller.isEditing.value) {
+        controller.initForEdit(banner!);
+      }
+    });
+
     return SafeArea(
       top: false,
       child: Scaffold(
-        appBar: const CustomAppBar(titleText: 'Add New Banner'),
+        appBar: CustomAppBar(
+          titleText: banner != null ? 'Edit Banner' : 'Add New Banner',
+        ),
         body: CustomContainer(
           width: double.infinity,
           height: double.infinity,
@@ -36,9 +48,9 @@ class AddNewBannerScreen extends StatelessWidget {
                       const SizedBox(height: 16),
                       adminBannerDetailsCard(
                         context,
-                        onTitleChanged: controller.setBannerTitle,
-                        onSubtitleChanged: controller.setSubtitle,
-                        onCtaChanged: controller.setCtaText,
+                        titleController: controller.titleController,
+                        subtitleController: controller.subtitleController,
+                        ctaController: controller.ctaController,
                       ),
                       const SizedBox(height: 16),
                       Obx(
@@ -49,7 +61,12 @@ class AddNewBannerScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 80),
-                      adminSaveButton(onTap: controller.saveBanner),
+                      Obx(
+                        () => adminSaveButton(
+                          onTap: controller.saveBanner,
+                          isLoading: controller.isLoading.value,
+                        ),
+                      ),
                       const SizedBox(height: 16),
                     ],
                   ),

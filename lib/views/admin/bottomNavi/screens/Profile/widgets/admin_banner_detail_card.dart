@@ -6,9 +6,9 @@ import '../../../../../../utils/colors.dart';
 
 Widget adminBannerDetailsCard(
   BuildContext context, {
-  required ValueChanged<String> onTitleChanged,
-  required ValueChanged<String> onSubtitleChanged,
-  required ValueChanged<String> onCtaChanged,
+  required TextEditingController titleController,
+  required TextEditingController subtitleController,
+  required TextEditingController ctaController,
 }) {
   OutlineInputBorder border = OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
@@ -20,7 +20,6 @@ Widget adminBannerDetailsCard(
     conColor: whiteColor,
     borderRadius: BorderRadius.circular(20),
     border: Border.all(color: beforecolor),
-
     boxShadow: [
       BoxShadow(
         color: blackColor.withOpacity(0.25),
@@ -47,7 +46,7 @@ Widget adminBannerDetailsCard(
         ),
         const SizedBox(height: 6),
         TextField(
-          onChanged: onTitleChanged,
+          controller: titleController,
           decoration: InputDecoration(
             hintText: 'Enter banner title',
             hintStyle: const TextStyle(fontSize: 13, color: hintColor),
@@ -71,6 +70,7 @@ Widget adminBannerDetailsCard(
         ),
         const SizedBox(height: 6),
         TextField(
+          controller: subtitleController,
           decoration: InputDecoration(
             hintText: 'Enter subtitle',
             hintStyle: const TextStyle(fontSize: 13, color: hintColor),
@@ -94,6 +94,7 @@ Widget adminBannerDetailsCard(
         ),
         const SizedBox(height: 6),
         TextField(
+          controller: ctaController,
           decoration: InputDecoration(
             hintText: 'e.g., Shop Now, Learn More',
             hintStyle: const TextStyle(fontSize: 13, color: hintColor),

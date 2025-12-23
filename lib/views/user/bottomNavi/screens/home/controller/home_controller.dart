@@ -3,13 +3,17 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/services/wallet_service.dart';
+import 'package:red_balloon_app/services/banner_service.dart';
+import 'package:red_balloon_app/model/banner_model.dart';
 
 class HomeController extends GetxController with GetTickerProviderStateMixin {
   late TabController tabController;
   final WalletService _walletService = WalletService();
+  final BannerService _bannerService = BannerService();
 
   RxInt selectedTabIndex = 0.obs;
   RxDouble walletBalance = 0.0.obs;
+  RxList<BannerModel> activeBanners = <BannerModel>[].obs;
 
   @override
   void onInit() {
@@ -24,6 +28,13 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
     _walletService.getWalletBalance().listen((balance) {
       walletBalance.value = balance;
     });
+
+    // Listen to active banners
+    activeBanners.bindStream(
+      _bannerService.streamBanners().map(
+            (list) => list.where((banner) => banner.isActive).toList(),
+          ),
+    );
   }
   
   Future<void> _checkNotificationPermission() async {

@@ -50,13 +50,30 @@ class DisputeDetailsController extends GetxController {
       // Task basic info
       this.taskId.value = taskId;
       taskTitle.value = taskData['title'] ?? 'No Title';
-      requesterReport.value = taskData['requesterHelpDetails'] ?? 
-                              taskData['requesterHelpReason'] ?? 
-                              'No report provided';
-      helperReport.value = taskData['helperHelpDetails'] ?? 
-                          taskData['helperHelpReason'] ?? 
-                          'No report provided';
-      
+
+      // Helper function to get non-empty report correctly
+      String getFormattedReport(String detailsKey, String reasonKey) {
+        String details = (taskData[detailsKey]?.toString() ?? '').trim();
+        String reason = (taskData[reasonKey]?.toString() ?? '').trim();
+
+        if (details.isNotEmpty && reason.isNotEmpty) {
+          return '$reason: $details';
+        } else if (details.isNotEmpty) {
+          return details;
+        } else if (reason.isNotEmpty) {
+          return reason;
+        }
+        return '';
+      }
+
+      requesterReport.value =
+          getFormattedReport('requesterHelpDetails', 'requesterHelpReason');
+      helperReport.value =
+          getFormattedReport('helperHelpDetails', 'helperHelpReason');
+
+      // Initialize IDs from task data as fallback
+      requesterUserId.value = taskData['userId'] ?? '';
+
       // Calculate submitted time
       if (taskData['disputedStartTime'] != null) {
         try {
@@ -64,7 +81,8 @@ class DisputeDetailsController extends GetxController {
           if (taskData['disputedStartTime'] is String) {
             disputedTime = DateTime.parse(taskData['disputedStartTime']);
           } else {
-            disputedTime = (taskData['disputedStartTime'] as Timestamp).toDate();
+            disputedTime =
+                (taskData['disputedStartTime'] as Timestamp).toDate();
           }
           submittedTime.value = _getTimeAgo(disputedTime);
         } catch (e) {
@@ -74,23 +92,23 @@ class DisputeDetailsController extends GetxController {
       } else {
         submittedTime.value = 'Recently';
       }
-      
+
       print('✅ Task info loaded: ${taskTitle.value}');
-      
+
       // 2. Fetch Requester details (using task.uid)
       final requesterUidValue = taskData['uid'];
       if (requesterUidValue != null) {
         requesterUid.value = requesterUidValue;
         await _fetchRequesterDetails(requesterUidValue);
       }
-      
+
       // 3. Fetch Helper details (using acceptedOfferUid)
       final helperUidValue = taskData['acceptedOfferUid'];
       if (helperUidValue != null) {
         helperUid.value = helperUidValue;
         await _fetchHelperDetails(helperUidValue);
       }
-      
+
       isLoading.value = false;
       print('✅ Dispute details loaded successfully');
     } catch (e) {
@@ -98,27 +116,31 @@ class DisputeDetailsController extends GetxController {
       isLoading.value = false;
     }
   }
-  
+
   /// Fetch requester user details
   Future<void> _fetchRequesterDetails(String uid) async {
     try {
       print('👤 Fetching requester details for UID: $uid');
       final userDoc = await _firestore.collection('users').doc(uid).get();
-      
+
       if (userDoc.exists) {
         final userData = userDoc.data()!;
-        requesterName.value = userData['username'] ?? 
-                             userData['displayName'] ?? 
-                             userData['name'] ?? 
-                             'Unknown User';
-        requesterUserId.value = userData['userId'] ?? 'RB-00000';
-        requesterCity.value = userData['city'] ?? 
-                             userData['location'] ?? 
-                             'Unknown';
-        requesterImage.value = userData['photoURL'] ?? 
-                              userData['profileImage'] ?? 
-                              '';
-        
+        requesterName.value = userData['username'] ??
+            userData['displayName'] ??
+            userData['name'] ??
+            'Unknown User';
+
+        // Only overwrite if userData has a valid userId
+        if (userData['userId'] != null &&
+            userData['userId'].toString().isNotEmpty) {
+          requesterUserId.value = userData['userId'];
+        }
+
+        requesterCity.value =
+            userData['city'] ?? userData['location'] ?? 'Unknown';
+        requesterImage.value =
+            userData['photoURL'] ?? userData['profileImage'] ?? '';
+
         print('✅ Requester: ${requesterName.value} (${requesterUserId.value})');
       } else {
         print('❌ Requester user not found');
@@ -127,28 +149,33 @@ class DisputeDetailsController extends GetxController {
       print('❌ Error fetching requester details: $e');
     }
   }
-  
+
   /// Fetch helper user details
   Future<void> _fetchHelperDetails(String uid) async {
     try {
       print('👷 Fetching helper details for UID: $uid');
       final userDoc = await _firestore.collection('users').doc(uid).get();
-      
+
       if (userDoc.exists) {
         final userData = userDoc.data()!;
-        helperName.value = userData['username'] ?? 
-                          userData['displayName'] ?? 
-                          userData['name'] ?? 
-                          'Unknown User';
-        helperUserId.value = userData['userId'] ?? 'RB-00000';
+        helperName.value = userData['username'] ??
+            userData['displayName'] ??
+            userData['name'] ??
+            'Unknown User';
+
+        if (userData['userId'] != null &&
+            userData['userId'].toString().isNotEmpty) {
+          helperUserId.value = userData['userId'];
+        }
+
         helperRating.value = (userData['rating'] ?? 0.0).toDouble();
         helperTasksCompleted.value = userData['completedTasks'] ?? 0;
-        helperImage.value = userData['photoURL'] ?? 
-                           userData['profileImage'] ?? 
-                           '';
-        
+        helperImage.value =
+            userData['photoURL'] ?? userData['profileImage'] ?? '';
+
         print('✅ Helper: ${helperName.value} (${helperUserId.value})');
-        print('📊 Helper stats - Rating: ${helperRating.value}, Tasks: ${helperTasksCompleted.value}');
+        print(
+            '📊 Helper stats - Rating: ${helperRating.value}, Tasks: ${helperTasksCompleted.value}');
       } else {
         print('❌ Helper user not found');
       }

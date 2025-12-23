@@ -27,19 +27,19 @@ class AdminDisputesTab extends StatelessWidget {
             ),
             
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
               child: Obx(() => CustomText(
                 "Active Disputes (${controller.disputedTasks.length})",
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontVariant.bold,
               )),
             ),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: CustomText(
                 "Requires admin review and resolution",
-                fontSize: 13,
+                fontSize: 14,
                 color: walletTextGreyColor,
               ),
             ),
@@ -78,22 +78,21 @@ class AdminDisputesTab extends StatelessWidget {
                     ),
                   );
                 }
-                
                 return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
                   itemCount: controller.disputedTasks.length,
                   itemBuilder: (context, index) {
                     final task = controller.disputedTasks[index];
-                    return DisputeCard(
-                      task: task,
-                      timeAgo: controller.getTimeAgo(task.createdAt),
-                    );
+                      return DisputeCard(
+                        task: task,
+                        timeAgo: controller.getTimeAgo(
+                          controller.getDisplayDate(task),
+                        ),
+                      );
                   },
                 );
               }),
             ),
-            
-            const SizedBox(height: 100),
           ],
         ),
       ),

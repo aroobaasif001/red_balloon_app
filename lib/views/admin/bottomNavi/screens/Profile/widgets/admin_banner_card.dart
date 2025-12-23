@@ -3,17 +3,24 @@ import 'package:get/get.dart';
 
 import '../../../../../../custom_widgets/custom_container.dart';
 import '../../../../../../custom_widgets/customtext.dart';
+import 'package:red_balloon_app/model/banner_model.dart';
 import '../../../../../../utils/colors.dart';
+import '../tabs/add_new_banner_screen.dart';
+
+import 'package:red_balloon_app/utils/dialog_helpers.dart';
 
 Widget adminBannerCard(
   BuildContext context, {
-  required String imagePath,
-  required String title,
-  required String description,
-  required bool isActive,
+  required BannerModel banner,
+  required int index,
   required ValueChanged<bool> onToggle,
   required VoidCallback onDelete,
 }) {
+  final imagePath = banner.imageUrl;
+  final title = banner.title;
+  final description = banner.description;
+  final isActive = banner.isActive;
+
   return CustomContainer(
     padding: const EdgeInsets.all(14),
     conColor: whiteColor,
@@ -29,7 +36,8 @@ Widget adminBannerCard(
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
+        ReorderableDragStartListener(
+          index: index,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Image.asset('assets/icons/dots.png', height: 16, width: 16),
@@ -42,15 +50,22 @@ Widget adminBannerCard(
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Expanded(
-                  child: Center(
-                    child: Image.asset(
-                      imagePath,
-                      height: 120,
-                      width: Get.width * 0.75,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                child: Center(
+                  child: imagePath.startsWith('http')
+                      ? Image.network(
+                          imagePath,
+                          height: 120,
+                          width: Get.width * 0.75,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.broken_image, size: 50),
+                        )
+                      : Image.asset(
+                          imagePath,
+                          height: 120,
+                          width: Get.width * 0.75,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
 
@@ -99,7 +114,9 @@ Widget adminBannerCard(
                       Row(
                         children: [
                           OutlinedButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              Get.to(() => AddNewBannerScreen(banner: banner));
+                            },
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(color: borderColor),
                               shape: RoundedRectangleBorder(
@@ -128,7 +145,12 @@ Widget adminBannerCard(
                           ),
                           const SizedBox(width: 8),
                           TextButton.icon(
-                            onPressed: onDelete,
+                            onPressed: () {
+                              DialogHelpers.showDeleteBannerConfirmationDialog(
+                                context: context,
+                                onConfirm: onDelete,
+                              );
+                            },
                             style: TextButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,

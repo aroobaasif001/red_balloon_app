@@ -73,7 +73,10 @@ class DisputeCard extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   /// 🔴 Status + distance
-                  Row(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       /// Disputed tag
                       CustomContainer(
@@ -84,13 +87,14 @@ class DisputeCard extends StatelessWidget {
                         conColor: disBgColor,
                         borderRadius: BorderRadius.circular(20),
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
                               Icons.error_outline,
                               size: 14,
                               color: redColor,
                             ),
-                            const SizedBox(width: 1),
+                            const SizedBox(width: 4),
                             CustomText(
                               "Disputed",
                               fontSize: 12,
@@ -99,8 +103,6 @@ class DisputeCard extends StatelessWidget {
                           ],
                         ),
                       ),
-
-                      const SizedBox(width: 1),
 
                       /// Distance tag (if location available)
                       if (task.location != null && task.location!.isNotEmpty)
@@ -112,6 +114,7 @@ class DisputeCard extends StatelessWidget {
                           conColor: disBgColor,
                           borderRadius: BorderRadius.circular(20),
                           child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 Icons.location_on,
@@ -119,12 +122,17 @@ class DisputeCard extends StatelessWidget {
                                 color: redColor,
                               ),
                               const SizedBox(width: 4),
-                              CustomText(
-                                task.location!.length > 15
-                                    ? "${task.location!.substring(0, 15)}..."
-                                    : task.location!,
-                                fontSize: 12,
-                                color: redColor,
+                              ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width * 0.35,
+                                ),
+                                child: CustomText(
+                                  task.location!,
+                                  fontSize: 12,
+                                  color: redColor,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           ),
@@ -210,9 +218,9 @@ class DisputeCard extends StatelessWidget {
 
                 /// View Details Button
                 CustomButton(
-                  height: 40,
-                  width: 130,
-                  fontSize: 14,
+                  height: 38,
+                  width: 110,
+                  fontSize: 13,
                   label: 'View Details',
                   onPressed: () {
                     Get.to(() => DisputeDetailsScreen(task: task));
