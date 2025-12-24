@@ -44,14 +44,20 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
             final data = snapshot.data();
             final status = data?['status']?.toString().toLowerCase();
 
-            // If task is no longer active (e.g., accepted and moved to in progress)
-            if (status != null && status != 'active') {
+            // 🔥 Only navigate back when task moves to 'in progress' or 'completed'
+            // Don't navigate back on 'rejected' as user might be on Task Review screen
+            if (status != null && 
+                (status == 'in progress' || status == 'completed')) {
               print(
                 '🚀 TaskDetails: Status changed to $status. Navigating back...',
               );
               if (mounted) {
                 Get.back();
               }
+            } else if (status == 'rejected') {
+              print(
+                '⚠️ TaskDetails: Status changed to rejected. Staying on screen.',
+              );
             }
           }
         });

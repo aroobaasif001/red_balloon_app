@@ -157,24 +157,43 @@ class InProgressTaskController extends GetxController {
   ) async {
     if (taskId.isEmpty) return;
 
-    await _taskService.updateHelpRequest(
-      taskId: taskId,
-      role: 'helper',
-      reason: reason,
-      details: details,
-    );
+    try {
+      // 🔥 Check if task is already disputed
+      final taskDoc = await _firestore.collection('tasks').doc(taskId).get();
+      if (taskDoc.exists) {
+        final taskStatus = taskDoc.data()?['status']?.toString().toLowerCase();
+        
+        if (taskStatus == 'disputed') {
+          Get.snackbar(
+            'Already Disputed',
+            'This task is already in dispute resolution',
+          );
+          return;
+        }
+      }
 
-    // 🔥 Send Push Notification to owner
-    if (taskOwnerId != null) {
-      final currentUser = FirebaseAuth.instance.currentUser;
-      final senderName = currentUser?.displayName ?? 'Helper';
-      
-      NotificationService.instance.notifyHelpRequested(
-        receiverId: taskOwnerId!,
-        senderName: senderName,
-        taskTitle: currentTaskTitle ?? 'Task',
+      await _taskService.updateHelpRequest(
         taskId: taskId,
+        role: 'helper',
+        reason: reason,
+        details: details,
       );
+
+      // 🔥 Send Push Notification to owner
+      if (taskOwnerId != null) {
+        final currentUser = FirebaseAuth.instance.currentUser;
+        final senderName = currentUser?.displayName ?? 'Helper';
+        
+        NotificationService.instance.notifyHelpRequested(
+          receiverId: taskOwnerId!,
+          senderName: senderName,
+          taskTitle: currentTaskTitle ?? 'Task',
+          taskId: taskId,
+        );
+      }
+    } catch (e) {
+      print('Error submitting help request: $e');
+      Get.snackbar('Error', 'Failed to submit help request');
     }
   }
 

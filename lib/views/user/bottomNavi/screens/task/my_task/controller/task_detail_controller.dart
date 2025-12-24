@@ -20,6 +20,8 @@ class TaskDetailController extends GetxController {
   RxString ownerName = ''.obs;
   RxString ownerPhotoUrl = ''.obs;
   RxDouble ownerRating = 4.9.obs;
+  RxInt ownerTasksCompleted = 0.obs;
+  RxInt ownerTasksRequested = 0.obs;
   RxBool isLoadingOwner = false.obs;
 
   @override
@@ -133,6 +135,8 @@ class TaskDetailController extends GetxController {
           
           final stats = await _userService.getUserStatistics(uid);
           ownerRating.value = (stats['rating'] ?? 5.0).toDouble();
+          ownerTasksCompleted.value = stats['tasksCompleted'] ?? 0;
+          ownerTasksRequested.value = stats['tasksRequested'] ?? 0;
         }
       }
     } catch (e) {

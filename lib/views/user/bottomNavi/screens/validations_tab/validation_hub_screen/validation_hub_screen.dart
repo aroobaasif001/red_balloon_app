@@ -40,6 +40,27 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 🔥 Mark validations as seen when screen becomes visible
+    // Schedule for after build to avoid setState during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final controller = Get.find<ValidationHubController>();
+        controller.onScreenVisible();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // 🔥 Mark screen as hidden when leaving
+    final controller = Get.find<ValidationHubController>();
+    controller.onScreenHidden();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final controller = Get.put(ValidationHubController());
 

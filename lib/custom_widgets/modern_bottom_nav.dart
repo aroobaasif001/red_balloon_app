@@ -7,11 +7,13 @@ class ModernBottomNavItem {
   final String label;
   final Widget activeIcon;
   final Widget inactiveIcon;
+  final Widget? badge; // 🔥 Optional badge widget
 
   ModernBottomNavItem({
     required this.label,
     required this.activeIcon,
     required this.inactiveIcon,
+    this.badge,
   });
 }
 
@@ -74,13 +76,25 @@ class _NavBarItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CustomContainer(
-            padding: const EdgeInsets.all(8),
-            child: SizedBox(
-              width: 24,
-              height: 24,
-              child: isActive ? item.activeIcon : item.inactiveIcon,
-            ),
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              CustomContainer(
+                padding: const EdgeInsets.all(8),
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: isActive ? item.activeIcon : item.inactiveIcon,
+                ),
+              ),
+              // 🔥 Show badge if provided
+              if (item.badge != null)
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: item.badge!,
+                ),
+            ],
           ),
           const SizedBox(height: 4),
           CustomText(

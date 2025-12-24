@@ -55,6 +55,9 @@ class TasksForYouTab extends StatelessWidget {
         SizedBox(height: 17),
         CustomContainer(
           child: Obx(() {
+            // Listen to updateTrigger to rebuild when time updates
+            controller.updateTrigger.value;
+
             if (controller.isLoading.value) {
               return Center(
                 child: Padding(
@@ -77,26 +80,49 @@ class TasksForYouTab extends StatelessWidget {
               );
             }
 
+            // 🔥 Get current user ID
+            final authService = AuthService();
+            final currentUserId = authService.currentUser!.uid;
+
+            // 🔥 Filter tasks (Logic matching ActiveTab):
+            // 1. Task owner is NOT current user
+            // 2. Status is 'active' OR 'in progress' (where I am the helper)
             final filteredTasks = controller.tasksForYou.where((task) {
               final status = task.status.toLowerCase();
 
-              // Remove tasks that are not "in progress" or "active"
-              if (status != 'in progress' && status != 'active') {
+              // 🔥 Remove tasks created by current user
+              if (task.uid == currentUserId) {
                 return false;
               }
 
-              // Remove "in progress" tasks that don't belong to current user
+              // 🔥 Only allow 'active' or 'in progress'
+              if (status != 'active' && status != 'in progress') {
+                return false;
+              }
+
+              // 🔥 If 'in progress', ensure current user is the helper
               if (status == 'in progress' &&
-                  task.acceptedOfferUid !=
-                      FirebaseAuth.instance.currentUser!.uid) {
+                  task.acceptedOfferUid != currentUserId) {
                 return false;
               }
 
-              // Keep "active" tasks and "in progress" tasks for current user
               return true;
             }).toList();
 
-            if (filteredTasks.isEmpty) {
+            // 🔥 Sort tasks: "in progress" first, then "active"
+            filteredTasks.sort((a, b) {
+              final aIsInProgress = a.status.toLowerCase() == 'in progress';
+              final bIsInProgress = b.status.toLowerCase() == 'in progress';
+
+              if (aIsInProgress && !bIsInProgress) return -1;
+              if (!aIsInProgress && bIsInProgress) return 1;
+              return 0;
+            });
+
+            // 🔥 Limit to max 4 tasks for the home screen section
+            final limitedTasks = filteredTasks.take(4).toList();
+
+            if (limitedTasks.isEmpty) {
               return Container(
                 height: 200,
                 child: Center(
@@ -125,150 +151,102 @@ class TasksForYouTab extends StatelessWidget {
               );
             }
 
-            return Obx(() {
-              // Listen to updateTrigger to rebuild when time updates
-              controller.updateTrigger.value;
+            return RefreshIndicator(
+              backgroundColor: whiteColor,
+              onRefresh: controller.refreshTasks,
+              color: redColor,
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                itemCount: limitedTasks.length,
+                itemBuilder: (context, index) {
+                  final task = limitedTasks[index];
+                  final isOfflineTask = task.taskType == 'Offline Task';
 
-              // 🔥 Get current user ID
-              final authService = AuthService();
-              final currentUserId = authService.currentUser!.uid;
+                  // 🔥 Check if task is truly "in progress" for current user
+                  final isInProgress =
+                      task.status.toLowerCase() == 'in progress' &&
+                          task.acceptedOfferUid == currentUserId;
 
-              // 🔥 Filter tasks:
-              // 1. Only show "in progress" and "active" status
-              // 2. Remove "in progress" tasks where acceptedOfferUid != current user
-              final filteredTasks = controller.tasksForYou.where((task) {
-                final status = task.status.toLowerCase();
+                  return FadeInUp(
+                    duration: const Duration(milliseconds: 700),
+                    delay: Duration(milliseconds: index * 700),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: OfflineAndOnlineCard(
+                        title: task.title,
+                        subtitle: task.description,
+                        distance: isOfflineTask ? task.location : null,
+                        taskType: task.taskType,
+                        timeAgo: controller.getTimeAgo(task.createdAt),
+                        price: controller.formatBudget(task.budget),
+                        image: controller.getImageUrl(task),
+                        type: task.taskType,
+                        btnText: isInProgress ? 'In Progress' : 'View Details',
+                        onViewDetails: () async {
+                          print("Task details tapped: ${task.id}");
 
-                // Remove tasks that are not "in progress" or "active"
-                if (status != 'in progress' && status != 'active') {
-                  return false;
-                }
+                          // Fetch user profile data
+                          final authService = AuthService();
+                          final userData = await authService.getUserData(
+                            task.uid,
+                          );
 
-                // Remove "in progress" tasks that don't belong to current user
-                if (status == 'in progress' &&
-                    task.acceptedOfferUid != currentUserId) {
-                  return false;
-                }
+                          final userName =
+                              userData?['displayName'] ?? 'Unknown';
+                          final userPhoto = userData?['photoURL'];
+                          final userId = userData?['userId'];
+                          final phone = userData?['phoneNumber'];
 
-                // Keep "active" tasks and "in progress" tasks for current user
-                return true;
-              }).toList();
-
-              // 🔥 Sort tasks: "in progress" (with matching acceptedOfferUid) first, then "active"
-              filteredTasks.sort((a, b) {
-                final aIsInProgress =
-                    a.status.toLowerCase() == 'in progress' &&
-                    a.acceptedOfferUid == currentUserId;
-                final bIsInProgress =
-                    b.status.toLowerCase() == 'in progress' &&
-                    b.acceptedOfferUid == currentUserId;
-
-                if (aIsInProgress && !bIsInProgress) return -1;
-                if (!aIsInProgress && bIsInProgress) return 1;
-                return 0;
-              });
-
-              // 🔥 Limit to max 4 tasks
-              final limitedTasks = filteredTasks.take(4).toList();
-
-              return RefreshIndicator(
-                backgroundColor: whiteColor,
-
-                onRefresh: controller.refreshTasks,
-                color: redColor,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  itemCount: limitedTasks.length,
-                  itemBuilder: (context, index) {
-                    final task = limitedTasks[index]; // 🔥 Use limited list
-                    final isOfflineTask = task.taskType == 'Offline Task';
-                    // 🔥 Check if task is truly "in progress" for current user
-                    final isInProgress =
-                        task.status.toLowerCase() == 'in progress' &&
-                        task.acceptedOfferUid == currentUserId;
-                    return FadeInUp(
-                      duration: const Duration(milliseconds: 700),
-                      delay: Duration(milliseconds: index * 700),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: OfflineAndOnlineCard(
-                          title: task.title,
-                          subtitle: task.description,
-                          distance: isOfflineTask ? task.location : null,
-                          taskType: task.taskType,
-                          timeAgo: controller.getTimeAgo(task.createdAt),
-                          price: controller.formatBudget(task.budget),
-                          image: controller.getImageUrl(task),
-                          type: task.taskType,
-                          btnText: isInProgress
-                              ? 'In Progress'
-                              : 'View Details', // 🔥 Conditional button text
-                          onViewDetails: () async {
-                            print("Task details tapped: ${task.id}");
-
-                            // Fetch user profile data
-                            final authService = AuthService();
-                            final userData = await authService.getUserData(
-                              task.uid,
+                          if (isInProgress) {
+                            Get.to(
+                              () => InProgressViewDetails(
+                                userId: userId,
+                                taskId: task.id,
+                                timeAgo: controller.getTimeAgo(
+                                  task.createdAt,
+                                ),
+                                taskTitle: task.title,
+                                price: task.budget.toString(),
+                                userName: userName,
+                                photoUrl: userPhoto,
+                                location: task.location,
+                                phoneNumber: phone,
+                                helperUid: task.uid,
+                                taskImage: task.imageUrl,
+                              ),
                             );
-
-                            final userName =
-                                userData?['displayName'] ?? 'Unknown';
-                            final userPhoto = userData?['photoURL'];
-                            final userId = userData?['userId'];
-                            final phone = userData?['phoneNumber'];
-
-                            isInProgress
-                                ? Get.to(
-                                    () => InProgressViewDetails(
-                                      userId: userId,
-                                      taskId: task.id,
-                                      timeAgo: controller.getTimeAgo(
-                                        task.createdAt,
-                                      ),
-                                      taskTitle: task.title,
-                                      price: task.budget.toString(),
-                                      userName: userName,
-                                      photoUrl: userPhoto,
-                                      location: task.location,
-                                      phoneNumber: phone,
-                                      helperUid: task.uid,
-                                      taskImage: task.imageUrl,
-                                    ),
-                                  )
-                                : Get.to(
-                                    () => Cleanmysolarpanels(
-                                      taskId: task.id,
-                                      location: isOfflineTask
-                                          ? task.location
-                                          : null,
-                                      taskTitle: task.title,
-                                      taskDescription: task.description,
-                                      taskPrice: controller.formatBudget(
-                                        task.budget,
-                                      ),
-                                      taskBudget: task.budget,
-                                      taskTimeAgo: controller.getTimeAgo(
-                                        task.createdAt,
-                                      ),
-                                      taskType: task.taskType,
-                                      taskImage: controller.getImageUrl(task),
-                                      userId: userId,
-                                      userName: userName,
-                                      userPhoto: userPhoto,
-                                      taskOwnerAuthId: task.uid, // Pass Auth UID explicitly
-                                    ),
-                                  );
-                          },
-                        ),
+                          } else {
+                            Get.to(
+                              () => Cleanmysolarpanels(
+                                taskId: task.id,
+                                location: isOfflineTask ? task.location : null,
+                                taskTitle: task.title,
+                                taskDescription: task.description,
+                                taskPrice: controller.formatBudget(
+                                  task.budget,
+                                ),
+                                taskBudget: task.budget,
+                                taskTimeAgo: controller.getTimeAgo(
+                                  task.createdAt,
+                                ),
+                                taskType: task.taskType,
+                                taskImage: controller.getImageUrl(task),
+                                userId: userId,
+                                userName: userName,
+                                userPhoto: userPhoto,
+                                taskOwnerAuthId: task.uid,
+                              ),
+                            );
+                          }
+                        },
                       ),
-                    );
-                  },
-                ),
-              );
-            });
+                    ),
+                  );
+                },
+              ),
+            );
           }),
         ),
       ],

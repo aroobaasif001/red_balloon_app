@@ -9,6 +9,7 @@ import '../../../../../../../utils/dialog_helpers.dart';
 import '../controller/task_review_controller.dart';
 import '../controller/task_tabs_controller.dart';
 import '../controller/tasks_controller.dart';
+import '../my_task_screen.dart';
 
 class TaskReviewScreen extends StatelessWidget {
   final String? taskId;
@@ -65,17 +66,8 @@ class TaskReviewScreen extends StatelessWidget {
         print('⚠️ Could not refresh tasks controller: $e');
       }
 
-      // Navigate back twice (close screens)
-      Navigator.of(context).pop(); // Close TaskReviewScreen
-      Navigator.of(context).pop(); // Close TaskInProgressScreen
-
-      // Switch to History tab (index 2)
-      try {
-        final taskTabsController = Get.find<TaskTabsController>();
-        taskTabsController.changeTab(2); // History tab
-      } catch (e) {
-        print('❌ Could not switch to History tab: $e');
-      }
+      // 🔥 Navigate to MyTaskScreen (All Task tab)
+      Get.offAll(() => MyTaskScreen());
     };
 
     return SafeArea(

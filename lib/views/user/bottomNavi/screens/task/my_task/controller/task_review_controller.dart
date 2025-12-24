@@ -61,16 +61,37 @@ class TaskReviewController extends GetxController {
       return;
     }
 
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) async {
       if (remainingSeconds.value > 0) {
         remainingSeconds.value--;
       } else {
         timer.cancel();
         // 🔥 Auto-move to validation if no action taken
-        print('⏰ Timer expired - Auto validation logic starting');
+        print('⏰ Timer expired - Checking task status before auto validation');
+        
         if (currentTaskId != null && currentProofId != null && !isSubmitting.value) {
-           selectedRejectionReason.value = 'Work not completed'; // Default reason
-           submitRejection(taskId: currentTaskId!, proofId: currentProofId!);
+          // 🔥 Check if task status has already changed
+          try {
+            final taskDoc = await FirebaseFirestore.instance
+                .collection('tasks')
+                .doc(currentTaskId!)
+                .get();
+            
+            if (taskDoc.exists) {
+              final taskStatus = taskDoc.data()?['status'] ?? '';
+              
+              // 🔥 Only auto-reject if task is still "in progress"
+              if (taskStatus.toLowerCase() == 'in progress') {
+                print('⏰ Task still in progress - Auto-rejecting to validation');
+                selectedRejectionReason.value = 'Work not completed'; // Default reason
+                submitRejection(taskId: currentTaskId!, proofId: currentProofId!);
+              } else {
+                print('✅ Task status already changed to "$taskStatus" - Skipping auto-validation');
+              }
+            }
+          } catch (e) {
+            print('❌ Error checking task status: $e');
+          }
         }
       }
     });
@@ -96,6 +117,9 @@ class TaskReviewController extends GetxController {
     required String proofId,
   }) async {
     try {
+      // 🔥 Cancel timer immediately to prevent auto-validation
+      _timer?.cancel();
+      
       isSubmitting.value = true; // 🔥 Show loading
 
       final currentUser = FirebaseAuth.instance.currentUser;
@@ -186,6 +210,9 @@ class TaskReviewController extends GetxController {
     required String proofId,
   }) async {
     try {
+      // 🔥 Cancel timer immediately to prevent auto-validation
+      _timer?.cancel();
+      
       isSubmitting.value = true; // 🔥 Show loading
 
       // 1. Fetch task details to get budget and requester UID
