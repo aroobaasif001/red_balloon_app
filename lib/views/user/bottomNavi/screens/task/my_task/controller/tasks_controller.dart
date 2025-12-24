@@ -110,7 +110,8 @@ class TasksController extends GetxController {
                 status != 'completed' &&
                 status != 'cancelled' &&
                 status != 'disputed' &&
-                status != 'rejected';
+                status != 'rejected' &&
+                status != 'dispute dismissed';
             return isMyTask && isActive;
           }).toList();
 
@@ -122,7 +123,8 @@ class TasksController extends GetxController {
                 status != 'completed' &&
                 status != 'cancelled' &&
                 status != 'disputed' &&
-                status != 'rejected';
+                status != 'rejected' &&
+                status != 'dispute dismissed';
             return isOtherUser && isActive;
           }).toList();
 
@@ -138,7 +140,8 @@ class TasksController extends GetxController {
                 status == 'completed' ||
                 status == 'cancelled' ||
                 status == 'rejected' ||
-                status == 'disputed';
+                status == 'disputed' ||
+                status == 'dispute dismissed';
             return (isMyTask || isHelper) && isHistory;
           }).toList();
 
@@ -209,7 +212,8 @@ class TasksController extends GetxController {
         return status != 'completed' &&
             status != 'cancelled' &&
             status != 'rejected' &&
-            status != 'disputed';
+            status != 'disputed' &&
+            status != 'dispute dismissed';
       }).toList();
 
       print('✅ My Tasks Count (Active only): ${myTasks.length}');
@@ -298,7 +302,8 @@ class TasksController extends GetxController {
             status == 'completed' ||
             status == 'cancelled' ||
             status == 'rejected' ||
-            status == 'disputed';
+            status == 'disputed' ||
+            status == 'dispute dismissed';
         final shouldInclude = (isMyTask || isHelper) && isHistory;
 
         if (shouldInclude) {

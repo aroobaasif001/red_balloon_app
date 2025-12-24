@@ -57,6 +57,9 @@ class InProgressViewDetails extends StatelessWidget {
       if (helperUid != null && helperUid!.isNotEmpty) {
         controller.fetchUserData(helperUid!);
       }
+      
+      // 🔥 Fetch Accepted Offer Price
+      controller.fetchAcceptedOfferPrice(taskId!);
     }
 
     // Debug: Log the helper UID being used
@@ -84,15 +87,17 @@ class InProgressViewDetails extends StatelessWidget {
                     const SizedBox(height: 16),
                     buildRouteCard(),
                     const SizedBox(height: 16),
-                    buildTaskSummaryCard(
+                    Obx(() => buildTaskSummaryCard(
                       controller,
                       timeAgo!,
-                      price!,
+                      controller.acceptedOfferPrice.value.isNotEmpty 
+                          ? controller.acceptedOfferPrice.value 
+                          : price!,
                       userName,
                       taskTitle!, // Ensure taskTitle is not null or handled
                       location ?? '',
                       taskImage: taskImage,
-                    ),
+                    )),
                     const SizedBox(height: 16),
 
                     const SizedBox(height: 16),

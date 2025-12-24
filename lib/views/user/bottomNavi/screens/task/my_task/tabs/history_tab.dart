@@ -1,17 +1,17 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/widgets/history_task_card.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_screen/validation_screen.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_disputed_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/leave_feedback_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_completed_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_disputed_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/widgets/history_task_card.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_screen/validation_screen.dart';
 
 class HistoryTab extends StatelessWidget {
   const HistoryTab({super.key});
@@ -91,6 +91,10 @@ class HistoryTab extends StatelessWidget {
                     statusText = 'Completed';
                     statusTextColor = greenColor;
                     statusBgColor = greenColor.withOpacity(0.25);
+                  } else if (task.status.toLowerCase() == 'dispute dismissed') {
+                    statusText = 'Dispute Dismissed';
+                    statusTextColor = greenColor;
+                    statusBgColor = greenColor.withOpacity(0.25);
                   } else if (task.status.toLowerCase() == 'disputed') {
                     statusText = 'Disputed';
                     statusTextColor = redColor;
@@ -156,7 +160,8 @@ class HistoryTab extends StatelessWidget {
                                 // Navigate with validation data
                                 Get.to(
                                   () => ValidationScreen(
-                                    validationId: validationSnapshot.docs.first.id,
+                                    validationId:
+                                        validationSnapshot.docs.first.id,
                                     taskId: task.id,
                                     userId: userId,
                                     beforePhotoUrl:
@@ -191,14 +196,14 @@ class HistoryTab extends StatelessWidget {
 
                                 if (reqDoc.docs.isNotEmpty) {
                                   final data = reqDoc.docs.first.data();
-                                    requesterInfo = {
-                                      'uid': task.uid,
-                                      'id': reqDoc.docs.first.id,
-                                      'name': data['displayName'] ?? data['name'],
-                                      'photoUrl':
-                                          data['photoURL'] ?? data['photoUrl'],
-                                      'userId': data['userId'],
-                                    };
+                                  requesterInfo = {
+                                    'uid': task.uid,
+                                    'id': reqDoc.docs.first.id,
+                                    'name': data['displayName'] ?? data['name'],
+                                    'photoUrl':
+                                        data['photoURL'] ?? data['photoUrl'],
+                                    'userId': data['userId'],
+                                  };
                                 }
                               }
 
@@ -230,7 +235,8 @@ class HistoryTab extends StatelessWidget {
 
                               // 3. Prepare Dispute Data
                               // Fetch validation photos or proof photos for dispute
-                              final validationSnapshot = await FirebaseFirestore.instance
+                              final validationSnapshot = await FirebaseFirestore
+                                  .instance
                                   .collection('validations')
                                   .where('taskId', isEqualTo: task.id)
                                   .limit(1)
@@ -239,18 +245,24 @@ class HistoryTab extends StatelessWidget {
                               String beforeUrl = '';
                               String afterUrl = '';
                               if (validationSnapshot.docs.isNotEmpty) {
-                                final vData = validationSnapshot.docs.first.data();
-                                beforeUrl = vData['beforePhotoUrl'] ?? 
-                                           vData['beforeImageUrl'] ?? 
-                                           vData['beforePhoto'] ?? '';
-                                afterUrl = vData['afterPhotoUrl'] ?? 
-                                          vData['afterImageUrl'] ?? 
-                                          vData['afterPhoto'] ?? '';
+                                final vData = validationSnapshot.docs.first
+                                    .data();
+                                beforeUrl =
+                                    vData['beforePhotoUrl'] ??
+                                    vData['beforeImageUrl'] ??
+                                    vData['beforePhoto'] ??
+                                    '';
+                                afterUrl =
+                                    vData['afterPhotoUrl'] ??
+                                    vData['afterImageUrl'] ??
+                                    vData['afterPhoto'] ??
+                                    '';
                               }
 
                               // Fallback to task_proofs if validations didn't have photos
                               if (beforeUrl.isEmpty || afterUrl.isEmpty) {
-                                final proofSnapshot = await FirebaseFirestore.instance
+                                final proofSnapshot = await FirebaseFirestore
+                                    .instance
                                     .collection('task_proofs')
                                     .where('taskId', isEqualTo: task.id)
                                     .orderBy('submittedAt', descending: true)
@@ -259,13 +271,17 @@ class HistoryTab extends StatelessWidget {
                                 if (proofSnapshot.docs.isNotEmpty) {
                                   for (var doc in proofSnapshot.docs) {
                                     final pData = doc.data();
-                                    final b = pData['beforePhotoUrl'] ?? 
-                                              pData['beforeImageUrl'] ?? 
-                                              pData['beforePhoto'] ?? '';
-                                    final a = pData['afterPhotoUrl'] ?? 
-                                              pData['afterImageUrl'] ?? 
-                                              pData['afterPhoto'] ?? '';
-                                    
+                                    final b =
+                                        pData['beforePhotoUrl'] ??
+                                        pData['beforeImageUrl'] ??
+                                        pData['beforePhoto'] ??
+                                        '';
+                                    final a =
+                                        pData['afterPhotoUrl'] ??
+                                        pData['afterImageUrl'] ??
+                                        pData['afterPhoto'] ??
+                                        '';
+
                                     if (b.isNotEmpty || a.isNotEmpty) {
                                       if (beforeUrl.isEmpty) beforeUrl = b;
                                       if (afterUrl.isEmpty) afterUrl = a;
@@ -315,14 +331,19 @@ class HistoryTab extends StatelessWidget {
                                 'Failed to load dispute details',
                               );
                             }
-                          } else if (task.status.toLowerCase() == 'completed') {
-                            final currentUser = FirebaseAuth.instance.currentUser;
+                          } else if (task.status.toLowerCase() == 'completed' ||
+                              task.status.toLowerCase() ==
+                                  'dispute dismissed') {
+                            final currentUser =
+                                FirebaseAuth.instance.currentUser;
                             if (currentUser == null) return;
 
                             // Show Loading Feedback immediately
                             Get.dialog(
                               const Center(
-                                child: CircularProgressIndicator(color: redColor),
+                                child: CircularProgressIndicator(
+                                  color: redColor,
+                                ),
                               ),
                               barrierDismissible: false,
                             );
@@ -332,7 +353,8 @@ class HistoryTab extends StatelessWidget {
 
                               // 1. Start Validation Fetch (Parallel)
                               // We can start this before fetching task details since we have task.id
-                              final validationFuture = FirebaseFirestore.instance
+                              final validationFuture = FirebaseFirestore
+                                  .instance
                                   .collection('validations')
                                   .where('taskId', isEqualTo: task.id)
                                   .where('status', isEqualTo: 'approved')
@@ -393,59 +415,69 @@ class HistoryTab extends StatelessWidget {
                                 }
                               }
 
-                                // 6. Await Validation Data (if not already done)
-                                final validationQuery = await validationFuture;
-                                Map<String, dynamic> validationInfo = {};
-                                String beforeUrl = '';
-                                String afterUrl = '';
+                              // 6. Await Validation Data (if not already done)
+                              final validationQuery = await validationFuture;
+                              Map<String, dynamic> validationInfo = {};
+                              String beforeUrl = '';
+                              String afterUrl = '';
 
-                                if (validationQuery.docs.isNotEmpty) {
-                                  final vData = validationQuery.docs.first.data();
-                                  beforeUrl = vData['beforePhotoUrl'] ?? 
-                                             vData['beforeImageUrl'] ?? 
-                                             vData['beforePhoto'] ?? '';
-                                  afterUrl = vData['afterPhotoUrl'] ?? 
-                                            vData['afterImageUrl'] ?? 
-                                            vData['afterPhoto'] ?? '';
-                                }
+                              if (validationQuery.docs.isNotEmpty) {
+                                final vData = validationQuery.docs.first.data();
+                                beforeUrl =
+                                    vData['beforePhotoUrl'] ??
+                                    vData['beforeImageUrl'] ??
+                                    vData['beforePhoto'] ??
+                                    '';
+                                afterUrl =
+                                    vData['afterPhotoUrl'] ??
+                                    vData['afterImageUrl'] ??
+                                    vData['afterPhoto'] ??
+                                    '';
+                              }
 
-                                // Fallback to task_proofs for completed tasks
-                                if (beforeUrl.isEmpty || afterUrl.isEmpty) {
-                                  final proofQuery = await FirebaseFirestore.instance
-                                      .collection('task_proofs')
-                                      .where('taskId', isEqualTo: task.id)
-                                      .orderBy('submittedAt', descending: true)
-                                      .limit(5)
-                                      .get();
-                                  if (proofQuery.docs.isNotEmpty) {
-                                    for (var doc in proofQuery.docs) {
-                                      final pData = doc.data();
-                                      final b = pData['beforePhotoUrl'] ?? 
-                                                pData['beforeImageUrl'] ?? 
-                                                pData['beforePhoto'] ?? '';
-                                      final a = pData['afterPhotoUrl'] ?? 
-                                                pData['afterImageUrl'] ?? 
-                                                pData['afterPhoto'] ?? '';
-                                      
-                                      if (b.isNotEmpty || a.isNotEmpty) {
-                                        if (beforeUrl.isEmpty) beforeUrl = b;
-                                        if (afterUrl.isEmpty) afterUrl = a;
-                                        break;
-                                      }
+                              // Fallback to task_proofs for completed tasks
+                              if (beforeUrl.isEmpty || afterUrl.isEmpty) {
+                                final proofQuery = await FirebaseFirestore
+                                    .instance
+                                    .collection('task_proofs')
+                                    .where('taskId', isEqualTo: task.id)
+                                    .orderBy('submittedAt', descending: true)
+                                    .limit(5)
+                                    .get();
+                                if (proofQuery.docs.isNotEmpty) {
+                                  for (var doc in proofQuery.docs) {
+                                    final pData = doc.data();
+                                    final b =
+                                        pData['beforePhotoUrl'] ??
+                                        pData['beforeImageUrl'] ??
+                                        pData['beforePhoto'] ??
+                                        '';
+                                    final a =
+                                        pData['afterPhotoUrl'] ??
+                                        pData['afterImageUrl'] ??
+                                        pData['afterPhoto'] ??
+                                        '';
+
+                                    if (b.isNotEmpty || a.isNotEmpty) {
+                                      if (beforeUrl.isEmpty) beforeUrl = b;
+                                      if (afterUrl.isEmpty) afterUrl = a;
+                                      break;
                                     }
                                   }
                                 }
+                              }
 
-                                validationInfo = {
-                                  'beforePhotoUrl': beforeUrl,
-                                  'afterPhotoUrl': afterUrl,
-                                  'validationId': validationQuery.docs.isNotEmpty
-                                      ? validationQuery.docs.first.id
-                                      : '',
-                                  'approvedAt': validationQuery.docs.isNotEmpty
-                                      ? validationQuery.docs.first.data()['approvedAt']
-                                      : null,
-                                };
+                              validationInfo = {
+                                'beforePhotoUrl': beforeUrl,
+                                'afterPhotoUrl': afterUrl,
+                                'validationId': validationQuery.docs.isNotEmpty
+                                    ? validationQuery.docs.first.id
+                                    : '',
+                                'approvedAt': validationQuery.docs.isNotEmpty
+                                    ? validationQuery.docs.first
+                                          .data()['approvedAt']
+                                    : null,
+                              };
 
                               // 7. Prepare Final Data Maps
                               final taskInfo = {
@@ -460,7 +492,9 @@ class HistoryTab extends StatelessWidget {
 
                               // Close Loading Dialog
                               if (Get.isDialogOpen ?? false) {
-                                await Future.delayed(const Duration(milliseconds: 100));
+                                await Future.delayed(
+                                  const Duration(milliseconds: 100),
+                                );
                                 Get.back();
                               }
 
@@ -486,7 +520,9 @@ class HistoryTab extends StatelessWidget {
                               }
                             } catch (e) {
                               if (Get.isDialogOpen ?? false) {
-                                await Future.delayed(const Duration(milliseconds: 100));
+                                await Future.delayed(
+                                  const Duration(milliseconds: 100),
+                                );
                                 Get.back();
                               }
                               print('❌ Error in completed task navigation: $e');

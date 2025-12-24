@@ -18,6 +18,15 @@ class LeaveFeedbackController extends GetxController {
   var rating = 0.0.obs;
   final reviewController = TextEditingController();
   var isLoading = false.obs;
+  var currentReviewLength = 0.obs; // 🔥 Track character count
+
+  @override
+  void onInit() {
+    super.onInit();
+    reviewController.addListener(() {
+      currentReviewLength.value = reviewController.text.length;
+    });
+  }
 
   // Getters for widgets
   RxString get initials {

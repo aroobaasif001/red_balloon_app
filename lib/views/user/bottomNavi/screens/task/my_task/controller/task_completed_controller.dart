@@ -80,6 +80,15 @@ class TaskCompletedController extends GetxController {
   // 1. Task Title
   String get taskTitle => taskData['title'] ?? 'Task Details';
 
+  // 🔥 Success Message based on status
+  String get statusMessage {
+    final status = taskData['status']?.toString().toLowerCase();
+    if (status == 'dispute dismissed') {
+      return "Disputed Dismissed Successfully";
+    }
+    return "Task Completed Successfully";
+  }
+
   // 2. Completed Date (e.g., "Dec 4, 2025 at 2:30 PM")
   String get formattedCompletedDate {
     final feedbackMap = isRequester ? taskData['requesterFeedback'] : taskData['helperFeedback'];
@@ -87,6 +96,24 @@ class TaskCompletedController extends GetxController {
 
     if (date == null) return 'N/A';
     return DateFormat('MMM d, yyyy \'at\' h:mm a').format(date);
+  }
+
+  // 🔥 Completion Date Title
+  String get formattedCompletedDateTitle {
+    final status = taskData['status']?.toString().toLowerCase();
+    if (status == 'dispute dismissed') {
+      return "Disputed Dismissed on";
+    }
+    return "Completed on";
+  }
+
+  // 🔥 Footer Note
+  String get bottomNote {
+    final status = taskData['status']?.toString().toLowerCase();
+    if (status == 'dispute dismissed') {
+      return "The dispute for this task has been dismissed. No further action is required.";
+    }
+    return "This task has been completed. No further action is required.";
   }
 
   // 3. Amount (e.g., "SAR 250")

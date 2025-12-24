@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/custom_widgets/full_screen_image_viewer.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/custom_widgets/full_screen_image_viewer.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/task_completed_controller.dart';
 
@@ -31,13 +31,6 @@ class CompletedEvidenceCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomText(
-              "Before & After Evidence",
-              fontSize: 16,
-              fontWeight: FontVariant.semiBold,
-              color: textcolord,
-            ),
-            const SizedBox(height: 12),
             CustomContainer(
               height: 60,
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -99,51 +92,55 @@ class CompletedEvidenceCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Obx(() {
-               final showBefore = controller.showBefore.value;
-               final url = showBefore ? controller.beforePhotoUrl : controller.afterPhotoUrl;
-               
-               return GestureDetector(
-                 onTap: () {
-                   if (url.isNotEmpty) {
-                     Get.to(() => FullScreenImageViewer(imageUrl: url));
-                   }
-                 },
-                 child: ClipRRect(
-                   borderRadius: BorderRadius.circular(12),
-                   child: url.isNotEmpty
-                       ? Image.network(
-                           url,
-                           width: double.infinity,
-                           height: 250,
-                           fit: BoxFit.cover,
-                           loadingBuilder: (context, child, loadingProgress) {
-                             if (loadingProgress == null) return child;
-                             return Container(
-                               height: 250,
-                               width: double.infinity,
-                               color: white2Color,
-                               child: const Center(
-                                 child: CircularProgressIndicator(color: redColor),
-                               ),
-                             );
-                           },
-                           errorBuilder: (context, error, stackTrace) {
-                             return Image.asset(
-                               "assets/images/homedetail.png",
-                               width: double.infinity,
-                               height: 250,
-                               fit: BoxFit.cover,
-                             );
-                           },
-                         )
-                       : Image.asset(
-                           "assets/images/homedetail.png",
-                           width: double.infinity,
-                           height: 250,
-                           fit: BoxFit.cover,
-                         ),
-                 ),
-               );
+              final showBefore = controller.showBefore.value;
+              final url = showBefore
+                  ? controller.beforePhotoUrl
+                  : controller.afterPhotoUrl;
+
+              return GestureDetector(
+                onTap: () {
+                  if (url.isNotEmpty) {
+                    Get.to(() => FullScreenImageViewer(imageUrl: url));
+                  }
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: url.isNotEmpty
+                      ? Image.network(
+                          url,
+                          width: double.infinity,
+                          height: 250,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              height: 250,
+                              width: double.infinity,
+                              color: white2Color,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: redColor,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              "assets/images/homedetail.png",
+                              width: double.infinity,
+                              height: 250,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          "assets/images/homedetail.png",
+                          width: double.infinity,
+                          height: 250,
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              );
             }),
           ],
         ),

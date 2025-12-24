@@ -541,9 +541,9 @@ class TaskInProgressScreen extends StatelessWidget {
                                 ),
                                 SizedBox(width: 4),
                                 CustomText(
-                                  controller.formatBudget(
-                                    task.budget,
-                                  ), // 🔥 Real budget
+                                  offer != null
+                                      ? "SAR ${offer.offerPrice}"
+                                      : controller.formatBudget(task.budget),
                                   fontSize: 14,
                                   color: timeColor,
                                 ),

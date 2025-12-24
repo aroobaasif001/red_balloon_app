@@ -28,14 +28,14 @@ class CompletedBanner extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           CustomText(
-            "Task Completed Successfully",
+            controller.statusMessage,
             fontSize: 18,
             fontWeight: FontVariant.semiBold,
             color: whiteColor,
           ),
           const SizedBox(height: 4),
           CustomText(
-            "Completed on ${controller.formattedCompletedDate}",
+            "${controller.formattedCompletedDateTitle} ${controller.formattedCompletedDate}",
             fontSize: 14,
             fontWeight: FontVariant.regular,
             color: whiteColor,
