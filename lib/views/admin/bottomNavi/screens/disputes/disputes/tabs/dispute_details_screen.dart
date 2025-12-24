@@ -473,7 +473,9 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                             height: 50,
                             label: "Warn Helper",
                             fontSize: 15,
-                            onPressed: () {},
+                            onPressed: () {
+                              controller.warnHelper();
+                            },
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -482,7 +484,9 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                             height: 50,
                             label: "Warn Requester",
                             fontSize: 15,
-                            onPressed: () {},
+                            onPressed: () {
+                              controller.warnRequester();
+                            },
                             bgColor: whiteColor,
                             textColor: walletBlackColor,
                             border: Border.all(color: walletBlackColor),
@@ -500,7 +504,9 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                             height: 50,
                             label: "Refund Payment",
                             fontSize: 15,
-                            onPressed: () {},
+                            onPressed: () {
+                              controller.refundPayment();
+                            },
                             bgColor: whiteColor,
                             textColor: blackColor,
                             border: Border.all(color: blackColor),
@@ -512,7 +518,9 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                             height: 50,
                             label: "Dismiss Dispute",
                             fontSize: 15,
-                            onPressed: () {},
+                            onPressed: () {
+                              controller.dismissDispute();
+                            },
                             bgColor: whiteColor,
                             textColor: blackColor,
                             border: Border.all(color: blackColor),

@@ -472,6 +472,152 @@ class WalletService {
     }
   }
 
+  /// Refund dispute to requester (96% refund)
+  Future<Map<String, dynamic>> refundDisputeToRequester({
+    required String taskId,
+    required String requesterUid,
+    required double totalAmount,
+    required String taskTitle,
+  }) async {
+    try {
+      final requesterWalletDoc = _walletCollection.doc(requesterUid);
+
+      final result = await _firestore.runTransaction((transaction) async {
+        final requesterSnapshot = await transaction.get(requesterWalletDoc);
+
+        if (!requesterSnapshot.exists) {
+          return {'success': false, 'message': 'Requester wallet not found'};
+        }
+
+        final requesterData = requesterSnapshot.data() as Map<String, dynamic>;
+        double currentEscrow = (requesterData['escrowBalance'] ?? 0.0).toDouble();
+        double currentBalance = (requesterData['balance'] ?? 0.0).toDouble();
+
+        double refundAmount = totalAmount * 0.96;
+
+        // Update requester wallet
+        transaction.update(requesterWalletDoc, {
+          'escrowBalance': currentEscrow - totalAmount,
+          'balance': currentBalance + refundAmount,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        // Add transaction record
+        final reqTransRef = requesterWalletDoc.collection('transactions').doc();
+        transaction.set(reqTransRef, {
+          'id': reqTransRef.id,
+          'title': 'Dispute Refund',
+          'description': 'Refund (96%) for task "$taskTitle"',
+          'amount': refundAmount,
+          'type': 'credit',
+          'status': 'completed',
+          'taskId': taskId,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        return {
+          'success': true,
+          'refundAmount': refundAmount,
+        };
+      });
+
+      return result;
+    } catch (e) {
+      print('Error refunding dispute: $e');
+      return {'success': false, 'message': 'An error occurred while refunding: ${e.toString()}'};
+    }
+  }
+
+  /// Dismiss dispute with split (85% to Helper, 7.5% to Requester)
+  Future<Map<String, dynamic>> dismissDisputeWithSplit({
+    required String taskId,
+    required String requesterUid,
+    required String helperUid,
+    required double totalAmount,
+    required String taskTitle,
+  }) async {
+    try {
+      final requesterWalletDoc = _walletCollection.doc(requesterUid);
+      final helperWalletDoc = _walletCollection.doc(helperUid);
+
+      final result = await _firestore.runTransaction((transaction) async {
+        final requesterSnapshot = await transaction.get(requesterWalletDoc);
+        final helperSnapshot = await transaction.get(helperWalletDoc);
+
+        if (!requesterSnapshot.exists) {
+          return {'success': false, 'message': 'Requester wallet not found'};
+        }
+
+        final requesterData = requesterSnapshot.data() as Map<String, dynamic>;
+        double currentEscrow = (requesterData['escrowBalance'] ?? 0.0).toDouble();
+        double currentReqBalance = (requesterData['balance'] ?? 0.0).toDouble();
+
+        double helperAmount = totalAmount * 0.85;
+        double requesterRefund = totalAmount * 0.075;
+        double feeAmount = totalAmount - helperAmount - requesterRefund; // 7.5% fee
+
+        double currentHelperBalance = 0.0;
+        if (helperSnapshot.exists) {
+          currentHelperBalance = (helperSnapshot.data() as Map<String, dynamic>)['balance'] ?? 0.0;
+        }
+
+        // Update requester wallet (Subtract from escrow, add 7.5% refund)
+        transaction.update(requesterWalletDoc, {
+          'escrowBalance': currentEscrow - totalAmount,
+          'balance': currentReqBalance + requesterRefund,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        // Update helper wallet (Add 85%)
+        transaction.set(
+          helperWalletDoc,
+          {
+            'balance': currentHelperBalance + helperAmount,
+            'uid': helperUid,
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true),
+        );
+
+        // Transaction records
+        final reqTransRef = requesterWalletDoc.collection('transactions').doc();
+        transaction.set(reqTransRef, {
+          'id': reqTransRef.id,
+          'title': 'Dispute Dismissed - Partial Refund',
+          'description': 'Refund (7.5%) for task "$taskTitle"',
+          'amount': requesterRefund,
+          'type': 'credit',
+          'status': 'completed',
+          'taskId': taskId,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        final helpTransRef = helperWalletDoc.collection('transactions').doc();
+        transaction.set(helpTransRef, {
+          'id': helpTransRef.id,
+          'title': 'Dispute Dismissed - Payment',
+          'description': 'Payment (85%) for task "$taskTitle"',
+          'amount': helperAmount,
+          'type': 'credit',
+          'status': 'completed',
+          'taskId': taskId,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        return {
+          'success': true,
+          'helperAmount': helperAmount,
+          'requesterRefund': requesterRefund,
+        };
+      });
+
+      return result;
+    } catch (e) {
+      print('Error dismissing dispute with split: $e');
+      return {'success': false, 'message': 'An error occurred: ${e.toString()}'};
+    }
+  }
+
   /// Get withdrawal requests stream
   Stream<List<Map<String, dynamic>>> getWithdrawalRequestsStream() {
     if (_uid.isEmpty) return Stream.value([]);

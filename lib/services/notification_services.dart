@@ -639,6 +639,187 @@ class NotificationService {
     }
   }
 
+  /// Notify user about a warning in a dispute
+  Future<void> notifyDisputeWarning({
+    required String userId,
+    required String taskTitle,
+    required String taskId,
+    required String role, // 'Helper' or 'Requester'
+  }) async {
+    try {
+      final title = 'Dispute Warning';
+      final body = 'You have received a warning regarding the task "$taskTitle". Please adhere to platform rules.';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(userId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.warning.name,
+            'category': 'dispute_warning',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'role': role,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: {
+            'category': 'dispute_warning',
+            'taskId': taskId,
+            'route': 'history_tab',
+          },
+          recipientSdk: userDoc.data()?['androidSdk'] as int?,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending dispute warning notification: $e');
+    }
+  }
+
+  /// Notify requester about a refund
+  Future<void> notifyDisputeRefund({
+    required String userId,
+    required String taskTitle,
+    required String taskId,
+    required double amount,
+  }) async {
+    try {
+      final title = 'Refund Processed';
+      final body = 'A refund of SAR ${amount.toStringAsFixed(2)} (96%) has been credited to your wallet for task "$taskTitle".';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(userId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.success.name,
+            'category': 'dispute_refund',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'amount': amount,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: {
+            'category': 'dispute_refund',
+            'taskId': taskId,
+            'amount': amount.toString(),
+            'route': 'wallet_tab',
+          },
+          recipientSdk: userDoc.data()?['androidSdk'] as int?,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending dispute refund notification: $e');
+    }
+  }
+
+
+  /// Notify both parties when a dispute is dismissed with a split
+  Future<void> notifyDisputeDismissedSplit({
+    required String helperId,
+    required String requesterId,
+    required String taskTitle,
+    required String taskId,
+    required double helperAmount,
+    required double requesterRefund,
+  }) async {
+    try {
+      final helperTitle = 'Dispute Resolved';
+      final helperBody = 'The dispute for "$taskTitle" has been resolved. You have received SAR ${helperAmount.toStringAsFixed(2)} (85%).';
+
+      final requesterTitle = 'Dispute Resolved';
+      final requesterBody = 'The dispute for "$taskTitle" has been resolved. You have received SAR ${requesterRefund.toStringAsFixed(2)} (7.5% refund).';
+
+      // 1. Helper Notification
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(helperId)
+          .collection('items')
+          .add({
+            'title': helperTitle,
+            'body': helperBody,
+            'type': NoticeType.success.name,
+            'category': 'dispute_resolved_helper',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'amount': helperAmount,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      // 2. Requester Notification
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(requesterId)
+          .collection('items')
+          .add({
+            'title': requesterTitle,
+            'body': requesterBody,
+            'type': NoticeType.info.name,
+            'category': 'dispute_resolved_requester',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'amount': requesterRefund,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      // Send FCM to both (utility)
+      await _sendFcmToUser(helperId, helperTitle, helperBody, {'route': 'wallet_tab', 'taskId': taskId});
+      await _sendFcmToUser(requesterId, requesterTitle, requesterBody, {'route': 'wallet_tab', 'taskId': taskId});
+
+    } catch (e) {
+      debugPrint('Error sending dispute dismissal split notifications: $e');
+    }
+  }
+
+  /// Helper to send FCM to a user by ID
+  Future<void> _sendFcmToUser(String userId, String title, String body, Map<String, String> data) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: data,
+          recipientSdk: userDoc.data()?['androidSdk'] as int?,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending FCM to $userId: $e');
+    }
+  }
 
   /// Send push notification for chat messages
   Future<void> notifyChatMessage({
