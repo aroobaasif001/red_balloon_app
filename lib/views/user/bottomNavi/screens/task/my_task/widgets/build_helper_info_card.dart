@@ -92,12 +92,13 @@ Widget buildHelperInfoCard(
               child: InkWell(
                 onTap: () {
                   // Navigate to chat with helper
-                  final resolvedUserId = userId.isNotEmpty ? userId : (helperUid ?? '');
+                  // 🔥 Use helperUid (Firebase Auth UID) for chat, not userId (RB-XXXX)
+                  final chatUserId = helperUid ?? userId;
 
                   if (taskId != null &&
                       taskId!.isNotEmpty &&
-                      resolvedUserId.isNotEmpty) {
-                    print('✅ Opening chat with userId: ${resolvedUserId}');
+                      chatUserId.isNotEmpty) {
+                    print('✅ Opening chat with helperUid: $chatUserId');
                     Get.to(
                       () => const ChatScreen(),
                       binding: BindingsBuilder(() {
@@ -105,7 +106,7 @@ Widget buildHelperInfoCard(
                           ChatController(
                             taskId: taskId,
                             taskTitle: taskTitle ?? 'Task',
-                            taskOwnerId: resolvedUserId,
+                            taskOwnerId: chatUserId, // 🔥 Use Firebase Auth UID
                             taskOwnerName: userName,
                             taskOwnerPhoto: photoUrl,
                             taskImage: taskImage,
@@ -114,7 +115,7 @@ Widget buildHelperInfoCard(
                       }),
                     );
                   } else {
-                    print('❌ Chat failed: taskId=$taskId, userId=$userId');
+                    print('❌ Chat failed: taskId=$taskId, helperUid=$helperUid');
                     Get.snackbar(
                       'Error',
                       'Cannot start chat: Missing task or user information',

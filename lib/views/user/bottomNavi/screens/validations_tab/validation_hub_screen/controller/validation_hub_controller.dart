@@ -12,6 +12,11 @@ class ValidationHubController extends GetxController {
 
   RxList<Map<String, dynamic>> validations = <Map<String, dynamic>>[].obs;
   RxBool isLoading = false.obs;
+  
+  // 🔥 Unread validation counter
+  RxInt unreadValidationCount = 0.obs;
+  DateTime? lastSeenTimestamp;
+  RxBool isScreenVisible = false.obs;
 
   Timer? _timer;
   RxMap<String, String> remainingTimes = <String, String>{}.obs;
@@ -19,6 +24,8 @@ class ValidationHubController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Load last seen timestamp from storage if needed
+    _loadLastSeenTimestamp();
     // First time load: 2 seconds delay
     fetchValidations(minDelay: const Duration(seconds: 2));
     _startTimer();
@@ -210,6 +217,7 @@ class ValidationHubController extends GetxController {
 
           validations.value = fetchedValidations;
           _updateRemainingTimes(); // Initial calculation
+          _calculateUnreadCount(); // 🔥 Calculate unread validations
           isLoading.value = false;
 
           // Complete the future if it hasn't been completed
@@ -236,5 +244,58 @@ class ValidationHubController extends GetxController {
       print('Error initializing validation stream: $e');
       isLoading.value = false;
     }
+  }
+
+  /// Load last seen timestamp (can be from SharedPreferences or Firestore)
+  void _loadLastSeenTimestamp() {
+    // For now, set to current time on first load
+    // In production, load from SharedPreferences
+    lastSeenTimestamp = DateTime.now();
+  }
+
+  /// Mark all current validations as seen
+  void markValidationsAsSeen() {
+    lastSeenTimestamp = DateTime.now();
+    unreadValidationCount.value = 0;
+    // Optionally save to SharedPreferences for persistence
+  }
+
+  /// Calculate unread count based on validations added after lastSeenTimestamp
+  void _calculateUnreadCount() {
+    if (!isScreenVisible.value && lastSeenTimestamp != null) {
+      int count = 0;
+      for (var validation in validations) {
+        final rejectedAt = validation['rejectedAt'];
+        DateTime validationTime;
+        
+        if (rejectedAt is Timestamp) {
+          validationTime = rejectedAt.toDate();
+        } else if (rejectedAt is String) {
+          validationTime = DateTime.parse(rejectedAt);
+        } else {
+          continue;
+        }
+        
+        // Count validations that came after last seen
+        if (validationTime.isAfter(lastSeenTimestamp!)) {
+          count++;
+        }
+      }
+      unreadValidationCount.value = count;
+    } else if (isScreenVisible.value) {
+      // If screen is visible, no unread count
+      unreadValidationCount.value = 0;
+    }
+  }
+
+  /// Call this when user enters the validation hub screen
+  void onScreenVisible() {
+    isScreenVisible.value = true;
+    markValidationsAsSeen();
+  }
+
+  /// Call this when user leaves the validation hub screen
+  void onScreenHidden() {
+    isScreenVisible.value = false;
   }
 }

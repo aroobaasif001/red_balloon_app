@@ -11,6 +11,8 @@ class TaskOwnerTile extends StatelessWidget {
   final String? id; // This is the custom ID (RB-001)
   final String? authUid;
   final double rating;
+  final int tasksCompleted;
+  final int tasksRequested;
 
   const TaskOwnerTile({
     super.key,
@@ -19,6 +21,8 @@ class TaskOwnerTile extends StatelessWidget {
     this.photoUrl,
     this.authUid,
     this.rating = 4.9,
+    this.tasksCompleted = 0,
+    this.tasksRequested = 0,
   });
 
   @override
@@ -86,8 +90,8 @@ class TaskOwnerTile extends StatelessWidget {
                     userName: name ?? 'User',
                     userInitials: name != null && name!.isNotEmpty ? name![0].toUpperCase() : 'U',
                     rating: rating,
-                    tasksCompleted: 0,
-                    tasksRequested: 0,
+                    tasksCompleted: tasksCompleted,
+                    tasksRequested: tasksRequested,
                   ),
                 );
               },

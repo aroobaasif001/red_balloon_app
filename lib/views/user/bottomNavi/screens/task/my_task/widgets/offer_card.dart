@@ -3,26 +3,32 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/user_profile_screen.dart';
 import '../../../../../../../utils/colors.dart';
-import '../../../../../../../utils/dialog_helpers.dart';
 
 class OfferCard extends StatelessWidget {
   final String name;
   final String price;
-  final int ratingCount;
-  final int stars;
+  final int tasksCompleted;
+  final int tasksRequested;
+  final double rating;
+  final int stars; // Keeping stars for legacy UI if needed, but rating is preferred
   final String photoUrl;
   final Widget? timerWidget;
-  final String userId;
+  final String? customId; // RB-XXXX
+  final String? authUid; // Firestore UID
 
   const OfferCard({
     super.key,
     required this.name,
     required this.price,
-    required this.ratingCount,
+    required this.tasksCompleted,
+    required this.tasksRequested,
+    required this.rating,
     required this.stars,
     required this.photoUrl,
-    required this.userId,
+    this.customId,
+    this.authUid,
     this.timerWidget,
   });
 
@@ -68,12 +74,12 @@ class OfferCard extends StatelessWidget {
                                   (index) =>
                                       Icon(Icons.star, color: yellow, size: 15),
                                 )..add(
-                                  CustomText(
-                                    "  $ratingCount completed",
-                                    fontSize: 12,
-                                    color: walletInfoTextColor,
-                                    fontWeight: FontVariant.regular,
-                                  ),
+                                    CustomText(
+                                      "  $tasksCompleted completed",
+                                      fontSize: 12,
+                                      color: walletInfoTextColor,
+                                      fontWeight: FontVariant.regular,
+                                    ),
                                 ),
                           ),
                         ],
@@ -105,11 +111,17 @@ class OfferCard extends StatelessWidget {
                 const SizedBox(height: 14),
                 InkWell(
                   onTap: () {
-                    DialogHelpers.showHelperProfileDialog(
-                      context,
-                      name,
-                      photoUrl,
-                      userId,
+                    Get.to(
+                      () => UserProfileScreen(
+                        userName: name,
+                        userInitials: name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                        rating: rating,
+                        tasksCompleted: tasksCompleted,
+                        tasksRequested: tasksRequested,
+                        userId: customId,
+                        userUid: authUid,
+                        userPhoto: photoUrl,
+                      ),
                     );
                   },
                   child: CustomContainer(

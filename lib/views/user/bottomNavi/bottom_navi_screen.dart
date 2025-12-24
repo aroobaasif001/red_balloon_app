@@ -10,6 +10,7 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/wallet_tab.
 
 import 'screens/notification/controller/notification_controller.dart';
 import 'screens/profile/tabs/controller/messages_controller.dart';
+import 'screens/validations_tab/validation_hub_screen/controller/validation_hub_controller.dart';
 
 class BottomNaviScreen extends StatefulWidget {
   final int initialIndex;
@@ -26,16 +27,18 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize global trackers for badges
     // Initialize global trackers for badges - set to permanent to ensure they stay active
     Get.put(NotificationController(), permanent: true);
     Get.put(MessagesController(), permanent: true);
+    Get.put(ValidationHubController(), permanent: true); // 🔥 Add validation counter
     
     currentIndex = widget.initialIndex;
     _initializeNavItems();
   }
 
   void _initializeNavItems() {
+    final validationController = Get.find<ValidationHubController>();
+    
     navItems = [
       ModernBottomNavItem(
         label: 'Home',
@@ -88,6 +91,32 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
           height: 24,
           color: whiteColor,
         ),
+        // 🔥 Add validation counter badge
+        badge: Obx(() {
+          if (validationController.unreadValidationCount.value > 0) {
+            return Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: whiteColor,
+                shape: BoxShape.circle,
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 16,
+                minHeight: 16,
+              ),
+              child: Text(
+                '${validationController.unreadValidationCount.value}',
+                style: const TextStyle(
+                  color: redColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        }),
       ),
       ModernBottomNavItem(
         label: 'Wallet',

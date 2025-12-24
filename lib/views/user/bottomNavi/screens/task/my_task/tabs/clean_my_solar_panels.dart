@@ -151,6 +151,8 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                       id: controller.ownerUserId.value.isEmpty ? widget.userId : controller.ownerUserId.value,
                       authUid: widget.taskOwnerAuthId,
                       rating: controller.ownerRating.value,
+                      tasksCompleted: controller.ownerTasksCompleted.value,
+                      tasksRequested: controller.ownerTasksRequested.value,
                     )),
 
                     const SizedBox(height: 10),
@@ -466,6 +468,10 @@ class TaskOffersController extends GetxController {
               final uid = offer['offeringUserUid'];
               if (uid != null && !offerUserStats.containsKey(uid)) {
                 final stats = await _userService.getUserStatistics(uid);
+                final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+                if (userDoc.exists) {
+                  stats['customId'] = userDoc.data()?['userId'] ?? '';
+                }
                 offerUserStats[uid] = stats;
               }
             }
@@ -635,11 +641,15 @@ class _OfferCardWithTimer extends StatelessWidget {
       // 🔥 Get real stats from controller if available
       double rating = 5.0;
       int completed = 0;
+      int requested = 0;
+      String customId = '';
       if (offersController != null && offeringUserUid != null) {
         final stats = offersController.offerUserStats[offeringUserUid];
         if (stats != null) {
           rating = (stats['rating'] ?? 5.0).toDouble();
           completed = stats['tasksCompleted'] ?? 0;
+          requested = stats['tasksRequested'] ?? 0;
+          customId = stats['customId'] ?? '';
         }
       }
 
@@ -647,9 +657,12 @@ class _OfferCardWithTimer extends StatelessWidget {
         name: userName,
         price: offerPrice,
         stars: rating.round(), // OfferCard uses int for stars
-        ratingCount: completed,
+        rating: rating,
+        tasksCompleted: completed,
+        tasksRequested: requested,
         photoUrl: userPhoto,
-        userId: userId,
+        authUid: offeringUserUid,
+        customId: customId,
         timerWidget: CustomText(
           '00:${controller.remainingSeconds.value.toString().padLeft(2, '0')}',
           fontSize: 12,

@@ -79,13 +79,18 @@ class TasksForYouController extends GetxController {
       // Listen to all tasks stream
       _taskService.streamAllTasks().listen(
         (allTasks) {
-          // Filter: tasks where uid != current user's uid
-          final filteredTasks = allTasks
-              .where((task) => task.uid != currentUserId)
-              .toList();
+          // Filter tasks near me (created by other users, not completed/cancelled)
+          final filteredTasks = allTasks.where((task) {
+            final isOtherUser = task.uid != currentUserId;
+            final status = task.status.toLowerCase();
+            final isActive = status != 'completed' &&
+                status != 'cancelled' &&
+                status != 'disputed' &&
+                status != 'rejected';
+            return isOtherUser && isActive;
+          }).toList();
 
-          // Limit to 4 latest tasks
-          tasksForYou.value = filteredTasks.take(4).toList();
+          tasksForYou.value = filteredTasks;
           isLoading.value = false;
           errorMessage.value = '';
         },
@@ -118,13 +123,18 @@ class TasksForYouController extends GetxController {
       // Get all tasks
       final allTasks = await _taskService.getAllTasks();
 
-      // Filter: tasks where uid != current user's uid
-      final filteredTasks = allTasks
-          .where((task) => task.uid != currentUserId)
-          .toList();
+      // Filter tasks near me (created by other users, not completed/cancelled)
+      final filteredTasks = allTasks.where((task) {
+        final isOtherUser = task.uid != currentUserId;
+        final status = task.status.toLowerCase();
+        final isActive = status != 'completed' &&
+            status != 'cancelled' &&
+            status != 'disputed' &&
+            status != 'rejected';
+        return isOtherUser && isActive;
+      }).toList();
 
-      // Limit to 4 latest tasks
-      tasksForYou.value = filteredTasks.take(4).toList();
+      tasksForYou.value = filteredTasks;
 
       isRefreshing.value = false;
     } catch (e) {

@@ -59,37 +59,34 @@ class ActiveTab extends StatelessWidget {
               final currentUserId = authService.currentUser!.uid;
 
               // 🔥 Filter tasks:
-              // 1. Remove completed tasks
-              // 2. Remove "in progress" tasks where acceptedOfferUid != current user
+              // 1. Task owner is NOT current user
+              // 2. Status is 'active' OR 'in progress' (where I am the helper)
               final filteredTasks = controller.tasksNearMe.where((task) {
                 final status = task.status.toLowerCase();
 
-                // Remove completed tasks
-                if (status == 'completed' ||
-                    status == 'rejected' ||
-                    status == 'cancelled' ||
-                    status == 'disputed')
+                // 🔥 Remove tasks created by current user
+                if (task.uid == currentUserId) {
                   return false;
+                }
 
-                // Remove "in progress" tasks that don't belong to current user
+                // 🔥 Only allow 'active' or 'in progress'
+                if (status != 'active' && status != 'in progress') {
+                  return false;
+                }
+
+                // 🔥 If 'in progress', ensure current user is the helper
                 if (status == 'in progress' &&
                     task.acceptedOfferUid != currentUserId) {
                   return false;
                 }
 
-                // Keep all other tasks
                 return true;
               }).toList();
 
-              // 🔥 Sort tasks: "in progress" (with matching acceptedOfferUid) first, then others
+              // 🔥 Sort tasks: "in progress" first, then "active"
               filteredTasks.sort((a, b) {
-                // Check if task is truly in progress for current user
-                final aIsInProgress =
-                    a.status.toLowerCase() == 'in progress' &&
-                    a.acceptedOfferUid == currentUserId;
-                final bIsInProgress =
-                    b.status.toLowerCase() == 'in progress' &&
-                    b.acceptedOfferUid == currentUserId;
+                final aIsInProgress = a.status.toLowerCase() == 'in progress';
+                final bIsInProgress = b.status.toLowerCase() == 'in progress';
 
                 if (aIsInProgress && !bIsInProgress) return -1;
                 if (!aIsInProgress && bIsInProgress) return 1;
