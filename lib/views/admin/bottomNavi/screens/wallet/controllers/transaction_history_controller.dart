@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'dart:async';
 
 enum TransactionHistoryFilter { all, escrow, withdrawals, refunds, releases }
 
@@ -26,75 +29,115 @@ class TransactionHistoryItem {
 
 class TransactionHistoryController extends GetxController {
   final selectedFilter = TransactionHistoryFilter.all.obs;
+  final transactions = <TransactionHistoryItem>[].obs;
+  final isLoading = true.obs;
+  final moneySendTotal = 0.0.obs;
 
-  final transactions = <TransactionHistoryItem>[
-    TransactionHistoryItem(
-      id: '1',
-      type: 'Escrow Release',
-      code: 'RB-789',
-      amount: 500,
-      isPositive: true,
-      name: 'Anton Furnitures',
-      role: 'Helper',
-      time: 'Oct 22, 2:30 PM',
-    ),
-    TransactionHistoryItem(
-      id: '2',
-      type: 'Withdrawal',
-      code: 'RB-234',
-      amount: 450,
-      isPositive: false,
-      name: 'Ahmed Al-Harbi',
-      role: 'User',
-      time: 'Oct 20, 4:15 PM',
-    ),
-    TransactionHistoryItem(
-      id: '3',
-      type: 'Refund',
-      code: 'RB-892',
-      amount: 180,
-      isPositive: false,
-      name: 'Reem Saeed',
-      role: 'User',
-      time: 'Oct 18, 10:22 AM',
-    ),
-    TransactionHistoryItem(
-      id: '4',
-      type: 'Platform Fee',
-      code: 'RB-445',
-      amount: 12,
-      isPositive: true,
-      name: 'Platform Revenue',
-      role: 'System',
-      time: 'Oct 18, 9:45 AM',
-    ),
-  ].obs;
+  StreamSubscription? _subscription;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _listenToTransactions();
+  }
+
+  void _listenToTransactions() {
+    isLoading.value = true;
+    _subscription = _firestore
+        .collectionGroup('transactions')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .listen((snapshot) {
+      List<TransactionHistoryItem> fetchedItems = [];
+      double totalSent = 0.0;
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final title = data['title']?.toString() ?? 'Transaction';
+        final amount = (data['amount'] ?? 0.0).toDouble();
+        final createdAt = data['createdAt'] as Timestamp?;
+        final taskId = data['taskId']?.toString() ?? 'N/A';
+        final description = data['description']?.toString() ?? '';
+
+        // Match user's image signs/colors:
+        // Red (-) for Refunds/Withdrawals/Partial outflows
+        // Green (+) for Escrow Releases/Fees or everything else
+        bool isPositive = true;
+        if (title.contains('Refund') || title.contains('Withdrawal') || title.contains('Partial')) {
+          isPositive = false;
+        }
+
+        // Only count actual OUTFLOWS (Money Sent to users) in the header total
+        bool isOutflow = (title.contains('Refund') || 
+                         title.contains('Payment') || 
+                         title.contains('Released') || 
+                         title.contains('Partial') || 
+                         title.contains('Withdrawal')) && 
+                        !title.contains('Posted'); // Exclude deposits like "Task Posted - Escrow"
+
+        if (isOutflow) {
+          totalSent += amount;
+        }
+
+        fetchedItems.add(TransactionHistoryItem(
+          id: doc.id,
+          type: title,
+          code: taskId.startsWith('RB-') ? taskId : (taskId != 'N/A' && taskId.isNotEmpty ? 'RB-${taskId.substring(0, _min(5, taskId.length))}' : ''),
+          amount: amount,
+          isPositive: isPositive,
+          name: title.contains('Platform') ? 'Platform Revenue' : (description.isNotEmpty ? description : 'User'),
+          role: title.contains('Platform') ? 'System' : 'User/Helper',
+          time: _formatTime(createdAt),
+        ));
+      }
+
+      transactions.assignAll(fetchedItems);
+      moneySendTotal.value = totalSent;
+      isLoading.value = false;
+    }, onError: (e) {
+      print('Error loading transaction history: $e');
+      isLoading.value = false;
+    });
+  }
+
+  int _min(int a, int b) => a < b ? a : b;
+
+  String _formatTime(Timestamp? timestamp) {
+    if (timestamp == null) return "Unknown";
+    final date = timestamp.toDate();
+    return DateFormat('MMM dd, h:mm a').format(date);
+  }
 
   void setFilter(TransactionHistoryFilter filter) {
     selectedFilter.value = filter;
   }
 
   List<TransactionHistoryItem> get filteredTransactions {
+    List<TransactionHistoryItem> result;
     switch (selectedFilter.value) {
       case TransactionHistoryFilter.escrow:
-        return transactions
-            .where((t) => t.type.toLowerCase().contains('escrow'))
-            .toList();
+        result = transactions.where((t) => t.type.toLowerCase().contains('escrow')).toList();
+        break;
       case TransactionHistoryFilter.withdrawals:
-        return transactions
-            .where((t) => t.type.toLowerCase().contains('withdrawal'))
-            .toList();
+        result = transactions.where((t) => t.type.toLowerCase().contains('withdrawal')).toList();
+        break;
       case TransactionHistoryFilter.refunds:
-        return transactions
-            .where((t) => t.type.toLowerCase().contains('refund'))
-            .toList();
+        result = transactions.where((t) => t.type.toLowerCase().contains('refund')).toList();
+        break;
       case TransactionHistoryFilter.releases:
-        return transactions
-            .where((t) => t.type.toLowerCase().contains('release'))
-            .toList();
+        result = transactions.where((t) => t.type.toLowerCase().contains('release') || t.type.toLowerCase().contains('payment')).toList();
+        break;
       case TransactionHistoryFilter.all:
       default:
-        return transactions;
+        result = transactions;
     }
+    return result;
+  }
+
+  @override
+  void onClose() {
+    _subscription?.cancel();
+    super.onClose();
   }
 }

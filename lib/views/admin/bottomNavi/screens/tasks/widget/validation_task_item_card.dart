@@ -48,8 +48,8 @@ class ValidationTaskItemCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// TEXT (Flexible to avoid overflow)
-              Flexible(
+              /// TEXT (Expanded to push image to the right)
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -91,12 +91,47 @@ class ValidationTaskItemCard extends StatelessWidget {
                 ],
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(14),
-                  child: Image.asset(
-                    image,
-                    width: 110,
-                    height: 105,
-                    fit: BoxFit.cover,
-                  ),
+                  child: image.startsWith('http')
+                      ? Image.network(
+                          image,
+                          width: 105,
+                          height: 105,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Image.asset(
+                            "assets/images/Rectangle 34625307.png",
+                            width: 105,
+                            height: 105,
+                            fit: BoxFit.cover,
+                          ),
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return SizedBox(
+                              width: 105,
+                              height: 105,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  color: redColor,
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          image.isNotEmpty ? image : "assets/images/Rectangle 34625307.png",
+                          width: 105,
+                          height: 105,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Image.asset(
+                            "assets/images/Rectangle 34625307.png",
+                            width: 105,
+                            height: 105,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                 ),
               ),
             ],

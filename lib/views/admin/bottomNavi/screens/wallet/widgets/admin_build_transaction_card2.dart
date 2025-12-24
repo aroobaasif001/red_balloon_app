@@ -29,8 +29,8 @@ Widget adminBuildTransactionCard2(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Top Row: Title and Status
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: CustomText(
@@ -38,8 +38,11 @@ Widget adminBuildTransactionCard2(
                 fontSize: 14,
                 fontWeight: FontVariant.semiBold,
                 color: textcolord,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
+            const SizedBox(width: 8),
             CustomContainer(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               borderRadius: BorderRadius.circular(9999),
@@ -54,6 +57,7 @@ Widget adminBuildTransactionCard2(
           ],
         ),
         const SizedBox(height: 6),
+        // Amount
         CustomText(
           amount,
           fontSize: 18,
@@ -61,52 +65,68 @@ Widget adminBuildTransactionCard2(
           color: isPositive ? greenColor : redColor,
         ),
         const SizedBox(height: 12),
+        // Bottom Row: User Info and Time
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                CustomContainer(
-                  height: 32,
-                  width: 32,
-                  borderRadius: BorderRadius.circular(9999),
-                  conColor: redColor,
-                  child: const Center(
-                    child: CustomText(
-                      'AF',
-                      fontSize: 12,
-                      fontWeight: FontVariant.semiBold,
-                      color: whiteColor,
+            // Left side: Avatar + User details (Takes most space)
+            Expanded(
+              flex: 5, 
+              child: Row(
+                children: [
+                  CustomContainer(
+                    height: 32,
+                    width: 32,
+                    borderRadius: BorderRadius.circular(9999),
+                    conColor: redColor,
+                    child: const Center(
+                      child: CustomText(
+                        'AF',
+                        fontSize: 10,
+                        fontWeight: FontVariant.semiBold,
+                        color: whiteColor,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomText(
-                      name,
-                      fontSize: 12,
-                      fontWeight: FontVariant.medium,
-                      color: textcolord,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CustomText(
+                          name,
+                          fontSize: 12,
+                          fontWeight: FontVariant.medium,
+                          color: textcolord,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                        CustomText(
+                          role,
+                          fontSize: 11,
+                          fontWeight: FontVariant.regular,
+                          color: txColor,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 2),
-                    CustomText(
-                      role,
-                      fontSize: 12,
-                      fontWeight: FontVariant.regular,
-                      color: txColor,
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-            Center(
+            const SizedBox(width: 4),
+            // Right side: Time (Takes minimal needed space)
+            Flexible(
+              flex: 3,
               child: CustomText(
                 time,
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontVariant.regular,
                 color: txColor,
+                textAlign: TextAlign.right,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ],

@@ -690,55 +690,62 @@ class NotificationService {
     }
   }
 
-  /// Notify requester about a refund
+  /// Notify requester about a refund and helper about a small payment
   Future<void> notifyDisputeRefund({
-    required String userId,
+    required String requesterId,
+    required String helperId,
     required String taskTitle,
     required String taskId,
-    required double amount,
+    required double refundAmount,
+    required double helperAmount,
   }) async {
     try {
-      final title = 'Refund Processed';
-      final body = 'A refund of SAR ${amount.toStringAsFixed(2)} (96%) has been credited to your wallet for task "$taskTitle".';
+      final reqTitle = 'Refund Processed';
+      final reqBody = 'A refund of SAR ${refundAmount.toStringAsFixed(2)} (96%) has been credited to your wallet for task "$taskTitle".';
 
+      final helpTitle = 'Partial Payment Received';
+      final helpBody = 'You have received SAR ${helperAmount.toStringAsFixed(2)} (1%) for your efforts on task "$taskTitle".';
+
+      // 1. Requester Notification
       await FirebaseFirestore.instance
           .collection('notifications')
-          .doc(userId)
+          .doc(requesterId)
           .collection('items')
           .add({
-            'title': title,
-            'body': body,
+            'title': reqTitle,
+            'body': reqBody,
             'type': NoticeType.success.name,
             'category': 'dispute_refund',
             'taskId': taskId,
             'taskTitle': taskTitle,
-            'amount': amount,
+            'amount': refundAmount,
             'read': false,
             'createdAt': FieldValue.serverTimestamp(),
           });
 
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .get();
-
-      final deviceToken = userDoc.data()?['deviceToken'] as String?;
-      if (deviceToken != null && deviceToken.isNotEmpty) {
-        await _sendFcmDirect(
-          token: deviceToken,
-          title: title,
-          body: body,
-          data: {
-            'category': 'dispute_refund',
+      // 2. Helper Notification
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(helperId)
+          .collection('items')
+          .add({
+            'title': helpTitle,
+            'body': helpBody,
+            'type': NoticeType.info.name,
+            'category': 'dispute_helper_payment',
             'taskId': taskId,
-            'amount': amount.toString(),
-            'route': 'wallet_tab',
-          },
-          recipientSdk: userDoc.data()?['androidSdk'] as int?,
-        );
-      }
+            'taskTitle': taskTitle,
+            'amount': helperAmount,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      // Send FCM to both
+      await _sendFcmToUser(requesterId, reqTitle, reqBody, {'route': 'wallet_tab', 'taskId': taskId});
+      await _sendFcmToUser(helperId, helpTitle, helpBody, {'route': 'wallet_tab', 'taskId': taskId});
+
     } catch (e) {
-      debugPrint('Error sending dispute refund notification: $e');
+      debugPrint('Error sending dispute refund notifications: $e');
     }
   }
 

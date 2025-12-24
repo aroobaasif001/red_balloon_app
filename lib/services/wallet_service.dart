@@ -472,18 +472,21 @@ class WalletService {
     }
   }
 
-  /// Refund dispute to requester (96% refund)
+  /// Refund dispute to requester (96% refund) and 1% to helper
   Future<Map<String, dynamic>> refundDisputeToRequester({
     required String taskId,
     required String requesterUid,
+    required String helperUid,
     required double totalAmount,
     required String taskTitle,
   }) async {
     try {
       final requesterWalletDoc = _walletCollection.doc(requesterUid);
+      final helperWalletDoc = _walletCollection.doc(helperUid);
 
       final result = await _firestore.runTransaction((transaction) async {
         final requesterSnapshot = await transaction.get(requesterWalletDoc);
+        final helperSnapshot = await transaction.get(helperWalletDoc);
 
         if (!requesterSnapshot.exists) {
           return {'success': false, 'message': 'Requester wallet not found'};
@@ -491,18 +494,35 @@ class WalletService {
 
         final requesterData = requesterSnapshot.data() as Map<String, dynamic>;
         double currentEscrow = (requesterData['escrowBalance'] ?? 0.0).toDouble();
-        double currentBalance = (requesterData['balance'] ?? 0.0).toDouble();
+        double currentReqBalance = (requesterData['balance'] ?? 0.0).toDouble();
 
         double refundAmount = totalAmount * 0.96;
+        double helperAmount = totalAmount * 0.01;
+
+        double currentHelperBalance = 0.0;
+        if (helperSnapshot.exists) {
+          currentHelperBalance = (helperSnapshot.data() as Map<String, dynamic>)['balance'] ?? 0.0;
+        }
 
         // Update requester wallet
         transaction.update(requesterWalletDoc, {
           'escrowBalance': currentEscrow - totalAmount,
-          'balance': currentBalance + refundAmount,
+          'balance': currentReqBalance + refundAmount,
           'updatedAt': FieldValue.serverTimestamp(),
         });
 
-        // Add transaction record
+        // Update helper wallet
+        transaction.set(
+          helperWalletDoc,
+          {
+            'balance': currentHelperBalance + helperAmount,
+            'uid': helperUid,
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true),
+        );
+
+        // Transaction records
         final reqTransRef = requesterWalletDoc.collection('transactions').doc();
         transaction.set(reqTransRef, {
           'id': reqTransRef.id,
@@ -515,9 +535,22 @@ class WalletService {
           'createdAt': FieldValue.serverTimestamp(),
         });
 
+        final helpTransRef = helperWalletDoc.collection('transactions').doc();
+        transaction.set(helpTransRef, {
+          'id': helpTransRef.id,
+          'title': 'Dispute Payment - Partial',
+          'description': 'Payment (1%) for task "$taskTitle"',
+          'amount': helperAmount,
+          'type': 'credit',
+          'status': 'completed',
+          'taskId': taskId,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
         return {
           'success': true,
           'refundAmount': refundAmount,
+          'helperAmount': helperAmount,
         };
       });
 

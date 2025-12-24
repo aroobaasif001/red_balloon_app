@@ -30,6 +30,36 @@ class AdminTransactionHistory extends StatelessWidget {
                 child: CustomContainer(
                   padding: const EdgeInsets.all(16),
                   child: Obx(() {
+                    if (controller.isLoading.value) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: redColor),
+                      );
+                    }
+
+                    if (controller.selectedFilter.value == TransactionHistoryFilter.withdrawals) {
+                      return Column(
+                        children: [
+                          const SizedBox(height: 8),
+                          adminBuildSummaryRow2(context),
+                          const SizedBox(height: 20),
+                          adminBuildFilterRow2(
+                            context,
+                            selectedFilter: controller.selectedFilter.value,
+                            onFilterSelected: controller.setFilter,
+                          ),
+                          const SizedBox(height: 100),
+                          const Center(
+                            child: CustomText(
+                              'Coming Soon',
+                              fontSize: 18,
+                              fontWeight: FontVariant.bold,
+                              color: walletGrey500Color,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
                     final items = controller.filteredTransactions;
                     return SingleChildScrollView(
                       child: Column(
@@ -44,12 +74,18 @@ class AdminTransactionHistory extends StatelessWidget {
                             onFilterSelected: controller.setFilter,
                           ),
                           const SizedBox(height: 20),
+                          if (items.isEmpty)
+                            const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(40.0),
+                                child: CustomText('No transactions found'),
+                              ),
+                            ),
                           for (final item in items) ...[
                             adminBuildTransactionCard2(
                               context,
                               typeLabel: '${item.type} ${item.code}',
-                              amount:
-                                  '${item.isPositive ? '+' : '-'}SAR ${item.amount.toStringAsFixed(0)}',
+                              amount: '${item.isPositive ? '+' : '-'}SAR ${item.amount.toStringAsFixed(1)}',
                               isPositive: item.isPositive,
                               name: item.name,
                               role: item.role,

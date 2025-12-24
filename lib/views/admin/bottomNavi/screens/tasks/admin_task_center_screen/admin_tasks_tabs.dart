@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
@@ -7,6 +9,8 @@ import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_center_screen/tabs/validation_tasks_tab_screen.dart';
 
 import '../../../../../../custom_widgets/custom_container.dart';
+import 'controller/admin_all_tasks_controller.dart';
+import 'controller/admin_validation_tasks_controller.dart';
 
 class AdminTaskCenterScreen extends StatefulWidget {
   const AdminTaskCenterScreen({super.key});
@@ -17,6 +21,13 @@ class AdminTaskCenterScreen extends StatefulWidget {
 
 class _AdminTaskCenterScreenState extends State<AdminTaskCenterScreen> {
   int selectedTab = 0; // 0 = All Tasks, 1 = Validations, 2 = Completed
+
+  @override
+  void initState() {
+    super.initState();
+    Get.put(AdminAllTasksController());
+    Get.put(AdminValidationTasksController());
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -207,9 +207,6 @@ class DisputeDetailsController extends GetxController {
       
       Get.back();
       Get.snackbar('Success', 'Warning sent to helper: ${helperName.value}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
       );
     } catch (e) {
       Get.back();
@@ -237,9 +234,6 @@ class DisputeDetailsController extends GetxController {
       
       Get.back();
       Get.snackbar('Success', 'Warning sent to requester: ${requesterName.value}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
       );
     } catch (e) {
       Get.back();
@@ -251,9 +245,16 @@ class DisputeDetailsController extends GetxController {
     }
   }
 
-  /// Refund Payment (96% to requester)
+  /// Refund Payment (96% to requester, 1% to helper)
   Future<void> refundPayment() async {
-    if (taskId.value.isEmpty || requesterUid.value.isEmpty) return;
+    if (taskId.value.isEmpty || requesterUid.value.isEmpty || helperUid.value.isEmpty) {
+      Get.snackbar('Error', 'Missing information to process refund',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
     
     try {
       Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
@@ -261,6 +262,7 @@ class DisputeDetailsController extends GetxController {
       final result = await _walletService.refundDisputeToRequester(
         taskId: taskId.value,
         requesterUid: requesterUid.value,
+        helperUid: helperUid.value,
         totalAmount: taskBudget.value,
         taskTitle: taskTitle.value,
       );
@@ -270,22 +272,21 @@ class DisputeDetailsController extends GetxController {
         await _firestore.collection('tasks').doc(taskId.value).update({
           'status': 'Refunded',
           'disputeResolvedAt': FieldValue.serverTimestamp(),
-          'resolution': 'Refunded to Requester (96%)',
+          'resolution': 'Refunded: 96% to Requester, 1% to Helper',
         });
         
-        // Notify requester
+        // Notify both parties
         await _notificationService.notifyDisputeRefund(
-          userId: requesterUid.value,
+          requesterId: requesterUid.value,
+          helperId: helperUid.value,
           taskTitle: taskTitle.value,
           taskId: taskId.value,
-          amount: result['refundAmount'],
+          refundAmount: result['refundAmount'],
+          helperAmount: result['helperAmount'],
         );
         
         Get.back();
-        Get.snackbar('Success', 'Refund of SAR ${result['refundAmount'].toStringAsFixed(2)} processed successfully',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
+        Get.snackbar('Success', 'Refund of 96% processed for requester and 1% payment for helper.',
         );
       } else {
         Get.back();
@@ -348,9 +349,6 @@ class DisputeDetailsController extends GetxController {
         
         Get.back();
         Get.snackbar('Success', 'Dispute dismissed. Funds distributed: 85% to Helper, 7.5% to Requester.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
         );
       } else {
         Get.back();
