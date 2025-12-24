@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/services/task_service.dart';
 import 'package:red_balloon_app/services/user_service.dart';
+
 import '../../../../../../../services/notification_services.dart';
+import '../my_task_screen.dart';
 
 class InProgressTaskController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -100,11 +101,11 @@ class InProgressTaskController extends GetxController {
 
             // If status changed from "in_progress" to something else (completed, cancelled, etc)
             if (taskStatus.isNotEmpty && taskStatus != 'in progress') {
-              print('✅ Task status changed to: $taskStatus');
+              print('✅ Task status changed to: $taskStatus. Navigating back.');
 
               // Navigate back
-              if (Get.context != null) {
-                Navigator.of(Get.context!).pop();
+              if (Get.isRegistered<InProgressTaskController>()) {
+                Get.offAll(() => MyTaskScreen());
               }
             }
           }
@@ -162,7 +163,7 @@ class InProgressTaskController extends GetxController {
       final taskDoc = await _firestore.collection('tasks').doc(taskId).get();
       if (taskDoc.exists) {
         final taskStatus = taskDoc.data()?['status']?.toString().toLowerCase();
-        
+
         if (taskStatus == 'disputed') {
           Get.snackbar(
             'Already Disputed',
@@ -183,7 +184,7 @@ class InProgressTaskController extends GetxController {
       if (taskOwnerId != null) {
         final currentUser = FirebaseAuth.instance.currentUser;
         final senderName = currentUser?.displayName ?? 'Helper';
-        
+
         NotificationService.instance.notifyHelpRequested(
           receiverId: taskOwnerId!,
           senderName: senderName,
@@ -206,8 +207,9 @@ class InProgressTaskController extends GetxController {
         if (data != null) {
           helperName.value = data['displayName'] ?? data['name'] ?? 'Helper';
           helperPhotoUrl.value = data['photoURL'] ?? data['photoUrl'] ?? '';
-          helperUserId.value = data['userId'] ?? ''; // 🔥 Fetch custom ID (RB-001)
-          
+          helperUserId.value =
+              data['userId'] ?? ''; // 🔥 Fetch custom ID (RB-001)
+
           // Generate initials
           if (helperName.value.isNotEmpty) {
             helperInitials.value = helperName.value[0].toUpperCase();
@@ -220,6 +222,29 @@ class InProgressTaskController extends GetxController {
       }
     } catch (e) {
       print('Error fetching helper user data: $e');
+    }
+  }
+
+  // 🔥 Accepted Offer Price
+  RxString acceptedOfferPrice = ''.obs;
+
+  Future<void> fetchAcceptedOfferPrice(String taskId) async {
+    try {
+      final query = await _firestore
+          .collection('offers')
+          .where('taskId', isEqualTo: taskId)
+          .where('status', isEqualTo: 'accepted')
+          .limit(1)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+        final price = query.docs.first.data()['offerPrice']?.toString();
+        if (price != null && price.isNotEmpty) {
+          acceptedOfferPrice.value = price;
+        }
+      }
+    } catch (e) {
+      print('Error fetching accepted offer price: $e');
     }
   }
 

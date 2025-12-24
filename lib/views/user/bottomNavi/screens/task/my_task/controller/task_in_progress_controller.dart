@@ -1,14 +1,17 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/model/offer_model.dart';
+import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/model/user_model.dart';
-import 'package:red_balloon_app/services/task_service.dart';
 import 'package:red_balloon_app/services/offer_service.dart';
+import 'package:red_balloon_app/services/task_service.dart';
 import 'package:red_balloon_app/services/user_service.dart';
-import 'dart:async';
+
 import '../../../../../../../services/notification_services.dart';
+import '../my_task_screen.dart';
 
 class TaskInProgressController extends GetxController {
   final TaskService _taskService = TaskService();
@@ -51,20 +54,32 @@ class TaskInProgressController extends GetxController {
         .doc(taskId)
         .snapshots()
         .listen((snapshot) {
-      if (snapshot.exists) {
-        final data = snapshot.data();
-        if (data != null) {
-          requesterHelpRequested.value = data['requesterHelpRequested'] ?? false;
-          helperHelpRequested.value = data['helperHelpRequested'] ?? false;
-          helperHelpReason.value = data['helperHelpReason'] ?? '';
-          helperHelpDetails.value = data['helperHelpDetails'] ?? '';
-          
-          // Also update local task model if needed, but these flags are most critical
-          // task.value = TaskModel.fromJson(data, snapshot.id); // Optional, might cause rebuilds
-        }
-      }
-    });
-    
+          if (snapshot.exists) {
+            final data = snapshot.data();
+            if (data != null) {
+              requesterHelpRequested.value =
+                  data['requesterHelpRequested'] ?? false;
+              helperHelpRequested.value = data['helperHelpRequested'] ?? false;
+              helperHelpReason.value = data['helperHelpReason'] ?? '';
+              helperHelpDetails.value = data['helperHelpDetails'] ?? '';
+
+              // 🔥 Check for status change to anything other than 'in progress'
+              final taskStatus = data['status']?.toString().toLowerCase() ?? '';
+              if (taskStatus.isNotEmpty && taskStatus != 'in progress') {
+                print(
+                  '✅ Task status changed to $taskStatus. Navigating back from TaskInProgressScreen.',
+                );
+                if (Get.isRegistered<TaskInProgressController>()) {
+                  Get.offAll(() => MyTaskScreen());
+                }
+              }
+
+              // Also update local task model if needed, but these flags are most critical
+              // task.value = TaskModel.fromJson(data, snapshot.id); // Optional, might cause rebuilds
+            }
+          }
+        });
+
     // Setup real-time proof listener
     setupProofListener(taskId);
   }
@@ -77,29 +92,30 @@ class TaskInProgressController extends GetxController {
         .limit(5)
         .snapshots()
         .listen((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        hasProof.value = true;
-        
-        // Try to find a proof with images
-        QueryDocumentSnapshot<Map<String, dynamic>>? proofWithImages;
-        
-        for (var doc in snapshot.docs) {
-          final data = doc.data();
-          if (data['beforePhotoUrl'] != null && data['afterPhotoUrl'] != null) {
-            proofWithImages = doc;
-            break;
+          if (snapshot.docs.isNotEmpty) {
+            hasProof.value = true;
+
+            // Try to find a proof with images
+            QueryDocumentSnapshot<Map<String, dynamic>>? proofWithImages;
+
+            for (var doc in snapshot.docs) {
+              final data = doc.data();
+              if (data['beforePhotoUrl'] != null &&
+                  data['afterPhotoUrl'] != null) {
+                proofWithImages = doc;
+                break;
+              }
+            }
+
+            // Use proof with images if found, otherwise use the latest one
+            final selectedProof = proofWithImages ?? snapshot.docs.first;
+
+            proofId.value = selectedProof.id;
+            print('✅ Real-time proof update: ${proofId.value}');
+          } else {
+            hasProof.value = false;
           }
-        }
-        
-        // Use proof with images if found, otherwise use the latest one
-        final selectedProof = proofWithImages ?? snapshot.docs.first;
-        
-        proofId.value = selectedProof.id;
-        print('✅ Real-time proof update: ${proofId.value}');
-      } else {
-        hasProof.value = false;
-      }
-    });
+        });
   }
 
   @override
@@ -112,23 +128,23 @@ class TaskInProgressController extends GetxController {
   /// Submit Help Request for Requester
   Future<void> submitHelpRequest(String reason, String details) async {
     if (task.value?.id == null) return;
-    
+
     await _taskService.updateHelpRequest(
       taskId: task.value!.id!,
       role: 'requester',
       reason: reason,
       details: details,
     );
-    
+
     // 🔥 Send Push Notification to helper
     final hUid = acceptedOffer.value?.offeringUserUid;
     final tTitle = task.value?.title;
     final tId = task.value?.id;
-    
+
     if (hUid != null && tTitle != null && tId != null) {
       final currentUser = FirebaseAuth.instance.currentUser;
       final senderName = currentUser?.displayName ?? 'Requester';
-      
+
       NotificationService.instance.notifyHelpRequested(
         receiverId: hUid,
         senderName: senderName,
@@ -136,7 +152,7 @@ class TaskInProgressController extends GetxController {
         taskId: tId,
       );
     }
-    
+
     // Refresh local state (listener handles it mostly, but good for immediate feedback if needed)
   }
 
@@ -165,10 +181,7 @@ class TaskInProgressController extends GetxController {
           return;
         }
 
-        task.value = TaskModel.fromJson(
-          taskDoc.data()!,
-          taskDoc.id,
-        );
+        task.value = TaskModel.fromJson(taskDoc.data()!, taskDoc.id);
         setupTaskListener(task.value!.id!); // 🔥 Start listening
 
         print('✅ Found specific task: ${task.value?.title}');
@@ -189,10 +202,7 @@ class TaskInProgressController extends GetxController {
 
         // Parse task
         final taskDoc = tasksSnapshot.docs.first;
-        task.value = TaskModel.fromJson(
-          taskDoc.data(),
-          taskDoc.id,
-        );
+        task.value = TaskModel.fromJson(taskDoc.data(), taskDoc.id);
         setupTaskListener(task.value!.id!); // 🔥 Start listening
 
         print('✅ Found in-progress task: ${task.value?.title}');
@@ -232,7 +242,9 @@ class TaskInProgressController extends GetxController {
         offerDoc.id, // 🔥 Pass docId as second parameter
       );
 
-      print('✅ Found accepted offer from: ${acceptedOffer.value?.offeringUserName}');
+      print(
+        '✅ Found accepted offer from: ${acceptedOffer.value?.offeringUserName}',
+      );
 
       // Fetch helper user details
       if (acceptedOffer.value?.offeringUserUid != null) {
@@ -300,11 +312,11 @@ class TaskInProgressController extends GetxController {
           .get();
 
       hasProof.value = proofSnapshot.docs.isNotEmpty;
-      
+
       if (hasProof.value) {
         // 🔥 Try to find a proof with images
         QueryDocumentSnapshot<Map<String, dynamic>>? proofWithImages;
-        
+
         for (var doc in proofSnapshot.docs) {
           final data = doc.data();
           if (data['beforePhotoUrl'] != null && data['afterPhotoUrl'] != null) {
@@ -312,14 +324,16 @@ class TaskInProgressController extends GetxController {
             break;
           }
         }
-        
+
         // Use proof with images if found, otherwise use the latest one
         final selectedProof = proofWithImages ?? proofSnapshot.docs.first;
-        
+
         proofId.value = selectedProof.id;
         final proofData = selectedProof.data();
         print('✅ Proof found for task: $taskId, proofId: ${proofId.value}');
-        print('   Has images: ${proofData['beforePhotoUrl'] != null && proofData['afterPhotoUrl'] != null}');
+        print(
+          '   Has images: ${proofData['beforePhotoUrl'] != null && proofData['afterPhotoUrl'] != null}',
+        );
       } else {
         print('❌ No proof found for task: $taskId');
       }

@@ -8,6 +8,7 @@ import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
 
+import 'package:red_balloon_app/services/wallet_service.dart';
 import '../views/user/bottomNavi/screens/task/my_task/tabs/task_in_progress_screen.dart';
 import '../views/user/bottomNavi/screens/task/my_task/widgets/send_offer_bottom_sheet.dart';
 import 'colors.dart';
@@ -1967,6 +1968,8 @@ class DialogHelpers {
     required String offerId,
     required String taskId, // 🔥 Added taskId parameter
     required String taskTitle, // 🔥 Added taskTitle parameter
+    required double taskBudget, // 🔥 Added taskBudget
+    required double offerPrice, // 🔥 Added offerPrice
     required VoidCallback onAccepted,
   }) {
     showDialog(
@@ -2037,10 +2040,29 @@ class DialogHelpers {
                         CustomButton(
                           label: "Continue",
                           onPressed: () async {
-                            Get.back(); // Close confirmation dialog
-
-                            // Update offer status to 'accepted' in Firestore
+                            // 🔥 1. Adjust Wallet/Escrow First
+                            // Show loading indicator or block interaction? 
+                            // For now, let's just proceed. 
+                            // Better UX would be to show a loader.
+                            
                             try {
+                                // 🔥 Call Wallet Service
+                                final walletResult = await WalletService().adjustEscrowAfterOfferAcceptance(
+                                  taskId: taskId,
+                                  taskBudget: taskBudget,
+                                  offerPrice: offerPrice,
+                                  taskTitle: taskTitle,
+                                );
+
+                                if (walletResult['success'] == false) {
+                                  // Show error and abort
+                                  Get.snackbar('Error', walletResult['message'] ?? 'Wallet adjustment failed');
+                                  return;
+                                }
+
+                                Get.back(); // Close confirmation dialog (Wallet success)
+
+                                // 🔥 2. Proceed with Offer Acceptance Logic
                               // 🔥 First, fetch the offer to get offeringUserUid
                               final offerDoc = await FirebaseFirestore.instance
                                   .collection('offers')
@@ -2068,6 +2090,7 @@ class DialogHelpers {
                                     'status': 'in progress',
                                     'acceptedOfferUid':
                                         offeringUserUid, // 🔥 Store helper's UID
+                                    'budget': offerPrice, // 🔥 Update task budget to accepted offer price
                                   });
 
                               print(
@@ -2087,8 +2110,8 @@ class DialogHelpers {
                               // Call the callback
                               onAccepted();
 
-                              // 🔥 Close confirmation dialog first
-                              Get.back();
+                              // 🔥 Close confirmation dialog first (Already closed above)
+                              // Get.back(); 
 
                               // Close task details screen and navigate
                               Get.back(); // Close task details screen
@@ -2105,6 +2128,7 @@ class DialogHelpers {
                               );
                             } catch (e) {
                               print('❌ Error updating offer/task status: $e');
+                              Get.snackbar('Error', 'Failed to accept offer: $e');
                             }
                           },
                           height: 52,

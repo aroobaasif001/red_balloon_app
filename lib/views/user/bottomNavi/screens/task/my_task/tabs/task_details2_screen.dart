@@ -361,11 +361,16 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                       }
                     },
                     onAccept: () {
+                      final double price =
+                          double.tryParse(offer.offerPrice) ?? 0.0;
+
                       DialogHelpers.showOfferConfirmationDialog(
                         context: context,
                         offerId: offer.offerId,
                         taskId: widget.task.id ?? '',
-                        taskTitle: widget.task.title, // 🔥 Added taskTitle
+                        taskTitle: widget.task.title,
+                        taskBudget: widget.task.budget, // 🔥 Pass budget
+                        offerPrice: price, // 🔥 Pass offer price
                         onAccepted: () {
                           // Real-time listener will automatically update offers
                         },

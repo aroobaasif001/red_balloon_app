@@ -92,7 +92,7 @@ class TaskCompletedScreen extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               child: Center(
                 child: CustomText(
-                  "This task has been completed. No further action is required.",
+                  controller.bottomNote,
                   fontSize: 12,
                   color: rbtxColor,
                   textAlign: TextAlign.center,

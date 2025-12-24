@@ -284,24 +284,27 @@ class LeaveFeedbackScreen extends StatelessWidget {
                       child: TextField(
                         controller: controller.reviewController,
                         maxLines: 6,
+                        maxLength: 250, // 🔥 Limit to 250 characters
+                        buildCounter: (context, {required currentLength, required isFocused, maxLength}) => null, // Hide default counter
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: "Type your message...",
                           hintStyle: TextStyle(color: walletProgressBgColor),
+                          counterText: "", // Hide default counter
                         ),
                       ),
                     ),
 
                     const SizedBox(height: 5),
 
-                    // Character count could be reactive if needed, leaving static style for now
-                    const Align(
+                    // character count reactive update
+                    Align(
                       alignment: Alignment.centerRight,
-                      child: CustomText(
-                        "0/250 characters",
+                      child: Obx(() => CustomText(
+                        "${controller.currentReviewLength.value}/250 characters",
                         fontSize: 12,
                         color: walletTransactionDescColor,
-                      ),
+                      )),
                     ),
                   ],
                 ),

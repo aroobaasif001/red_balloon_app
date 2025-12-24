@@ -489,4 +489,105 @@ class WalletService {
       }).toList();
     });
   }
+
+  /// Process escrow adjustment when offer is accepted
+  Future<Map<String, dynamic>> adjustEscrowAfterOfferAcceptance({
+    required String taskId,
+    required double taskBudget,
+    required double offerPrice,
+    required String taskTitle,
+  }) async {
+    if (_uid.isEmpty) return {'success': false, 'message': 'User not logged in'};
+
+    try {
+      final walletDoc = _walletCollection.doc(_uid);
+
+      final result = await _firestore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(walletDoc);
+
+        // 1. Get current balances
+        double currentBalance = 0.0;
+        double currentEscrow = 0.0;
+        if (snapshot.exists) {
+          final data = snapshot.data() as Map<String, dynamic>;
+          currentBalance = (data['balance'] ?? 0.0).toDouble();
+          currentEscrow = (data['escrowBalance'] ?? 0.0).toDouble();
+        }
+
+        double difference = 0.0;
+
+        // 2. Logic based on user request
+        if (offerPrice > taskBudget) {
+          // Offer is higher: Add difference to escrow, deduct from wallet
+          difference = offerPrice - taskBudget;
+
+          if (currentBalance < difference) {
+            return {
+              'success': false,
+              'message': 'Insufficient wallet balance for price difference',
+            };
+          }
+
+          transaction.set(
+            walletDoc,
+            {
+              'balance': currentBalance - difference,
+              'escrowBalance': currentEscrow + difference,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true),
+          );
+
+          // Add transaction record
+          final transactionRef = walletDoc.collection('transactions').doc();
+          transaction.set(transactionRef, {
+            'id': transactionRef.id,
+            'title': 'Escrow Adjustment (Top-up)',
+            'description': 'Offer accepted is higher than budget for "$taskTitle"',
+            'amount': difference,
+            'type': 'debit',
+            'status': 'completed',
+            'taskId': taskId,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        } else if (offerPrice < taskBudget) {
+          // Offer is lower: Deduct difference from escrow, add back to wallet
+          difference = taskBudget - offerPrice;
+
+          transaction.set(
+            walletDoc,
+            {
+              'balance': currentBalance + difference,
+              'escrowBalance': currentEscrow - difference,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true),
+          );
+
+          // Add transaction record
+          final transactionRef = walletDoc.collection('transactions').doc();
+          transaction.set(transactionRef, {
+            'id': transactionRef.id,
+            'title': 'Escrow Adjustment (Refund)',
+            'description': 'Offer accepted is lower than budget for "$taskTitle"',
+            'amount': difference,
+            'type': 'credit',
+            'status': 'completed',
+            'taskId': taskId,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        } else {
+          // Equal: No changes needed
+          return {'success': true, 'message': 'No adjustment needed'};
+        }
+
+        return {'success': true, 'message': 'Escrow adjusted successfully'};
+      });
+
+      return result;
+    } catch (e) {
+      print('Error adjusting escrow: $e');
+      return {'success': false, 'message': 'An error occurred: ${e.toString()}'};
+    }
+  }
 }
