@@ -11,7 +11,7 @@ class ValidationTasksTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('📱 ValidationTasksTab build() called');
-    final controller = Get.put(AdminValidationTasksController());
+    final controller = Get.find<AdminValidationTasksController>();
     print(
       '📊 Controller state - isLoading: ${controller.isLoading.value}, validations count: ${controller.validationTasks.length}',
     );
@@ -48,7 +48,7 @@ class ValidationTasksTab extends StatelessWidget {
                     price:
                         "SAR ${(validation['budget'] ?? 0).toStringAsFixed(2)}",
                     startedAgo: controller.getTimeAgo(validation['rejectedAt']),
-                    image: "assets/images/Rectangle 34625307.png",
+                    image: validation['imageUrl'] ?? "",
                     validationId: validation['validationId'],
                   ),
                 );

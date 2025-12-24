@@ -10,6 +10,7 @@ Widget adminTaskCard(
   required String title,
   required String description,
   required String timeAgo,
+  VoidCallback? onViewDetails,
 }) {
   return CustomContainer(
     padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 16),
@@ -89,18 +90,21 @@ Widget adminTaskCard(
                   ),
                   const SizedBox(height: 12),
 
-                  CustomContainer(
-                    height: 40,
-                    borderRadius: BorderRadius.circular(12),
-                    conColor: redColor,
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: CustomText(
-                          'View Details',
-                          fontSize: 14,
-                          fontWeight: FontVariant.semiBold,
-                          color: whiteColor,
+                  GestureDetector(
+                    onTap: onViewDetails,
+                    child: CustomContainer(
+                      height: 40,
+                      borderRadius: BorderRadius.circular(12),
+                      conColor: redColor,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: CustomText(
+                            'View Details',
+                            fontSize: 14,
+                            fontWeight: FontVariant.semiBold,
+                            color: whiteColor,
+                          ),
                         ),
                       ),
                     ),

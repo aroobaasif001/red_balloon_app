@@ -11,7 +11,7 @@ class AllTasksTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('📱 AllTasksTab build() called');
-    final controller = Get.put(AdminAllTasksController());
+    final controller = Get.find<AdminAllTasksController>();
     print(
       '📊 Controller state - isLoading: ${controller.isLoading.value}, tasks count: ${controller.allTasks.length}',
     );
@@ -47,7 +47,7 @@ class AllTasksTab extends StatelessWidget {
                   price: "SAR ${task.budget.toStringAsFixed(2)}",
                   distance: task.location ?? "Unknown location",
                   timeAgo: _getTimeAgo(task.createdAt),
-                  image: "assets/images/Rectangle 34625307.png",
+                  image: task.imageUrl ?? "",
                   taskId: task.id, // Pass real task ID
                 ),
               );

@@ -63,7 +63,39 @@ class AdminWalletTab extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Obx(() {
+                        if (controller.isLoading.value) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(40.0),
+                              child: CircularProgressIndicator(color: redColor),
+                            ),
+                          );
+                        }
+
+                        if (controller.selectedFilter.value == WalletFilter.withdrawal) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(40.0),
+                              child: CustomText(
+                                'Coming Soon',
+                                fontSize: 18,
+                                fontWeight: FontVariant.bold,
+                                color: walletGrey500Color,
+                              ),
+                            ),
+                          );
+                        }
+
                         final items = controller.filteredTransactions;
+                        if (items.isEmpty) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(40.0),
+                              child: CustomText('No transactions found'),
+                            ),
+                          );
+                        }
+
                         return Column(
                           children: [
                             for (int i = 0; i < items.length; i++) ...[

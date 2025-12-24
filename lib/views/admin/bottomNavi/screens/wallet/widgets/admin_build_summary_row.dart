@@ -9,7 +9,7 @@ import 'admin_summary_card.dart';
 Widget adminBuildSummaryRow(BuildContext context) {
   final WalletController controller = Get.find<WalletController>(tag: 'admin_wallet');
 
-  return Row(
+  return Obx(() => Row(
     children: [
       Expanded(
         child: adminSummaryCard(
@@ -35,5 +35,5 @@ Widget adminBuildSummaryRow(BuildContext context) {
         ),
       ),
     ],
-  );
+  ));
 }

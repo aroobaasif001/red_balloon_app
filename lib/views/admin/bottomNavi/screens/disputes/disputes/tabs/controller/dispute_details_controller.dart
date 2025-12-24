@@ -1,14 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
+import 'package:red_balloon_app/services/wallet_service.dart';
 
 class DisputeDetailsController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final NotificationService _notificationService = NotificationService.instance;
+  final WalletService _walletService = WalletService();
   
   var isLoading = false.obs;
   
   // Task Info
   var taskTitle = ''.obs;
   var taskId = ''.obs;
+  var taskBudget = 0.0.obs;
   var submittedTime = ''.obs;
   
   // Requester Info
@@ -50,6 +56,7 @@ class DisputeDetailsController extends GetxController {
       // Task basic info
       this.taskId.value = taskId;
       taskTitle.value = taskData['title'] ?? 'No Title';
+      taskBudget.value = (taskData['budget'] ?? 0.0).toDouble();
 
       // Helper function to get non-empty report correctly
       String getFormattedReport(String detailsKey, String reasonKey) {
@@ -181,6 +188,184 @@ class DisputeDetailsController extends GetxController {
       }
     } catch (e) {
       print('❌ Error fetching helper details: $e');
+    }
+  }
+
+  /// Warn Helper
+  Future<void> warnHelper() async {
+    if (helperUid.value.isEmpty) return;
+    
+    try {
+      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
+      
+      await _notificationService.notifyDisputeWarning(
+        userId: helperUid.value,
+        taskTitle: taskTitle.value,
+        taskId: taskId.value,
+        role: 'Helper',
+      );
+      
+      Get.back();
+      Get.snackbar('Success', 'Warning sent to helper: ${helperName.value}',
+      );
+    } catch (e) {
+      Get.back();
+      Get.snackbar('Error', 'Failed to send warning: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  /// Warn Requester
+  Future<void> warnRequester() async {
+    if (requesterUid.value.isEmpty) return;
+    
+    try {
+      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
+      
+      await _notificationService.notifyDisputeWarning(
+        userId: requesterUid.value,
+        taskTitle: taskTitle.value,
+        taskId: taskId.value,
+        role: 'Requester',
+      );
+      
+      Get.back();
+      Get.snackbar('Success', 'Warning sent to requester: ${requesterName.value}',
+      );
+    } catch (e) {
+      Get.back();
+      Get.snackbar('Error', 'Failed to send warning: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  /// Refund Payment (96% to requester, 1% to helper)
+  Future<void> refundPayment() async {
+    if (taskId.value.isEmpty || requesterUid.value.isEmpty || helperUid.value.isEmpty) {
+      Get.snackbar('Error', 'Missing information to process refund',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+    
+    try {
+      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
+      
+      final result = await _walletService.refundDisputeToRequester(
+        taskId: taskId.value,
+        requesterUid: requesterUid.value,
+        helperUid: helperUid.value,
+        totalAmount: taskBudget.value,
+        taskTitle: taskTitle.value,
+      );
+      
+      if (result['success']) {
+        // Update task status in Firestore
+        await _firestore.collection('tasks').doc(taskId.value).update({
+          'status': 'Refunded',
+          'disputeResolvedAt': FieldValue.serverTimestamp(),
+          'resolution': 'Refunded: 96% to Requester, 1% to Helper',
+        });
+        
+        // Notify both parties
+        await _notificationService.notifyDisputeRefund(
+          requesterId: requesterUid.value,
+          helperId: helperUid.value,
+          taskTitle: taskTitle.value,
+          taskId: taskId.value,
+          refundAmount: result['refundAmount'],
+          helperAmount: result['helperAmount'],
+        );
+        
+        Get.back();
+        Get.snackbar('Success', 'Refund of 96% processed for requester and 1% payment for helper.',
+        );
+      } else {
+        Get.back();
+        Get.snackbar('Error', result['message'] ?? 'Failed to process refund',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print('Refund error: $e');
+      Get.back();
+      Get.snackbar('Error', 'An unexpected error occurred: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  /// Dismiss Dispute (85% to Helper, 7.5% to Requester)
+  Future<void> dismissDispute() async {
+    if (taskId.value.isEmpty || requesterUid.value.isEmpty || helperUid.value.isEmpty) {
+      Get.snackbar('Error', 'Missing information to resolve dispute',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+    
+    try {
+      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
+      
+      final result = await _walletService.dismissDisputeWithSplit(
+        taskId: taskId.value,
+        requesterUid: requesterUid.value,
+        helperUid: helperUid.value,
+        totalAmount: taskBudget.value,
+        taskTitle: taskTitle.value,
+      );
+      
+      if (result['success']) {
+        // Update task status in Firestore
+        await _firestore.collection('tasks').doc(taskId.value).update({
+          'status': 'Dispute Dismissed',
+          'disputeResolvedAt': FieldValue.serverTimestamp(),
+          'resolution': 'Dispute dismissed by admin. Split: 85% Helper, 7.5% Requester',
+        });
+        
+        // Notify both parties
+        await _notificationService.notifyDisputeDismissedSplit(
+          helperId: helperUid.value,
+          requesterId: requesterUid.value,
+          taskTitle: taskTitle.value,
+          taskId: taskId.value,
+          helperAmount: result['helperAmount'],
+          requesterRefund: result['requesterRefund'],
+        );
+        
+        Get.back();
+        Get.snackbar('Success', 'Dispute dismissed. Funds distributed: 85% to Helper, 7.5% to Requester.',
+        );
+      } else {
+        Get.back();
+        Get.snackbar('Error', result['message'] ?? 'Failed to dismiss dispute',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print('Dismiss dispute error: $e');
+      Get.back();
+      Get.snackbar('Error', 'An unexpected error occurred: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
   
