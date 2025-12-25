@@ -11,6 +11,8 @@ import 'widgets/admin_build_header.dart';
 import 'widgets/admin_build_summary_row.dart';
 import 'widgets/admin_wallet_transaction_card.dart';
 
+import 'transaction_details/admin_transaction_details_screen.dart';
+
 class AdminWalletTab extends StatelessWidget {
   const AdminWalletTab({super.key});
 
@@ -103,12 +105,20 @@ class AdminWalletTab extends StatelessWidget {
                                 context,
                                 iconPath: items[i].iconPath,
                                 iconBg: _iconBgForType(items[i].type),
-                                id: items[i].id,
+                                id: controller.userMapping[items[i].userUid] ??
+                                    items[i].id,
                                 amount: items[i].amount,
                                 title: items[i].title,
                                 subtitle: items[i].subtitle,
                                 timeAgo: items[i].timeAgo,
                                 isWithDrawal: items[i].type == 'withdrawal',
+                                onTap: () {
+                                  Get.to(() => AdminTransactionDetailsScreen(
+                                        transactionData: items[i].fullData,
+                                        userUid: items[i].userUid,
+                                        taskId: items[i].taskId,
+                                      ));
+                                },
                               ),
                               if (i != items.length - 1)
                                 const SizedBox(height: 12),

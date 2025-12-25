@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -352,52 +353,33 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
                               // Show image from database
                               return ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                child: Image.network(
-                                  imageUrl,
+                                child: CachedNetworkImage(
+                                  imageUrl: imageUrl,
                                   height: 250,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return CustomContainer(
-                                          height: 250,
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                          conColor: conBgColor,
-                                          child: Center(
-                                            child: CircularProgressIndicator(
-                                              color: redColor,
-                                              value:
-                                                  loadingProgress
-                                                          .expectedTotalBytes !=
-                                                      null
-                                                  ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                  : null,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                  errorBuilder: (context, error, stackTrace) {
+                                  placeholder: (context, url) => CustomContainer(
+                                    height: 250,
+                                    borderRadius: BorderRadius.circular(12),
+                                    conColor: conBgColor,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        color: redColor,
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) {
                                     // Show placeholder on error
                                     final placeholderImage =
                                         controller.selectedProofTab.value == 0
-                                        ? 'assets/images/Rectangle 34625290.png'
-                                        : 'assets/images/Rectangle 34625290 (1).png';
+                                            ? 'assets/images/Rectangle 34625290.png'
+                                            : 'assets/images/Rectangle 34625290 (1).png';
 
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.asset(
-                                        placeholderImage,
-                                        height: 250,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                      ),
+                                    return Image.asset(
+                                      placeholderImage,
+                                      height: 250,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
                                     );
                                   },
                                 ),
@@ -414,41 +396,41 @@ class _AdminAllTaskDetailsScreenState extends State<AdminAllTaskDetailsScreen> {
               const SizedBox(height: 20),
 
               // Action Buttons
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Hold Payment Button
-                    Expanded(
-                      child: CustomContainer(
-                        height: 56,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: blackColor, width: 1),
-                        alignment: Alignment.center,
-                        child: const CustomText(
-                          "Hold Payment",
-                          fontSize: 14,
-                          fontWeight: FontVariant.semiBold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    // Approve Payment Button
-                    Expanded(
-                      child: CustomButton(
-                        height: 56,
-                        label: "Approve Payment",
-                        fontSize: 14,
-                        fontWeight: FontVariant.semiBold,
-                        bgColor: redColor,
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 20),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       // Hold Payment Button
+              //       Expanded(
+              //         child: CustomContainer(
+              //           height: 56,
+              //           borderRadius: BorderRadius.circular(10),
+              //           border: Border.all(color: blackColor, width: 1),
+              //           alignment: Alignment.center,
+              //           child: const CustomText(
+              //             "Hold Payment",
+              //             fontSize: 14,
+              //             fontWeight: FontVariant.semiBold,
+              //           ),
+              //         ),
+              //       ),
+              //       const SizedBox(width: 14),
+              //       // Approve Payment Button
+              //       Expanded(
+              //         child: CustomButton(
+              //           height: 56,
+              //           label: "Approve Payment",
+              //           fontSize: 14,
+              //           fontWeight: FontVariant.semiBold,
+              //           bgColor: redColor,
+              //           onPressed: () {},
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              const SizedBox(height: 10),
             ],
           ),
         );

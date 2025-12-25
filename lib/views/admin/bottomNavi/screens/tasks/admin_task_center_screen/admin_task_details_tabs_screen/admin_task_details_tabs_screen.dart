@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -201,7 +202,7 @@ class _AdminTaskDetailsTabsScreenState
                             radius: 26,
                             backgroundImage:
                                 controller.helperImage.value.isNotEmpty
-                                ? NetworkImage(controller.helperImage.value)
+                                ? CachedNetworkImageProvider(controller.helperImage.value)
                                 : AssetImage("assets/images/prof.png")
                                       as ImageProvider,
                           ),
@@ -341,7 +342,7 @@ class _AdminTaskDetailsTabsScreenState
                             radius: 26,
                             backgroundImage:
                                 controller.taskCreatorImage.value.isNotEmpty
-                                ? NetworkImage(
+                                ? CachedNetworkImageProvider(
                                     controller.taskCreatorImage.value,
                                   )
                                 : AssetImage(

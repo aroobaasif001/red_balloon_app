@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -190,7 +191,7 @@ class ParticipantCard extends StatelessWidget {
                 radius: 26,
                 backgroundColor: redColor,
                 backgroundImage: (imageUrl != null && imageUrl!.isNotEmpty)
-                    ? NetworkImage(imageUrl!)
+                    ? CachedNetworkImageProvider(imageUrl!)
                     : null,
                 child: (imageUrl == null || imageUrl!.isEmpty)
                     ? CustomText(
@@ -317,7 +318,7 @@ class OfferCard extends StatelessWidget {
             radius: 24,
             backgroundColor: redColor,
             backgroundImage: (imageUrl != null && imageUrl!.isNotEmpty)
-                ? NetworkImage(imageUrl!)
+                ? CachedNetworkImageProvider(imageUrl!)
                 : null,
             child: (imageUrl == null || imageUrl!.isEmpty)
                 ? CustomText(

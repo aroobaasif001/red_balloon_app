@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
@@ -17,7 +18,10 @@ class AdminAfterTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         conColor: whiteColor,
         image: imageUrl != null && imageUrl!.isNotEmpty
-            ? DecorationImage(image: NetworkImage(imageUrl!), fit: BoxFit.cover)
+            ? DecorationImage(
+                image: CachedNetworkImageProvider(imageUrl!),
+                fit: BoxFit.cover,
+              )
             : const DecorationImage(
                 image: AssetImage('assets/images/Rectangle 34625290.png'),
                 scale: 4,

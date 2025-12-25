@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/model/task_model.dart';
@@ -192,19 +193,27 @@ class DisputeCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: task.imageUrl != null && task.imageUrl!.isNotEmpty
-                      ? Image.network(
-                          task.imageUrl!,
+                      ? CachedNetworkImage(
+                          imageUrl: task.imageUrl!,
                           height: 110,
                           width: 110,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              "assets/images/Rectangle 34625307.png",
-                              height: 110,
-                              width: 110,
-                              fit: BoxFit.cover,
-                            );
-                          },
+                          placeholder: (context, url) => SizedBox(
+                            height: 110,
+                            width: 110,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: redColor,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            "assets/images/Rectangle 34625307.png",
+                            height: 110,
+                            width: 110,
+                            fit: BoxFit.cover,
+                          ),
                         )
                       : Image.asset(
                           "assets/images/Rectangle 34625307.png",

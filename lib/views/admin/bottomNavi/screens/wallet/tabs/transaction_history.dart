@@ -9,6 +9,7 @@ import '../controllers/transaction_history_controller.dart';
 import '../widgets/admin_build_filter_row2.dart';
 import '../widgets/admin_build_summary_row2.dart';
 import '../widgets/admin_build_transaction_card2.dart';
+import '../transaction_details/admin_transaction_details_screen.dart';
 
 class AdminTransactionHistory extends StatelessWidget {
   const AdminTransactionHistory({super.key});
@@ -26,88 +27,89 @@ class AdminTransactionHistory extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Column(
             children: [
+              const SizedBox(height: 8),
+              // Fixed Header Section
+              adminBuildSummaryRow2(context),
+              const SizedBox(height: 20),
+              Obx(
+                () => adminBuildFilterRow2(
+                  context,
+                  selectedFilter: controller.selectedFilter.value,
+                  onFilterSelected: controller.setFilter,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Scrollable Items Section
               Expanded(
-                child: CustomContainer(
-                  padding: const EdgeInsets.all(16),
-                  child: Obx(() {
-                    if (controller.isLoading.value) {
-                      return const Center(
-                        child: CircularProgressIndicator(color: redColor),
-                      );
-                    }
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: redColor),
+                    );
+                  }
 
-                    if (controller.selectedFilter.value == TransactionHistoryFilter.withdrawals) {
-                      return Column(
-                        children: [
-                          const SizedBox(height: 8),
-                          adminBuildSummaryRow2(context),
-                          const SizedBox(height: 20),
-                          adminBuildFilterRow2(
-                            context,
-                            selectedFilter: controller.selectedFilter.value,
-                            onFilterSelected: controller.setFilter,
-                          ),
-                          const SizedBox(height: 100),
-                          const Center(
-                            child: CustomText(
-                              'Coming Soon',
-                              fontSize: 18,
-                              fontWeight: FontVariant.bold,
-                              color: walletGrey500Color,
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-
-                    final items = controller.filteredTransactions;
-                    return SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 8),
-                          adminBuildSummaryRow2(context),
-                          const SizedBox(height: 20),
-                          adminBuildFilterRow2(
-                            context,
-                            selectedFilter: controller.selectedFilter.value,
-                            onFilterSelected: controller.setFilter,
-                          ),
-                          const SizedBox(height: 20),
-                          if (items.isEmpty)
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(40.0),
-                                child: CustomText('No transactions found'),
-                              ),
-                            ),
-                          for (final item in items) ...[
-                            adminBuildTransactionCard2(
-                              context,
-                              typeLabel: '${item.type} ${item.code}',
-                              amount: '${item.isPositive ? '+' : '-'}SAR ${item.amount.toStringAsFixed(1)}',
-                              isPositive: item.isPositive,
-                              name: item.name,
-                              role: item.role,
-                              time: item.time,
-                            ),
-                            const SizedBox(height: 12),
-                          ],
-                          const SizedBox(height: 4),
-                          Center(
-                            child: CustomText(
-                              'Transaction history updates in real-time.',
-                              fontSize: 12,
-                              fontWeight: FontVariant.regular,
-                              color: txColor,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                        ],
+                  if (controller.selectedFilter.value ==
+                      TransactionHistoryFilter.withdrawals) {
+                    return const Center(
+                      child: CustomText(
+                        'Coming Soon',
+                        fontSize: 18,
+                        fontWeight: FontVariant.bold,
+                        color: walletGrey500Color,
                       ),
                     );
-                  }),
-                ),
+                  }
+
+                  final items = controller.filteredTransactions;
+                  if (items.isEmpty) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(40.0),
+                        child: CustomText('No transactions found'),
+                      ),
+                    );
+                  }
+
+                  return SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final item in items) ...[
+                          adminBuildTransactionCard2(
+                            context,
+                            typeLabel:
+                                '${item.type} ${controller.userMapping[item.userUid] ?? item.code}',
+                            amount:
+                                '${item.isPositive ? '+' : '-'}SAR ${item.amount.toStringAsFixed(1)}',
+                            isPositive: item.isPositive,
+                            name: item.name,
+                            role: item.role,
+                            time: item.time,
+                            onTap: () {
+                              Get.to(() => AdminTransactionDetailsScreen(
+                                    transactionData: item.fullData,
+                                    userUid: item.userUid,
+                                    taskId: item.taskId,
+                                  ));
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                        const SizedBox(height: 4),
+                        Center(
+                          child: CustomText(
+                            'Transaction history updates in real-time.',
+                            fontSize: 12,
+                            fontWeight: FontVariant.regular,
+                            color: txColor,
+                          ),
+                        ),
+                        const SizedBox(height: 30), // Bottom padding
+                      ],
+                    ),
+                  );
+                }),
               ),
             ],
           ),

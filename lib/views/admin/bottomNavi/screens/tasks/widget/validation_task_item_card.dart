@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
@@ -92,33 +93,26 @@ class ValidationTaskItemCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(14),
                   child: image.startsWith('http')
-                      ? Image.network(
-                          image,
+                      ? CachedNetworkImage(
+                          imageUrl: image,
                           width: 105,
                           height: 105,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Image.asset(
+                          placeholder: (context, url) => SizedBox(
+                            width: 105,
+                            height: 105,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: redColor,
+                              ),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
                             "assets/images/Rectangle 34625307.png",
                             width: 105,
                             height: 105,
                             fit: BoxFit.cover,
                           ),
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return SizedBox(
-                              width: 105,
-                              height: 105,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                  color: redColor,
-                                ),
-                              ),
-                            );
-                          },
                         )
                       : Image.asset(
                           image.isNotEmpty ? image : "assets/images/Rectangle 34625307.png",

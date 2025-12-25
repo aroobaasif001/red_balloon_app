@@ -14,8 +14,11 @@ Widget adminWalletTransactionCard(
   required String subtitle,
   required String timeAgo,
   bool isWithDrawal = false,
+  VoidCallback? onTap,
 }) {
-  return CustomContainer(
+  return GestureDetector(
+    onTap: onTap,
+    child: CustomContainer(
     padding: const EdgeInsets.all(14),
     conColor: whiteColor,
     borderRadius: BorderRadius.circular(16),
@@ -98,6 +101,7 @@ Widget adminWalletTransactionCard(
           ),
         ),
       ],
+      ),
     ),
   );
 }

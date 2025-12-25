@@ -6,17 +6,22 @@ import 'dart:async';
 enum TransactionHistoryFilter { all, escrow, withdrawals, refunds, releases }
 
 class TransactionHistoryItem {
+  final String userUid;
   final String id;
+  final String taskId;
   final String type;
-  final String code;
+  final String code; // This will remain as a fallback
   final double amount;
   final bool isPositive;
   final String name;
   final String role;
   final String time;
+  final Map<String, dynamic> fullData;
 
   TransactionHistoryItem({
+    required this.userUid,
     required this.id,
+    required this.taskId,
     required this.type,
     required this.code,
     required this.amount,
@@ -24,12 +29,14 @@ class TransactionHistoryItem {
     required this.name,
     required this.role,
     required this.time,
+    required this.fullData,
   });
 }
 
 class TransactionHistoryController extends GetxController {
   final selectedFilter = TransactionHistoryFilter.all.obs;
   final transactions = <TransactionHistoryItem>[].obs;
+  final userMapping = <String, String>{}.obs; // uid -> userId (RB-XXX)
   final isLoading = true.obs;
   final moneySendTotal = 0.0.obs;
 
@@ -39,7 +46,22 @@ class TransactionHistoryController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _listenToUserMapping();
     _listenToTransactions();
+  }
+
+  void _listenToUserMapping() {
+    _firestore.collection('users').snapshots().listen((snapshot) {
+      final map = <String, String>{};
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final userId = data['userId']?.toString();
+        if (userId != null) {
+          map[doc.id] = userId;
+        }
+      }
+      userMapping.value = map;
+    });
   }
 
   void _listenToTransactions() {
@@ -80,8 +102,14 @@ class TransactionHistoryController extends GetxController {
           totalSent += amount;
         }
 
+        final userUid = doc.reference.parent.parent?.id ?? '';
+        final realUserId = userMapping[userUid] ?? 
+            (taskId.startsWith('RB-') ? taskId : (taskId != 'N/A' && taskId.isNotEmpty ? 'RB-${taskId.substring(0, _min(5, taskId.length))}' : ''));
+
         fetchedItems.add(TransactionHistoryItem(
+          userUid: userUid,
           id: doc.id,
+          taskId: taskId,
           type: title,
           code: taskId.startsWith('RB-') ? taskId : (taskId != 'N/A' && taskId.isNotEmpty ? 'RB-${taskId.substring(0, _min(5, taskId.length))}' : ''),
           amount: amount,
@@ -89,6 +117,7 @@ class TransactionHistoryController extends GetxController {
           name: title.contains('Platform') ? 'Platform Revenue' : (description.isNotEmpty ? description : 'User'),
           role: title.contains('Platform') ? 'System' : 'User/Helper',
           time: _formatTime(createdAt),
+          fullData: data,
         ));
       }
 

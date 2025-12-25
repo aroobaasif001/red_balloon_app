@@ -12,8 +12,11 @@ Widget adminBuildTransactionCard2(
   required String name,
   required String role,
   required String time,
+  VoidCallback? onTap,
 }) {
-  return CustomContainer(
+  return GestureDetector(
+    onTap: onTap,
+    child: CustomContainer(
     padding: const EdgeInsets.all(14),
     conColor: whiteColor,
     borderRadius: BorderRadius.circular(16),
@@ -39,7 +42,7 @@ Widget adminBuildTransactionCard2(
                 fontWeight: FontVariant.semiBold,
                 color: textcolord,
                 overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+                maxLines: 2,
               ),
             ),
             const SizedBox(width: 8),
@@ -67,10 +70,10 @@ Widget adminBuildTransactionCard2(
         const SizedBox(height: 12),
         // Bottom Row: User Info and Time
         Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            // Left side: Avatar + User details (Takes most space)
+            // Left side: Avatar + User details (Takes all available space)
             Expanded(
-              flex: 5, 
               child: Row(
                 children: [
                   CustomContainer(
@@ -99,7 +102,7 @@ Widget adminBuildTransactionCard2(
                           fontWeight: FontVariant.medium,
                           color: textcolord,
                           overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                          maxLines: 2,
                         ),
                         CustomText(
                           role,
@@ -115,23 +118,19 @@ Widget adminBuildTransactionCard2(
                 ],
               ),
             ),
-            const SizedBox(width: 4),
-            // Right side: Time (Takes minimal needed space)
-            Flexible(
-              flex: 3,
-              child: CustomText(
-                time,
-                fontSize: 11,
-                fontWeight: FontVariant.regular,
-                color: txColor,
-                textAlign: TextAlign.right,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
+            const SizedBox(width: 8),
+            // Right side: Time (Pushed to the absolute right)
+            CustomText(
+              time,
+              fontSize: 11,
+              fontWeight: FontVariant.regular,
+              color: txColor,
+              textAlign: TextAlign.right,
             ),
           ],
         ),
       ],
+      ),
     ),
   );
 }

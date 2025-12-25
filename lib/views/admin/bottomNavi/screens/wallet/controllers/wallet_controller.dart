@@ -6,28 +6,42 @@ import 'dart:async';
 enum WalletFilter { all, withdrawal, refund, escrow }
 
 class WalletTransaction {
-  final String id;
+  final String transactionId;
+  final String userUid;
+  final String taskId;
   final String amount;
   final String title;
   final String subtitle;
   final String timeAgo;
   final String type; // 'withdrawal', 'refund', 'escrow'
   final String iconPath;
+  final Map<String, dynamic> fullData;
 
   const WalletTransaction({
-    required this.id,
+    required this.transactionId,
+    required this.userUid,
+    required this.taskId,
     required this.amount,
     required this.title,
     required this.subtitle,
     required this.timeAgo,
     required this.type,
     required this.iconPath,
+    required this.fullData,
   });
+
+  // Getter to provide a fallback ID
+  String get id => taskId.startsWith('RB-')
+      ? taskId
+      : 'RB-${taskId.substring(0, min(5, taskId.length))}';
+
+  int min(int a, int b) => a < b ? a : b;
 }
 
 class WalletController extends GetxController {
   final selectedFilter = WalletFilter.all.obs;
   final transactions = <WalletTransaction>[].obs;
+  final userMapping = <String, String>{}.obs; // uid -> userId (RB-XXX)
   final isLoading = false.obs;
 
   // Summary values
@@ -41,8 +55,23 @@ class WalletController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _listenToUserMapping();
     _listenToAllTransactions();
     _listenToEscrowTotals();
+  }
+
+  void _listenToUserMapping() {
+    _firestore.collection('users').snapshots().listen((snapshot) {
+      final map = <String, String>{};
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final userId = data['userId']?.toString();
+        if (userId != null) {
+          map[doc.id] = userId;
+        }
+      }
+      userMapping.value = map;
+    });
   }
 
   void _listenToEscrowTotals() {
@@ -100,14 +129,19 @@ class WalletController extends GetxController {
           iconPath = 'assets/icons/cash.png';
         }
 
+        final userUid = doc.reference.parent.parent?.id ?? '';
+
         allTrans.add(WalletTransaction(
-          id: taskId.startsWith('RB-') ? taskId : 'RB-${taskId.substring(0, min(5, taskId.length))}',
+          transactionId: doc.id,
+          userUid: userUid,
+          taskId: taskId,
           amount: 'SAR ${amountVal.toStringAsFixed(1)}',
           title: title,
           subtitle: data['description']?.toString() ?? '',
           timeAgo: _getTimeAgo(createdAtTs),
           type: walletType,
           iconPath: iconPath,
+          fullData: data,
         ));
       }
       transactions.value = allTrans;
