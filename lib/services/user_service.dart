@@ -83,7 +83,7 @@ class UserService {
         }
       }
 
-      final rating = count > 0 ? (sum / count) : 5.0;
+      final rating = count > 0 ? (sum / count) : 0.0;
       final totalReviews = count;
 
       print('✅ UserService: Stats - Completed: $tasksCompleted, Requested: $tasksRequested');

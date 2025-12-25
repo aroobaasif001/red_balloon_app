@@ -34,15 +34,22 @@ class WalletController extends GetxController {
     availableBalance.bindStream(_walletService.getWalletBalance());
     lockedBalance.bindStream(_walletService.getLockedBalance());
 
-    // Listen to real-time transactions
-    _walletService.getTransactions().listen((list) {
+      _walletService.getTransactions().listen((list) {
       final processedList = list.map((item) {
         final isCredit = item['type'] == 'credit';
+        final double rawAmount = (item['amount'] ?? 0.0).toDouble();
+        
+        // Floor to 2 decimal places if more than 2 digits after dot
+        final double flooredAmount = (rawAmount * 100).floorToDouble() / 100;
+        final String amountStr = flooredAmount.toString().endsWith('.0') 
+            ? flooredAmount.toInt().toString() 
+            : flooredAmount.toString();
+
         return {
           'type': item['type'],
           'title': item['title'],
           'description': item['description'],
-          'amount': '${isCredit ? '+' : '-'}${item['amount']}',
+          'amount': '${isCredit ? '+' : '-'}$amountStr',
           'amountColor': isCredit ? walletSuccessColor.value : walletErrorColor.value,
           'daysAgo': _formatDate(item['createdAt']),
           'icon': isCredit ? 'assets/icons/check_circle.png' : 'assets/icons/arrow_down.png',

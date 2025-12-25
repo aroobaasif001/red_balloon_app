@@ -99,7 +99,7 @@ class ProviderCard extends StatelessWidget {
                             ),
                           ),
                           _buildBadge(
-                            text: id.isEmpty ? 'RB-124' : id,
+                            text: id.isEmpty ? 'RB-0000' : id,
                             bgColor: const Color(0xffFFF1F1),
                             textColor: const Color(0xffFE7062),
                           ),
@@ -108,14 +108,15 @@ class ProviderCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          const Icon(
-                            Icons.star,
-                            size: 18,
-                            color: Color(0xffDC4137),
-                          ),
-                          const SizedBox(width: 4),
+                          if (rating != "0.0")
+                            const Icon(
+                              Icons.star,
+                              size: 18,
+                              color: Color(0xffDC4137),
+                            ),
+                          if (rating != "0.0") const SizedBox(width: 4),
                           CustomText(
-                            rating,
+                            rating == "0.0" ? "No Rating" : rating,
                             fontSize: 14,
                             fontWeight: FontVariant.bold,
                             color: const Color(0xff333333),

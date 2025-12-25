@@ -83,8 +83,12 @@ class TaskReviewController extends GetxController {
               // 🔥 Only auto-reject if task is still "in progress"
               if (taskStatus.toLowerCase() == 'in progress') {
                 print('⏰ Task still in progress - Auto-rejecting to validation');
-                selectedRejectionReason.value = 'Work not completed'; // Default reason
-                submitRejection(taskId: currentTaskId!, proofId: currentProofId!);
+                selectedRejectionReason.value = 'Auto Review Timeout'; // Default reason
+                submitRejection(
+                  taskId: currentTaskId!,
+                  proofId: currentProofId!,
+                  isAuto: true,
+                );
               } else {
                 print('✅ Task status already changed to "$taskStatus" - Skipping auto-validation');
               }
@@ -115,6 +119,7 @@ class TaskReviewController extends GetxController {
   Future<void> submitRejection({
     required String taskId,
     required String proofId,
+    bool isAuto = false,
   }) async {
     try {
       // 🔥 Cancel timer immediately to prevent auto-validation
@@ -174,14 +179,23 @@ class TaskReviewController extends GetxController {
 
       // 🔥 Trigger Notifications
       if (helperId.value.isNotEmpty) {
-        final ownerName = currentUser.displayName ?? 'Owner';
-        
-        await NotificationService.instance.notifyProofRejected(
-          helperId: helperId.value.trim(),
-          taskTitle: taskTitle.value,
-          taskId: taskId,
-          rejectedByName: ownerName,
-        );
+        if (isAuto) {
+          // Timer expired case
+          await NotificationService.instance.notifyProofReviewTimeout(
+            helperId: helperId.value.trim(),
+            taskTitle: taskTitle.value,
+            taskId: taskId,
+          );
+        } else {
+          // Manual rejection case
+          final ownerName = currentUser.displayName ?? 'Owner';
+          await NotificationService.instance.notifyProofRejected(
+            helperId: helperId.value.trim(),
+            taskTitle: taskTitle.value,
+            taskId: taskId,
+            rejectedByName: ownerName,
+          );
+        }
       }
       
       // 🔥 Broadcast to all users (EXCLUDING helper and current owner)

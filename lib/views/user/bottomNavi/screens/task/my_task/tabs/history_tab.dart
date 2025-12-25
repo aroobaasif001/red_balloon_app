@@ -142,7 +142,7 @@ class HistoryTab extends StatelessWidget {
                                     .data();
 
                                 // Fetch userId from users collection using rejectedBy
-                                String userId = 'RB-00000';
+                                String userId = 'RB-0000';
                                 final rejectedBy = validationData['rejectedBy'];
                                 if (rejectedBy != null &&
                                     rejectedBy.isNotEmpty) {
@@ -153,7 +153,7 @@ class HistoryTab extends StatelessWidget {
                                       .get();
                                   if (userDoc.exists) {
                                     userId =
-                                        userDoc.data()?['userId'] ?? 'RB-00000';
+                                        userDoc.data()?['userId'] ?? 'RB-0000';
                                   }
                                 }
 

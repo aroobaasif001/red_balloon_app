@@ -7,7 +7,7 @@ import 'package:red_balloon_app/services/task_service.dart';
 import 'package:red_balloon_app/services/user_service.dart';
 
 import '../../../../../../../services/notification_services.dart';
-import '../my_task_screen.dart';
+import '../../../../bottom_navi_screen.dart';
 
 class InProgressTaskController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -105,7 +105,7 @@ class InProgressTaskController extends GetxController {
 
               // Navigate back
               if (Get.isRegistered<InProgressTaskController>()) {
-                Get.offAll(() => MyTaskScreen());
+                Get.offAll(() => BottomNaviScreen(initialIndex: 1));
               }
             }
           }

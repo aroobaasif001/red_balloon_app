@@ -9,7 +9,7 @@ class RatingRow extends StatelessWidget {
   
   const RatingRow({
     super.key,
-    this.rating = 4.9,
+    this.rating = 0.0,
     this.role = 'Provider',
   });
 
@@ -17,10 +17,10 @@ class RatingRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.star, color: yellow, size: 16),
-        const SizedBox(width: 4),
+        if (rating > 0) const Icon(Icons.star, color: yellow, size: 16),
+        if (rating > 0) const SizedBox(width: 4),
         CustomText(
-          rating.toStringAsFixed(1),
+          rating == 0.0 ? "No Rating" : rating.toStringAsFixed(1),
           fontSize: 13,
           fontWeight: FontVariant.semiBold,
           color: textcolord,
