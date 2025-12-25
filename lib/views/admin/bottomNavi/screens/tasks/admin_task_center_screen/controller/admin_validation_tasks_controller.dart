@@ -41,6 +41,13 @@ class AdminValidationTasksController extends GetxController {
       for (var validationDoc in validationsSnapshot.docs) {
         try {
           final validationData = validationDoc.data();
+          
+          // 🔥 Only show if funds have NOT been distributed yet
+          if (validationData['isFundsDistributed'] == true) {
+            print('⏭️ Skipping already settled validation: ${validationDoc.id}');
+            continue;
+          }
+
           final taskId = validationData['taskId'];
 
           if (taskId != null) {

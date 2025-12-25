@@ -879,6 +879,45 @@ class NotificationService {
     }
   }
 
+  /// Notify requester/helper about a validation loss
+  Future<void> notifyValidationLoser({
+    required String loserId,
+    required String taskTitle,
+    required String taskId,
+    required bool isHelper, // true if helper, false if requester
+  }) async {
+    try {
+      final title = 'Validation Settled';
+      final body = isHelper
+          ? 'The validation for "$taskTitle" has been settled in favor of the requester.'
+          : 'The validation for "$taskTitle" has been settled in favor of the helper.';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(loserId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.danger.name,
+            'category': 'validation_lost',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      await _sendFcmToUser(loserId, title, body, {
+        'route': 'history_tab',
+        'taskId': taskId,
+        'category': 'validation_result',
+      });
+
+    } catch (e) {
+      debugPrint('Error sending validation loser notification: $e');
+    }
+  }
+
   /// Notify participant that help was requested
   Future<void> notifyDisputeDismissedSplit({
     required String helperId,

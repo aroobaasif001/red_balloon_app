@@ -271,15 +271,35 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
             children: [
               // Hold Payment Button
               Expanded(
-                child: CustomContainer(
-                  height: 56,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: blackColor, width: 1),
-                  alignment: Alignment.center,
-                  child: const CustomText(
-                    "Hold Payment",
-                    fontSize: 14,
-                    fontWeight: FontVariant.semiBold,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.dialog(
+                      AlertDialog(
+                        title: const Text('Hold Payment?'),
+                        content: const Text('Are you sure you want to hold payment and refund the requester?'),
+                        actions: [
+                          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+                          TextButton(
+                            onPressed: () {
+                              Get.back();
+                              controller.holdPayment();
+                            },
+                            child: const Text('Proceed', style: TextStyle(color: redColor)),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: CustomContainer(
+                    height: 56,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: blackColor, width: 1),
+                    alignment: Alignment.center,
+                    child: const CustomText(
+                      "Hold Payment",
+                      fontSize: 14,
+                      fontWeight: FontVariant.semiBold,
+                    ),
                   ),
                 ),
               ),
@@ -292,7 +312,24 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                   fontSize: 14,
                   fontWeight: FontVariant.semiBold,
                   bgColor: redColor,
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.dialog(
+                      AlertDialog(
+                        title: const Text('Approve Payment?'),
+                        content: const Text('Are you sure you want to approve payment to the helper?'),
+                        actions: [
+                          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+                          TextButton(
+                            onPressed: () {
+                              Get.back();
+                              controller.approvePayment();
+                            },
+                            child: const Text('Approve', style: TextStyle(color: redColor)),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
