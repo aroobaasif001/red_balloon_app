@@ -3,10 +3,14 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/services/task_service.dart';
+import 'package:red_balloon_app/services/wallet_service.dart';
 
 class ValidationScreenController extends GetxController {
   final TaskService _taskService = TaskService();
+  final WalletService _walletService = WalletService();
+  final NotificationService _notificationService = NotificationService.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -438,32 +442,96 @@ class ValidationScreenController extends GetxController {
   /// Finalize voting when timer expires (ONLY place isVotingCompleted = true)
   Future<void> _finalizeVoting() async {
     try {
-      // Determine winner if not already set
+      // 0. Check if already distributed in DB (to handle manual resets correctly)
+      final vDoc = await _firestore.collection('validations').doc(validationId.value).get();
+      if (vDoc.exists && (vDoc.data() as Map<String, dynamic>)['isFundsDistributed'] == true) {
+        print('ℹ️ Validation ${validationId.value} already paid. Closing.');
+        await _firestore.collection('validations').doc(validationId.value).update({'isVotingCompleted': true});
+        return;
+      }
+
+      // Determine winner only if consensus reached (5+ votes)
       String? winner;
       if (helperVotes.value >= 5 || requesterVotes.value >= 5) {
         winner = helperVotes.value >= 5 ? 'helper' : 'requester';
-      } else if (helperVotes.value <= 4 && requesterVotes.value <= 4) {
-        // Send to admin
+      } else {
+        // 🔥 No consensus after 15 minutes -> Send to admin
         await _sendToAdmin();
         return;
-      } else {
-        winner = helperVotes.value > requesterVotes.value
-            ? 'helper'
-            : 'requester';
       }
 
-      // 🔥 ONLY set isVotingCompleted when timer expires
-      await _firestore.collection('validations').doc(validationId.value).update(
-        {
-          'isVotingCompleted': true, // 🔥 ONLY here!
-          'winner': winner,
-          'helperVotes': helperVotes.value,
-          'requesterVotes': requesterVotes.value,
-          'completedAt': FieldValue.serverTimestamp(),
-        },
-      );
+      // 🔥 1. PRE-FINALIZATION TASKS (Distribute Funds & Notifications)
+      final taskData = await _taskService.getTaskById(taskId.value);
+      if (taskData != null) {
+        final totalAmount = (taskData['budget'] ?? 0.0).toDouble();
+        final helperUid = taskData['acceptedOfferUid'];
+        final requesterUid = taskData['uid'];
+        final taskTitle = taskData['title'] ?? 'Task';
 
-      print('✅ Voting finalized. isVotingCompleted = true. Winner: $winner');
+        // Fetch latest voting doc for voters list
+        final votingDoc = await _firestore.collection('voting').doc(taskId.value).get();
+        if (votingDoc.exists) {
+          final votersData = List<Map<String, dynamic>>.from(votingDoc.data()?['voters'] ?? []);
+          final winnerVoterUids = votersData
+              .where((v) => v['voteType'] == winner)
+              .map((v) => (v['userId'] ?? v['uid']) as String)
+              .toList();
+
+          // A. Distribute Funds (Updates Wallet, Escrow, and Validation doc)
+          final distributionResult = await _walletService.distributeValidationFunds(
+            validationId: validationId.value,
+            taskId: taskId.value,
+            winner: winner!,
+            winnerVoterUids: winnerVoterUids,
+            totalAmount: totalAmount,
+            taskTitle: taskTitle,
+            helperUid: helperUid,
+            requesterUid: requesterUid,
+          );
+
+          if (distributionResult['success'] == true) {
+            // B. Mark Task as payment finalized
+            await _firestore.collection('tasks').doc(taskId.value).update({
+              'isPaymentFinalized': true,
+              'status': winner == 'helper' ? 'completed' : 'refunded',
+            });
+
+            // C. Send Notifications
+            await _notificationService.notifyValidationWinner(
+              winnerId: winner == 'helper' ? helperUid! : requesterUid!,
+              taskTitle: taskTitle,
+              taskId: taskId.value,
+              amount: distributionResult['winnerAmount'],
+              isRefund: winner == 'requester',
+            );
+
+            if (winnerVoterUids.isNotEmpty) {
+              final sharePerVoter = (distributionResult['voterShareTotal'] ?? 0.0) / winnerVoterUids.length;
+              for (var vUid in winnerVoterUids) {
+                await _notificationService.notifyValidationVoterReward(
+                  voterId: vUid,
+                  taskTitle: taskTitle,
+                  taskId: taskId.value,
+                  amount: sharePerVoter,
+                );
+              }
+            }
+
+            // D. FINALLY Mark validation as completed so it disappears from hub/screen
+            await _firestore.collection('validations').doc(validationId.value).update({
+              'isVotingCompleted': true,
+              'winner': winner,
+              'helperVotes': helperVotes.value,
+              'requesterVotes': requesterVotes.value,
+              'completedAt': FieldValue.serverTimestamp(),
+            });
+
+            print('✅ Manual Finalization Successful for $winner');
+          } else {
+            print('⚠️ Manual distribution failed: ${distributionResult['message']}');
+          }
+        }
+      }
 
       Get.snackbar(
         'Validation Complete',

@@ -278,6 +278,56 @@ class NotificationService {
     }
   }
 
+  /// Notify helper that their proof moved to validation due to requester timeout
+  Future<void> notifyProofReviewTimeout({
+    required String helperId,
+    required String taskTitle,
+    required String taskId,
+  }) async {
+    try {
+      final title = 'Task Moved to Validation';
+      final body =
+          'The requester did not review your proof for "$taskTitle" in time. It has been moved to community validation.';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(helperId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.warning.name,
+            'category': 'proof_review_timeout',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(helperId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: {
+            'category': 'proof_review_timeout',
+            'taskId': taskId,
+            'route': 'history_tab',
+          },
+          recipientSdk: userDoc.data()?['androidSdk'] as int?,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending proof review timeout notification: $e');
+    }
+  }
+
   /// Notify ALL users about a new task in validation hub
   /// [excludeUserIds] is used to skip helper and requester/owner
   Future<void> broadcastValidationTask({
@@ -750,7 +800,86 @@ class NotificationService {
   }
 
 
-  /// Notify both parties when a dispute is dismissed with a split
+  /// Notify requester/helper about a validation win
+  Future<void> notifyValidationWinner({
+    required String winnerId,
+    required String taskTitle,
+    required String taskId,
+    required double amount,
+    required bool isRefund, // true if requester, false if helper
+  }) async {
+    try {
+      final title = isRefund ? 'Validation Won - Refund' : 'Validation Won - Payment';
+      final body = isRefund 
+          ? 'You won the validation for "$taskTitle". A refund of SAR ${amount.toStringAsFixed(2)} has been credited.'
+          : 'You won the validation for "$taskTitle". A payment of SAR ${amount.toStringAsFixed(2)} has been credited.';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(winnerId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.success.name,
+            'category': isRefund ? 'validation_win_refund' : 'validation_win_payment',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'amount': amount,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      await _sendFcmToUser(winnerId, title, body, {
+        'route': 'wallet_tab',
+        'taskId': taskId,
+        'category': 'validation_result',
+      });
+
+    } catch (e) {
+      debugPrint('Error sending validation winner notification: $e');
+    }
+  }
+
+  /// Notify voter that they received a reward for a correct vote
+  Future<void> notifyValidationVoterReward({
+    required String voterId,
+    required String taskTitle,
+    required String taskId,
+    required double amount,
+  }) async {
+    try {
+      final title = 'Validation Reward Received!';
+      final body = 'You received SAR ${amount.toStringAsFixed(2)} for your correct vote on task "$taskTitle".';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(voterId)
+          .collection('items')
+          .add({
+            'title': title,
+            'body': body,
+            'type': NoticeType.success.name,
+            'category': 'validation_voter_reward',
+            'taskId': taskId,
+            'taskTitle': taskTitle,
+            'amount': amount,
+            'read': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+      await _sendFcmToUser(voterId, title, body, {
+        'route': 'wallet_tab',
+        'taskId': taskId,
+        'category': 'validation_voter_reward',
+      });
+
+    } catch (e) {
+      debugPrint('Error sending validation voter notification: $e');
+    }
+  }
+
+  /// Notify participant that help was requested
   Future<void> notifyDisputeDismissedSplit({
     required String helperId,
     required String requesterId,

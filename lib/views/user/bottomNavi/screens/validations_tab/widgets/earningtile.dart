@@ -7,12 +7,14 @@ class EarningTile extends StatelessWidget {
   final String title;
   final String date;
   final String amount;
+  final String status;
 
   const EarningTile({
     super.key,
     required this.title,
     required this.date,
     required this.amount,
+    required this.status,
   });
 
   @override
@@ -33,29 +35,34 @@ class EarningTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           /// LEFT SIDE
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomText(
-                title,
-                fontSize: 14,
-                fontWeight: FontVariant.regular,
-                color: totaTextColor,
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Image(
-                    image: AssetImage('assets/icons/fas5.png'),
-                    height: 15,
-                    width: 15,
-                  ),
-                  const SizedBox(width: 6),
-                  CustomText(date, fontSize: 12, color: grey5Color),
-                ],
-              ),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(
+                  title,
+                  fontSize: 14,
+                  fontWeight: FontVariant.regular,
+                  color: totaTextColor,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Image(
+                      image: AssetImage('assets/icons/fas5.png'),
+                      height: 15,
+                      width: 15,
+                    ),
+                    const SizedBox(width: 6),
+                    CustomText(date, fontSize: 12, color: grey5Color),
+                  ],
+                ),
+              ],
+            ),
           ),
+          const SizedBox(width: 10),
 
           /// RIGHT SIDE
           Column(
@@ -66,11 +73,11 @@ class EarningTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 conColor: white3Color,
                 child: Row(
-                  children: const [
-                    Icon(Icons.check_circle, size: 14, color: greenColor),
-                    SizedBox(width: 4),
+                  children: [
+                    const Icon(Icons.check_circle, size: 14, color: greenColor),
+                    const SizedBox(width: 4),
                     CustomText(
-                      "Correct",
+                      status,
                       fontSize: 12,
                       fontWeight: FontVariant.regular,
                       color: historyGreenColor,

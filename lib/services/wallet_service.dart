@@ -769,4 +769,160 @@ class WalletService {
       return {'success': false, 'message': 'An error occurred: ${e.toString()}'};
     }
   }
+  /// Distribute funds after validation consensus (Requester Win vs Helper Win)
+  Future<Map<String, dynamic>> distributeValidationFunds({
+    required String validationId,
+    required String taskId,
+    required String winner, // 'helper' or 'requester'
+    required List<String> winnerVoterUids,
+    required double totalAmount,
+    required String taskTitle,
+    required String helperUid,
+    required String requesterUid,
+  }) async {
+    try {
+      if (helperUid.isEmpty || requesterUid.isEmpty) {
+        return {'success': false, 'message': 'Missing Helper or Requester UID'};
+      }
+
+      final validationRef = _firestore.collection('validations').doc(validationId);
+      final requesterWalletRef = _walletCollection.doc(requesterUid);
+      final helperWalletRef = _walletCollection.doc(helperUid);
+
+      final result = await _firestore.runTransaction((transaction) async {
+        // 1. Mark validation as distributed to prevent double payment
+        final vSnap = await transaction.get(validationRef);
+        if (vSnap.exists && (vSnap.data() as Map<String, dynamic>)['isFundsDistributed'] == true) {
+          return {'success': false, 'message': 'Funds already distributed'};
+        }
+
+        // 2. Fetch wallets (ALL READS MUST BE FIRST)
+        final reqSnap = await transaction.get(requesterWalletRef);
+        final helpSnap = await transaction.get(helperWalletRef);
+        
+        // 🔥 Pre-fetch ALL voter wallets before any writes
+        final Map<String, DocumentSnapshot> voterSnaps = {};
+        for (var vUid in winnerVoterUids) {
+          voterSnaps[vUid] = await transaction.get(_walletCollection.doc(vUid));
+        }
+
+        double winnerShare = 0;
+        double platformShare = 0;
+        double voterPoolShare = 0;
+
+        // 3. Perform Writes
+        if (winner == 'requester') {
+          // Requester wins (Refund)
+          winnerShare = totalAmount * 0.96;
+          voterPoolShare = totalAmount * 0.02;
+          platformShare = totalAmount * 0.02;
+
+          double currentReqBal = (reqSnap.data() as Map<String, dynamic>?)?['balance'] ?? 0.0;
+          double currentEscrow = (reqSnap.data() as Map<String, dynamic>?)?['escrowBalance'] ?? 0.0;
+
+          // Refund Requester (add to balance, deduct from escrow)
+          transaction.set(requesterWalletRef, {
+            'balance': currentReqBal + winnerShare,
+            'escrowBalance': (currentEscrow - totalAmount).clamp(0.0, double.infinity),
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+          // Requester Transaction
+          final transRef = requesterWalletRef.collection('transactions').doc();
+          transaction.set(transRef, {
+            'id': transRef.id,
+            'title': 'Validation Win - Refund',
+            'description': 'Refund (96%) for task "$taskTitle"',
+            'amount': winnerShare,
+            'type': 'credit',
+            'status': 'completed',
+            'taskId': taskId,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+        } else {
+          // Helper wins (Payment)
+          winnerShare = totalAmount * 0.85;
+          voterPoolShare = totalAmount * 0.075;
+          platformShare = totalAmount * 0.075;
+
+          double currentHelpBal = (helpSnap.data() as Map<String, dynamic>?)?['balance'] ?? 0.0;
+          double currentEscrow = (reqSnap.data() as Map<String, dynamic>?)?['escrowBalance'] ?? 0.0;
+
+          // Pay Helper
+          transaction.set(helperWalletRef, {
+            'balance': currentHelpBal + winnerShare,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+          // Clean Requester Escrow
+          transaction.set(requesterWalletRef, {
+            'escrowBalance': (currentEscrow - totalAmount).clamp(0.0, double.infinity),
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+          // Helper Transaction
+          final transRef = helperWalletRef.collection('transactions').doc();
+          transaction.set(transRef, {
+            'id': transRef.id,
+            'title': 'Validation Win - Payment',
+            'description': 'Payment (85%) for task "$taskTitle"',
+            'amount': winnerShare,
+            'type': 'credit',
+            'status': 'completed',
+            'taskId': taskId,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        // 4. Voter Distribution Writes
+        if (winnerVoterUids.isNotEmpty) {
+          double sharePerVoter = voterPoolShare / winnerVoterUids.length;
+          for (var voterUid in winnerVoterUids) {
+            final voterSnap = voterSnaps[voterUid];
+            double currentVoterBal = (voterSnap?.data() as Map<String, dynamic>?)?['balance'] ?? 0.0;
+
+            final voterWalletRef = _walletCollection.doc(voterUid);
+            transaction.set(voterWalletRef, {
+              'balance': currentVoterBal + sharePerVoter,
+              'updatedAt': FieldValue.serverTimestamp(),
+            }, SetOptions(merge: true));
+
+            // Voter Transaction
+            final transRef = voterWalletRef.collection('transactions').doc();
+            transaction.set(transRef, {
+              'id': transRef.id,
+              'title': 'Validation Reward',
+              'description': 'Reward for correct vote on "$taskTitle"',
+              'amount': sharePerVoter,
+              'type': 'credit',
+              'status': 'completed',
+              'taskId': taskId,
+              'createdAt': FieldValue.serverTimestamp(),
+            });
+          }
+        }
+
+        // 5. Update Validation Doc
+        transaction.update(validationRef, {
+          'isFundsDistributed': true,
+          'fundsDistributedAt': FieldValue.serverTimestamp(),
+          'platformFee': platformShare,
+          'voterPoolReward': voterPoolShare,
+        });
+
+        return {
+          'success': true,
+          'winnerAmount': winnerShare,
+          'voterShareTotal': voterPoolShare,
+          'platformFee': platformShare,
+        };
+      });
+
+      return result;
+    } catch (e) {
+      print('Error distributing validation funds: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
 }

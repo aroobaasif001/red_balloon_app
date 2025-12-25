@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 import '../widgets/earningtile.dart';
+import 'controller/validation_history_controller.dart';
 
 class ValidationHistoryScreen extends StatelessWidget {
   const ValidationHistoryScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(ValidationHistoryController());
+
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -17,7 +22,11 @@ class ValidationHistoryScreen extends StatelessWidget {
         body: Column(
           children: [
             /// 🔴 HEADER
-            CustomAppBar1(title: 'Validation Hub', showRightImage: false),
+            CustomAppBar1(
+              title: 'Validation Hub',
+              showRightImage: false,
+              showLeftImage: true,
+            ),
 
             /// SAB UI AB EK HI PADDING KE ANDAR
             Expanded(
@@ -28,7 +37,7 @@ class ValidationHistoryScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 16),
 
-                    /// 🔵 TOP TOTAL EARNINGS CARD (IMAGE JAISE)
+                    /// 🔵 TOP TOTAL EARNINGS CARD
                     CustomContainer(
                       height: 180,
                       conColor: whiteColor,
@@ -68,12 +77,12 @@ class ValidationHistoryScreen extends StatelessWidget {
                                 color: totaTextColor,
                               ),
                               const SizedBox(width: 6),
-                              CustomText(
-                                "+120 SAR",
+                              Obx(() => CustomText(
+                                "+${controller.totalEarning.value.toStringAsFixed(1)} SAR",
                                 fontSize: 14,
                                 fontWeight: FontVariant.bold,
                                 color: historyGreenColor,
-                              ),
+                              )),
                             ],
                           ),
                         ),
@@ -100,31 +109,34 @@ class ValidationHistoryScreen extends StatelessWidget {
 
                     /// 🔵 LIST + SCROLL AREA
                     Expanded(
-                      child: ListView(
-                        children: [
-                          EarningTile(
-                            title: "Help Move Furniture",
-                            date: "Oct 25 · 2 PM",
-                            amount: "+3.5 SAR",
-                          ),
-                          EarningTile(
-                            title: "Deliver Parcel",
-                            date: "Oct 24 · 11 AM",
-                            amount: "+2.0 SAR",
-                          ),
-                          EarningTile(
-                            title: "Water Garden",
-                            date: "Oct 23 · 4 PM",
-                            amount: "+3.0 SAR",
-                          ),
-                          EarningTile(
-                            title: "Fix Leaky Faucet",
-                            date: "Oct 22 · 10 AM",
-                            amount: "+4.0 SAR",
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      ),
+                      child: Obx(() {
+                        if (controller.isLoading.value && controller.earnings.isEmpty) {
+                          return const Center(child: CircularProgressIndicator(color: redColor));
+                        }
+
+                        if (controller.earnings.isEmpty) {
+                          return const Center(
+                            child: CustomText(
+                              "No validation earnings yet.",
+                              color: grey5Color,
+                              fontSize: 16,
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          itemCount: controller.earnings.length,
+                          itemBuilder: (context, index) {
+                            final item = controller.earnings[index];
+                            return EarningTile(
+                              title: item['title'],
+                              date: item['date'],
+                              amount: item['amount'],
+                              status: item['status'],
+                            );
+                          },
+                        );
+                      }),
                     ),
                   ],
                 ),

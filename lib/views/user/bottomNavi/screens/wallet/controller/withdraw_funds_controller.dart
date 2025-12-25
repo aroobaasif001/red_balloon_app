@@ -61,25 +61,27 @@ class WithdrawFundsController extends GetxController {
 
   void showMethodSelection() {
     Get.bottomSheet(
-      CustomContainer(
-        conColor: whiteColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const CustomText('Select Payment Method', fontSize: 18, fontWeight: FontVariant.bold),
-            const SizedBox(height: 20),
-            ...methods.map((method) => ListTile(
-              title: CustomText(method),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-              onTap: () {
-                setMethod(method);
-                Get.back();
-              },
-            )).toList(),
-          ],
+      SafeArea(
+        child: CustomContainer(
+          conColor: whiteColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const CustomText('Select Payment Method', fontSize: 18, fontWeight: FontVariant.bold),
+              const SizedBox(height: 20),
+              ...methods.map((method) => ListTile(
+                title: CustomText(method),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                onTap: () {
+                  setMethod(method);
+                  Get.back();
+                },
+              )).toList(),
+            ],
+          ),
         ),
       ),
     );
@@ -94,25 +96,27 @@ class WithdrawFundsController extends GetxController {
     final banks = banksByMethod[selectedMethod.value] ?? [];
 
     Get.bottomSheet(
-      CustomContainer(
-        conColor: whiteColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomText('Select ${selectedMethod.value}', fontSize: 18, fontWeight: FontVariant.bold),
-            const SizedBox(height: 20),
-            ...banks.map((bank) => ListTile(
-              title: CustomText(bank),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-              onTap: () {
-                setBank(bank);
-                Get.back();
-              },
-            )).toList(),
-          ],
+      SafeArea(
+        child: CustomContainer(
+          conColor: whiteColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomText('Select ${selectedMethod.value}', fontSize: 18, fontWeight: FontVariant.bold),
+              const SizedBox(height: 20),
+              ...banks.map((bank) => ListTile(
+                title: CustomText(bank),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                onTap: () {
+                  setBank(bank);
+                  Get.back();
+                },
+              )).toList(),
+            ],
+          ),
         ),
       ),
     );
@@ -143,53 +147,8 @@ class WithdrawFundsController extends GetxController {
   }
 
   Future<void> submitWithdrawal() async {
-    final amountText = amountController.text.trim();
-    final method = selectedMethod.value;
-    final bank = selectedBank.value;
-    final account = bankAccountController.text.trim();
-
-    if (amountText.isEmpty || method.isEmpty || (method == 'Bank Transfer' && bank == 'Select Bank') || account.isEmpty) {
-      Get.snackbar('Error', 'Please fill all fields');
-      return;
-    }
-
-    final double amount = double.tryParse(amountText) ?? 0.0;
-    if (amount <= 0) {
-      Get.snackbar('Error', 'Invalid amount');
-      return;
-    }
-
-    if (amount > availableBalance.value) {
-      Get.snackbar('Error', 'Insufficient available balance');
-      return;
-    }
-
-    if (amount < 100) {
-      Get.snackbar('Error', 'Minimum withdrawal is SAR 100');
-      return;
-    }
-
-    if (amount > currentMaxLimit.value) {
-      Get.snackbar('Error', 'Amount exceeds bank limit of SAR ${currentMaxLimit.value}');
-      return;
-    }
-
-    // Call service to save request
-    final success = await _walletService.requestWithdrawal(
-      amount: amount,
-      method: method,
-      bank: bank,
-      accountNumber: account,
-    );
-
-    if (success) {
-      Get.snackbar('Success', 'Withdrawal request submitted successfully');
-      amountController.clear();
-      bankAccountController.clear();
-      // Status will update in real-time due to stream binding
-    } else {
-      Get.snackbar('Error', 'Failed to submit withdrawal request');
-    }
+    Get.snackbar('Alert', 'Coming soon. Withdrawal API integration is pending.');
+    return;
   }
 
   String formatCurrency(double amount) {

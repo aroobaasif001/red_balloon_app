@@ -207,13 +207,19 @@ class UserProfileScreen extends StatelessWidget {
                   ? tasksRequested.toString().padLeft(2, '0')
                   : controller.tasksRequested.value.toString().padLeft(2, '0'),
             )),
-            Obx(() => _buildStatCard(
-              label: "User's Rating",
-              value: (controller.isLoading.value) 
-                  ? rating.toStringAsFixed(1)
-                  : (controller.totalReviews.value == 0 ? rating.toStringAsFixed(1) : controller.averageRating.value.toStringAsFixed(1)),
-              isRating: true,
-            )),
+            Obx(() {
+              final bool noRating = !controller.isLoading.value && controller.totalReviews.value == 0;
+              return _buildStatCard(
+                label: "User's Rating",
+                value: noRating 
+                    ? "No ratings exist for this user." 
+                    : (controller.isLoading.value 
+                        ? rating.toStringAsFixed(1) 
+                        : controller.averageRating.value.toStringAsFixed(1)),
+                isRating: !noRating,
+                customValueFontSize: noRating ? 14 : 26,
+              );
+            }),
 
             const SizedBox(height: 32),
 
@@ -385,6 +391,7 @@ class UserProfileScreen extends StatelessWidget {
     required String label,
     required String value,
     bool isRating = false,
+    double? customValueFontSize,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -402,8 +409,7 @@ class UserProfileScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CustomContainer(
-              width: 210,
+            Expanded(
               child: CustomText(
                 label,
                 fontSize: 17,
@@ -412,17 +418,22 @@ class UserProfileScreen extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 12),
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 if (isRating) ...[
                   const Icon(Icons.star, color: dotColor, size: 28),
                   const SizedBox(width: 8),
                 ],
-                CustomText(
-                  value,
-                  fontSize: 26,
-                  fontWeight: FontVariant.bold,
-                  color: textColor2,
+                Flexible(
+                  child: CustomText(
+                    value,
+                    fontSize: customValueFontSize ?? 26,
+                    fontWeight: FontVariant.bold,
+                    color: textColor2,
+                    textAlign: TextAlign.end,
+                  ),
                 ),
               ],
             ),

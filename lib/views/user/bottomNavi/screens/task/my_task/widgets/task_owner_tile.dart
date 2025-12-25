@@ -20,7 +20,7 @@ class TaskOwnerTile extends StatelessWidget {
     this.name,
     this.photoUrl,
     this.authUid,
-    this.rating = 4.9,
+    this.rating = 0.0,
     this.tasksCompleted = 0,
     this.tasksRequested = 0,
   });
@@ -43,10 +43,10 @@ class TaskOwnerTile extends StatelessWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                const Icon(Icons.star, color: yellow, size: 20),
-                const SizedBox(width: 4),
+                if (rating > 0) const Icon(Icons.star, color: yellow, size: 20),
+                if (rating > 0) const SizedBox(width: 4),
                 CustomText(
-                  rating.toStringAsFixed(1),
+                  rating == 0.0 ? "No Rating" : rating.toStringAsFixed(1),
                   color: textcolord,
                   fontSize: 14,
                   fontWeight: FontVariant.medium,
@@ -74,7 +74,7 @@ class TaskOwnerTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             CustomText(
-              id ?? "RB-124",
+              id ?? "RB-0000",
               color: textcolord,
               fontSize: 12,
               fontWeight: FontVariant.regular,

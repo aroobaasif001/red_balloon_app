@@ -11,7 +11,7 @@ import 'package:red_balloon_app/services/task_service.dart';
 import 'package:red_balloon_app/services/user_service.dart';
 
 import '../../../../../../../services/notification_services.dart';
-import '../my_task_screen.dart';
+import '../../../../bottom_navi_screen.dart';
 
 class TaskInProgressController extends GetxController {
   final TaskService _taskService = TaskService();
@@ -70,7 +70,7 @@ class TaskInProgressController extends GetxController {
                   '✅ Task status changed to $taskStatus. Navigating back from TaskInProgressScreen.',
                 );
                 if (Get.isRegistered<TaskInProgressController>()) {
-                  Get.offAll(() => MyTaskScreen());
+                  Get.offAll(() => BottomNaviScreen(initialIndex: 1));
                 }
               }
 

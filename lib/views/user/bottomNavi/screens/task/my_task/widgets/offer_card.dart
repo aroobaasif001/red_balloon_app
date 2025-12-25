@@ -25,7 +25,7 @@ class OfferCard extends StatelessWidget {
     required this.tasksCompleted,
     required this.tasksRequested,
     required this.rating,
-    required this.stars,
+    this.stars = 0,
     required this.photoUrl,
     this.customId,
     this.authUid,
@@ -68,19 +68,27 @@ class OfferCard extends StatelessWidget {
                           ),
                           SizedBox(height: 10),
                           Row(
-                            children:
-                                List.generate(
+                            children: [
+                              if (stars == 0)
+                                const CustomText(
+                                  "No Rating",
+                                  fontSize: 12,
+                                  color: walletInfoTextColor,
+                                  fontWeight: FontVariant.regular,
+                                ),
+                              if (stars > 0)
+                                ...List.generate(
                                   stars,
                                   (index) =>
                                       Icon(Icons.star, color: yellow, size: 15),
-                                )..add(
-                                    CustomText(
-                                      "  $tasksCompleted completed",
-                                      fontSize: 12,
-                                      color: walletInfoTextColor,
-                                      fontWeight: FontVariant.regular,
-                                    ),
                                 ),
+                              CustomText(
+                                "  $tasksCompleted completed",
+                                fontSize: 12,
+                                color: walletInfoTextColor,
+                                fontWeight: FontVariant.regular,
+                              ),
+                            ],
                           ),
                         ],
                       ),

@@ -26,16 +26,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-
     return GetMaterialApp(
       theme: ThemeData(
         scaffoldBackgroundColor: whiteColor,
-
         textSelectionTheme: TextSelectionThemeData(
-          cursorColor: redColor, // Cursor ka color
-          selectionColor:
-              taskstatus3, //Colors.grey,      // Select ki hui text ka background
-          selectionHandleColor: redColor, // Handles ka color
+          cursorColor: redColor,
+          selectionColor: taskstatus3,
+          selectionHandleColor: redColor,
         ),
       ),
 
