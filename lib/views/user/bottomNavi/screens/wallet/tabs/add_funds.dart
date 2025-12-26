@@ -9,6 +9,7 @@ import 'package:red_balloon_app/utils/colors.dart';
 import '../../../../../../custom_widgets/wallet_balance_card.dart';
 import '../controller/add_funds_controller.dart';
 import '../widgets/info_card.dart';
+import '../widgets/payment_methods_list.dart';
 import '../widgets/predefined_amount_buttons.dart';
 
 class AddFunds extends StatelessWidget {

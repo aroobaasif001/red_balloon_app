@@ -39,13 +39,16 @@ class WithdrawFundsController extends GetxController {
     'SadaPay': 30000.0,
   };
 
-  RxString selectedMethod = ''.obs;
+  RxString selectedMethod = 'Bank Transfer'.obs;
   RxString selectedBank = 'Select Bank'.obs;
   RxDouble currentMaxLimit = 2000.0.obs; // Default fallback
+
+  RxBool isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
+    paymentMethodController.text = 'Bank Transfer';
     _bindData();
   }
 
@@ -89,7 +92,11 @@ class WithdrawFundsController extends GetxController {
 
   void showBankSelection() {
     if (selectedMethod.value.isEmpty) {
-      Get.snackbar('Alert', 'Please select a payment method first');
+      Get.snackbar('Alert', 'Please select a payment method first',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
       return;
     }
 
@@ -147,8 +154,78 @@ class WithdrawFundsController extends GetxController {
   }
 
   Future<void> submitWithdrawal() async {
-    Get.snackbar('Alert', 'Coming soon. Withdrawal API integration is pending.');
-    return;
+    // 1. Validation
+    if (amountController.text.isEmpty) {
+      DialogHelpers.showAddFundsError('Please enter amount');
+      return;
+    }
+
+    double amount = double.tryParse(amountController.text) ?? 0.0;
+    if (amount <= 0) {
+      DialogHelpers.showAddFundsError('Invalid amount');
+      return;
+    }
+
+    if (amount < 50) {
+      DialogHelpers.showAddFundsError('Minimum withdrawal is SAR 50');
+      return;
+    }
+
+    if (amount > availableBalance.value) {
+      DialogHelpers.showAddFundsError('Insufficient balance');
+      return;
+    }
+
+    if (amount > currentMaxLimit.value) {
+      DialogHelpers.showAddFundsError('Amount exceeds bank limit');
+      return;
+    }
+
+    if (selectedMethod.value.isEmpty || selectedBank.value == 'Select Bank') {
+      DialogHelpers.showAddFundsError('Please select payment method and bank');
+      return;
+    }
+
+    if (bankAccountController.text.isEmpty) {
+      DialogHelpers.showAddFundsError('Please enter account number / IBAN');
+      return;
+    }
+
+    // 2. Confirmation
+    try {
+      isLoading.value = true;
+      
+      // In a real "test" mode, we could just simulate success without Firestore
+      // But since user wants internal setup first, we go with Firestore requests.
+      final success = await _walletService.requestWithdrawal(
+        amount: amount,
+        method: selectedMethod.value,
+        bank: selectedBank.value,
+        accountNumber: bankAccountController.text,
+      );
+
+      if (success) {
+        // Clear fields
+        amountController.clear();
+        bankAccountController.clear();
+        selectedBank.value = 'Select Bank';
+        bankController.text = 'Select Bank';
+        
+        Get.snackbar(
+          'Success', 
+          'Withdrawal request submitted successfully. Admin will review it shortly.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        DialogHelpers.showAddFundsError('Failed to submit request. Please try again.');
+      }
+    } catch (e) {
+      DialogHelpers.showAddFundsError('Error: ${e.toString()}');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   String formatCurrency(double amount) {

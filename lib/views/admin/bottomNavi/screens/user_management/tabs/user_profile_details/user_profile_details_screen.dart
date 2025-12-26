@@ -240,14 +240,18 @@ class UserProfileDetailsScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    DangerButton(
-                      label: "Warn User",
+                    Obx(() => DangerButton(
+                      label: controller.isWarning.value ? "Sending..." : "Warn User",
                       onTap: controller.warnUser,
-                    ),
+                      isLoading: controller.isWarning.value,
+                    )),
                     const SizedBox(width: 12),
                     Obx(() => OutlineBlackButton(
-                      label: controller.isSuspended.value ? "Unsuspend Account" : "Suspend Account",
+                      label: controller.isSuspending.value 
+                          ? "Processing..." 
+                          : (controller.isSuspended.value ? "Unsuspend Account" : "Suspend Account"),
                       onTap: controller.toggleAccountSuspension,
+                      isLoading: controller.isSuspending.value,
                     )),
                   ],
                 ),

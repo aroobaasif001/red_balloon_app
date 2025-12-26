@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/services/wallet_service.dart';
 import 'package:red_balloon_app/utils/dialog_helpers.dart';
+import 'package:red_balloon_app/services/fatora_service.dart';
+import '../tabs/fatora_checkout_screen.dart';
 import 'wallet_controller.dart';
 
 class AddFundsController extends GetxController {
@@ -27,18 +29,18 @@ class AddFundsController extends GetxController {
       'subtitle': 'Visa, Mastercard, Amex',
       'icon': 'assets/images/card.png',
     },
-    {
-      'id': 'paypal',
-      'title': 'PayPal',
-      'subtitle': 'Fast & secure',
-      'icon': 'assets/images/paypal.png',
-    },
-    {
-      'id': 'wallet',
-      'title': 'STC Pay / Apple Pay',
-      'subtitle': 'Mobile wallet',
-      'icon': 'assets/images/iphone.png',
-    },
+    // {
+    //   'id': 'paypal',
+    //   'title': 'PayPal',
+    //   'subtitle': 'Fast & secure',
+    //   'icon': 'assets/images/paypal.png',
+    // },
+    // {
+    //   'id': 'wallet',
+    //   'title': 'STC Pay / Apple Pay',
+    //   'subtitle': 'Mobile wallet',
+    //   'icon': 'assets/images/iphone.png',
+    // },
     {
       'id': 'redballoon',
       'title': 'Redeem Red Balloon Card',
@@ -82,11 +84,6 @@ class AddFundsController extends GetxController {
       return;
     }
 
-    // if (!isPaymentMethodSelected) {
-    //   DialogHelpers.showAddFundsError('Please select a payment method');
-    //   return;
-    // }
-
     // Show confirmation dialog
     DialogHelpers.showAddFundsConfirmationDialog(
       context: context,
@@ -95,41 +92,67 @@ class AddFundsController extends GetxController {
         try {
           isLoading.value = true;
           final double amountToAdd = double.parse(finalAmount);
+          final currentUser = FirebaseAuth.instance.currentUser;
 
-          // Process payment
-          final success = await _walletService.addFunds(amountToAdd);
-
-          if (success) {
-            // Send push notification to current user
-            final currentUser = FirebaseAuth.instance.currentUser;
-            if (currentUser != null) {
-              NotificationService.instance.notifyFundsAdded(
-                userId: currentUser.uid,
-                amount: amountToAdd,
-              );
-            }
-
-            DialogHelpers.showAddFundsSuccess(
-              context: context,
-              amount: finalAmount,
-              paymentMethod: selectedPaymentMethod.value,
-              onDone: () {
-                Get.back(); // Navigate back to wallet
-              },
-            );
-          } else {
-
-            DialogHelpers.showAddFundsError(
-              'Failed to add funds. Please try again.',
-            );
+          if (selectedPaymentMethod.value == 'redballoon') {
+            DialogHelpers.showAddFundsError('Red Balloon Card redemption is not implemented yet.');
+            isLoading.value = false;
+            return;
           }
+
+          // 1. Get Checkout URL from Fatora
+          final String? checkoutUrl = await FatoraService.initiatePayment(
+            amount: amountToAdd,
+            customerName: currentUser?.displayName ?? 'User',
+            customerEmail: currentUser?.email ?? 'user@example.com',
+            note: 'Add Funds to Red Balloon Wallet',
+          );
+
+          if (checkoutUrl != null) {
+            // 2. Open WebView for payment
+            await Get.to(() => FatoraCheckoutScreen(
+              checkoutUrl: checkoutUrl,
+              onSuccess: (invoiceId) async {
+                // Payment was successful, update balance in Firestore
+                Get.back(); // Close webview
+                
+                final success = await _walletService.addFunds(amountToAdd);
+                if (success) {
+                  if (currentUser != null) {
+                    NotificationService.instance.notifyFundsAdded(
+                      userId: currentUser.uid,
+                      amount: amountToAdd,
+                    );
+                  }
+
+                  DialogHelpers.showAddFundsSuccess(
+                    context: context,
+                    amount: finalAmount,
+                    paymentMethod: 'Fatora.io',
+                    onDone: () {
+                      Get.back(); // Navigate back to wallet
+                    },
+                  );
+                } else {
+                  DialogHelpers.showAddFundsError('Payment successful but failed to update wallet. Please contact support.');
+                }
+              },
+              onFailure: () {
+                Get.back(); // Close webview
+                DialogHelpers.showAddFundsError('Payment failed or was cancelled.');
+              },
+            ));
+          } else {
+            DialogHelpers.showAddFundsError('Failed to initiate payment. Please try again.');
+          }
+        } catch (e) {
+          DialogHelpers.showAddFundsError('An unexpected error occurred: ${e.toString()}');
         } finally {
           isLoading.value = false;
         }
       },
     );
   }
-
 
   void clearSelection() {
     selectedAmount.value = '25';

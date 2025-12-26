@@ -8,6 +8,8 @@ class UserProfileDetailsController extends GetxController {
 
   // Loading state
   var isLoading = true.obs;
+  var isWarning = false.obs;
+  var isSuspending = false.obs;
 
   // User basic info
   var userName = ''.obs;
@@ -332,8 +334,11 @@ class UserProfileDetailsController extends GetxController {
   /// Warn user action with push notification
   void warnUser() async {
     if (_currentUserId == null) return;
+    if (isWarning.value) return; // Prevent double-tap
 
     try {
+      isWarning.value = true;
+      
       // Send dynamic push notification
       await NotificationService.instance.notifyAdminWarning(
         userUid: _currentUserId!,
@@ -343,16 +348,24 @@ class UserProfileDetailsController extends GetxController {
         'Action Successful',
         'Professional warning has been issued to the user.',
       );
+      
+      // Navigate back after 1 second
+      await Future.delayed(const Duration(seconds: 1));
+      Get.back();
     } catch (e) {
       Get.snackbar('Error', 'Failed to send warning: $e');
+    } finally {
+      isWarning.value = false;
     }
   }
 
   /// Toggle account suspension status
   void toggleAccountSuspension() async {
     if (_currentUserId == null) return;
+    if (isSuspending.value) return; // Prevent double-tap
     
     try {
+      isSuspending.value = true;
       final newSuspendedState = !isSuspended.value;
       final newWillLogin = !newSuspendedState; // willLogin = false if suspended
       
@@ -374,8 +387,14 @@ class UserProfileDetailsController extends GetxController {
         'Success', 
         newSuspendedState ? 'Account has been suspended.' : 'Account has been restored.',
       );
+      
+      // Navigate back after 1 second
+      await Future.delayed(const Duration(seconds: 1));
+      Get.back();
     } catch (e) {
       Get.snackbar('Error', 'Failed to update account status: $e');
+    } finally {
+      isSuspending.value = false;
     }
   }
 

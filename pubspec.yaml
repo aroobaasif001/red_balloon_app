@@ -71,6 +71,11 @@ dependencies:
   # rating
   flutter_rating_bar: ^4.0.1
 
+  # payment_card:
+  # myfatoorah_flutter: ^3.2.5
+  http: ^1.6.0
+  webview_flutter: ^4.13.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

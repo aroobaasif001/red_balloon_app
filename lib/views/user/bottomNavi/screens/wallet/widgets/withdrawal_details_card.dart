@@ -159,47 +159,48 @@ class WithdrawalDetailsCard extends StatelessWidget {
             color: hintTextColor,
           ),
           SizedBox(height: 20),
-          CustomText(
-            paymentMethodLabelText,
-            fontSize: labelFontSize,
-            fontWeight: labelFontVariant,
-            color: labelTextColor,
-          ),
-          SizedBox(height: 10),
-          TextField(
-            controller: paymentMethodController,
-            cursorColor: blackColor,
-            style: TextStyle(color: blackColor),
-            decoration: InputDecoration(
-              hintText: paymentMethodHintText,
-              hintStyle: TextStyle(
-                color: hintTextColor,
-                fontSize: hintFontSize,
-              ),
-              filled: true,
-              fillColor: inputBackgroundColor,
-              suffixIcon: Icon(Icons.keyboard_arrow_down, color: hintTextColor),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: inputBorderColor),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: inputBorderColor),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: inputBorderColor, width: 2),
-              ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 12,
-              ),
-            ),
-            readOnly: true,
-            onTap: onMethodTap,
-          ),
-          SizedBox(height: 20),
+          // Hidden as per user request
+          // CustomText(
+          //   paymentMethodLabelText,
+          //   fontSize: labelFontSize,
+          //   fontWeight: labelFontVariant,
+          //   color: labelTextColor,
+          // ),
+          // SizedBox(height: 10),
+          // TextField(
+          //   controller: paymentMethodController,
+          //   cursorColor: blackColor,
+          //   style: TextStyle(color: blackColor),
+          //   decoration: InputDecoration(
+          //     hintText: paymentMethodHintText,
+          //     hintStyle: TextStyle(
+          //       color: hintTextColor,
+          //       fontSize: hintFontSize,
+          //     ),
+          //     filled: true,
+          //     fillColor: inputBackgroundColor,
+          //     suffixIcon: Icon(Icons.keyboard_arrow_down, color: hintTextColor),
+          //     border: OutlineInputBorder(
+          //       borderRadius: BorderRadius.circular(8),
+          //       borderSide: BorderSide(color: inputBorderColor),
+          //     ),
+          //     enabledBorder: OutlineInputBorder(
+          //       borderRadius: BorderRadius.circular(8),
+          //       borderSide: BorderSide(color: inputBorderColor),
+          //     ),
+          //     focusedBorder: OutlineInputBorder(
+          //       borderRadius: BorderRadius.circular(8),
+          //       borderSide: BorderSide(color: inputBorderColor, width: 2),
+          //     ),
+          //     contentPadding: EdgeInsets.symmetric(
+          //       horizontal: 12,
+          //       vertical: 12,
+          //     ),
+          //   ),
+          //   readOnly: true,
+          //   onTap: onMethodTap,
+          // ),
+          // SizedBox(height: 20),
           CustomText(
             'Select Bank',
             fontSize: labelFontSize,
