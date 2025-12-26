@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // Import Get
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -216,43 +217,22 @@ class LeaveFeedbackScreen extends StatelessWidget {
 
               /// ------------------ STAR RATING ------------------
               Obx(
-                () => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(5, (index) {
-                    int starValue = index + 1;
-                    return GestureDetector(
-                      onTap: () {
-                        controller.setRating(starValue);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Image(
-                          image: AssetImage(
-                            starValue <= controller.rating.value
-                                ? 'assets/icons/star2.png' // Filled star (assuming)
-                                : 'assets/icons/star_unfilled.png', // You might need an unfilled star asset, otherwise check existing assets.
-                            // If 'star2.png' is filled, and assuming 'star1.png' or similar is empty?
-                            // Looking at codebase isn't possible for assets easily.
-                            // Assuming 'star2.png' is the highlighted one used in mockup.
-                            // I will use ColorFilter or Opacity for "unselected" if unselected asset unknown,
-                            // OR just assume user has 'star_gray.png' or similar.
-                            // Let's check the previous code: it just showed 5 star2.png images.
-                            // I'll assume standard behavior: star2 is Gold/Filled.
-                            // I will use Opacity for unselected simple approach if no other asset known.
-                          ),
-                          // Adjust visual for unselected
-                          color: starValue <= controller.rating.value
-                              ? null
-                              : taskstatus3.withOpacity(0.3),
-                          colorBlendMode: starValue <= controller.rating.value
-                              ? null
-                              : BlendMode.srcATop,
-                          height: 60,
-                          width: 39,
-                        ),
-                      ),
-                    );
-                  }),
+                () => RatingBar.builder(
+                  initialRating: controller.rating.value,
+                  minRating: 0.5,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemSize: 45,
+                  unratedColor: Colors.grey[300],
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => const Icon(
+                    Icons.star,
+                    color: yellow,
+                  ),
+                  onRatingUpdate: (rating) {
+                    controller.setRating(rating);
+                  },
                 ),
               ),
 

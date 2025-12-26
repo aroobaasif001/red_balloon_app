@@ -53,8 +53,8 @@ class LeaveFeedbackController extends GetxController {
     super.onClose();
   }
 
-  void setRating(int value) {
-    rating.value = value.toDouble();
+  void setRating(double value) {
+    rating.value = value;
   }
 
   Future<void> submitFeedback() async {

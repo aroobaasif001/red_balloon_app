@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/model/user_model.dart';
 import 'package:red_balloon_app/services/user_service.dart';
@@ -9,6 +10,7 @@ class UserManagementController extends GetxController {
   var allUsers = <UserModel>[].obs;
   var filteredUsers = <UserModel>[].obs;
   var searchQuery = ''.obs;
+  StreamSubscription? _usersSubscription; // 🔥 Added
   
   // User stats cache (make values observable so UI updates)
   final Map<String, RxMap<String, dynamic>> _userStatsCache = {};
@@ -19,7 +21,34 @@ class UserManagementController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchAllUsers();
+    _startUsersListener();
+    
+    // 🔥 Re-run search whenever the raw user list changes
+    ever(allUsers, (_) => searchUsers(searchQuery.value));
+  }
+  
+  @override
+  void onClose() {
+    _usersSubscription?.cancel();
+    super.onClose();
+  }
+
+  /// 🔥 Real-time user listener
+  void _startUsersListener() {
+    isLoading.value = true;
+    _usersSubscription?.cancel();
+    _usersSubscription = _userService.streamAllUsers().listen((users) {
+      allUsers.value = users;
+      isLoading.value = false;
+      
+      // Fetch stats for new users in background
+      for (var user in users) {
+        _fetchUserStats(user.uid);
+      }
+    }, onError: (e) {
+      print('❌ Error in users stream: $e');
+      isLoading.value = false;
+    });
   }
   
   /// Fetch all users from Firestore (with caching)
@@ -160,11 +189,11 @@ class UserManagementController extends GetxController {
     }
   }
   
-  /// Get user rating (rounded)
-  int getUserRating(UserModel user) {
+  /// Get user rating
+  double getUserRating(UserModel user) {
     final stats = getUserStats(user.uid);
     final dynamic rating = stats['rating'] ?? 0.0;
-    return (rating as num).round();
+    return (rating as num).toDouble();
   }
   
   /// Get user price/earnings

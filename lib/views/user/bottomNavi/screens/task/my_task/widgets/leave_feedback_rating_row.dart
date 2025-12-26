@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 import '../controller/leave_feedback_controller.dart';
@@ -12,23 +13,22 @@ class LeaveFeedbackRatingRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(5, (index) {
-          final starIndex = index + 1;
-          final isFilled = controller.rating.value >= starIndex;
-          return GestureDetector(
-            onTap: () => controller.setRating(starIndex),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: Icon(
-                Icons.star,
-                size: 32,
-                color: isFilled ? yellow : fundCardBorderColor,
-              ),
-            ),
-          );
-        }),
+      () => RatingBar.builder(
+        initialRating: controller.rating.value,
+        minRating: 0.5,
+        direction: Axis.horizontal,
+        allowHalfRating: true,
+        itemCount: 5,
+        itemSize: 48,
+        unratedColor: Colors.grey[300],
+        itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+        itemBuilder: (context, _) => const Icon(
+          Icons.star,
+          color: yellow,
+        ),
+        onRatingUpdate: (rating) {
+          controller.setRating(rating);
+        },
       ),
     );
   }

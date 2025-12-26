@@ -135,6 +135,16 @@ class UserService {
       return [];
     }
   }
+  
+  /// Stream all users for real-time updates (Admin panel)
+  Stream<List<UserModel>> streamAllUsers() {
+    return usersCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return UserModel.fromJson(data);
+      }).toList();
+    });
+  }
 
   /// Get user task statistics (tasks posted, completed, earnings)
   Future<Map<String, dynamic>> getUserTaskStats(String uid) async {

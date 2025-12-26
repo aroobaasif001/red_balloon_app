@@ -13,7 +13,7 @@ class UserCard extends StatelessWidget {
   final String userType;
   final bool verified;
   final String city;
-  final int stars;
+  final double stars;
   final String tasksText;
   final String price;
   final String initials;
