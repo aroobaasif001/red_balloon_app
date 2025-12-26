@@ -13,8 +13,10 @@ class MessagesController extends GetxController {
   final RxBool isLoading = true.obs;
   final RxString searchQuery = ''.obs;
   final RxInt totalUnreadCount = 0.obs;
+  final RxMap<String, bool> userSuspensionStatus = <String, bool>{}.obs; // 🔥 Track suspension status
 
   StreamSubscription? _conversationsSubscription;
+  final Map<String, StreamSubscription> _suspensionSubscriptions = {}; // 🔥 Track real-time listeners
 
   @override
   void onInit() {
@@ -27,6 +29,11 @@ class MessagesController extends GetxController {
   void onClose() {
     print('🛑 MessagesController: onClose - Disposing controller');
     _conversationsSubscription?.cancel();
+    // 🔥 Cancel all suspension listeners
+    for (var sub in _suspensionSubscriptions.values) {
+      sub.cancel();
+    }
+    _suspensionSubscriptions.clear();
     super.onClose();
   }
 
@@ -41,6 +48,7 @@ class MessagesController extends GetxController {
           '📬 MessagesController: Stream data received. List size: ${conversationsList.length}',
         );
         conversations.value = conversationsList;
+        _listenToSuspensionStatuses(conversationsList); // 🔥 Switch to listener
         _applySearchFilter();
         _calculateTotalUnread();
         isLoading.value = false;
@@ -60,8 +68,11 @@ class MessagesController extends GetxController {
 
   /// Apply search filter to conversations
   void _applySearchFilter() {
-    // 🔥 Filter out empty conversations (no messages)
-    final nonEmptyConversations = conversations.where((c) => c.lastMessage.trim().isNotEmpty).toList();
+    // 🔥 Filter out empty conversations (no actual messages)
+    final nonEmptyConversations = conversations.where((c) {
+      final msg = (c.lastMessage ?? '').trim();
+      return msg.isNotEmpty && msg != 'Start chatting...';
+    }).toList();
 
     if (searchQuery.value.isEmpty) {
       filteredConversations.assignAll(nonEmptyConversations);
@@ -161,5 +172,37 @@ class MessagesController extends GetxController {
     if (hasUpdates) {
       await batch.commit();
     }
+  }
+
+  /// 🔥 Listen to suspension status for all "other" participants in real-time
+  void _listenToSuspensionStatuses(List<ConversationModel> list) {
+    final currentUid = chatService.currentUserId;
+    if (currentUid == null) return;
+
+    for (var conversation in list) {
+      final otherParticipant = conversation.getOtherParticipant(currentUid);
+      final otherUid = otherParticipant['uid'];
+
+      if (otherUid != null && !_suspensionSubscriptions.containsKey(otherUid)) {
+        print('📡 MessagesController: Starting suspension listener for $otherUid');
+        
+        _suspensionSubscriptions[otherUid] = chatService.firestore
+            .collection('users')
+            .doc(otherUid)
+            .snapshots()
+            .listen((doc) {
+          if (doc.exists) {
+            final isSuspended = doc.data()?['willLogin'] == false;
+            userSuspensionStatus[otherUid] = isSuspended;
+            print('🔄 MessagesController: Real-time update for $otherUid: Suspended=$isSuspended');
+          }
+        });
+      }
+    }
+  }
+
+  /// 🔥 Public getter for suspension status
+  bool isUserSuspended(String uid) {
+    return userSuspensionStatus[uid] ?? false;
   }
 }

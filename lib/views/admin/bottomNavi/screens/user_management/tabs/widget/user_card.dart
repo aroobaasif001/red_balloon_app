@@ -18,6 +18,7 @@ class UserCard extends StatelessWidget {
   final String price;
   final String initials;
   final String? imageUrl;
+  final bool isSuspended; // 🔥 Added
   final VoidCallback onView;
 
   const UserCard({
@@ -31,6 +32,7 @@ class UserCard extends StatelessWidget {
     required this.price,
     required this.initials,
     this.imageUrl,
+    this.isSuspended = false, // 🔥 Added
     required this.onView,
   });
 
@@ -79,11 +81,17 @@ class UserCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
 
-                        Row(
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
                           children: [
-                            // CustomTag(title: userType),
-                            const SizedBox(width: 8),
                             if (verified) CustomTag(title: "Verified"),
+                            if (isSuspended)
+                              CustomTag(
+                                title: "Suspended",
+                                textColor: whiteColor,
+                                bgColor: redColor,
+                              ),
                           ],
                         ),
                       ],
@@ -91,7 +99,21 @@ class UserCard extends StatelessWidget {
                     const SizedBox(width: 12),
 
                     /// RIGHT SIDE (Avatar + Button)
-                    ProfileCircle(initials: initials, imageUrl: imageUrl),
+                    SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: isSuspended
+                          ? ColorFiltered(
+                              colorFilter: const ColorFilter.matrix(<double>[
+                                0.2126, 0.7152, 0.0722, 0, 0,
+                                0.2126, 0.7152, 0.0722, 0, 0,
+                                0.2126, 0.7152, 0.0722, 0, 0,
+                                0,      0,      0,      1, 0,
+                              ]),
+                              child: ProfileCircle(initials: initials, imageUrl: imageUrl),
+                            )
+                          : ProfileCircle(initials: initials, imageUrl: imageUrl),
+                    ),
                   ],
                 ),
 

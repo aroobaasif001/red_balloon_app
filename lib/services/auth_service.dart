@@ -227,7 +227,8 @@ class AuthService {
       if (isNewUser) {
         final userId = await _generateUserId();
         userData['userId'] = userId;
-        print('✅ Assigned userId: $userId to new user: $uid');
+        userData['willLogin'] = true; // Default to true for new users
+        print('✅ Assigned userId: $userId and willLogin: true to new user: $uid');
       }
 
       // Use set with merge to create or update the document

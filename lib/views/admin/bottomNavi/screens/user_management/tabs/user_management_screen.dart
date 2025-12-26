@@ -93,31 +93,34 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       physics: const AlwaysScrollableScrollPhysics(),
                       child: Column(
                         children: controller.filteredUsers.map((user) {
-                          final role = controller.getUserRole(user);
-                          final initials = controller.getUserInitials(user.displayName);
-                          final tasksText = controller.getTasksText(user);
-                          final rating = controller.getUserRating(user);
-                          final price = controller.getUserPrice(user);
-                          
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: UserCard(
-                              code: user.userId ?? 'RB-0000',
-                              userType: role,
-                              verified: true, // TODO: Get from user model when available
-                              city: user.city ?? 'Unknown',
-                              stars: rating,
-                              tasksText: tasksText,
-                              price: price,
-                              initials: initials,
-                              imageUrl: user.photoURL,
-                              onView: () {
-                                Get.to(() => UserProfileDetailsScreen(
-                                  userId: user.uid,
-                                ));
-                              },
-                            ),
-                          );
+                          return Obx(() {
+                            final role = controller.getUserRole(user);
+                            final initials = controller.getUserInitials(user.displayName);
+                            final tasksText = controller.getTasksText(user);
+                            final rating = controller.getUserRating(user);
+                            final price = controller.getUserPrice(user);
+                            
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: UserCard(
+                                code: user.userId ?? 'RB-0000',
+                                userType: role,
+                                verified: true, // TODO: Get from user model when available
+                                city: user.city ?? 'Unknown',
+                                stars: rating,
+                                tasksText: tasksText,
+                                price: price,
+                                initials: initials,
+                                imageUrl: user.photoURL,
+                                isSuspended: user.willLogin == false,
+                                onView: () {
+                                  Get.to(() => UserProfileDetailsScreen(
+                                        userId: user.uid,
+                                      ));
+                                },
+                              ),
+                            );
+                          });
                         }).toList(),
                       ),
                     ),

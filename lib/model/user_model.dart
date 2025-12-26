@@ -10,6 +10,7 @@ class UserModel {
   final String? workExperience;
   final String? provider;
   final DateTime? updatedAt;
+  final bool? willLogin; // 🔥 Added for suspension status
 
   UserModel({
     required this.uid,
@@ -23,6 +24,7 @@ class UserModel {
     this.workExperience,
     this.provider,
     this.updatedAt,
+    this.willLogin, // 🔥 Added
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -42,6 +44,7 @@ class UserModel {
               ? DateTime.parse(json['updatedAt'])
               : (json['updatedAt'] as dynamic).toDate())
           : null,
+      willLogin: json['willLogin'], // 🔥 Added
     );
   }
 
@@ -58,6 +61,7 @@ class UserModel {
       'workExperience': workExperience,
       'provider': provider,
       'updatedAt': updatedAt?.toIso8601String(),
+      'willLogin': willLogin, // 🔥 Added
     };
   }
 

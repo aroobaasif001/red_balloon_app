@@ -43,6 +43,11 @@ class MessagesScreen extends StatelessWidget {
             // 🔹 MESSAGE LIST
             Expanded(
               child: Obx(() {
+                final currentUserId = controller.chatService.currentUserId;
+                if (currentUserId == null) {
+                  return const SizedBox.shrink();
+                }
+
                 if (controller.isLoading.value) {
                   return const Center(
                     child: CircularProgressIndicator(color: redColor),
@@ -87,11 +92,13 @@ class MessagesScreen extends StatelessWidget {
                     final conversation =
                         controller.filteredConversations[index];
                     final otherParticipant = conversation.getOtherParticipant(
-                      controller.chatService.currentUserId!,
+                      currentUserId,
                     );
                     final unreadCount = conversation.getUnreadCountForUser(
-                      controller.chatService.currentUserId!,
+                      currentUserId,
                     );
+                    final otherUid = otherParticipant['uid'] ?? '';
+                    final isSuspended = controller.isUserSuspended(otherUid);
 
                     return Dismissible(
                       key: Key(conversation.conversationId),
@@ -135,7 +142,15 @@ class MessagesScreen extends StatelessWidget {
                             otherParticipant['photo'] ??
                             'assets/images/user1.png',
                         unreadCount: unreadCount,
+                        isSuspended: isSuspended,
                         onTap: () {
+                          if (isSuspended) {
+                            Get.snackbar(
+                              'Account Suspended',
+                              'This user\'s account has been suspended by administration.',
+                            );
+                            return;
+                          }
                           // Delete old controller if exists
                           if (Get.isRegistered<ChatController>()) {
                             Get.delete<ChatController>();

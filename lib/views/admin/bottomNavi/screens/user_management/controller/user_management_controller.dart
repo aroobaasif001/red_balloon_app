@@ -10,8 +10,8 @@ class UserManagementController extends GetxController {
   var filteredUsers = <UserModel>[].obs;
   var searchQuery = ''.obs;
   
-  // User stats cache
-  final Map<String, Map<String, dynamic>> _userStatsCache = {};
+  // User stats cache (make values observable so UI updates)
+  final Map<String, RxMap<String, dynamic>> _userStatsCache = {};
   
   // Cache flag to prevent re-fetching
   var _dataLoaded = false;
@@ -37,16 +37,18 @@ class UserManagementController extends GetxController {
       // Fetch users using UserService
       final users = await _userService.getAllUsers();
       
-      // Fetch stats for all users in parallel
-      await Future.wait(
-        users.map((user) => _fetchUserStats(user.uid)),
-      );
-      
       allUsers.value = users;
       filteredUsers.value = users;
       _dataLoaded = true;
-      isLoading.value = false;
-      print('✅ Controller: Loaded ${users.length} users (cached for future use)');
+      isLoading.value = false; // Show users immediately
+
+      print('✅ Controller: Loaded ${users.length} users. Now fetching stats...');
+
+      // Fetch stats for all users in background
+      for (var user in users) {
+        _fetchUserStats(user.uid);
+      }
+      
     } catch (e) {
       print('❌ Controller Error fetching users: $e');
       isLoading.value = false;
@@ -55,19 +57,49 @@ class UserManagementController extends GetxController {
   
   /// Fetch and cache user stats
   Future<void> _fetchUserStats(String uid) async {
-    if (_userStatsCache.containsKey(uid)) return;
+    // If already loading or loaded, return
+    if (_userStatsCache.containsKey(uid) && _userStatsCache[uid]!['loading'] == true) return;
+    if (_userStatsCache.containsKey(uid) && _userStatsCache[uid]!['loaded'] == true) return;
     
-    final stats = await _userService.getUserTaskStats(uid);
-    _userStatsCache[uid] = stats;
+    print('🔄 Controller: Background fetch started for $uid');
+
+    // Initialize cache with loading state
+    _userStatsCache[uid] = <String, dynamic>{
+      'tasksPosted': 0,
+      'tasksCompleted': 0,
+      'totalEarnings': 0.0,
+      'rating': 0.0,
+      'loaded': false,
+      'loading': true,
+    }.obs;
+
+    try {
+      final stats = await _userService.getUserTaskStats(uid);
+      stats['loaded'] = true;
+      stats['loading'] = false;
+      _userStatsCache[uid]!.assignAll(stats);
+      print('✨ Controller: Stats updated for $uid');
+    } catch (e) {
+      print('⚠️ Controller: Error updating stats for $uid: $e');
+      _userStatsCache[uid]!['loading'] = false;
+    }
   }
   
   /// Get user stats from cache
   Map<String, dynamic> getUserStats(String uid) {
-    return _userStatsCache[uid] ?? {
-      'tasksPosted': 0,
-      'tasksCompleted': 0,
-      'totalEarnings': 0,
-    };
+    if (!_userStatsCache.containsKey(uid)) {
+      // Create skeleton and trigger fetch
+      _userStatsCache[uid] = <String, dynamic>{
+        'tasksPosted': 0,
+        'tasksCompleted': 0,
+        'totalEarnings': 0.0,
+        'rating': 0.0,
+        'loaded': false,
+        'loading': false,
+      }.obs;
+      _fetchUserStats(uid);
+    }
+    return _userStatsCache[uid]!;
   }
   
   /// Search users
@@ -130,19 +162,15 @@ class UserManagementController extends GetxController {
   
   /// Get user rating (rounded)
   int getUserRating(UserModel user) {
-    // TODO: Get actual rating from user stats
-    return 4; // Placeholder
+    final stats = getUserStats(user.uid);
+    final dynamic rating = stats['rating'] ?? 0.0;
+    return (rating as num).round();
   }
   
   /// Get user price/earnings
   String getUserPrice(UserModel user) {
     final stats = getUserStats(user.uid);
-    final role = getUserRole(user);
-    
-    if (role == 'Helper') {
-      return 'SAR ${stats['totalEarnings']}';
-    } else {
-      return 'SAR ${stats['tasksPosted'] * 100}'; // Estimate
-    }
+    final price = stats['totalEarnings'] ?? 0.0;
+    return 'SAR ${price.toStringAsFixed(0)}';
   }
 }

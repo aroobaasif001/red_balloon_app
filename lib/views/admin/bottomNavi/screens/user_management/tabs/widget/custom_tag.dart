@@ -20,14 +20,14 @@ class CustomTag extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomContainer(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-      conColor: popupBg,
+      conColor: bgColor,
       borderRadius: BorderRadius.circular(30),
       child: CustomText(
         title,
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: redColor,
+          color: textColor,
         ),
       ),
     );

@@ -139,6 +139,8 @@ class UserService {
   /// Get user task statistics (tasks posted, completed, earnings)
   Future<Map<String, dynamic>> getUserTaskStats(String uid) async {
     try {
+      print('🔍 UserService: Fetching stats for user $uid');
+      
       // Count tasks posted by user
       final tasksPosted = await _firestore
           .collection('tasks')
@@ -149,26 +151,61 @@ class UserService {
       final tasksCompleted = await _firestore
           .collection('tasks')
           .where('acceptedOfferUid', isEqualTo: uid)
-          .where('status', isEqualTo: 'Completed')
+          .where('status', isEqualTo: 'completed')
           .get();
       
       // Calculate total earnings
-      int totalEarnings = 0;
+      double totalEarnings = 0;
       for (var task in tasksCompleted.docs) {
-        totalEarnings += (task.data()['budget'] ?? 0) as int;
+        final data = task.data();
+        totalEarnings += (data['budget'] ?? 0).toDouble();
       }
+
+      // Calculate Ratings
+      double ratingSum = 0;
+      int ratingCount = 0;
+
+      // 1. As Helper (Feedback from Requester)
+      for (var doc in tasksCompleted.docs) {
+        final data = doc.data();
+        if (data['requesterFeedback'] != null && data['requesterFeedback']['rating'] != null) {
+          ratingSum += (data['requesterFeedback']['rating']).toDouble();
+          ratingCount++;
+        }
+      }
+
+      // 2. As Requester (Feedback from Helper)
+      final requesterCompletedTasks = await _firestore
+          .collection('tasks')
+          .where('uid', isEqualTo: uid)
+          .where('status', isEqualTo: 'completed')
+          .get();
+
+      for (var doc in requesterCompletedTasks.docs) {
+        final data = doc.data();
+        if (data['helperFeedback'] != null && data['helperFeedback']['rating'] != null) {
+          ratingSum += (data['helperFeedback']['rating']).toDouble();
+          ratingCount++;
+        }
+      }
+
+      double averageRating = ratingCount > 0 ? (ratingSum / ratingCount) : 0.0;
+      
+      print('✅ UserService: Stats fetched for $uid: Rating $averageRating');
       
       return {
         'tasksPosted': tasksPosted.docs.length,
         'tasksCompleted': tasksCompleted.docs.length,
         'totalEarnings': totalEarnings,
+        'rating': averageRating,
       };
     } catch (e) {
-      print('❌ UserService Error getting task stats: $e');
+      print('❌ UserService Error getting task stats for $uid: $e');
       return {
         'tasksPosted': 0,
         'tasksCompleted': 0,
         'totalEarnings': 0,
+        'rating': 0.0,
       };
     }
   }

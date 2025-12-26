@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../utils/colors.dart';
+import 'custom_container.dart';
 import 'customtext.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -57,7 +58,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   : leadingOnPressed,
               icon: Icon(leadingIcon, color: leadingIconColor),
             )
-          : null,
+          : CustomContainer(),
       backgroundColor: whiteColor,
       centerTitle: centerTitle,
       title: CustomText(

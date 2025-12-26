@@ -34,37 +34,41 @@ class AllTaskTab extends StatelessWidget {
             // CustomText('My Tasks', fontSize: 22, fontWeight: FontVariant.bold),
             // const SizedBox(height: 15),
             Obx(() {
-            // 🔥 Get current user ID
-            final currentUserId = FirebaseAuth.instance.currentUser?.uid;
-            
-            // Filter tasks:
-            // 1. Only show tasks for current user
-            // 2. Only show "in progress" and "active" status
-            final filteredTasks = controller.myTasks.where((task) {
-              final status = task.status.toLowerCase();
+              // 🔥 Get current user ID
+              final currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
-              // 🔥 Only show tasks for current user
-              if (task.uid != currentUserId) {
-                return false;
+              if (currentUserId == null) {
+                return const SizedBox.shrink();
               }
 
-              // 🔥 Only show "in progress" and "active" tasks
-              if (status != 'in progress' && status != 'active') {
-                return false;
-              }
+              // Filter tasks:
+              // 1. Only show tasks for current user
+              // 2. Only show "in progress" and "active" status
+              final filteredTasks = controller.myTasks.where((task) {
+                final status = task.status.toLowerCase();
 
-              return true;
-            }).toList();
+                // 🔥 Only show tasks for current user
+                if (task.uid != currentUserId) {
+                  return false;
+                }
 
-            // 🔥 Sort tasks: "in progress" first, then "active"
-            filteredTasks.sort((a, b) {
-              final aIsInProgress = a.status.toLowerCase() == 'in progress';
-              final bIsInProgress = b.status.toLowerCase() == 'in progress';
+                // 🔥 Only show "in progress" and "active" tasks
+                if (status != 'in progress' && status != 'active') {
+                  return false;
+                }
 
-              if (aIsInProgress && !bIsInProgress) return -1;
-              if (!aIsInProgress && bIsInProgress) return 1;
-              return 0;
-            });
+                return true;
+              }).toList();
+
+              // 🔥 Sort tasks: "in progress" first, then "active"
+              filteredTasks.sort((a, b) {
+                final aIsInProgress = a.status.toLowerCase() == 'in progress';
+                final bIsInProgress = b.status.toLowerCase() == 'in progress';
+
+                if (aIsInProgress && !bIsInProgress) return -1;
+                if (!aIsInProgress && bIsInProgress) return 1;
+                return 0;
+              });
               // Show loading indicator
               if (controller.isLoadingMyTasks.value) {
                 return const Center(
@@ -144,6 +148,19 @@ class AllTaskTab extends StatelessWidget {
                           Get.to(() => PostNewTaskScreen());
                         },
                         onViewDetails: () {
+                          // 🔥 Check if other user involved is suspended
+                          // Current user is owner, so check helper
+                          if (task.acceptedOfferUid != null &&
+                              controller.isUserSuspended(
+                                task.acceptedOfferUid!,
+                              )) {
+                            Get.snackbar(
+                              'Account Suspended',
+                              'The helper\'s account has been suspended by administration.',
+                            );
+                            return;
+                          }
+
                           // 🔥 Navigate based on task status
                           if (isInProgress) {
                             // 🔥 Pass taskId to load correct task

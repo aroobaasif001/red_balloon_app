@@ -14,9 +14,11 @@ class TasksForYouController extends GetxController {
   RxBool isLoading = true.obs;
   RxBool isRefreshing = false.obs;
   RxString errorMessage = ''.obs;
+  final RxMap<String, bool> userSuspensionStatus = <String, bool>{}.obs; // 🔥 Track suspension status
 
   // For triggering UI updates
   RxInt updateTrigger = 0.obs;
+  final Map<String, StreamSubscription> _suspensionSubscriptions = {}; // 🔥 Track real-time listeners
 
   @override
   void onInit() {
@@ -27,7 +29,11 @@ class TasksForYouController extends GetxController {
 
   @override
   void onClose() {
-    // Timers are automatically cancelled by GetX
+    // 🔥 Cancel all suspension listeners
+    for (var sub in _suspensionSubscriptions.values) {
+      sub.cancel();
+    }
+    _suspensionSubscriptions.clear();
     super.onClose();
   }
 
@@ -89,6 +95,9 @@ class TasksForYouController extends GetxController {
                 status != 'rejected';
             return isOtherUser && isActive;
           }).toList();
+
+          // 🔥 Sync suspension listeners for all task owners
+          _syncSuspensionListeners(allTasks);
 
           tasksForYou.value = filteredTasks;
           isLoading.value = false;
@@ -181,5 +190,30 @@ class TasksForYouController extends GetxController {
   /// Format budget with currency
   String formatBudget(double budget) {
     return 'SAR ${budget.toStringAsFixed(0)}';
+  }
+
+  /// 🔥 Sync suspension listeners for a list of tasks
+  void _syncSuspensionListeners(List<TaskModel> tasks) {
+    for (var task in tasks) {
+      final ownerUid = task.uid;
+      if (!_suspensionSubscriptions.containsKey(ownerUid)) {
+        print('📡 TasksForYouController: Starting suspension listener for $ownerUid');
+        _suspensionSubscriptions[ownerUid] = _taskService.firestore
+            .collection('users')
+            .doc(ownerUid)
+            .snapshots()
+            .listen((doc) {
+          if (doc.exists) {
+            final isSuspended = doc.data()?['willLogin'] == false;
+            userSuspensionStatus[ownerUid] = isSuspended;
+          }
+        });
+      }
+    }
+  }
+
+  /// 🔥 Public getter for suspension status
+  bool isUserSuspended(String uid) {
+    return userSuspensionStatus[uid] ?? false;
   }
 }

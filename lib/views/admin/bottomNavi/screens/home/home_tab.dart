@@ -91,11 +91,11 @@ class AdminHomeTab extends StatelessWidget {
                 SizedBox(height: 22),
                 Row(
                   children: [
-                    admin_home_platform_metrics_widget(
+                    Obx(() => admin_home_platform_metrics_widget(
                       iconPath: 'assets/icons/lock_2.png',
-                      value: '\$12.4k',
+                      value: 'SAR ${controller.totalEscrowBalance.value >= 1000 ? (controller.totalEscrowBalance.value / 1000).toStringAsFixed(1) + 'k' : controller.totalEscrowBalance.value.toStringAsFixed(1)}',
                       title: 'Wallet Locked',
-                    ),
+                    )),
                     SizedBox(width: 10),
                     Obx(() => admin_home_platform_metrics_widget(
                       iconPath: 'assets/icons/clock_2.png',

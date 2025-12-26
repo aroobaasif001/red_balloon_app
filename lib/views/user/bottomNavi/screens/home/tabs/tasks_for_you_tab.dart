@@ -1,5 +1,4 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -82,7 +81,13 @@ class TasksForYouTab extends StatelessWidget {
 
             // 🔥 Get current user ID
             final authService = AuthService();
-            final currentUserId = authService.currentUser!.uid;
+            final user = authService.currentUser;
+
+            if (user == null) {
+              return const SizedBox.shrink();
+            }
+
+            final currentUserId = user.uid;
 
             // 🔥 Filter tasks (Logic matching ActiveTab):
             // 1. Task owner is NOT current user
@@ -103,6 +108,11 @@ class TasksForYouTab extends StatelessWidget {
               // 🔥 If 'in progress', ensure current user is the helper
               if (status == 'in progress' &&
                   task.acceptedOfferUid != currentUserId) {
+                return false;
+              }
+
+              // 🔥 NEW: Filter out 'active' tasks if owner is suspended
+              if (status == 'active' && controller.isUserSuspended(task.uid)) {
                 return false;
               }
 
@@ -167,7 +177,7 @@ class TasksForYouTab extends StatelessWidget {
                   // 🔥 Check if task is truly "in progress" for current user
                   final isInProgress =
                       task.status.toLowerCase() == 'in progress' &&
-                          task.acceptedOfferUid == currentUserId;
+                      task.acceptedOfferUid == currentUserId;
 
                   return FadeInUp(
                     duration: const Duration(milliseconds: 700),
@@ -199,14 +209,21 @@ class TasksForYouTab extends StatelessWidget {
                           final userId = userData?['userId'];
                           final phone = userData?['phoneNumber'];
 
+                          // 🔥 Check if task owner is suspended
+                          if (controller.isUserSuspended(task.uid)) {
+                            Get.snackbar(
+                              'Account Suspended',
+                              'The task owner\'s account has been suspended by administration.',
+                            );
+                            return;
+                          }
+
                           if (isInProgress) {
                             Get.to(
                               () => InProgressViewDetails(
                                 userId: userId,
                                 taskId: task.id,
-                                timeAgo: controller.getTimeAgo(
-                                  task.createdAt,
-                                ),
+                                timeAgo: controller.getTimeAgo(task.createdAt),
                                 taskTitle: task.title,
                                 price: task.budget.toString(),
                                 userName: userName,
@@ -224,9 +241,7 @@ class TasksForYouTab extends StatelessWidget {
                                 location: isOfflineTask ? task.location : null,
                                 taskTitle: task.title,
                                 taskDescription: task.description,
-                                taskPrice: controller.formatBudget(
-                                  task.budget,
-                                ),
+                                taskPrice: controller.formatBudget(task.budget),
                                 taskBudget: task.budget,
                                 taskTimeAgo: controller.getTimeAgo(
                                   task.createdAt,

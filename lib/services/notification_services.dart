@@ -1392,6 +1392,81 @@ class NotificationService {
     );
   }
 
+  /// Notify user about a formal warning from administration
+  Future<void> notifyAdminWarning({
+    required String userUid,
+  }) async {
+    try {
+      final title = 'Official Administrative Warning';
+      final body = 'Please be advised that your account has received a formal warning from the Red Balloon Administration. We kindly request you to review our community guidelines and ensure full compliance in your future activities. Continued violations may result in account suspension.';
+
+      // 1) Save to Firestore for the user's notification list
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(userUid)
+          .collection('items')
+          .add({
+        'title': title,
+        'body': body,
+        'type': NoticeType.danger.name,
+        'category': 'admin_warning',
+        'read': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      // 2) Send FCM to the user's device
+      await _sendFcmToUser(
+        userUid, 
+        title, 
+        body, 
+        {'route': 'history_tab', 'category': 'admin_warning'}
+      );
+
+      debugPrint('Admin warning sent to UID: $userUid');
+    } catch (e) {
+      debugPrint('Error sending admin warning to $userUid: $e');
+    }
+  }
+
+  /// Notify user about account suspension or restoration
+  Future<void> notifyAccountSuspension({
+    required String userUid,
+    required bool isSuspended,
+  }) async {
+    try {
+      final title = isSuspended ? 'Account Suspended' : 'Account Restored';
+      final body = isSuspended
+          ? 'Your account has been suspended by the Red Balloon Administration due to a violation of our community guidelines. For any complaints or appeals, please contact admin.'
+          : 'Your account has been successfully restored. You can now access all features of Red Balloon.';
+
+      // 1) Save to Firestore
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(userUid)
+          .collection('items')
+          .add({
+        'title': title,
+        'body': body,
+        'type': isSuspended ? NoticeType.danger.name : NoticeType.success.name,
+        'category': 'account_status_change',
+        'read': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      // 2) Send FCM
+      await _sendFcmToUser(
+        userUid, 
+        title, 
+        body, 
+        {'route': 'history_tab', 'category': 'account_status', 'isSuspended': isSuspended.toString()}
+      );
+
+      debugPrint('Account status notification sent to UID: $userUid (Suspended: $isSuspended)');
+    } catch (e) {
+      debugPrint('Error sending account status notification: $e');
+    }
+  }
+
   /// HTTP v1 send via service-account access token (keep only for DEV).
   Future<void> _sendFcmDirect({
     required String token,

@@ -12,6 +12,7 @@ class MessageTile extends StatelessWidget {
   final String image;
   final int unreadCount;
   final VoidCallback? onTap;
+  final bool isSuspended;
 
   const MessageTile({
     super.key,
@@ -22,6 +23,7 @@ class MessageTile extends StatelessWidget {
     required this.image,
     this.unreadCount = 0,
     this.onTap,
+    this.isSuspended = false,
   });
 
   @override
@@ -51,41 +53,55 @@ class MessageTile extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(40),
-                    child: isNetworkImage
-                        ? Image.network(
-                            image,
-                            height: 48,
-                            width: 48,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/images/user1.png',
-                                height: 48,
-                                width: 48,
-                                fit: BoxFit.cover,
-                              );
-                            },
-                          )
-                        : Image.asset(
-                            image,
-                            height: 48,
-                            width: 48,
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                  Positioned(
-                    bottom: 2,
-                    right: 2,
-                    child: Container(
-                      height: 12,
-                      width: 12,
-                      decoration: BoxDecoration(
-                        color: greenColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: whiteColor, width: 2),
-                      ),
+                    child: ColorFiltered(
+                      colorFilter: isSuspended
+                          ? const ColorFilter.matrix([
+                              0.2126, 0.7152, 0.0722, 0, 0,
+                              0.2126, 0.7152, 0.0722, 0, 0,
+                              0.2126, 0.7152, 0.0722, 0, 0,
+                              0, 0, 0, 1, 0,
+                            ])
+                          : const ColorFilter.mode(
+                              Colors.transparent,
+                              BlendMode.multiply,
+                            ),
+                      child: isNetworkImage
+                          ? Image.network(
+                              image,
+                              height: 48,
+                              width: 48,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  'assets/images/user1.png',
+                                  height: 48,
+                                  width: 48,
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              image,
+                              height: 48,
+                              width: 48,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                   ),
+                  if (!isSuspended) // 🔥 Hide dot if suspended
+                    Positioned(
+                      bottom: 2,
+                      right: 2,
+                      child: Container(
+                        height: 12,
+                        width: 12,
+                        decoration: BoxDecoration(
+                          color: greenColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: whiteColor, width: 2),
+                        ),
+                      ),
+                    ),
                 ],
               ),
 
@@ -97,10 +113,10 @@ class MessageTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomText(
-                      name,
+                      isSuspended ? "Suspended Account" : name,
                       fontSize: 16,
                       fontWeight: FontVariant.semiBold,
-                      color: blackColor,
+                      color: isSuspended ? greyColor : blackColor,
                     ),
 
                     const SizedBox(height: 5),

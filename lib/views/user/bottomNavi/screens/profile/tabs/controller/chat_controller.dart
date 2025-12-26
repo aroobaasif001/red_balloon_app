@@ -17,6 +17,7 @@ class ChatController extends GetxController {
   final String? taskOwnerPhoto;
   final RxnString taskImage = RxnString();
   final RxString taskStatus = 'Active'.obs;
+  final RxBool isOtherUserSuspended = false.obs; // 🔥 Added
 
   final ChatService _chatService = ChatService();
   final ScrollController scrollController = ScrollController();
@@ -27,6 +28,7 @@ class ChatController extends GetxController {
   final RxBool isUploading = false.obs; // 🔥 Added for attachment loading
   final RxString conversationId = ''.obs;
   StreamSubscription? _taskSubscription;
+  StreamSubscription? _suspensionSubscription; // 🔥 Added
 
   ChatController({
     required this.taskId,
@@ -45,6 +47,7 @@ class ChatController extends GetxController {
     _initializeConversation();
     _fetchTaskDetailsIfNeeded();
     _listenToTaskStatus();
+    _listenToOtherUserSuspension(); // 🔥 Renamed and switched to listener
   }
 
   /// Fetch task details if image is missing
@@ -89,6 +92,22 @@ class ChatController extends GetxController {
             }
           }
         });
+  }
+
+  /// 🔥 Listen to real-time suspension status
+  void _listenToOtherUserSuspension() {
+    _suspensionSubscription?.cancel();
+    _suspensionSubscription = FirebaseFirestore.instance
+        .collection('users')
+        .doc(taskOwnerId)
+        .snapshots()
+        .listen((doc) {
+      if (doc.exists) {
+        final data = doc.data();
+        isOtherUserSuspended.value = data?['willLogin'] == false;
+        print('🔄 Real-time suspension update for $taskOwnerId: ${isOtherUserSuspended.value}');
+      }
+    }, onError: (e) => print('Error listening to suspension: $e'));
   }
 
   /// Initialize or get existing conversation
@@ -149,6 +168,10 @@ class ChatController extends GetxController {
 
   /// Send a new message
   Future<void> sendMessage() async {
+    if (isOtherUserSuspended.value) {
+      Get.snackbar('Action Blocked', 'You cannot message a suspended user.');
+      return;
+    }
     final messageText = messageController.text.trim();
     if (messageText.isEmpty) return;
 
@@ -261,6 +284,7 @@ class ChatController extends GetxController {
   void onClose() {
     _markMessagesAsRead(); // 🔥 Final mark as read when leaving
     _taskSubscription?.cancel();
+    _suspensionSubscription?.cancel(); // 🔥 Added
     scrollController.dispose();
     messageController.dispose();
     super.onClose();

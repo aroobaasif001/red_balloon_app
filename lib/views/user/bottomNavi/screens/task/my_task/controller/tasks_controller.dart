@@ -14,6 +14,7 @@ class TasksController extends GetxController {
   final RxList<TaskModel> tasksNearMe = <TaskModel>[].obs;
   final RxList<TaskModel> historyTasks =
       <TaskModel>[].obs; // 🔥 NEW: For completed/cancelled tasks
+  final RxMap<String, bool> userSuspensionStatus = <String, bool>{}.obs; // 🔥 Track suspension status
 
   // Loading states
   final RxBool isLoadingMyTasks = false.obs;
@@ -22,6 +23,7 @@ class TasksController extends GetxController {
 
   // For triggering UI updates
   RxInt updateTrigger = 0.obs;
+  final Map<String, StreamSubscription> _suspensionSubscriptions = {}; // 🔥 Track real-time listeners
 
   @override
   void onInit() {
@@ -35,7 +37,11 @@ class TasksController extends GetxController {
 
   @override
   void onClose() {
-    // Timers are automatically cancelled by GetX
+    // 🔥 Cancel all suspension listeners
+    for (var sub in _suspensionSubscriptions.values) {
+      sub.cancel();
+    }
+    _suspensionSubscriptions.clear();
     super.onClose();
   }
 
@@ -101,6 +107,9 @@ class TasksController extends GetxController {
             await Future.delayed(const Duration(seconds: 1));
             _isFirstLoad = false;
           }
+
+          // 🔥 Sync suspension listeners for all task owners
+          _syncSuspensionListeners(allTasks);
 
           // Filter my tasks (created by current user, not completed/cancelled)
           myTasks.value = allTasks.where((task) {
@@ -373,5 +382,30 @@ class TasksController extends GetxController {
       default:
         return status;
     }
+  }
+
+  /// 🔥 Sync suspension listeners for a list of tasks
+  void _syncSuspensionListeners(List<TaskModel> tasks) {
+    for (var task in tasks) {
+      final ownerUid = task.uid;
+      if (!_suspensionSubscriptions.containsKey(ownerUid)) {
+        print('📡 TasksController: Starting suspension listener for $ownerUid');
+        _suspensionSubscriptions[ownerUid] = _taskService.firestore
+            .collection('users')
+            .doc(ownerUid)
+            .snapshots()
+            .listen((doc) {
+          if (doc.exists) {
+            final isSuspended = doc.data()?['willLogin'] == false;
+            userSuspensionStatus[ownerUid] = isSuspended;
+          }
+        });
+      }
+    }
+  }
+
+  /// 🔥 Public getter for suspension status
+  bool isUserSuspended(String uid) {
+    return userSuspensionStatus[uid] ?? false;
   }
 }

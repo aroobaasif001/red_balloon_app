@@ -56,7 +56,13 @@ class ActiveTab extends StatelessWidget {
 
               // 🔥 Get current user ID
               final authService = AuthService();
-              final currentUserId = authService.currentUser!.uid;
+              final user = authService.currentUser;
+
+              if (user == null) {
+                return const SizedBox.shrink();
+              }
+
+              final currentUserId = user.uid;
 
               // 🔥 Filter tasks:
               // 1. Task owner is NOT current user
@@ -77,6 +83,12 @@ class ActiveTab extends StatelessWidget {
                 // 🔥 If 'in progress', ensure current user is the helper
                 if (status == 'in progress' &&
                     task.acceptedOfferUid != currentUserId) {
+                  return false;
+                }
+
+                // 🔥 NEW: Filter out 'active' tasks if owner is suspended
+                if (status == 'active' &&
+                    controller.isUserSuspended(task.uid)) {
                   return false;
                 }
 
@@ -164,6 +176,15 @@ class ActiveTab extends StatelessWidget {
                             ? 'In Progress'
                             : 'View Details', // 🔥 Conditional button text
                         onViewDetails: () async {
+                          // 🔥 Check if task owner is suspended
+                          if (controller.isUserSuspended(task.uid)) {
+                            Get.snackbar(
+                              'Account Suspended',
+                              'The task owner\'s account has been suspended by administration.',
+                            );
+                            return;
+                          }
+
                           // Fetch user profile data
                           final authService = AuthService();
                           final userData = await authService.getUserData(

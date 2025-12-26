@@ -16,6 +16,7 @@ class HomeTabsController extends GetxController
   RxInt activeTasksCount = 0.obs;
   RxInt disputesCount = 0.obs;
   RxInt pendingWithdrawalsCount = 0.obs;
+  RxDouble totalEscrowBalance = 0.0.obs;
 
   // Alerts
   RxList<Map<String, dynamic>> taskAlerts = <Map<String, dynamic>>[].obs;
@@ -26,6 +27,7 @@ class HomeTabsController extends GetxController
   StreamSubscription? _tasksSubscription;
   StreamSubscription? _withdrawalsSubscription;
   StreamSubscription? _validationsSubscription;
+  StreamSubscription? _walletSubscription;
   Timer? _alertRefreshTimer;
   
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -45,6 +47,7 @@ class HomeTabsController extends GetxController
     
     _startListeningToMetrics();
     _startListeningToAlerts();
+    _startListeningToWallet();
     _startAlertRefreshTimer();
     
     _checkNotificationPermission();
@@ -213,6 +216,18 @@ class HomeTabsController extends GetxController
       disputesCount.value = disputed;
     });
   }
+
+  void _startListeningToWallet() {
+    _walletSubscription = _firestore.collection('wallet').snapshots().listen((snapshot) {
+      double total = 0.0;
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final balance = (data['escrowBalance'] ?? 0.0).toDouble();
+        total += balance;
+      }
+      totalEscrowBalance.value = total;
+    });
+  }
   
   Future<void> _checkNotificationPermission() async {
     try {
@@ -237,6 +252,7 @@ class HomeTabsController extends GetxController
     _tasksSubscription?.cancel();
     _withdrawalsSubscription?.cancel();
     _validationsSubscription?.cancel();
+    _walletSubscription?.cancel();
     _alertRefreshTimer?.cancel();
     tabController.dispose();
     super.onClose();
