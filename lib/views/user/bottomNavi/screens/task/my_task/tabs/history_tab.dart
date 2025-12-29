@@ -530,7 +530,7 @@ class HistoryTab extends StatelessWidget {
                             }
                           }
                         },
-                        location: '2.5 km away',
+                        location: controller.getDistanceToTask(task.latitude, task.longitude) ?? '',
                         dateTime: time,
                       ),
                     ),

@@ -45,6 +45,8 @@ class TaskService {
     required double budget,
     String? location,
     String? userId,
+    double? latitude,
+    double? longitude,
     File? imageFile,
   }) async {
     try {
@@ -73,6 +75,8 @@ class TaskService {
         description: description,
         budget: budget,
         location: location,
+        latitude: latitude,
+        longitude: longitude,
         imageUrl: imageUrl,
         createdAt: DateTime.now(),
         status: 'active',
@@ -97,6 +101,8 @@ class TaskService {
     required double budget,
     String? location,
     String? userId,
+    double? latitude,
+    double? longitude,
     required String imageUrl,
   }) async {
     try {
@@ -119,6 +125,8 @@ class TaskService {
         description: description,
         budget: budget,
         location: location,
+        latitude: latitude,
+        longitude: longitude,
         imageUrl: imageUrl,
         createdAt: DateTime.now(),
         status: 'active',

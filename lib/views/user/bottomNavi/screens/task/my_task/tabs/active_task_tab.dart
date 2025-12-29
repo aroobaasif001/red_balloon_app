@@ -166,7 +166,7 @@ class ActiveTab extends StatelessWidget {
                             : "assets/images/sofa.png",
                         isNetworkImage:
                             task.imageUrl != null && task.imageUrl!.isNotEmpty,
-                        distance: '2.5 km away',
+                        distance: controller.getDistanceToTask(task.latitude, task.longitude),
                         taskType: task.taskType, // 🔥 Pass taskType
                         onEdit: () {
                           Get.to(() => PostNewTaskScreen());
@@ -222,6 +222,8 @@ class ActiveTab extends StatelessWidget {
                                     phoneNumber: phone,
                                     helperUid: otherUserUid,
                                     taskImage: task.imageUrl,
+                                    latitude: task.latitude,
+                                    longitude: task.longitude,
                                   ),
                                 )
                               : Get.to(
@@ -251,6 +253,8 @@ class ActiveTab extends StatelessWidget {
                                     userPhoto: userPhoto,
                                     taskOwnerAuthId:
                                         task.uid, // Pass Auth UID explicitly
+                                    latitude: task.latitude,
+                                    longitude: task.longitude,
                                   ),
                                 );
                         },

@@ -11,6 +11,7 @@ import '../../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
 import '../../../profile/tabs/controller/chat_controller.dart';
+import '../tabs/task_location_display_screen.dart';
 import '../controller/task_in_progress_controller.dart'; // 🔥 Import controller
 
 class TaskInProgressScreen extends StatelessWidget {
@@ -118,16 +119,69 @@ class TaskInProgressScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
-                        child: CustomContainer(
-                          borderRadius: BorderRadius.circular(15),
-                          child: ClipRRect(
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
                             borderRadius: BorderRadius.circular(15),
-                            child: Image.asset(
-                              "assets/images/map.png",
-                              height: 155,
-                              fit: BoxFit.cover,
+                            onTap: () {
+                              print("📍 Map preview tapped in TaskInProgressScreen");
+                              if (task.latitude != null && task.longitude != null) {
+                                Get.to(
+                                  () => TaskLocationDisplayScreen(
+                                    latitude: task.latitude!,
+                                    longitude: task.longitude!,
+                                    title: task.title,
+                                    address: task.location ?? "Task Location",
+                                  ),
+                                );
+                              } else {
+                                Get.snackbar(
+                                  "Location Info",
+                                  "This task does not have specific location coordinates.",
+                                  backgroundColor: Colors.blue.withOpacity(0.7),
+                                  colorText: Colors.white,
+                                );
+                              }
+                            },
+                            child: CustomContainer(
+                              borderRadius: BorderRadius.circular(15),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: (task.latitude != null &&
+                                        task.longitude != null &&
+                                        task.latitude != 0.0 &&
+                                        task.longitude != 0.0)
+                                    ? Image.network(
+                                        "https://maps.googleapis.com/maps/api/staticmap?center=${task.latitude},${task.longitude}&zoom=14&size=400x400&markers=color:red%7C${task.latitude},${task.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
+                                        height: 155,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder: (context, child, loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          return Container(
+                                            height: 155,
+                                            color: bordercolor1,
+                                            child: const Center(
+                                              child: CircularProgressIndicator(
+                                                valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        errorBuilder: (context, error, stackTrace) =>
+                                            Image.asset(
+                                          "assets/images/map.png",
+                                          height: 155,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Image.asset(
+                                        "assets/images/map.png",
+                                        height: 155,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
                             ),
                           ),
                         ),

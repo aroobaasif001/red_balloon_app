@@ -139,7 +139,7 @@ class AllTaskTab extends StatelessWidget {
                             : "assets/images/sofa.png",
                         isNetworkImage:
                             task.imageUrl != null && task.imageUrl!.isNotEmpty,
-                        distance: '2.5 km away',
+                        distance: controller.getDistanceToTask(task.latitude, task.longitude),
                         taskType: task.taskType, // 🔥 Pass taskType
                         btnText: isInProgress
                             ? 'In Progress'

@@ -22,6 +22,8 @@ class PostNewTaskController extends GetxController {
   final taskDescription = TextEditingController();
   final taskBudget = TextEditingController();
   final location = TextEditingController();
+  var latitude = 0.0.obs;
+  var longitude = 0.0.obs;
 
   // Error fields
   RxString taskTypeError = "".obs;
@@ -179,8 +181,8 @@ class PostNewTaskController extends GetxController {
       if (loc.isEmpty) {
         locationError.value = "Location is required for offline tasks";
         isValid = false;
-      } else if (loc.length > 50) {
-        locationError.value = "Location must not exceed 50 characters";
+      } else if (loc.length > 250) {
+        locationError.value = "Location must not exceed 250 characters";
         isValid = false;
       }
     }
@@ -235,6 +237,8 @@ class PostNewTaskController extends GetxController {
         location: selectedTaskType.value == "Offline Task"
             ? location.text.trim()
             : null,
+        latitude: selectedTaskType.value == "Offline Task" ? latitude.value : null,
+        longitude: selectedTaskType.value == "Offline Task" ? longitude.value : null,
         userId: storedUserId,
         imageUrl: uploadedImageUrl.value,
       );
@@ -297,6 +301,8 @@ class PostNewTaskController extends GetxController {
     taskDescription.clear();
     taskBudget.clear();
     location.clear();
+    latitude.value = 0.0;
+    longitude.value = 0.0;
     pickedFile.value = null;
 
     // Clear errors

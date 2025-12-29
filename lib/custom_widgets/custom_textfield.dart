@@ -12,6 +12,8 @@ class CustomTextField extends StatefulWidget {
   final String? iconPath;
   final bool isPassword;
   final Function(String)? onChanged;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   // 🔤 Keyboard
   final TextInputType keyboardType;
@@ -49,6 +51,8 @@ class CustomTextField extends StatefulWidget {
     this.iconPath,
     this.isPassword = false,
     this.onChanged,
+    this.readOnly = false,
+    this.onTap,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
     this.onSubmitted,
@@ -130,6 +134,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             // ),
           ],
           child: TextField(
+            readOnly: widget.readOnly,
+            onTap: widget.onTap,
             controller: widget.controller,
             obscureText: widget.isPassword ? _obscure : false,
             maxLines: widget.maxLines,

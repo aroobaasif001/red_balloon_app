@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/services/task_service.dart';
+import 'package:geolocator/geolocator.dart';
 
 class TasksController extends GetxController {
   final TaskService _taskService = TaskService();
@@ -15,6 +16,7 @@ class TasksController extends GetxController {
   final RxList<TaskModel> historyTasks =
       <TaskModel>[].obs; // 🔥 NEW: For completed/cancelled tasks
   final RxMap<String, bool> userSuspensionStatus = <String, bool>{}.obs; // 🔥 Track suspension status
+  final Rx<Position?> userPosition = Rx<Position?>(null); // 🔥 Track user location
 
   // Loading states
   final RxBool isLoadingMyTasks = false.obs;
@@ -31,8 +33,56 @@ class TasksController extends GetxController {
     print('🚀 TasksController initialized');
     print('👤 Current User: ${_auth.currentUser?.uid ?? "NOT LOGGED IN"}');
     print('📧 Email: ${_auth.currentUser?.email ?? "N/A"}');
+    _fetchUserLocation();
     startRealTimeUpdates();
     startAutoRefreshTimer();
+  }
+
+  /// 🔥 Fetch current user location
+  Future<void> _fetchUserLocation() async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+        userPosition.value = position;
+        print('📍 User location fetched: ${position.latitude}, ${position.longitude}');
+      }
+    } catch (e) {
+      print('❌ Error fetching user location: $e');
+    }
+  }
+
+  /// 🔥 Calculate distance to a task
+  String? getDistanceToTask(double? taskLat, double? taskLon) {
+    if (userPosition.value == null || taskLat == null || taskLon == null) {
+      return null;
+    }
+
+    try {
+      final distanceInMeters = Geolocator.distanceBetween(
+        userPosition.value!.latitude,
+        userPosition.value!.longitude,
+        taskLat,
+        taskLon,
+      );
+
+      if (distanceInMeters < 1000) {
+        return '${distanceInMeters.toStringAsFixed(0)}m away';
+      } else {
+        final distanceInKm = distanceInMeters / 1000;
+        return '${distanceInKm.toStringAsFixed(1)} km away';
+      }
+    } catch (e) {
+      print('❌ Error calculating distance: $e');
+      return null;
+    }
   }
 
   @override

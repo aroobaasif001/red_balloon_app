@@ -13,6 +13,7 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/task/post_new_task
 
 import 'confirm_payment_screen.dart';
 import 'controller/post_new_task_controller.dart';
+import 'map_picker_screen.dart';
 
 class PostNewTaskScreen extends StatelessWidget {
   const PostNewTaskScreen({super.key});
@@ -320,10 +321,10 @@ class PostNewTaskScreen extends StatelessWidget {
                                 builder: (controller) {
                                   return Obx(
                                     () => CustomText(
-                                      '${controller.locationLength.value}/50',
+                                      '${controller.locationLength.value}/250',
                                       fontSize: 12,
                                       color:
-                                          controller.locationLength.value > 50
+                                          controller.locationLength.value > 250
                                           ? redColor
                                           : blackLightColor.withOpacity(0.6),
                                     ),
@@ -334,8 +335,19 @@ class PostNewTaskScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 10),
                           CustomTextField(
+                            readOnly: true,
+                            hintText: "Tap to select location",
+                            onTap: () async {
+                              final result = await Get.to(() => MapPickerScreen());
+                              if (result != null) {
+                                controller.location.text = result['address'];
+                                controller.latitude.value = result['latitude'];
+                                controller.longitude.value = result['longitude'];
+                                controller.locationLength.value = controller.location.text.length;
+                              }
+                            },
                             controller: controller.location,
-                            maxLength: 50,
+                            maxLength: 250,
                             onChanged: (value) {
                               controller.locationLength.value = value.length;
                             },

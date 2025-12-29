@@ -18,6 +18,8 @@ class TaskModel {
   final String? helperHelpDetails;
   final bool? helperHelpRequested;
   final String? disputedStartTime;
+  final double? latitude;
+  final double? longitude;
 
   TaskModel({
     this.id,
@@ -39,6 +41,8 @@ class TaskModel {
     this.helperHelpDetails,
     this.helperHelpRequested,
     this.disputedStartTime,
+    this.latitude,
+    this.longitude,
   });
 
   Map<String, dynamic> toJson() {
@@ -61,6 +65,8 @@ class TaskModel {
       'helperHelpDetails': helperHelpDetails,
       'helperHelpRequested': helperHelpRequested,
       'disputedStartTime': disputedStartTime,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 
@@ -87,6 +93,8 @@ class TaskModel {
       helperHelpDetails: json['helperHelpDetails'],
       helperHelpRequested: json['helperHelpRequested'],
       disputedStartTime: json['disputedStartTime'],
+      latitude: json['latitude']?.toDouble(),
+      longitude: json['longitude']?.toDouble(),
     );
   }
 
@@ -135,6 +143,8 @@ class TaskModel {
       helperHelpDetails: data['helperHelpDetails'],
       helperHelpRequested: data['helperHelpRequested'],
       disputedStartTime: data['disputedStartTime'],
+      latitude: data['latitude']?.toDouble(),
+      longitude: data['longitude']?.toDouble(),
     );
   }
 }

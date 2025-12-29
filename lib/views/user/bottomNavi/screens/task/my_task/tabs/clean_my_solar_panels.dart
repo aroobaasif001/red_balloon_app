@@ -12,6 +12,7 @@ import '../../../../../../../utils/colors.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
 import '../../../profile/tabs/controller/chat_controller.dart';
+import 'task_location_display_screen.dart';
 import '../controller/task_detail_controller.dart';
 import '../widgets/offer_card.dart';
 import '../widgets/task_info_top_row.dart';
@@ -37,6 +38,8 @@ class Cleanmysolarpanels extends StatefulWidget {
   final String? userName;
   final String? userPhoto;
   final String? taskOwnerAuthId; // New field for robust Auth UID
+  final double? latitude;
+  final double? longitude;
 
   Cleanmysolarpanels({
     super.key,
@@ -54,6 +57,8 @@ class Cleanmysolarpanels extends StatefulWidget {
     this.userName,
     this.userPhoto,
     this.taskOwnerAuthId,
+    this.latitude,
+    this.longitude,
   });
 
   @override
@@ -237,12 +242,62 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              "assets/images/map.png",
-                              height: 160,
-                              fit: BoxFit.cover,
+                          child: GestureDetector(
+                            onTap: () {
+                              if (widget.latitude != null &&
+                                  widget.longitude != null) {
+                                Get.to(
+                                  () => TaskLocationDisplayScreen(
+                                    latitude: widget.latitude!,
+                                    longitude: widget.longitude!,
+                                    title: widget.taskTitle ?? "Task Location",
+                                    address: widget.location ?? "",
+                                  ),
+                                );
+                              } else {
+                                Get.snackbar("Info", "Location coordinates not available");
+                              }
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: (widget.latitude != null &&
+                                      widget.longitude != null &&
+                                      widget.latitude != 0.0 &&
+                                      widget.longitude != 0.0)
+                                  ? Image.network(
+                                      "https://maps.googleapis.com/maps/api/staticmap?center=${widget.latitude},${widget.longitude}&zoom=14&size=400x400&markers=color:red%7C${widget.latitude},${widget.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
+                                      height: 160,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return Container(
+                                          height: 160,
+                                          color: bordercolor1,
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      redColor),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          "assets/images/map.png",
+                                          height: 160,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    )
+                                  : Image.asset(
+                                      "assets/images/map.png",
+                                      height: 160,
+                                      fit: BoxFit.cover,
+                                    ),
                             ),
                           ),
                         ),

@@ -10,6 +10,7 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details2_screen.dart';
+import 'task_location_display_screen.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
   final TaskModel? task; // 🔥 Made optional
@@ -233,43 +234,72 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                         const SizedBox(height: 10),
 
                         /// MAP CARD
-                        CustomContainer(
-                          height: 150,
-                          conColor: mapBgColor,
-                          borderRadius: BorderRadius.circular(22),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(height: 1),
-
-                              /// 📍 Center Pin (Emoji Style)
-                              Image(
-                                image: AssetImage('assets/icons/map-pin1.png'),
-                                height: 40,
-                                width: 40,
-                              ),
-
-                              /// White Input Box
-                              CustomContainer(
-                                conColor: whiteColor,
-                                width: double.infinity,
-                                borderRadius: BorderRadius.circular(16),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                        GestureDetector(
+                          onTap: () {
+                             if (displayTask.latitude != null &&
+                                  displayTask.longitude != null) {
+                                Get.to(
+                                  () => TaskLocationDisplayScreen(
+                                    latitude: displayTask.latitude!,
+                                    longitude: displayTask.longitude!,
+                                    title: displayTask.title,
+                                    address: displayTask.location ?? "",
+                                  ),
+                                );
+                              }
+                          },
+                          child: CustomContainer(
+                            height: 150,
+                            conColor: mapBgColor,
+                            borderRadius: BorderRadius.circular(22),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            child: Stack(
+                              children: [
+                                if (displayTask.latitude != null &&
+                                    displayTask.longitude != null &&
+                                    displayTask.latitude != 0.0 &&
+                                    displayTask.longitude != 0.0)
+                                  Positioned.fill(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(22),
+                                      child: Image.network(
+                                        "https://maps.googleapis.com/maps/api/staticmap?center=${displayTask.latitude},${displayTask.longitude}&zoom=14&size=600x300&markers=color:red%7C${displayTask.latitude},${displayTask.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) =>
+                                            const SizedBox.shrink(),
+                                      ),
+                                    ),
+                                  ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const SizedBox(height: 1),
+                                    const Image(
+                                      image: AssetImage('assets/icons/map-pin1.png'),
+                                      height: 40,
+                                      width: 40,
+                                    ),
+                                    CustomContainer(
+                                      conColor: whiteColor.withOpacity(0.9),
+                                      width: double.infinity,
+                                      borderRadius: BorderRadius.circular(16),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 12,
+                                      ),
+                                      child: CustomText(
+                                        displayTask.location ?? "Location not specified",
+                                        fontSize: 13,
+                                        fontWeight: FontVariant.regular,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                child: CustomText(
-                                  displayTask.location ??
-                                      "Location not specified", // 🔥 Real location
-                                  fontSize: 13,
-                                  fontWeight: FontVariant.regular,
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],

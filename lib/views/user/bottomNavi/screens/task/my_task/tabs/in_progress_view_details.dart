@@ -23,6 +23,8 @@ class InProgressViewDetails extends StatelessWidget {
   final String? phoneNumber;
   final String? helperUid;
   final String? taskImage;
+  final double? latitude;
+  final double? longitude;
 
   const InProgressViewDetails({
     super.key,
@@ -37,6 +39,8 @@ class InProgressViewDetails extends StatelessWidget {
     this.phoneNumber,
     this.helperUid,
     this.taskImage,
+    this.latitude,
+    this.longitude,
   });
 
   @override
@@ -85,7 +89,12 @@ class InProgressViewDetails extends StatelessWidget {
 
                     buildStatusCard(controller),
                     const SizedBox(height: 16),
-                    buildRouteCard(),
+                    buildRouteCard(
+                      latitude: latitude,
+                      longitude: longitude,
+                      title: taskTitle,
+                      address: location,
+                    ),
                     const SizedBox(height: 16),
                     Obx(() => buildTaskSummaryCard(
                       controller,

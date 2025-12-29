@@ -89,13 +89,15 @@ class HistoryTaskCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomText(
-                      location,
-                      fontSize: 14,
-                      fontWeight: FontVariant.regular,
-                      color: grey6Color,
-                    ),
-                    const SizedBox(height: 8),
+                    if (location.isNotEmpty) ...[
+                      CustomText(
+                        location,
+                        fontSize: 14,
+                        fontWeight: FontVariant.regular,
+                        color: grey6Color,
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                     CustomText(
                       dateTime,
                       fontSize: 14,

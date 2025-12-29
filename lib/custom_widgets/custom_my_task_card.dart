@@ -10,7 +10,7 @@ class CustomMyTaskCard extends StatelessWidget {
   final String status;
   final String postedTime;
   final String image;
-  final String distance;
+  final String? distance;
   final bool isNetworkImage;
   final String? taskType; // 🔥 NEW: To check if online or offline
 
@@ -34,7 +34,7 @@ class CustomMyTaskCard extends StatelessWidget {
     this.btnText,
     this.onViewDetails,
     this.showButton = false,
-    this.distance = '2.5 km away',
+    this.distance,
     this.isNetworkImage = false,
     this.taskType, // 🔥 NEW
     this.showType = true,
@@ -73,12 +73,12 @@ class CustomMyTaskCard extends StatelessWidget {
                 Row(
                   children: [
                     // 🔥 Only show distance if NOT Online Task
-                    if (taskType != 'Online Task') ...[
+                    if (taskType != 'Online Task' && distance != null && distance!.isNotEmpty) ...[
                       CustomContainer(
                         conColor: whiteColor,
                         borderRadius: BorderRadius.circular(15),
                         child: CustomText(
-                          distance,
+                          distance!,
                           fontSize: 12,
                           fontWeight: FontVariant.regular,
                         ),

@@ -187,7 +187,9 @@ class TasksForYouTab extends StatelessWidget {
                       child: OfflineAndOnlineCard(
                         title: task.title,
                         subtitle: task.description,
-                        distance: isOfflineTask ? task.location : null,
+                        distance: isOfflineTask 
+                            ? (controller.getDistanceToTask(task.latitude, task.longitude) ?? task.location)
+                            : null,
                         taskType: task.taskType,
                         timeAgo: controller.getTimeAgo(task.createdAt),
                         price: controller.formatBudget(task.budget),
@@ -232,6 +234,8 @@ class TasksForYouTab extends StatelessWidget {
                                 phoneNumber: phone,
                                 helperUid: task.uid,
                                 taskImage: task.imageUrl,
+                                latitude: task.latitude,
+                                longitude: task.longitude,
                               ),
                             );
                           } else {
@@ -252,6 +256,8 @@ class TasksForYouTab extends StatelessWidget {
                                 userName: userName,
                                 userPhoto: userPhoto,
                                 taskOwnerAuthId: task.uid,
+                                latitude: task.latitude,
+                                longitude: task.longitude,
                               ),
                             );
                           }
