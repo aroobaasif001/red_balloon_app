@@ -7,7 +7,7 @@ import 'package:red_balloon_app/utils/dialog_helpers.dart';
 
 class FatoraService {
   // Toggle this to switch between modes
-  static const bool isTestMode = false;
+  static const bool isTestMode = true;
 
   static const String _prodApiKey = 'a1ac1512-6c07-4242-8d95-e9ed5db9eed4';
   static const String _testApiKey = 'E4B73FEE-F492-4607-A38D-852B0EBC91C9';
