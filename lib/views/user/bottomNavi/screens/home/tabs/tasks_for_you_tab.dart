@@ -116,6 +116,18 @@ class TasksForYouTab extends StatelessWidget {
                 return false;
               }
 
+              // 🔥 NEW: Filter offline tasks by distance (max 20km) - ONLY for 'active' tasks
+              if (status == 'active' && task.taskType == 'Offline Task') {
+                final rawDistance = controller.getRawDistanceToTask(
+                  task.latitude,
+                  task.longitude,
+                );
+                // If distance is > 20,000 meters (20km), hide it
+                if (rawDistance != null && rawDistance > 20000) {
+                  return false;
+                }
+              }
+
               return true;
             }).toList();
 
@@ -188,7 +200,7 @@ class TasksForYouTab extends StatelessWidget {
                         title: task.title,
                         subtitle: task.description,
                         distance: isOfflineTask 
-                            ? (controller.getDistanceToTask(task.latitude, task.longitude) ?? task.location)
+                            ? controller.getDistanceToTask(task.latitude, task.longitude)
                             : null,
                         taskType: task.taskType,
                         timeAgo: controller.getTimeAgo(task.createdAt),

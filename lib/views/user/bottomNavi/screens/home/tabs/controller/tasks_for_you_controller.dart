@@ -77,6 +77,25 @@ class TasksForYouController extends GetxController {
     }
   }
 
+  /// 🔥 Get raw distance in meters
+  double? getRawDistanceToTask(double? taskLat, double? taskLon) {
+    if (userPosition.value == null || taskLat == null || taskLon == null) {
+      return null;
+    }
+
+    try {
+      return Geolocator.distanceBetween(
+        userPosition.value!.latitude,
+        userPosition.value!.longitude,
+        taskLat,
+        taskLon,
+      );
+    } catch (e) {
+      print('❌ Home: Error calculating raw distance: $e');
+      return null;
+    }
+  }
+
   @override
   void onClose() {
     // 🔥 Cancel all suspension listeners

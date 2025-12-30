@@ -7,29 +7,56 @@ import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/custom_textfield.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/utils/dialog_helpers.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/bottom_navi_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/post_new_task/widgets/custom_dropdown.dart';
 
 import 'confirm_payment_screen.dart';
 import 'controller/post_new_task_controller.dart';
 import 'map_picker_screen.dart';
 
-class PostNewTaskScreen extends StatelessWidget {
-  const PostNewTaskScreen({super.key});
+class PostNewTaskScreen extends StatefulWidget {
+  final TaskModel? task;
+  const PostNewTaskScreen({super.key, this.task});
+
+  @override
+  State<PostNewTaskScreen> createState() => _PostNewTaskScreenState();
+}
+
+class _PostNewTaskScreenState extends State<PostNewTaskScreen> {
+  late PostNewTaskController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(PostNewTaskController());
+
+    if (widget.task != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.initializeForEditing(widget.task!);
+      });
+    } else {
+      // Clear form if not editing to avoid leftover data
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.clearForm();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(PostNewTaskController());
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: whiteColor,
         centerTitle: true,
-        title: CustomText(
-          'Post New Task',
-          fontSize: 24,
-          fontWeight: FontVariant.bold,
+        title: Obx(
+          () => CustomText(
+            controller.isEditing.value ? 'Edit Task' : 'Post New Task',
+            fontSize: 24,
+            fontWeight: FontVariant.bold,
+          ),
         ),
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -338,12 +365,16 @@ class PostNewTaskScreen extends StatelessWidget {
                             readOnly: true,
                             hintText: "Tap to select location",
                             onTap: () async {
-                              final result = await Get.to(() => MapPickerScreen());
+                              final result = await Get.to(
+                                () => MapPickerScreen(),
+                              );
                               if (result != null) {
                                 controller.location.text = result['address'];
                                 controller.latitude.value = result['latitude'];
-                                controller.longitude.value = result['longitude'];
-                                controller.locationLength.value = controller.location.text.length;
+                                controller.longitude.value =
+                                    result['longitude'];
+                                controller.locationLength.value =
+                                    controller.location.text.length;
                               }
                             },
                             controller: controller.location,
@@ -396,59 +427,110 @@ class PostNewTaskScreen extends StatelessWidget {
               Obx(() {
                 final file = controller.pickedFile.value;
                 final hasFile = file != null;
+                final existingUrl = controller.uploadedImageUrl.value;
+                final hasExistingUrl = existingUrl.isNotEmpty;
                 final isUploading = controller.isUploadingImage.value;
                 final uploadError = controller.imageError.value;
                 final isPdf =
                     hasFile && (file!.extension ?? '').toLowerCase() == 'pdf';
 
                 Widget buildImagePreview() {
-                  if (!hasFile) return SizedBox.shrink();
-                  if (isPdf) return SizedBox.shrink();
+                  if (hasFile) {
+                    if (isPdf) return SizedBox.shrink();
 
-                  final imageWidget = file!.bytes != null
-                      ? Image.memory(
-                          file.bytes!,
+                    final imageWidget = file!.bytes != null
+                        ? Image.memory(
+                            file.bytes!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: 180,
+                          )
+                        : (file.path != null
+                              ? Image.file(
+                                  File(file.path!),
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 180,
+                                )
+                              : Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.insert_drive_file_outlined,
+                                        size: 40,
+                                        color: blackColor,
+                                      ),
+                                      SizedBox(height: 6),
+                                      CustomText(
+                                        "Preview not available",
+                                        fontSize: 12,
+                                      ),
+                                    ],
+                                  ),
+                                ));
+
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: SizedBox(
+                        height: 180,
+                        width: double.infinity,
+                        child: imageWidget,
+                      ),
+                    );
+                  } else if (hasExistingUrl) {
+                    // Show remote image
+                    final isExistingPdf =
+                        existingUrl.toLowerCase().contains('.pdf') ||
+                        existingUrl.contains('PdfProof');
+
+                    if (isExistingPdf) {
+                      return Container(
+                        height: 180,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: whiteColor,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.picture_as_pdf,
+                              size: 60,
+                              color: redColor,
+                            ),
+                            SizedBox(height: 6),
+                            CustomText("Existing Document", fontSize: 12),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: SizedBox(
+                        height: 180,
+                        width: double.infinity,
+                        child: Image.network(
+                          existingUrl,
                           fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: 180,
-                        )
-                      : (file.path != null
-                            ? Image.file(
-                                File(file.path!),
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: 180,
-                              )
-                            : Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.insert_drive_file_outlined,
-                                      size: 40,
-                                      color: blackColor,
-                                    ),
-                                    SizedBox(height: 6),
-                                    CustomText(
-                                      "Preview not available",
-                                      fontSize: 12,
-                                    ),
-                                  ],
-                                ),
-                              ));
-
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: SizedBox(
-                      height: 180,
-                      width: double.infinity,
-                      child: imageWidget,
-                    ),
-                  );
+                          errorBuilder: (context, error, stackTrace) => Center(
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 40,
+                              color: grayColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return SizedBox.shrink();
                 }
 
                 Widget buildPdfPreview() {
-                  if (!isPdf) return SizedBox.shrink();
+                  if (!hasFile || !isPdf) return SizedBox.shrink();
                   return Container(
                     height: 180,
                     alignment: Alignment.center,
@@ -492,7 +574,7 @@ class PostNewTaskScreen extends StatelessWidget {
                               180, // 🔥 Fixed finite height to prevent animation crash
                           alignment: Alignment
                               .center, // 🔥 Center content to avoid overflow
-                          padding: hasFile || isUploading
+                          padding: hasFile || isUploading || hasExistingUrl
                               ? EdgeInsets.all(0)
                               : EdgeInsets.symmetric(horizontal: 58),
                           child: isUploading
@@ -520,12 +602,12 @@ class PostNewTaskScreen extends StatelessWidget {
                                     ],
                                   ),
                                 )
-                              : hasFile
+                              : hasFile || hasExistingUrl
                               ? Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     buildImagePreview(),
-                                    buildPdfPreview(),
+                                    if (hasFile) buildPdfPreview(),
                                   ],
                                 )
                               : Column(
@@ -563,50 +645,62 @@ class PostNewTaskScreen extends StatelessWidget {
               SizedBox(height: 21),
 
               // ---------------- Info Box ----------------
-              Obx(() => controller.selectedTaskType.value == "Offline Task"
-                ? CustomContainer(
-                    padding: EdgeInsets.all(20),
-                    conColor: red2Color,
-                    borderRadius: BorderRadius.circular(15),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.info_outline_rounded,
-                          size: 25,
-                          color: whiteColor,
+              Obx(
+                () => controller.selectedTaskType.value == "Offline Task"
+                    ? CustomContainer(
+                        padding: EdgeInsets.all(20),
+                        conColor: red2Color,
+                        borderRadius: BorderRadius.circular(15),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline_rounded,
+                              size: 25,
+                              color: whiteColor,
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: CustomText(
+                                'Your task will be visible to nearby helpers within 20km of your location',
+                                color: whiteColor,
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: CustomText(
-                            'Your task will be visible to nearby helpers within 20km of your location',
-                            color: whiteColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : SizedBox.shrink(),
+                      )
+                    : SizedBox.shrink(),
               ),
 
               SizedBox(height: 36),
               Center(
-                child: CustomButton(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  bgColor: red2Color,
-                  label: 'Next',
-                  onPressed: () async {
-                    if (!controller.validateForm()) return;
+                child: Obx(
+                  () => CustomButton(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    bgColor: red2Color,
+                    isLoading: controller.isLoading.value,
+                    label: controller.isEditing.value ? 'Save Changes' : 'Next',
+                    onPressed: () async {
+                      if (!controller.validateForm()) return;
 
-                    final result = await Get.to(() => ConfirmPaymentScreen());
+                      if (controller.isEditing.value) {
+                        final success = await controller.submitTask();
+                        if (success) {
+                          Get.offAll(() => BottomNaviScreen(initialIndex: 1));
+                        }
+                        return;
+                      }
 
-                    if (result == true) {
-                      DialogHelpers.showPaymentSuccessDialog(
-                        context: context,
-                        showButton: false,
-                        message: 'Your Task was posted successfully!',
-                      );
-                    }
-                  },
+                      final result = await Get.to(() => ConfirmPaymentScreen());
+
+                      if (result == true) {
+                        DialogHelpers.showPaymentSuccessDialog(
+                          context: context,
+                          showButton: false,
+                          message: 'Your Task was posted successfully!',
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
 

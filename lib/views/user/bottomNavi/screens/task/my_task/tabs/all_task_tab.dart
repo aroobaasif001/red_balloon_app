@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_my_task_card.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/utils/dialog_helpers.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/tasks_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_details_screen.dart';
 
+import '../../post_new_task/controller/post_new_task_controller.dart';
 import '../../post_new_task/post_new_task_screen.dart';
 import 'task_in_progress_screen.dart'; // 🔥 Import TaskInProgressScreen
 
@@ -17,7 +20,7 @@ class AllTaskTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Find the existing controller (put by MyTaskScreen)
-    final TasksController controller = Get.find<TasksController>();
+    final TasksController controller = Get.put(TasksController());
 
     return RefreshIndicator(
       backgroundColor: whiteColor,
@@ -139,11 +142,23 @@ class AllTaskTab extends StatelessWidget {
                             : "assets/images/sofa.png",
                         isNetworkImage:
                             task.imageUrl != null && task.imageUrl!.isNotEmpty,
-                        distance: controller.getDistanceToTask(task.latitude, task.longitude),
+                        distance: controller.getDistanceToTask(
+                          task.latitude,
+                          task.longitude,
+                        ),
                         taskType: task.taskType, // 🔥 Pass taskType
                         btnText: isInProgress
                             ? 'In Progress'
                             : 'View Details', // 🔥 Dynamic button text
+                        onLongPress: () {
+                          if (task.status.toLowerCase() == 'active') {
+                            _showEditDeleteBottomSheet(
+                              context,
+                              task,
+                              controller,
+                            );
+                          }
+                        },
                         onEdit: () {
                           Get.to(() => PostNewTaskScreen());
                         },
@@ -180,6 +195,87 @@ class AllTaskTab extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showEditDeleteBottomSheet(
+    BuildContext context,
+    TaskModel task,
+    TasksController tasksController,
+  ) {
+    // We need PostNewTaskController for editing/deleting
+    final postController = Get.put(PostNewTaskController());
+
+    Get.bottomSheet(
+      SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          decoration: BoxDecoration(
+            color: whiteColor,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit, color: rbnewcolor),
+                title: CustomText(
+                  'Edit Task',
+                  fontWeight: FontVariant.semiBold,
+                ),
+                onTap: () {
+                  Get.back(); // Close bottom sheet
+                  Get.to(() => PostNewTaskScreen(task: task));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: redColor),
+                title: CustomText(
+                  'Delete Task',
+                  color: redColor,
+                  fontWeight: FontVariant.semiBold,
+                ),
+                onTap: () {
+                  Get.back(); // Close bottom sheet
+                  _showDeleteConfirmation(
+                    context,
+                    task,
+                    postController,
+                    tasksController,
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(
+    BuildContext context,
+    TaskModel task,
+    PostNewTaskController postController,
+    TasksController tasksController,
+  ) {
+    DialogHelpers.showDeleteTaskDialog(
+      context: context,
+      budget: task.budget,
+      taskTitle: task.title,
+      onConfirm: () async {
+        final success = await postController.deleteTask(
+          task.id!,
+          task.budget,
+          task.title,
+        );
+        if (success) {
+          tasksController.refreshTasks();
+        }
+      },
     );
   }
 }

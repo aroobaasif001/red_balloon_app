@@ -228,6 +228,144 @@ class DialogHelpers {
     );
   }
 
+  static void showDeleteTaskDialog({
+    required BuildContext context,
+    required double budget,
+    required String taskTitle,
+    required VoidCallback onConfirm,
+  }) {
+    double refundAmount = budget * 0.96;
+    double taxAmount = budget * 0.04;
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              CustomContainer(
+                padding: const EdgeInsets.only(
+                  top: 90,
+                  left: 25,
+                  right: 25,
+                  bottom: 25,
+                ),
+                conColor: whiteColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: blackColor.withOpacity(0.12),
+                    blurRadius: 10,
+                  ),
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomText(
+                      "Delete Task?",
+                      fontSize: 20,
+                      fontWeight: FontVariant.bold,
+                      color: blackColor,
+                    ),
+                    const SizedBox(height: 10),
+                    CustomText(
+                      "Are you sure you want to delete \"$taskTitle\"?",
+                      fontSize: 14,
+                      color: gray6Color,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    CustomContainer(
+                      padding: const EdgeInsets.all(12),
+                      conColor: redColor.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: redColor.withOpacity(0.1)),
+                      child: CustomText(
+                        "A 4% tax (SAR ${taxAmount.toStringAsFixed(2)}) will be deducted. You will receive 96% (SAR ${refundAmount.toStringAsFixed(2)}) back in your wallet.",
+                        fontSize: 12,
+                        color: redColor,
+                        textAlign: TextAlign.center,
+                        fontWeight: FontVariant.medium,
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: fundCardBorderColor,
+                                width: 2,
+                              ),
+                              conColor: hColor.withOpacity(0.10),
+                              child: const CustomText(
+                                "Cancel",
+                                fontSize: 14,
+                                color: redColor,
+                                fontWeight: FontVariant.medium,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              onConfirm();
+                            },
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              conColor: redColor,
+                              child: const CustomText(
+                                "Delete",
+                                fontSize: 14,
+                                color: whiteColor,
+                                fontWeight: FontVariant.medium,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: -70,
+                child: CustomContainer(
+                  width: 140,
+                  height: 140,
+                  conColor: redColor,
+                  shape: BoxShape.circle,
+                  child: const Center(
+                    child: Icon(
+                      Icons.delete,
+                      size: 75,
+                      color: whiteColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   static void handleWithdrawalRequest() {
     // Handle withdrawal request logic here
     Get.snackbar('Success', 'Withdrawal request submitted');

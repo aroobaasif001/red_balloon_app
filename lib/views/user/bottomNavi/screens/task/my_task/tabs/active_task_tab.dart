@@ -92,6 +92,18 @@ class ActiveTab extends StatelessWidget {
                   return false;
                 }
 
+                // 🔥 NEW: Filter offline tasks by distance (max 20km) - ONLY for 'active' tasks
+                if (status == 'active' && task.taskType == 'Offline Task') {
+                  final rawDistance = controller.getRawDistanceToTask(
+                    task.latitude,
+                    task.longitude,
+                  );
+                  // If distance is > 20,000 meters (20km), hide it
+                  if (rawDistance != null && rawDistance > 20000) {
+                    return false;
+                  }
+                }
+
                 return true;
               }).toList();
 

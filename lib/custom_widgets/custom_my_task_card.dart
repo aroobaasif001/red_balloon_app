@@ -22,6 +22,7 @@ class CustomMyTaskCard extends StatelessWidget {
   final String buttonText;
   final Color? buttonColor; // 🔥 NEW: Custom button color
   final bool isButtonEnabled; // 🔥 NEW: To disable button
+  final VoidCallback? onLongPress; // 🔥 NEW: Long press support
 
   const CustomMyTaskCard({
     super.key,
@@ -41,24 +42,27 @@ class CustomMyTaskCard extends StatelessWidget {
     this.buttonText = 'View Details',
     this.buttonColor, // 🔥 NEW
     this.isButtonEnabled = true, // 🔥 NEW - default enabled
+    this.onLongPress, // 🔥 NEW
   });
 
   @override
   Widget build(BuildContext context) {
-    return CustomContainer(
-      width: double.maxFinite,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      conColor: whiteColor,
-      borderRadius: BorderRadius.circular(15),
-      boxShadow: [
-        BoxShadow(
-          color: blackColor.withOpacity(0.25),
-          offset: const Offset(0, 4),
-          blurRadius: 4,
-        ),
-      ],
+    return GestureDetector(
+      onLongPress: onLongPress,
+      child: CustomContainer(
+        width: double.maxFinite,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        conColor: whiteColor,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: blackColor.withOpacity(0.25),
+            offset: const Offset(0, 4),
+            blurRadius: 4,
+          ),
+        ],
 
-      child: Row(
+        child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
@@ -193,6 +197,7 @@ class CustomMyTaskCard extends StatelessWidget {
           // ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

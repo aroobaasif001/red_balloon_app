@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/services/task_service.dart';
@@ -51,6 +52,30 @@ class PostNewTaskController extends GetxController {
   RxDouble walletBalance = 0.0.obs;
 
   final List<String> taskTypes = ["Offline Task", "Online Task"];
+  
+  // Editing state
+  RxBool isEditing = false.obs;
+  TaskModel? editingTask;
+
+  void initializeForEditing(TaskModel task) {
+    isEditing.value = true;
+    editingTask = task;
+
+    selectedTaskType.value = task.taskType;
+    taskTitle.text = task.title;
+    taskDescription.text = task.description;
+    taskBudget.text = task.budget.toInt().toString();
+    location.text = task.location ?? "";
+    latitude.value = task.latitude ?? 0.0;
+    longitude.value = task.longitude ?? 0.0;
+    uploadedImageUrl.value = task.imageUrl ?? "";
+
+    // Set lengths
+    titleLength.value = task.title.length;
+    descriptionLength.value = task.description.length;
+    budgetLength.value = task.budget.toInt().toString().length;
+    locationLength.value = (task.location ?? "").length;
+  }
 
   // File
 
@@ -204,6 +229,10 @@ class PostNewTaskController extends GetxController {
       // Parse budget
       final budget = double.tryParse(taskBudget.text.trim()) ?? 0.0;
 
+      if (isEditing.value && editingTask != null) {
+        return await updateTask(budget);
+      }
+
       // 1. Check Wallet Balance
       final currentBal = await _walletService.getCurrentBalance();
       if (currentBal < budget) {
@@ -294,8 +323,90 @@ class PostNewTaskController extends GetxController {
     }
   }
 
+  Future<bool> updateTask(double newBudget) async {
+    try {
+      if (editingTask == null) return false;
+
+      final oldBudget = editingTask!.budget;
+      
+      // 1. Adjust Escrow/Wallet if budget changed
+      if (newBudget != oldBudget) {
+        final adjustmentResult = await _walletService.adjustEscrowAfterOfferAcceptance(
+          taskId: editingTask!.id!,
+          taskBudget: oldBudget,
+          offerPrice: newBudget, // Reusing this logic for edit as it's the same
+          taskTitle: taskTitle.text.trim(),
+        );
+
+        if (!adjustmentResult['success']) {
+          Get.snackbar("Error", adjustmentResult['message']);
+          isLoading.value = false;
+          return false;
+        }
+      }
+
+      // 2. Update Task Data
+      final Map<String, dynamic> updates = {
+        'taskType': selectedTaskType.value,
+        'title': taskTitle.text.trim(),
+        'description': taskDescription.text.trim(),
+        'budget': newBudget,
+        'location': selectedTaskType.value == "Offline Task" ? location.text.trim() : null,
+        'latitude': selectedTaskType.value == "Offline Task" ? latitude.value : null,
+        'longitude': selectedTaskType.value == "Offline Task" ? longitude.value : null,
+        'imageUrl': uploadedImageUrl.value,
+        'escrow.amount': newBudget, // Update embedded escrow amount too
+      };
+
+      await _taskService.updateTask(editingTask!.id!, updates);
+      
+      Get.snackbar("Success", "Task updated successfully");
+      
+      // Clear form and reset state
+      clearForm();
+      isLoading.value = false;
+      return true;
+    } catch (e) {
+      print('Error updating task: $e');
+      isLoading.value = false;
+      return false;
+    }
+  }
+
+  Future<bool> deleteTask(String taskId, double budget, String title) async {
+    try {
+      isLoading.value = true;
+
+      // 1. Return funds from escrow to wallet (96% refund, 4% tax)
+      final refundResult = await _walletService.refundEscrowWithTax(
+        taskId: taskId,
+        budget: budget,
+        taskTitle: title,
+      );
+
+      if (!refundResult['success']) {
+        Get.snackbar("Error", "Failed to refund funds: ${refundResult['message']}");
+        isLoading.value = false;
+        return false;
+      }
+
+      // 2. Delete task from Firestore
+      await _taskService.deleteTask(taskId);
+      
+      Get.snackbar("Success", "Task deleted. 96% of the budget (SAR ${budget * 0.96}) returned to wallet.");
+      isLoading.value = false;
+      return true;
+    } catch (e) {
+      print('Error deleting task: $e');
+      isLoading.value = false;
+      return false;
+    }
+  }
+
   // Clear form
   void clearForm() {
+    isEditing.value = false;
+    editingTask = null;
     selectedTaskType.value = "";
     taskTitle.clear();
     taskDescription.clear();

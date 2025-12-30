@@ -760,12 +760,77 @@ class WalletService {
           return {'success': true, 'message': 'No adjustment needed'};
         }
 
-        return {'success': true, 'message': 'Escrow adjusted successfully'};
+        return {
+          'success': true,
+          'message': 'Escrow adjusted successfully',
+          'currentBalance': currentBalance,
+          'currentEscrow': currentEscrow,
+        };
       });
 
       return result;
     } catch (e) {
       print('Error adjusting escrow: $e');
+      return {'success': false, 'message': 'An error occurred: ${e.toString()}'};
+    }
+  }
+
+  /// Refund escrow with 4% tax deduction
+  Future<Map<String, dynamic>> refundEscrowWithTax({
+    required String taskId,
+    required double budget,
+    required String taskTitle,
+  }) async {
+    if (_uid.isEmpty) return {'success': false, 'message': 'User not logged in'};
+
+    try {
+      final walletDoc = _walletCollection.doc(_uid);
+
+      final result = await _firestore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(walletDoc);
+
+        if (!snapshot.exists) {
+          return {'success': false, 'message': 'Wallet not found'};
+        }
+
+        final data = snapshot.data() as Map<String, dynamic>;
+        double currentBalance = (data['balance'] ?? 0.0).toDouble();
+        double currentEscrow = (data['escrowBalance'] ?? 0.0).toDouble();
+
+        double refundAmount = budget * 0.96;
+        double taxAmount = budget * 0.04;
+
+        transaction.update(walletDoc, {
+          'balance': currentBalance + refundAmount,
+          'escrowBalance': (currentEscrow - budget).clamp(0.0, double.infinity),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        // Add transaction record
+        final transactionRef = walletDoc.collection('transactions').doc();
+        transaction.set(transactionRef, {
+          'id': transactionRef.id,
+          'title': 'Task Deleted - Refund',
+          'description': '96% Refund for "$taskTitle" (4% Tax deducted)',
+          'amount': refundAmount,
+          'tax': taxAmount,
+          'type': 'credit',
+          'status': 'completed',
+          'taskId': taskId,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        return {
+          'success': true,
+          'message': 'Refund processed with 4% tax',
+          'refundAmount': refundAmount,
+          'taxAmount': taxAmount,
+        };
+      });
+
+      return result;
+    } catch (e) {
+      print('Error refunding escrow with tax: $e');
       return {'success': false, 'message': 'An error occurred: ${e.toString()}'};
     }
   }
