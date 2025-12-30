@@ -4,12 +4,12 @@ import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/tabs/escrow_detail.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/tabs/withdraw_funds.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/tabs/transaction_details_screen.dart';
 
 import '../../../../../custom_widgets/custom_appbar.dart';
 import '../../../../../custom_widgets/transaction_item.dart';
 import '../../../../../custom_widgets/wallet_balance_card.dart';
 import 'controller/wallet_controller.dart';
-import 'widgets/info_card.dart';
 import 'widgets/locked_balance_card.dart';
 import 'widgets/transactions_header.dart';
 
@@ -85,14 +85,6 @@ class WalletTab extends StatelessWidget {
                   ),
                 ),
 
-                // Info Card
-                InfoCard(
-                  message:
-                      'Funds are auto-released after successful validation.',
-                  linkText: 'Learn more',
-                  onLinkTap: controller.learnMore,
-                ),
-
                 // Recent Transactions Header
                 TransactionsHeader(onViewAll: controller.viewAllTransactions),
 
@@ -104,13 +96,18 @@ class WalletTab extends StatelessWidget {
                     itemCount: controller.recentTransactions.length,
                     itemBuilder: (context, index) {
                       final transaction = controller.recentTransactions[index];
-                      return TransactionItem(
-                        title: transaction['title'],
-                        description: transaction['description'],
-                        amount: transaction['amount'],
-                        amountColor: Color(transaction['amountColor']),
-                        daysAgo: transaction['daysAgo'],
-                        iconPath: transaction['icon'],
+                      return InkWell(
+                        onTap: () {
+                          Get.to(() => TransactionDetailsScreen(transactionData: transaction));
+                        },
+                        child: TransactionItem(
+                          title: transaction['title'],
+                          description: transaction['description'],
+                          amount: transaction['amount'],
+                          amountColor: Color(transaction['amountColor']),
+                          daysAgo: transaction['daysAgo'],
+                          iconPath: transaction['icon'],
+                        ),
                       );
                     },
                   ),

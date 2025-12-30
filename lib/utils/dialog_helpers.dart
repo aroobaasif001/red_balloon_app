@@ -3347,4 +3347,123 @@ class DialogHelpers {
       },
     );
   }
+
+  static void showClearNotificationsDialog({
+    required BuildContext context,
+    required VoidCallback onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              CustomContainer(
+                padding: const EdgeInsets.only(
+                  top: 90,
+                  left: 25,
+                  right: 25,
+                  bottom: 25,
+                ),
+                conColor: whiteColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: blackColor.withOpacity(0.12),
+                    blurRadius: 10,
+                  ),
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CustomText(
+                      "Clear All?",
+                      fontSize: 20,
+                      fontWeight: FontVariant.bold,
+                      color: blackColor,
+                    ),
+                    const SizedBox(height: 10),
+                    const CustomText(
+                      "Are you sure you want to delete all notifications?",
+                      fontSize: 14,
+                      color: gray6Color,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 25),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: fundCardBorderColor,
+                                width: 2,
+                              ),
+                              conColor: hColor.withOpacity(0.10),
+                              child: const CustomText(
+                                "Cancel",
+                                fontSize: 14,
+                                color: redColor,
+                                fontWeight: FontVariant.medium,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              onConfirm();
+                            },
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              conColor: redColor,
+                              child: const CustomText(
+                                "Delete",
+                                fontSize: 14,
+                                color: whiteColor,
+                                fontWeight: FontVariant.medium,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: -70,
+                child: CustomContainer(
+                  width: 140,
+                  height: 140,
+                  conColor: redColor,
+                  shape: BoxShape.circle,
+                  child: const Center(
+                    child: Icon(
+                      Icons.delete_sweep_rounded,
+                      size: 75,
+                      color: whiteColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

@@ -51,7 +51,8 @@ class _ValidationScreenState extends State<ValidationScreen> {
         validationBeforePhoto: widget.beforePhotoUrl ?? '',
         validationAfterPhoto: widget.afterPhotoUrl ?? '',
         proofId: widget.proofId, // 🔥 Pass proofId to controller
-        validationDocId: widget.validationId, // 🔥 Pass validationId to controller
+        validationDocId:
+            widget.validationId, // 🔥 Pass validationId to controller
       );
     }
   }
@@ -92,52 +93,44 @@ class _ValidationScreenState extends State<ValidationScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundColor: redColor.withOpacity(0.1),
-                          backgroundImage: controller.requesterPhotoUrl.value.isNotEmpty
-                              ? NetworkImage(controller.requesterPhotoUrl.value)
-                              : const AssetImage("assets/images/prof.png") as ImageProvider,
-                          onBackgroundImageError: (_, __) {
-                            print("❌ Error loading requester photo");
-                          },
-                        ),
-                        const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+
                             children: [
-                              CustomText(
-                                controller.taskTitle.value,
-                                fontSize: 18,
-                                fontWeight: FontVariant.bold,
-                                color: blackColor,
-                                maxLines: null,
-                                overflow: TextOverflow.visible,
+                              CustomContainer(
+                                width: double.infinity,
+                                child: CustomText(
+                                  textAlign: TextAlign.left,
+                                  controller.taskTitle.value,
+                                  fontSize: 18,
+                                  fontWeight: FontVariant.bold,
+                                  color: blackColor,
+                                  maxLines: null,
+                                  overflow: TextOverflow.visible,
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  CustomText(
-                                    controller.userId.value,
-                                    fontSize: 13,
-                                    fontWeight: FontVariant.medium,
-                                    color: walletGrey600Color,
-                                  ),
-                                  if (controller.completedAt.value != null) const SizedBox(width: 6),
-                                  if (controller.completedAt.value != null) CustomText(
-                                    "•",
-                                    fontSize: 13,
-                                    fontWeight: FontVariant.medium,
-                                    color: walletGrey600Color,
-                                  ),
-                                  if (controller.completedAt.value != null) const SizedBox(width: 6),
-                                  if (controller.completedAt.value != null) CustomText(
-                                    "Submitted ${controller.getSubmittedTimeAgo()}",
-                                    fontSize: 13,
-                                    fontWeight: FontVariant.medium,
-                                    color: walletGrey600Color,
-                                  ),
+                                  if (controller.completedAt.value != null)
+                                    const SizedBox(width: 6),
+                                  if (controller.completedAt.value != null)
+                                    CustomText(
+                                      "•",
+                                      fontSize: 13,
+                                      fontWeight: FontVariant.medium,
+                                      color: walletGrey600Color,
+                                    ),
+                                  if (controller.completedAt.value != null)
+                                    const SizedBox(width: 6),
+                                  if (controller.completedAt.value != null)
+                                    CustomText(
+                                      "Submitted ${controller.getSubmittedTimeAgo()}",
+                                      fontSize: 13,
+                                      fontWeight: FontVariant.medium,
+                                      color: walletGrey600Color,
+                                    ),
                                 ],
                               ),
                             ],
@@ -154,8 +147,6 @@ class _ValidationScreenState extends State<ValidationScreen> {
                       fontWeight: FontVariant.regular,
                       color: walletGrey600Color,
                     ),
-
-
 
                     const SizedBox(height: 25),
 
@@ -198,7 +189,10 @@ class _ValidationScreenState extends State<ValidationScreen> {
                           /// Votes Received Row
                           _buildStatRow(
                             "Votes Received",
-                            controller.votesReceived.value.toString().padLeft(2, '0'),
+                            controller.votesReceived.value.toString().padLeft(
+                              2,
+                              '0',
+                            ),
                           ),
 
                           Padding(
@@ -213,7 +207,10 @@ class _ValidationScreenState extends State<ValidationScreen> {
                           /// Votes Needed Row
                           _buildStatRow(
                             "Votes Needed",
-                            controller.votesNeeded.value.toString().padLeft(2, '0'),
+                            controller.votesNeeded.value.toString().padLeft(
+                              2,
+                              '0',
+                            ),
                           ),
 
                           Padding(

@@ -7,6 +7,7 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/notification/tabs/
 import 'package:red_balloon_app/views/user/bottomNavi/screens/notification/tabs/validation_hub_notifications_tab.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/notification/widgets/custom_notification_tabs.dart';
 
+import 'package:red_balloon_app/utils/dialog_helpers.dart';
 import 'controller/notification_controller.dart';
 
 class NotificationScreen extends StatelessWidget {
@@ -14,7 +15,8 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NotificationController controller = Get.put(NotificationController());
+    // 🔹 Use permanent controller from BottomNaviScreen
+    final NotificationController controller = Get.find<NotificationController>();
 
     // Mark all as read when user enters this screen
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -34,6 +36,21 @@ class NotificationScreen extends StatelessWidget {
           fontWeight: FontVariant.bold,
           color: blackColor,
         ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              DialogHelpers.showClearNotificationsDialog(
+                context: context,
+                onConfirm: () => controller.clearAll(),
+              );
+            },
+            child: const CustomText(
+              'Clear All',
+              color: redColor,
+              fontWeight: FontVariant.bold,
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [

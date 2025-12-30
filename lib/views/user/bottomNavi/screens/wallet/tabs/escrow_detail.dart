@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
-import 'package:red_balloon_app/utils/colors.dart';
 
 import '../controller/escrow_detail_controller.dart';
 import '../widgets/escrow_amount_card.dart';
 import '../widgets/fund_distribution_table.dart';
-import '../widgets/info_card.dart';
+import '../widgets/escrow_tasks_table.dart';
 
 class EscrowDetail extends StatelessWidget {
   EscrowDetail({super.key});
@@ -30,24 +29,11 @@ class EscrowDetail extends StatelessWidget {
                 // Amount Held Card
                 EscrowAmountCard(controller: controller),
 
-                const SizedBox(height: 24),
-
                 // Fund Distribution Table
                 FundDistributionTable(controller: controller),
 
-                const SizedBox(height: 16),
-
-                // Info Alert
-                InfoCard(
-                  iconColor: whiteColor,
-                  textColor: whiteColor,
-                  borderColor: walletPrimaryColor,
-                  backgroundColor: walletPrimaryColor,
-                  message:
-                      'Funds will be automatically distributed once validation reaches 6/9 consensus.',
-                  linkText: '',
-                  onLinkTap: () {},
-                ),
+                // Escrow Tasks Table
+                EscrowTasksTable(controller: controller),
               ],
             ),
           ),

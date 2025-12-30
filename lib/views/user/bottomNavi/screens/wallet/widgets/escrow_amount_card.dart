@@ -49,38 +49,6 @@ class EscrowAmountCard extends StatelessWidget {
               fontSize: 32,
               fontWeight: FontVariant.bold,
             ),
-            const SizedBox(height: 18),
-
-            // Task Name
-            CustomText(
-              'for task \'${controller.taskName.value}\'',
-              color: walletTransactionDescColor,
-              fontSize: 13,
-              fontWeight: FontVariant.regular,
-            ),
-            const SizedBox(height: 16),
-
-            // Validation Status
-            CustomContainer(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              conColor: escrowAmountCardWaitingBackground,
-              borderRadius: BorderRadius.circular(28),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Center(
-                    child: Image.asset('assets/icons/waiting.png', height: 16),
-                  ),
-                  const SizedBox(width: 8),
-                  CustomText(
-                    controller.validationStatus.value,
-                    color: walletErrorColor,
-                    fontSize: 12,
-                    fontWeight: FontVariant.semiBold,
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),

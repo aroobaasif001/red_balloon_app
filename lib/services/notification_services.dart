@@ -1522,6 +1522,54 @@ class NotificationService {
       debugPrint('Push sent');
     }
   }
+
+  /// Notify user about withdrawal request status update (Processed or Rejected)
+  Future<void> notifyWithdrawalStatusUpdate({
+    required String userUid,
+    required double amount,
+    required String status, // 'Completed' or 'Rejected'
+  }) async {
+    try {
+      final isApproved = status == 'Completed';
+      final title = isApproved ? 'Withdrawal Approved!' : 'Withdrawal Rejected';
+      final body = isApproved
+          ? 'Your withdrawal of SAR ${amount.toStringAsFixed(2)} has been processed. The funds are on their way to your account.'
+          : 'Your withdrawal request for SAR ${amount.toStringAsFixed(2)} was rejected. The funds have been returned to your balance.';
+      final type = isApproved ? NoticeType.success : NoticeType.danger;
+
+      // 1. Save to Firestore
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(userUid)
+          .collection('items')
+          .add({
+        'title': title,
+        'body': body,
+        'type': type.name,
+        'category': 'withdrawal_update',
+        'status': status,
+        'amount': amount,
+        'read': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      // 2. Send FCM Push
+      await _sendFcmToUser(
+        userUid,
+        title,
+        body,
+        {
+          'route': 'wallet_tab',
+          'category': 'withdrawal_update',
+          'status': status,
+        },
+      );
+
+      debugPrint('Withdrawal status notification sent to UID: $userUid');
+    } catch (e) {
+      debugPrint('Error sending withdrawal status notification: $e');
+    }
+  }
 }
 
 // Top-level background handler (must be a static/global function)

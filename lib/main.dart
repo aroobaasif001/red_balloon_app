@@ -8,6 +8,8 @@ import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/auth/view/onboarding/onboarding_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/bottom_navi_screen.dart';
 
+import 'package:red_balloon_app/views/admin/bottomNavi/admin_bottom_navi_screen.dart';
+
 import 'firebase_options.dart';
 
 void main() async {
@@ -26,6 +28,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+    
+    // Determine the initial screen
+    Widget initialScreen;
+    if (user == null) {
+      initialScreen = const OnboardingScreen();
+    } else if (user.email?.trim().toLowerCase() == 'admin@gmail.com') {
+      initialScreen = const AdminBottomNaviScreen();
+    } else {
+      initialScreen = const BottomNaviScreen();
+    }
+
     return GetMaterialApp(
       theme: ThemeData(
         scaffoldBackgroundColor: whiteColor,
@@ -37,7 +50,7 @@ class MyApp extends StatelessWidget {
       ),
 
       debugShowCheckedModeBanner: false,
-      home: user == null ? const OnboardingScreen() : const BottomNaviScreen(),
+      home: initialScreen,
     );
   }
 }

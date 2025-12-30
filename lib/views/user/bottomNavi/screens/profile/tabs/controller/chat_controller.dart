@@ -132,7 +132,7 @@ class ChatController extends GetxController {
         conversationId.value = convId;
         print('   ✅ ConversationID set: $convId');
         _streamMessages();
-        _markMessagesAsRead();
+        markMessagesAsRead();
       } else {
         print('   ❌ Failed to get conversationId');
       }
@@ -156,7 +156,7 @@ class ChatController extends GetxController {
               (m) => m.receiverId == _chatService.currentUserId && !m.isRead,
             );
             if (hasUnread) {
-              _markMessagesAsRead();
+              markMessagesAsRead();
             }
           },
           onError: (error) {
@@ -227,7 +227,7 @@ class ChatController extends GetxController {
   }
 
   /// Mark messages as read when viewing
-  Future<void> _markMessagesAsRead() async {
+  Future<void> markMessagesAsRead() async {
     await _chatService.markMessagesAsRead(conversationId.value);
   }
 
@@ -282,7 +282,7 @@ class ChatController extends GetxController {
 
   @override
   void onClose() {
-    _markMessagesAsRead(); // 🔥 Final mark as read when leaving
+    markMessagesAsRead(); // 🔥 Final mark as read when leaving
     _taskSubscription?.cancel();
     _suspensionSubscription?.cancel(); // 🔥 Added
     scrollController.dispose();

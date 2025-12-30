@@ -23,6 +23,24 @@ class AuthService {
   // Auth state stream
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  // Sign in with Email and Password
+  Future<AuthModel?> signInWithEmailAndPassword(String email, String password) async {
+    try {
+      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user != null) {
+        return AuthModel.fromFirebaseUser(userCredential.user!, 'email');
+      }
+      return null;
+    } catch (e) {
+      print('Error signing in with email/password: $e');
+      rethrow;
+    }
+  }
+
   // Sign in with Google
   Future<AuthModel?> signInWithGoogle() async {
     try {

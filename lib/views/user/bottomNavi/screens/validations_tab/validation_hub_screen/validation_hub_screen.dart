@@ -10,10 +10,10 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../../../admin/bottomNavi/admin_bottom_navi_screen.dart';
-import '../validation_history_screen/validation_history_screen.dart';
-import '../validation_screen/validation_screen.dart';
-import '../validation_hub_screen/controller/validation_hub_controller.dart';
 import '../../validations_tab/widgets/validationemptywidget.dart';
+import '../validation_history_screen/validation_history_screen.dart';
+import '../validation_hub_screen/controller/validation_hub_controller.dart';
+import '../validation_screen/validation_screen.dart';
 
 class ValidationHubScreen extends StatefulWidget {
   const ValidationHubScreen({super.key});
@@ -166,14 +166,6 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
                                           maxLines: null,
                                           overflow: TextOverflow.visible,
                                         ),
-                                        SizedBox(height: 10),
-                                        CustomText(
-                                          validation['userId'] ?? 'RB-00000',
-                                          fontSize: 16,
-                                          fontWeight: FontVariant.bold,
-                                          fontType: AppFont.montserrat,
-                                          color: blackColor,
-                                        ),
                                       ],
                                     ),
                                   ),
@@ -195,17 +187,22 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
                                       borderRadius: BorderRadius.circular(7),
                                     ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Obx(() => CustomText(
-                                          controller.remainingTimes[validation['validationId']] ?? "15 min left to validate",
-                                          fontSize: 14,
-                                          fontWeight: FontVariant.regular,
-                                          color: txColor,
-                                        )),
+                                        Obx(
+                                          () => CustomText(
+                                            controller
+                                                    .remainingTimes[validation['validationId']] ??
+                                                "15 min left to validate",
+                                            fontSize: 14,
+                                            fontWeight: FontVariant.regular,
+                                            color: txColor,
+                                          ),
+                                        ),
                                         SizedBox(height: 10),
                                         CustomText(
                                           time.toString(),
@@ -224,7 +221,8 @@ class _ValidationHubScreenState extends State<ValidationHubScreen> {
                                       onPressed: () {
                                         Get.to(
                                           () => ValidationScreen(
-                                            validationId: validation['validationId'],
+                                            validationId:
+                                                validation['validationId'],
                                             taskId: validation['taskId'],
                                             userId: validation['userId'],
                                             beforePhotoUrl:

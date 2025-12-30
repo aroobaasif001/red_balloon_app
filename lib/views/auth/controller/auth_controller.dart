@@ -139,6 +139,28 @@ class AuthController extends GetxController {
     }
   }
 
+  // Sign in with Email and Password
+  Future<AuthModel?> signInWithEmailAndPassword(String email, String password) async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final user = await _authService.signInWithEmailAndPassword(email, password);
+
+      if (user != null) {
+        currentUser.value = user;
+        return user;
+      }
+      return null;
+    } catch (e) {
+      errorMessage.value = 'Failed to sign in: ${e.toString()}';
+      Get.snackbar('Error', errorMessage.value);
+      return null;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   // Sign in with Google
   Future<AuthModel?> signInWithGoogle() async {
     try {

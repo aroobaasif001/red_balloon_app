@@ -23,6 +23,8 @@ class MessagesController extends GetxController {
     super.onInit();
     print('🚀 MessagesController: onInit - Starting stream');
     _streamConversations();
+    // Force a recheck after slight delay to ensure sync
+    Future.delayed(const Duration(seconds: 1), _calculateTotalUnread);
   }
 
   @override

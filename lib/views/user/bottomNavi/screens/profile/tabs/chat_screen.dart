@@ -16,144 +16,165 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ChatController>();
+    final controller = Get.put(ChatController(
+      taskId: Get.arguments?['taskId'] ?? '',
+      taskTitle: Get.arguments?['taskTitle'] ?? '',
+      taskOwnerId: Get.arguments?['taskOwnerId'] ?? '',
+      taskOwnerName: Get.arguments?['taskOwnerName'] ?? '',
+      taskOwnerPhoto: Get.arguments?['taskOwnerPhoto'],
+      taskImage: Get.arguments?['taskImage'],
+    ), tag: Get.arguments?['conversationId']); // Use tag to allow multiple chats if needed
 
     return SafeArea(
       top: false,
-      child: Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomAppBar1(title: 'Messages', showRightImage: false),
-            
-            // 🔥 Fixed Task Header
-            Obx(() => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
-              child: TaskHeaderCard(
-                taskTitle: controller.taskTitle,
-                taskPrice: '', // 🔥 Removed "View Task"
-                timeAgo: controller.taskStatus.value, // 🔥 Dynamic status
-                taskImage: controller.taskImage.value,
-              ),
-            )),
+      child: PopScope(
+        canPop: true,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (didPop) {
+            print('🔙 ChatScreen Popped! Marking messages as read...');
+            await controller.markMessagesAsRead();
+          }
+        },
+        child: Scaffold(
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomAppBar1(title: 'Messages', showRightImage: false),
 
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: redColor),
-                  );
-                }
-
-                return ListView.builder(
-                  controller: controller.scrollController,
-                  reverse: true, // 🔥 Starts at bottom, no animation needed
+              // 🔥 Fixed Task Header
+              Obx(
+                () => Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 10,
+                    horizontal: 15.0,
+                    vertical: 8.0,
                   ),
-                  itemCount: controller.messages.length,
-                  itemBuilder: (context, index) {
-                    final message = controller.messages[index];
-                    final isMyMessage = controller.isMyMessage(message);
+                  child: TaskHeaderCard(
+                    taskTitle: controller.taskTitle,
+                    taskPrice: '', // 🔥 Removed "View Task"
+                    timeAgo: controller.taskStatus.value, // 🔥 Dynamic status
+                    taskImage: controller.taskImage.value,
+                  ),
+                ),
+              ),
 
-                    // Determine if we should show a date divider above this message
-                    bool showDateDivider = false;
-                    if (index == controller.messages.length - 1) {
-                      // It's the absolute oldest message
-                      showDateDivider = true;
-                    } else {
-                      // Compare with the next (chronologically older) message
-                      final previousMessage = controller.messages[index + 1];
-                      if (!controller.isSameDay(
-                        message.timestamp.toDate(),
-                        previousMessage.timestamp.toDate(),
-                      )) {
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: redColor),
+                    );
+                  }
+
+                  return ListView.builder(
+                    controller: controller.scrollController,
+                    reverse: true, // 🔥 Starts at bottom, no animation needed
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 10,
+                    ),
+                    itemCount: controller.messages.length,
+                    itemBuilder: (context, index) {
+                      final message = controller.messages[index];
+                      final isMyMessage = controller.isMyMessage(message);
+
+                      // Determine if we should show a date divider above this message
+                      bool showDateDivider = false;
+                      if (index == controller.messages.length - 1) {
+                        // It's the absolute oldest message
                         showDateDivider = true;
+                      } else {
+                        // Compare with the next (chronologically older) message
+                        final previousMessage = controller.messages[index + 1];
+                        if (!controller.isSameDay(
+                          message.timestamp.toDate(),
+                          previousMessage.timestamp.toDate(),
+                        )) {
+                          showDateDivider = true;
+                        }
                       }
-                    }
 
-                    return Column(
-                      children: [
-                        if (showDateDivider) ...[
-                          const SizedBox(height: 20),
-                          Center(
-                            child: CustomContainer(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 4,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                              conColor: walletCardBorderColor,
-                              child: CustomText(
-                                controller.getGroupDate(
-                                  message.timestamp.toDate(),
+                      return Column(
+                        children: [
+                          if (showDateDivider) ...[
+                            const SizedBox(height: 20),
+                            Center(
+                              child: CustomContainer(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
                                 ),
-                                fontSize: 12,
-                                color: grey1Color,
+                                borderRadius: BorderRadius.circular(20),
+                                conColor: walletCardBorderColor,
+                                child: CustomText(
+                                  controller.getGroupDate(
+                                    message.timestamp.toDate(),
+                                  ),
+                                  fontSize: 12,
+                                  color: grey1Color,
+                                ),
                               ),
                             ),
+                            const SizedBox(height: 20),
+                          ],
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 15),
+                            child: isMyMessage
+                                ? SenderBubble(
+                                    text: message.message,
+                                    time: controller.getTimeAgo(
+                                      message.timestamp.toDate(),
+                                    ),
+                                    imageUrl: message.imageUrl,
+                                    onTapImage: () {
+                                      if (message.imageUrl != null) {
+                                        _showImageFullscreen(
+                                          context,
+                                          message.imageUrl!,
+                                        );
+                                      }
+                                    },
+                                  )
+                                : ReceiverBubble(
+                                    text: message.message,
+                                    time: controller.getTimeAgo(
+                                      message.timestamp.toDate(),
+                                    ),
+                                    profilePhoto: controller.taskOwnerPhoto,
+                                    userName: controller.taskOwnerName,
+                                    imageUrl: message.imageUrl,
+                                    onTapImage: () {
+                                      if (message.imageUrl != null) {
+                                        _showImageFullscreen(
+                                          context,
+                                          message.imageUrl!,
+                                        );
+                                      }
+                                    },
+                                  ),
                           ),
-                          const SizedBox(height: 20),
                         ],
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: isMyMessage
-                              ? SenderBubble(
-                                  text: message.message,
-                                  time: controller.getTimeAgo(
-                                    message.timestamp.toDate(),
-                                  ),
-                                  imageUrl: message.imageUrl,
-                                  onTapImage: () {
-                                    if (message.imageUrl != null) {
-                                      _showImageFullscreen(
-                                        context,
-                                        message.imageUrl!,
-                                      );
-                                    }
-                                  },
-                                )
-                              : ReceiverBubble(
-                                  text: message.message,
-                                  time: controller.getTimeAgo(
-                                    message.timestamp.toDate(),
-                                  ),
-                                  profilePhoto: controller.taskOwnerPhoto,
-                                  userName: controller.taskOwnerName,
-                                  imageUrl: message.imageUrl,
-                                  onTapImage: () {
-                                    if (message.imageUrl != null) {
-                                      _showImageFullscreen(
-                                        context,
-                                        message.imageUrl!,
-                                      );
-                                    }
-                                  },
-                                ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }),
-            ),
+                      );
+                    },
+                  );
+                }),
+              ),
 
-            Obx(
-              () => controller.isUploading.value
-                  ? const LinearProgressIndicator(
-                      color: redColor,
-                      backgroundColor: Colors.transparent,
-                    )
-                  : const SizedBox.shrink(),
-            ),
+              Obx(
+                () => controller.isUploading.value
+                    ? const LinearProgressIndicator(
+                        color: redColor,
+                        backgroundColor: Colors.transparent,
+                      )
+                    : const SizedBox.shrink(),
+              ),
 
-            ChatInputBar(
-              controller: controller.messageController,
-              onSend: controller.sendMessage,
-              onAttach: controller.pickAndSendImage, // 🔥 Hook up attachment
-            ),
-          ],
+              ChatInputBar(
+                controller: controller.messageController,
+                onSend: controller.sendMessage,
+                onAttach: controller.pickAndSendImage, // 🔥 Hook up attachment
+              ),
+            ],
+          ),
         ),
       ),
     );

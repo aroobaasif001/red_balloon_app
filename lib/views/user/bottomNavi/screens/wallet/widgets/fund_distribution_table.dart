@@ -34,81 +34,44 @@ class FundDistributionTable extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            CustomText(
-              'Fund Distribution',
-              color: walletBlackColor,
-              fontSize: 16,
-              fontWeight: FontVariant.bold,
-            ),
-            const SizedBox(height: 16),
-
-            // Table Header
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+            // Header with toggle
+            GestureDetector(
+              onTap: controller.toggleDistribution,
+              behavior: HitTestBehavior.opaque,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    flex: 2,
-                    child: CustomText(
-                      'SPLIT',
-                      color: blackColor,
-                      fontSize: 14,
-                      fontWeight: FontVariant.bold,
-                    ),
+                  CustomText(
+                    'Fund Distribution',
+                    color: walletBlackColor,
+                    fontSize: 16,
+                    fontWeight: FontVariant.bold,
                   ),
-                  Expanded(
-                    flex: 2,
-                    child: CustomText(
-                      'AMOUNT',
-                      color: blackColor,
-                      fontSize: 14,
-                      fontWeight: FontVariant.bold,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: CustomText(
-                      'STATUS',
-                      color: walletTransactionDescColor,
-                      fontSize: 14,
-                      fontWeight: FontVariant.semiBold,
-                      textAlign: TextAlign.right,
-                    ),
+                  Icon(
+                    controller.isDistributionExpanded.value
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: greyColor,
                   ),
                 ],
               ),
             ),
-
-            // Divider
-            Container(height: 1, color: fundCardBorderColor),
-
-            // Table Rows
-            ...controller.fundDistribution.asMap().entries.map((entry) {
-              int index = entry.key;
-              Map<String, dynamic> item = entry.value;
-              bool isLast = index == controller.fundDistribution.length - 1;
-
-              return Column(
+            
+            AnimatedCrossFade(
+              firstChild: const SizedBox(width: double.infinity),
+              secondChild: Column(
                 children: [
+                  const SizedBox(height: 16),
+                  // Table Header
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.only(bottom: 12),
                     child: Row(
                       children: [
                         Expanded(
                           flex: 2,
                           child: CustomText(
-                            item['split'],
-                            color: walletBlackColor,
-                            fontSize: 14,
-                            fontWeight: FontVariant.regular,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: CustomText(
-                            'SAR ${item['amount'].toStringAsFixed(2)}',
-                            color: walletBlackColor,
+                            'SPLIT',
+                            color: blackColor,
                             fontSize: 14,
                             fontWeight: FontVariant.bold,
                           ),
@@ -116,20 +79,83 @@ class FundDistributionTable extends StatelessWidget {
                         Expanded(
                           flex: 2,
                           child: CustomText(
-                            item['status'],
+                            'AMOUNT',
                             color: blackColor,
-                            fontSize: 13,
-                            fontWeight: FontVariant.regular,
+                            fontSize: 14,
+                            fontWeight: FontVariant.bold,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: CustomText(
+                            'STATUS',
+                            color: walletTransactionDescColor,
+                            fontSize: 14,
+                            fontWeight: FontVariant.semiBold,
                             textAlign: TextAlign.right,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  if (!isLast) Container(height: 1, color: walletCardBgColor),
+
+                  // Divider
+                  Container(height: 1, color: fundCardBorderColor),
+
+                  // Table Rows
+                  ...controller.fundDistribution.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    Map<String, dynamic> item = entry.value;
+                    bool isLast = index == controller.fundDistribution.length - 1;
+
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: CustomText(
+                                  item['split'],
+                                  color: walletBlackColor,
+                                  fontSize: 14,
+                                  fontWeight: FontVariant.regular,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: CustomText(
+                                  'SAR ${item['amount'].toStringAsFixed(2)}',
+                                  color: walletBlackColor,
+                                  fontSize: 14,
+                                  fontWeight: FontVariant.bold,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: CustomText(
+                                  item['status'],
+                                  color: blackColor,
+                                  fontSize: 13,
+                                  fontWeight: FontVariant.regular,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (!isLast) Container(height: 1, color: walletCardBgColor),
+                      ],
+                    );
+                  }).toList(),
                 ],
-              );
-            }).toList(),
+              ),
+              crossFadeState: controller.isDistributionExpanded.value
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+              duration: const Duration(milliseconds: 300),
+            ),
           ],
         ),
       ),

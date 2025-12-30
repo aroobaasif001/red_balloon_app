@@ -1,13 +1,28 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class WalletService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   String get _uid => _auth.currentUser?.uid ?? '';
 
   CollectionReference get _walletCollection => _firestore.collection('wallet');
+
+  /// Upload withdrawal receipt image
+  Future<String?> uploadWithdrawalReceipt(File imageFile, String requestId) async {
+    try {
+      final ref = _storage.ref().child('withdrawal_receipts/$requestId.jpg');
+      await ref.putFile(imageFile);
+      return await ref.getDownloadURL();
+    } catch (e) {
+      print('Error uploading withdrawal receipt: $e');
+      return null;
+    }
+  }
 
   /// Get current wallet balance
   Stream<double> getWalletBalance() {
@@ -410,17 +425,21 @@ class WalletService {
     required String accountNumber,
   }) async {
     if (_uid.isEmpty) return false;
+    final userUid = _uid;
 
     try {
-      final walletDoc = _walletCollection.doc(_uid);
+      final walletDoc = _walletCollection.doc(userUid);
       final withdrawalRef = walletDoc.collection('withdrawals').doc();
 
       await _firestore.runTransaction((transaction) async {
         final snapshot = await transaction.get(walletDoc);
         
         double currentBalance = 0.0;
+        double currentEscrow = 0.0;
         if (snapshot.exists) {
-          currentBalance = (snapshot.data() as Map<String, dynamic>)['balance'] ?? 0.0;
+          final data = snapshot.data() as Map<String, dynamic>;
+          currentBalance = (data['balance'] ?? 0.0).toDouble();
+          currentEscrow = (data['escrowBalance'] ?? 0.0).toDouble();
         }
 
         if (currentBalance < amount) {
@@ -428,20 +447,19 @@ class WalletService {
         }
 
         final newBalance = currentBalance - amount;
+        final newEscrow = currentEscrow + amount;
 
-        // 1. Deduct from balance immediately? 
-        // Typically we hold the funds. Let's deduct and show as "Pending withdrawal" in some scenarios, 
-        // or just let the admin approve and then deduct. 
-        // For this app, let's deduct immediately to avoid double spending.
+        // 1. Move from balance to escrowBalance
         transaction.update(walletDoc, {
           'balance': newBalance,
+          'escrowBalance': newEscrow,
           'updatedAt': FieldValue.serverTimestamp(),
         });
 
         // 2. Create withdrawal record
         transaction.set(withdrawalRef, {
           'id': withdrawalRef.id,
-          'uid': _uid,
+          'uid': userUid,
           'amount': amount,
           'method': method,
           'bank': bank,
@@ -451,14 +469,14 @@ class WalletService {
           'updatedAt': FieldValue.serverTimestamp(),
         });
 
-        // 3. Add to transactions as a debit
+        // 3. Add to transactions as an escrow hold
         final transactionRef = walletDoc.collection('transactions').doc();
         transaction.set(transactionRef, {
           'id': transactionRef.id,
-          'title': 'Withdrawal Requested',
-          'description': '$method - $bank',
+          'title': 'Withdrawal Requested (Locked)',
+          'description': 'SAR ${amount.toStringAsFixed(2)} moved to escrow until approval',
           'amount': amount,
-          'type': 'debit',
+          'type': 'debit_to_escrow',
           'status': 'pending',
           'withdrawalId': withdrawalRef.id,
           'createdAt': FieldValue.serverTimestamp(),
@@ -987,6 +1005,129 @@ class WalletService {
       return result;
     } catch (e) {
       print('Error distributing validation funds: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  /// Get all withdrawal requests for admin
+  Stream<List<Map<String, dynamic>>> getAllWithdrawalRequestsStream() {
+    return _firestore
+        .collectionGroup('withdrawals')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return data;
+      }).toList();
+    });
+  }
+
+  /// Process withdrawal request (Approve/Reject)
+  Future<Map<String, dynamic>> processWithdrawalRequest({
+    required String requestId,
+    required String userUid,
+    required String status, // 'Completed' or 'Rejected'
+    String? receiptUrl,
+  }) async {
+    try {
+      final walletDoc = _walletCollection.doc(userUid);
+      final withdrawalRef = walletDoc.collection('withdrawals').doc(requestId);
+
+      final result = await _firestore.runTransaction((transaction) async {
+        // 1. Read necessary docs
+        final walletSnap = await transaction.get(walletDoc);
+        final withdrawalSnap = await transaction.get(withdrawalRef);
+
+        if (!walletSnap.exists || !withdrawalSnap.exists) {
+          return {'success': false, 'message': 'Wallet or Request not found'};
+        }
+
+        final walletData = walletSnap.data() as Map<String, dynamic>;
+        final withdrawalData = withdrawalSnap.data() as Map<String, dynamic>;
+        
+        if (withdrawalData['status'] != 'Pending') {
+          return {'success': false, 'message': 'Request already processed'};
+        }
+
+        double amount = (withdrawalData['amount'] ?? 0.0).toDouble();
+        double currentBalance = (walletData['balance'] ?? 0.0).toDouble();
+        double currentEscrow = (walletData['escrowBalance'] ?? 0.0).toDouble();
+
+        if (status == 'Completed') {
+          // APPROVAL: Deduct from escrowBalance
+          if (currentEscrow < amount) {
+             // Safety check, though it should be there as we moved it during request
+             amount = currentEscrow; 
+          }
+
+          transaction.update(walletDoc, {
+            'escrowBalance': currentEscrow - amount,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+
+          // Update withdrawal record with receipt
+          transaction.update(withdrawalRef, {
+            'status': 'Completed',
+            'receiptUrl': receiptUrl,
+            'processedAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+
+          // Add completion transaction record
+          final transRef = walletDoc.collection('transactions').doc();
+          transaction.set(transRef, {
+            'id': transRef.id,
+            'title': 'Withdrawal Completed',
+            'description': 'Funds released from escrow to your bank',
+            'amount': amount,
+            'type': 'debit', // Final debit from the user's total wealth
+            'status': 'completed',
+            'receiptUrl': receiptUrl,
+            'withdrawalId': requestId,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+        } else if (status == 'Rejected') {
+          // REJECTION: Move back from escrowBalance to balance
+          if (currentEscrow < amount) {
+             amount = currentEscrow;
+          }
+
+          transaction.update(walletDoc, {
+            'balance': currentBalance + amount,
+            'escrowBalance': currentEscrow - amount,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+
+          // Update withdrawal record
+          transaction.update(withdrawalRef, {
+            'status': 'Rejected',
+            'processedAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+
+          // Add rejection transaction record
+          final transRef = walletDoc.collection('transactions').doc();
+          transaction.set(transRef, {
+            'id': transRef.id,
+            'title': 'Withdrawal Rejected',
+            'description': 'Funds returned to your wallet balance',
+            'amount': amount,
+            'type': 'credit',
+            'status': 'completed',
+            'withdrawalId': requestId,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        return {'success': true, 'amount': amount};
+      });
+
+      return result;
+    } catch (e) {
+      print('Error processing withdrawal: $e');
       return {'success': false, 'message': e.toString()};
     }
   }

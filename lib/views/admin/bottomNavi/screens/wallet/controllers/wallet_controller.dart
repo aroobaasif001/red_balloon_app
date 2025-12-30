@@ -47,6 +47,7 @@ class WalletController extends GetxController {
   // Summary values
   final lockedEscrow = 'SAR 0'.obs;
   final releasedWeekly = 'SAR 0'.obs;
+  final withdrawalRequests = <Map<String, dynamic>>[].obs;
 
   StreamSubscription? _transactionSubscription;
   StreamSubscription? _escrowSubscription;
@@ -58,6 +59,15 @@ class WalletController extends GetxController {
     _listenToUserMapping();
     _listenToAllTransactions();
     _listenToEscrowTotals();
+    _listenToWithdrawalRequests();
+  }
+
+  void _listenToWithdrawalRequests() {
+    _firestore.collectionGroup('withdrawals')
+      .where('status', isEqualTo: 'Pending')
+      .snapshots().listen((snapshot) {
+        withdrawalRequests.assignAll(snapshot.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList());
+      });
   }
 
   void _listenToUserMapping() {
@@ -138,7 +148,7 @@ class WalletController extends GetxController {
           amount: 'SAR ${amountVal.toStringAsFixed(1)}',
           title: title,
           subtitle: data['description']?.toString() ?? '',
-          timeAgo: _getTimeAgo(createdAtTs),
+          timeAgo: getTimeAgo(createdAtTs),
           type: walletType,
           iconPath: iconPath,
           fullData: data,
@@ -155,7 +165,7 @@ class WalletController extends GetxController {
 
   int min(int a, int b) => a < b ? a : b;
 
-  String _getTimeAgo(Timestamp? timestamp) {
+  String getTimeAgo(Timestamp? timestamp) {
     if (timestamp == null) return "Just now";
     final diff = DateTime.now().difference(timestamp.toDate());
     if (diff.inSeconds < 60) return "Just now";

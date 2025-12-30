@@ -46,13 +46,16 @@ class WalletController extends GetxController {
             : flooredAmount.toString();
 
         return {
-          'type': item['type'],
+          ...item,
           'title': item['title'],
           'description': item['description'],
           'amount': '${isCredit ? '+' : '-'}$amountStr',
           'amountColor': isCredit ? walletSuccessColor.value : walletErrorColor.value,
           'daysAgo': _formatDate(item['createdAt']),
           'icon': isCredit ? 'assets/icons/check_circle.png' : 'assets/icons/arrow_down.png',
+          'rawCreatedAt': item['createdAt'],
+          'taskId': item['taskId'],
+          'id': item['id'],
         };
       }).toList();
 

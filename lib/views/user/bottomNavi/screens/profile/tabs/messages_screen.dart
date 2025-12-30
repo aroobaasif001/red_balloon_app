@@ -15,9 +15,8 @@ class MessagesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.isRegistered<MessagesController>()
-        ? Get.find<MessagesController>()
-        : Get.put(MessagesController());
+    // 🔹 Use Get.put to ensure controller is available (matches NotificationScreen pattern)
+    final controller = Get.put(MessagesController());
 
     return SafeArea(
       top: false,
@@ -151,23 +150,19 @@ class MessagesScreen extends StatelessWidget {
                             );
                             return;
                           }
-                          // Delete old controller if exists
-                          if (Get.isRegistered<ChatController>()) {
-                            Get.delete<ChatController>();
-                          }
-
-                          // Navigate to chat screen
-                          Get.put(
-                            ChatController(
-                              taskId: conversation.taskId,
-                              taskTitle: conversation.taskTitle,
-                              taskOwnerId: otherParticipant['uid'],
-                              taskOwnerName: otherParticipant['name'],
-                              taskOwnerPhoto: otherParticipant['photo'],
-                              taskImage: conversation.taskImage,
-                            ),
+                          // Navigate to chat screen with arguments
+                          Get.to(
+                            () => const ChatScreen(),
+                            arguments: {
+                              'taskId': conversation.taskId,
+                              'taskTitle': conversation.taskTitle,
+                              'taskOwnerId': otherParticipant['uid'],
+                              'taskOwnerName': otherParticipant['name'],
+                              'taskOwnerPhoto': otherParticipant['photo'],
+                              'taskImage': conversation.taskImage,
+                              'conversationId': conversation.conversationId,
+                            },
                           );
-                          Get.to(() => const ChatScreen());
                         },
                       ),
                     );

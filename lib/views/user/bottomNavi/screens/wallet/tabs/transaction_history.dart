@@ -5,6 +5,7 @@ import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 
 import '../../../../../../custom_widgets/transaction_item.dart';
 import '../controller/wallet_controller.dart';
+import 'transaction_details_screen.dart';
 
 class TransactionHistory extends StatelessWidget {
   const TransactionHistory({super.key});
@@ -31,13 +32,18 @@ class TransactionHistory extends StatelessWidget {
                     itemCount: controller.allTransactions.length,
                     itemBuilder: (context, index) {
                       final transaction = controller.allTransactions[index];
-                      return TransactionItem(
-                        title: transaction['title'],
-                        description: transaction['description'],
-                        amount: transaction['amount'],
-                        amountColor: Color(transaction['amountColor']),
-                        daysAgo: transaction['daysAgo'],
-                        iconPath: transaction['icon'],
+                      return InkWell(
+                        onTap: () {
+                          Get.to(() => TransactionDetailsScreen(transactionData: transaction));
+                        },
+                        child: TransactionItem(
+                          title: transaction['title'],
+                          description: transaction['description'],
+                          amount: transaction['amount'],
+                          amountColor: Color(transaction['amountColor']),
+                          daysAgo: transaction['daysAgo'],
+                          iconPath: transaction['icon'],
+                        ),
                       );
                     },
                   ),

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,7 @@ import 'widgets/admin_build_summary_row.dart';
 import 'widgets/admin_wallet_transaction_card.dart';
 
 import 'transaction_details/admin_transaction_details_screen.dart';
+import 'withdrawal_requests/admin_withdrawal_details_screen.dart';
 
 class AdminWalletTab extends StatelessWidget {
   const AdminWalletTab({super.key});
@@ -75,17 +77,7 @@ class AdminWalletTab extends StatelessWidget {
                         }
 
                         if (controller.selectedFilter.value == WalletFilter.withdrawal) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(40.0),
-                              child: CustomText(
-                                'Coming Soon',
-                                fontSize: 18,
-                                fontWeight: FontVariant.bold,
-                                color: walletGrey500Color,
-                              ),
-                            ),
-                          );
+                          return _buildWithdrawalRequestsList(context, controller);
                         }
 
                         final items = controller.filteredTransactions;
@@ -137,6 +129,47 @@ class AdminWalletTab extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildWithdrawalRequestsList(BuildContext context, WalletController controller) {
+    return Obx(() {
+      final requests = controller.withdrawalRequests;
+      if (requests.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(40.0),
+            child: CustomText('No pending withdrawal requests'),
+          ),
+        );
+      }
+
+      return Column(
+        children: [
+          for (var request in requests) ...[
+            adminWalletTransactionCard(
+              context,
+              iconPath: 'assets/icons/cash.png',
+              iconBg: iconBg2,
+              id: controller.userMapping[request['uid']] ?? 'User',
+              amount: 'SAR ${request['amount']}',
+              title: 'Withdrawal Request',
+              subtitle: '${request['bank']} - ${request['method']}',
+              timeAgo: controller.getTimeAgo(request['createdAt'] as dynamic),
+              isWithDrawal: true,
+              onTap: () {
+                // Navigate to withdrawal details
+                _navigateToWithdrawalDetails(request);
+              },
+            ),
+            const SizedBox(height: 12),
+          ],
+        ],
+      );
+    });
+  }
+
+  void _navigateToWithdrawalDetails(Map<String, dynamic> request) {
+    Get.to(() => const AdminWithdrawalDetailsScreen(), arguments: request);
   }
 
   Color _iconBgForType(String type) {

@@ -1,9 +1,14 @@
 import 'package:get/get.dart';
 import 'package:red_balloon_app/services/wallet_service.dart';
+import 'package:red_balloon_app/services/task_service.dart';
+import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/utils/dialog_helpers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EscrowDetailController extends GetxController {
   final WalletService _walletService = WalletService();
+  final TaskService _taskService = TaskService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Observable variables
   RxDouble amountHeld = 0.0.obs;
@@ -11,6 +16,9 @@ class EscrowDetailController extends GetxController {
   RxString taskName = 'Current Active Task'.obs;
   RxString validationStatus = 'Awaiting Validation'.obs;
   RxString validationTimeRemaining = '15 min left'.obs;
+  RxBool isDistributionExpanded = false.obs;
+  RxBool isTasksExpanded = false.obs;
+  RxList<TaskModel> userTasks = <TaskModel>[].obs;
 
   // Fund Distribution Data
   final RxList<Map<String, dynamic>> fundDistribution = <Map<String, dynamic>>[].obs;
@@ -60,12 +68,36 @@ class EscrowDetailController extends GetxController {
     });
   }
 
+  void _listenToTasks() {
+    final uid = _auth.currentUser?.uid;
+    if (uid != null) {
+      _taskService.streamUserTasks(uid).listen((tasks) {
+        // Filter out completed, refunded, and dispute dismissed tasks as requested
+        userTasks.assignAll(tasks.where((task) {
+          final status = task.status.toLowerCase();
+          return status != 'completed' && 
+                 status != 'refunded' && 
+                 status != 'dispute dismissed';
+        }).toList());
+      });
+    }
+  }
+
+  void toggleDistribution() {
+    isDistributionExpanded.value = !isDistributionExpanded.value;
+  }
+
+  void toggleTasks() {
+    isTasksExpanded.value = !isTasksExpanded.value;
+  }
+
   @override
   void onInit() {
     super.onInit();
     amountHeld.bindStream(_walletService.getLockedBalance());
     ever(amountHeld, (_) => _updateDistribution());
     updateValidationStatus();
+    _listenToTasks();
   }
 
   @override

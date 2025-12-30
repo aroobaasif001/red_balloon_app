@@ -138,7 +138,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             onTap: widget.onTap,
             controller: widget.controller,
             obscureText: widget.isPassword ? _obscure : false,
-            maxLines: widget.maxLines,
+            maxLines: widget.isPassword ? 1 : widget.maxLines,
             maxLength: widget.maxLength,
             maxLengthEnforcement: widget.maxLength != null
                 ? MaxLengthEnforcement.enforced
@@ -185,13 +185,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   ? Padding(
                       padding: const EdgeInsets.only(left: 10, right: 8),
                       child: CustomContainer(
-                        width: 45,
-                        height: 45,
+                        width: 35,
+                        height: 35,
                         conColor: redColor,
                         shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(widget.iconPath!),
-                          scale: 4,
+                        child: Center(
+                          child: Image.asset(
+                            widget.iconPath!,
+                            width: 18,
+                            height: 18,
+                            fit: BoxFit.contain,
+                            // color: Colors.white,
+                          ),
                         ),
                       ),
                     )

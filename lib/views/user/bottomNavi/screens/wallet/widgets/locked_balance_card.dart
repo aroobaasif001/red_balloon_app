@@ -74,44 +74,6 @@ class LockedBalanceCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          CustomText(
-            subtitle,
-            color: walletLabelTextColor,
-            fontSize: 13,
-            fontWeight: FontVariant.regular,
-          ),
-          const SizedBox(height: 17),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomText(
-                'Releasing funds',
-                color: walletLabelTextColor,
-                fontSize: 12,
-                fontWeight: FontVariant.regular,
-              ),
-              CustomText(
-                '${hoursRemaining}h ${minutesRemaining}m',
-                color: walletPrimaryColor,
-                fontWeight: FontVariant.bold,
-                fontSize: 12,
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: releaseProgress,
-              minHeight: 6,
-              backgroundColor: walletProgressBgColor,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                walletPrimaryColor,
-              ),
-            ),
-          ),
         ],
       ),
     );

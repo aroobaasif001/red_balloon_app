@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 
 class FatoraCheckoutScreen extends StatefulWidget {
   final String checkoutUrl;
@@ -22,6 +24,8 @@ class FatoraCheckoutScreen extends StatefulWidget {
 class _FatoraCheckoutScreenState extends State<FatoraCheckoutScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
+  bool _hasError = false;
+  String _errorMessage = '';
 
   @override
   void initState() {
@@ -37,6 +41,7 @@ class _FatoraCheckoutScreenState extends State<FatoraCheckoutScreen> {
           onPageStarted: (String url) {
             setState(() {
               _isLoading = true;
+              _hasError = false;
             });
             _checkUrl(url);
           },
@@ -48,6 +53,11 @@ class _FatoraCheckoutScreenState extends State<FatoraCheckoutScreen> {
           },
           onWebResourceError: (WebResourceError error) {
             debugPrint('Web Resource Error: ${error.description}');
+            setState(() {
+              _isLoading = false;
+              _hasError = true;
+              _errorMessage = error.description;
+            });
           },
           onNavigationRequest: (NavigationRequest request) {
             return NavigationDecision.navigate;
@@ -88,7 +98,46 @@ class _FatoraCheckoutScreenState extends State<FatoraCheckoutScreen> {
           WebViewWidget(controller: _controller),
           if (_isLoading)
             const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: redColor,
+              ),
+            ),
+          if (_hasError)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 60, color: redColor),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Failed to load payment page',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _errorMessage,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: greyColor),
+                    ),
+                    const SizedBox(height: 24),
+                    CustomButton(
+                      label: 'Retry',
+                      onPressed: () {
+                        setState(() {
+                          _hasError = false;
+                          _isLoading = true;
+                        });
+                        _controller.reload();
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
         ],
       ),

@@ -16,7 +16,6 @@ class custom_withdraw_balance_card extends StatelessWidget {
   final double lockedFontSize;
   final FontVariant lockedFontVariant;
   final Color lockedAmountColor;
-  final String releasingTimeLabel;
   final double releasingFontSize;
   final FontVariant releasingFontVariant;
   final Color releasingTimeColor;
@@ -44,7 +43,6 @@ class custom_withdraw_balance_card extends StatelessWidget {
     this.lockedFontSize = 20,
     this.lockedFontVariant = FontVariant.bold,
     this.lockedAmountColor = walletTransactionDescColor,
-    this.releasingTimeLabel = '⏱ Releasing in 47h 12m',
     this.releasingFontSize = 12,
     this.releasingFontVariant = FontVariant.regular,
     this.releasingTimeColor = redColor,
@@ -131,16 +129,6 @@ class custom_withdraw_balance_card extends StatelessWidget {
           ),
           SizedBox(height: 15),
 
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: CustomText(
-              releasingTimeLabel,
-              fontSize: releasingFontSize,
-              fontWeight: releasingFontVariant,
-              color: releasingTimeColor,
-            ),
-          ),
-          SizedBox(height: 15),
           InfoCard(
             // cardHeight: 50,
             marginHorizontal: 0,
