@@ -15,8 +15,7 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🔹 Use permanent controller from BottomNaviScreen
-    final NotificationController controller = Get.find<NotificationController>();
+    final NotificationController controller = Get.put(NotificationController());
 
     // Mark all as read when user enters this screen
     WidgetsBinding.instance.addPostFrameCallback((_) {

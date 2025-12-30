@@ -167,7 +167,7 @@ class NotificationController extends GetxController
   void onClose() {
     print('🛑 NotificationController: onClose');
     _notificationsSubscription?.cancel();
-    // tabController.dispose(); // 🔥 Don't dispose tabController as this is a permanent controller
+    tabController.dispose();
     super.onClose();
   }
 }
