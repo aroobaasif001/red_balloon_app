@@ -90,7 +90,7 @@ class InProgressViewDetails extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    buildStatusCard(controller),
+                    buildStatusCard(controller, taskType: taskType),
                     const SizedBox(height: 16),
                     
                     // 🔥 Conditionally show Route Card

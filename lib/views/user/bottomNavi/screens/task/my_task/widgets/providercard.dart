@@ -156,12 +156,13 @@ class ProviderCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomText(
-                      distance,
-                      fontSize: 13,
-                      color: const Color(0xffFE7062),
-                      fontWeight: FontVariant.medium,
-                    ),
+                    if (distance.isNotEmpty)
+                      CustomText(
+                        distance,
+                        fontSize: 13,
+                        color: const Color(0xffFE7062),
+                        fontWeight: FontVariant.medium,
+                      ),
                   ],
                 ),
                 CustomText(

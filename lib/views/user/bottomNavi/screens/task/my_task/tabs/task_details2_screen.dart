@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
@@ -330,6 +331,22 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                   final double userRating = (stats['rating'] ?? 5.0).toDouble();
                   final int completedTasks = stats['tasksCompleted'] ?? 0;
 
+                  // 🔥 Calculate Distance
+                  String distanceString = "";
+                  if (widget.task.taskType != 'Online Task' &&
+                      widget.task.latitude != null &&
+                      widget.task.longitude != null &&
+                      offer.latitude != null &&
+                      offer.longitude != null) {
+                    final distMeters = Geolocator.distanceBetween(
+                      widget.task.latitude!,
+                      widget.task.longitude!,
+                      offer.latitude!,
+                      offer.longitude!,
+                    );
+                    distanceString = "${(distMeters / 1000).toStringAsFixed(1)} km away";
+                  }
+
                   return ProviderCard(
                     userPhoto:
                         user?.photoURL ??
@@ -341,7 +358,7 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                     rating: userRating.toStringAsFixed(1),
                     description: "($completedTasks Tasks Completed)",
                     price: "SAR ${offer.offerPrice}",
-                    distance: "34.5 km away",
+                    distance: distanceString,
                     onViewProfile: () async {
                       if (user != null) {
                         try {

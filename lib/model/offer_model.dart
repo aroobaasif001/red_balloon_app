@@ -19,6 +19,8 @@ class OfferModel {
   final String? taskOwnerPhoto;
   final String taskOwnerUid;
   final String timeAgo;
+  final double? latitude;
+  final double? longitude;
 
   OfferModel({
     this.id,
@@ -39,6 +41,8 @@ class OfferModel {
     this.taskOwnerPhoto,
     required this.taskOwnerUid,
     required this.timeAgo,
+    this.latitude,
+    this.longitude,
   });
 
   factory OfferModel.fromJson(Map<String, dynamic> json, String docId) {
@@ -79,6 +83,8 @@ class OfferModel {
       taskOwnerPhoto: taskDetails['taskOwnerPhoto'],
       taskOwnerUid: taskDetails['taskOwnerUid'] ?? '',
       timeAgo: json['timeAgo'] ?? '',
+      latitude: json['latitude']?.toDouble(),
+      longitude: json['longitude']?.toDouble(),
     );
   }
 
@@ -103,6 +109,8 @@ class OfferModel {
         'taskOwnerUid': taskOwnerUid,
       },
       'timeAgo': timeAgo,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 }

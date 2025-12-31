@@ -22,6 +22,8 @@ class OfferService2 {
     String? taskOwnerPhoto,
     required String offeringUserName,
     String? offeringUserPhoto,
+    double? latitude,
+    double? longitude,
   }) async {
     try {
       if (currentUserId == null) {
@@ -43,6 +45,8 @@ class OfferService2 {
         'offeringUserPhoto': offeringUserPhoto,
         'status': 'pending',
         'createdAt': FieldValue.serverTimestamp(),
+        'latitude': latitude,
+        'longitude': longitude,
         // All task details nested as per OfferModel.toJson()
         'taskDetails': {
           'taskId': taskId,

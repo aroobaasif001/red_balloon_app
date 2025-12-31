@@ -10,6 +10,7 @@ import 'package:red_balloon_app/utils/colors.dart';
 import '../../../../../../../services/offer_service2.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
+import 'package:geolocator/geolocator.dart';
 
 class SendOfferBottomSheet extends StatefulWidget {
   final String? taskId;
@@ -239,6 +240,17 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
         'location': widget.location ?? '',
       };
 
+      double? lat;
+      double? lng;
+      try {
+        final position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.medium);
+        lat = position.latitude;
+        lng = position.longitude;
+      } catch (e) {
+        debugPrint('⚠️ Could not fetch location for offer: $e');
+      }
+
       // Submit offer to Firebase
       final success = await _offerService.submitOffer(
         taskId: widget.taskId!,
@@ -250,6 +262,8 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
         taskOwnerPhoto: widget.taskOwnerPhoto,
         offeringUserName: userName,
         offeringUserPhoto: userPhoto,
+        latitude: lat,
+        longitude: lng,
       );
 
       setState(() => _isSubmitting = false);

@@ -7,7 +7,7 @@ import '../../../../../../../utils/colors.dart';
 import '../controller/in_progress_task_controller.dart';
 
 /// STATUS CARD: In Progress chip + distance / ETA text
-Widget buildStatusCard(InProgressTaskController controller) {
+Widget buildStatusCard(InProgressTaskController controller, {String? taskType}) {
   return Obx(
     () => CustomContainer(
       width: double.infinity,
@@ -47,13 +47,16 @@ Widget buildStatusCard(InProgressTaskController controller) {
               ),
             ],
           ],
-          const SizedBox(height: 10),
-          CustomText(
-            '${controller.distance.value} 	 ${controller.eta.value}',
-            fontSize: 15,
-            color: walletGrey600Color,
-            fontWeight: FontVariant.regular,
-          ),
+          // 🔥 Hide distance/ETA if task is Online
+          if (taskType != 'Online Task') ...[
+            const SizedBox(height: 10),
+            CustomText(
+              '${controller.distance.value} 	 ${controller.eta.value}',
+              fontSize: 15,
+              color: walletGrey600Color,
+              fontWeight: FontVariant.regular,
+            ),
+          ],
           const SizedBox(height: 10),
           const LinearProgressIndicator(
             backgroundColor: appbard,
