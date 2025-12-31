@@ -19,6 +19,7 @@ import '../views/user/bottomNavi/screens/task/my_task/tabs/task_review_screen.da
 import '../model/task_model.dart';
 import '../views/user/bottomNavi/screens/task/my_task/tabs/task_details2_screen.dart';
 import '../views/user/bottomNavi/screens/task/my_task/tabs/in_progress_view_details.dart';
+import '../views/user/bottomNavi/screens/notification/notification_screen.dart';
 import 'get_server_key.dart';
 
 /// Notification types used in Firestore + payloads
@@ -1212,6 +1213,8 @@ class NotificationService {
         _navigateToInProgressView(data);
       } else if (category == 'funds_added' || route == 'wallet_tab') {
         _navigateToWallet();
+      } else if (category == 'help_requested') {
+        _navigateToNotifications();
       }
     } catch (e) {
       debugPrint('Error handling notification tap logic: $e');
@@ -1281,6 +1284,17 @@ class NotificationService {
     if (duration.inHours > 0) return '${duration.inHours} hours ago';
     if (duration.inMinutes > 0) return '${duration.inMinutes} mins ago';
     return 'Just now';
+  }
+
+  void _navigateToNotifications() {
+    debugPrint('Navigating to Notifications screen');
+    // Reset stack to Home tab (index 0)
+    Get.offAll(() => const BottomNaviScreen(initialIndex: 0));
+    
+    // Small delay before pushing the NotificationScreen
+    Future.delayed(const Duration(milliseconds: 300), () {
+      Get.to(() => const NotificationScreen());
+    });
   }
 
   void _navigateToWallet() {
