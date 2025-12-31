@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:red_balloon_app/model/message_model.dart';
 import 'package:red_balloon_app/services/chat_service.dart';
+import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/custom_widgets/customtext.dart';
 
 class ChatController extends GetxController {
   final String taskId;
@@ -193,12 +195,98 @@ class ChatController extends GetxController {
     }
   }
 
+  /// Show options for Camera/Gallery
+  void showAttachmentOptions() {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 50,
+              height: 5,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            const SizedBox(height: 20),
+            CustomText(
+              "Select Image Source",
+              fontSize: 18,
+              fontWeight: FontVariant.bold,
+            ),
+            const SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildOption(
+                  icon: Icons.camera_alt_rounded,
+                  label: "Camera",
+                  onTap: () {
+                    Get.back();
+                    pickAndSendImage(ImageSource.camera);
+                  },
+                ),
+                _buildOption(
+                  icon: Icons.photo_library_rounded,
+                  label: "Gallery",
+                  onTap: () {
+                    Get.back();
+                    pickAndSendImage(ImageSource.gallery);
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: redColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: redColor, size: 30),
+          ),
+          const SizedBox(height: 8),
+          CustomText(
+            label,
+            fontSize: 14,
+            fontWeight: FontVariant.semiBold,
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Pick and send an image attachment
-  Future<void> pickAndSendImage() async {
+  Future<void> pickAndSendImage(ImageSource source) async {
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         maxWidth: 1024, // Optimized for mobile viewing
         imageQuality: 70, // Good balance between speed and visibility
       );

@@ -26,6 +26,7 @@ class HomeScreen extends StatelessWidget {
     final notiController = Get.find<NotificationController>();
 
     return GetBuilder<HomeController>(
+      init: HomeController(),
       builder: (controller) {
         return Scaffold(
           floatingActionButton: CustomContainer(
