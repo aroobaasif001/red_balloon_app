@@ -173,7 +173,7 @@ class ChatScreen extends StatelessWidget {
               ChatInputBar(
                 controller: controller.messageController,
                 onSend: controller.sendMessage,
-                onAttach: controller.pickAndSendImage, // 🔥 Hook up attachment
+                onAttach: controller.showAttachmentOptions, // 🔥 Now shows options instead of direct gallery
               ),
             ],
           ),

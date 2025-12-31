@@ -27,8 +27,6 @@ class _CustomBonusSliderState extends State<CustomBonusSlider> {
   void _startAutoSlide() {
     _autoSlideTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (_pageController.hasClients) {
-        if (!Get.isRegistered<HomeController>()) return;
-        
         final controller = Get.find<HomeController>();
         final itemCount = controller.activeBanners.isNotEmpty 
             ? controller.activeBanners.length 

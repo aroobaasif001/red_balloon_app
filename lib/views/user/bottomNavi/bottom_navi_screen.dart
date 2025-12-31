@@ -11,7 +11,6 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/wallet_tab.
 import 'screens/notification/controller/notification_controller.dart';
 import 'screens/profile/tabs/controller/messages_controller.dart';
 import 'screens/validations_tab/validation_hub_screen/controller/validation_hub_controller.dart';
-import 'screens/home/controller/home_controller.dart';
 
 class BottomNaviScreen extends StatefulWidget {
   final int initialIndex;
@@ -34,7 +33,6 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
     Get.put(NotificationController(), permanent: true);
     Get.put(MessagesController(), permanent: true);
     Get.put(ValidationHubController(), permanent: true); // 🔥 Add validation counter
-    Get.put(HomeController(), permanent: true); 
     
     currentIndex = widget.initialIndex;
     _initializeNavItems();
