@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/custom_widgets/expandable_text.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 class NotificationItem extends StatelessWidget {
@@ -98,12 +99,12 @@ class NotificationItem extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  CustomText(
-                    body,
+                  ExpandableText(
+                    text: body,
                     fontSize: 14,
                     color: isRead ? grey5Color : blackLightColor,
                     maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    fontWeight: FontVariant.regular,
                   ),
                 ],
               ),

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
@@ -70,6 +71,30 @@ class Cleanmysolarpanels extends StatefulWidget {
 class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
   final controller = Get.put(TaskDetailController());
   StreamSubscription? _taskStatusListener;
+  String? _dynamicDistance;
+
+  Future<void> _calculateLiveDistance() async {
+    if (widget.taskType == 'Online Task') return;
+    if (widget.latitude != null && widget.longitude != null && widget.latitude != 0.0) {
+      try {
+        final position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.medium);
+        final distMeters = Geolocator.distanceBetween(
+          widget.latitude!,
+          widget.longitude!,
+          position.latitude,
+          position.longitude,
+        );
+        if (mounted) {
+          setState(() {
+            _dynamicDistance = (distMeters / 1000).toStringAsFixed(1);
+          });
+        }
+      } catch (e) {
+        debugPrint('⚠️ Error calculating distance: $e');
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -78,6 +103,9 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
     if (widget.taskId != null && widget.taskId!.isNotEmpty) {
       _setupTaskStatusListener(widget.taskId!);
     }
+    
+    // 🔥 Calculate live distance
+    _calculateLiveDistance();
     
     // 🔥 Fetch real owner data
     if (widget.taskOwnerAuthId != null && widget.taskOwnerAuthId!.isNotEmpty) {
@@ -90,7 +118,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
         .collection('tasks')
         .doc(taskId)
         .snapshots()
-        .listen((snapshot) {
+        .listen((snapshot) async {
           if (snapshot.exists) {
             final data = snapshot.data();
             final status = data?['status']?.toString().toLowerCase() ?? '';
@@ -112,6 +140,24 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                 final acceptedOfferUid = data?['acceptedOfferUid'] ?? '';
                 final phoneNumber = data?['phoneNumber'] ?? '';
 
+                // 🔥 Calculate Distance
+                String? distanceString;
+                if (taskType != 'Online Task' && latitude != 0.0 && longitude != 0.0) {
+                  try {
+                    final position = await Geolocator.getCurrentPosition(
+                        desiredAccuracy: LocationAccuracy.medium);
+                    final distMeters = Geolocator.distanceBetween(
+                      latitude,
+                      longitude,
+                      position.latitude,
+                      position.longitude,
+                    );
+                    distanceString = "${(distMeters / 1000).toStringAsFixed(1)} km away";
+                  } catch (e) {
+                    print('⚠️ Could not fetch location for distance calc: $e');
+                  }
+                }
+
                 // Navigate to InProgressViewDetails with full data
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
@@ -130,6 +176,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                       userName: widget.userName,
                       photoUrl: widget.userPhoto,
                       userId: widget.userId,
+                      distance: distanceString,
                     ),
                   ),
                 );
@@ -184,6 +231,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                           widget.userId ??
                           'task_${widget.taskTimeAgo ?? 'default'}',
                       isOnline: widget.taskType == 'Online Task',
+                      distance: _dynamicDistance,
                     ),
                     const SizedBox(height: 15),
 

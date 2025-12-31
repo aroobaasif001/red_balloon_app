@@ -45,7 +45,7 @@ class TaskInfoTopRow extends StatelessWidget {
               Image.asset("assets/icons/location2.png", height: 16),
               const SizedBox(width: 6),
               CustomText(
-                "${distance ?? '2.4'} km away",
+                "${distance ?? '--'} km away",
                 fontSize: 12,
                 fontWeight: FontVariant.medium,
               ),

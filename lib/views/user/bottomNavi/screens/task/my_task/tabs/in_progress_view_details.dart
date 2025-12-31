@@ -27,6 +27,7 @@ class InProgressViewDetails extends StatelessWidget {
   final String? taskType; // 🔥 Added taskType
   final double? latitude;
   final double? longitude;
+  final String? distance; // 🔥 Added calculated distance
 
   const InProgressViewDetails({
     super.key,
@@ -44,6 +45,7 @@ class InProgressViewDetails extends StatelessWidget {
     this.taskType, // 🔥 Added taskType
     this.latitude,
     this.longitude,
+    this.distance,
   });
 
   @override
@@ -51,6 +53,11 @@ class InProgressViewDetails extends StatelessWidget {
     final InProgressTaskController controller = Get.put(
       InProgressTaskController(),
     );
+
+    // 🔥 Set initial distance if provided
+    if (distance != null && distance!.isNotEmpty) {
+      controller.distance.value = distance!;
+    }
 
     // Check if proof exists and start listening for task updates
     if (taskId != null && taskId!.isNotEmpty) {
