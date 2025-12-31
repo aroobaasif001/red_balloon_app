@@ -4,6 +4,7 @@ import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 import '../../../../../../../custom_widgets/custom_container.dart';
+import '../../../../../../../custom_widgets/customtext.dart';
 import '../controller/in_progress_task_controller.dart';
 import '../widgets/build_bottom_upload_bar.dart';
 import '../widgets/build_helper_info_card.dart';
@@ -23,6 +24,7 @@ class InProgressViewDetails extends StatelessWidget {
   final String? phoneNumber;
   final String? helperUid;
   final String? taskImage;
+  final String? taskType; // 🔥 Added taskType
   final double? latitude;
   final double? longitude;
 
@@ -39,6 +41,7 @@ class InProgressViewDetails extends StatelessWidget {
     this.phoneNumber,
     this.helperUid,
     this.taskImage,
+    this.taskType, // 🔥 Added taskType
     this.latitude,
     this.longitude,
   });
@@ -89,13 +92,18 @@ class InProgressViewDetails extends StatelessWidget {
 
                     buildStatusCard(controller),
                     const SizedBox(height: 16),
-                    buildRouteCard(
-                      latitude: latitude,
-                      longitude: longitude,
-                      title: taskTitle,
-                      address: location,
-                    ),
-                    const SizedBox(height: 16),
+                    
+                    // 🔥 Conditionally show Route Card
+                    if (taskType != 'Online Task') ...[
+                      buildRouteCard(
+                        latitude: latitude,
+                        longitude: longitude,
+                        title: taskTitle,
+                        address: location,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
                     Obx(() => buildTaskSummaryCard(
                       controller,
                       timeAgo!,
@@ -109,7 +117,42 @@ class InProgressViewDetails extends StatelessWidget {
                     )),
                     const SizedBox(height: 16),
 
-                    const SizedBox(height: 16),
+                    // 🔥 Conditionally show Location Section
+                    if (taskType != 'Online Task') ...[
+                      const CustomText(
+                        "Location nearby",
+                        fontSize: 16,
+                        fontWeight: FontVariant.bold,
+                      ),
+                      const SizedBox(height: 12),
+                      CustomContainer(
+                        height: 52,
+                        borderRadius: BorderRadius.circular(15),
+                        conColor: whiteColor,
+                        border: Border.all(color: grey50Color),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: CustomText(
+                                location ?? "No location specified",
+                                fontSize: 14,
+                                color: timeColor,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.location_on_outlined,
+                              color: greyColor,
+                              size: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+                    ],
+
                     Obx(() => buildHelperInfoCard(
                       controller,
                       controller.helperPhotoUrl.value.isEmpty ? photoUrl : controller.helperPhotoUrl.value,

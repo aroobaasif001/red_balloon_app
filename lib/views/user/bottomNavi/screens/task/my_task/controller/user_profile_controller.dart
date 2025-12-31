@@ -19,9 +19,19 @@ class UserProfileController extends GetxController {
     fetchFeedbacks();
   }
 
+  void updateInitialStats({required int completed, required int requested}) {
+    // Only update if current value is 0 or if we want to sync with passed data
+    tasksCompleted.value = completed;
+    tasksRequested.value = requested;
+  }
+
   Future<void> fetchFeedbacks() async {
     try {
-      isLoading.value = true;
+      // Only show visible loader if we have no data yet
+      if (feedbacks.isEmpty) {
+        isLoading.value = true;
+      }
+      
       List<Map<String, dynamic>> allFeedbacks = [];
 
       // 1. Fetch feedbacks where user was a Helper (Requester left feedback)

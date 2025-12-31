@@ -6,6 +6,7 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/custom_widgets/formatted_text.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
+import 'package:url_launcher/url_launcher.dart';
 import '../widgets/faqtile.dart';
 import '../controllers/user_app_content_controller.dart'; // Keep original import for UserAppContentController
 import 'contact_support.dart';
@@ -147,6 +148,8 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                     ),
                     const SizedBox(height: 15),
 
+                    const SizedBox(height: 25),
+
                     /// CONTACT SUPPORT CARD
                     CustomContainer(
                       conColor: whiteColor,
@@ -178,7 +181,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                             fontWeight: FontVariant.bold,
                             color: blackColor,
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 15),
                           CustomText(
                             'Chat with our support team.',
                             fontSize: 14,

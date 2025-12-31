@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 class ParticipantCard extends StatelessWidget {
@@ -39,18 +40,23 @@ class ParticipantCard extends StatelessWidget {
                   )
                 : ClipRRect(
                     borderRadius: BorderRadius.circular(24),
-                    child: Image.network(
-                      photoUrl,
+                    child: CachedNetworkImage(
+                      imageUrl: photoUrl,
                       fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: redColor,
-                            strokeWidth: 2,
-                          ),
-                        );
-                      },
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator(
+                          color: redColor,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Center(
+                        child: CustomText(
+                          name.isNotEmpty ? name[0] : "?",
+                          fontSize: 18,
+                          fontWeight: FontVariant.bold,
+                          color: redColor,
+                        ),
+                      ),
                     ),
                   ),
           ),

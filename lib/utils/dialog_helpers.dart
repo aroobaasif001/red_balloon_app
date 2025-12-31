@@ -371,7 +371,7 @@ class DialogHelpers {
     Get.snackbar('Success', 'Withdrawal request submitted');
   }
 
-  void showNoVoteDialog({
+  static void showNoVoteDialog({
     required BuildContext context,
     bool barrierDismissible = true,
   }) {
@@ -432,7 +432,7 @@ class DialogHelpers {
     );
   }
 
-  void showRejectStep1Dialog(
+  static void showRejectStep1Dialog(
     BuildContext context, {
     dynamic controller,
     String? taskId,
@@ -486,7 +486,7 @@ class DialogHelpers {
                     /// NEXT BUTTON
                     InkWell(
                       onTap: () {
-                        DialogHelpers().showRejectStep2Dialog(
+                        DialogHelpers.showRejectStep2Dialog(
                           context,
                           controller: controller,
                           taskId: taskId,
@@ -548,7 +548,7 @@ class DialogHelpers {
     );
   }
 
-  void showRejectStep2Dialog(
+  static void showRejectStep2Dialog(
     BuildContext context, {
     dynamic controller,
     String? taskId,
@@ -644,7 +644,7 @@ class DialogHelpers {
                             // 🔥 If "Others" selected, show bottom sheet
                             if (selectedReason == "Others") {
                               Get.back(); // Close step2 dialog
-                              DialogHelpers().showRejectionReasonSheet(
+                              DialogHelpers.showRejectionReasonSheet(
                                 context,
                                 controller: controller,
                                 taskId: taskId ?? '',
@@ -694,7 +694,7 @@ class DialogHelpers {
     );
   }
 
-  void showTaskCompletedDialog(BuildContext context) {
+  static void showTaskCompletedDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -1145,7 +1145,7 @@ class DialogHelpers {
                     GestureDetector(
                       onTap: () {
                         Get.back();
-                        DialogHelpers().showTaskCompletedDialog(context);
+                        DialogHelpers.showTaskCompletedDialog(context);
                       },
                       child: CustomContainer(
                         height: 48,
@@ -1330,7 +1330,7 @@ class DialogHelpers {
     );
   }
 
-  void showReportUserSheet(BuildContext context) {
+  static void showReportUserSheet(BuildContext context) {
     int selectedIndex = 0;
 
     showModalBottomSheet(
@@ -1511,7 +1511,7 @@ class DialogHelpers {
     );
   }
 
-  void showSupportHelpSheet(
+  static void showSupportHelpSheet(
     BuildContext context, {
     String? firstOptionText,
     String? lastOptionText,
@@ -1627,7 +1627,7 @@ class DialogHelpers {
 
                       if (selectedReason == "Others") {
                         // 🔥 If "Others", show description sheet
-                        DialogHelpers().showDescribeProblemSheet(
+                        DialogHelpers.showDescribeProblemSheet(
                           context,
                           selectedReason: selectedReason,
                           onSubmit: onSubmit,
@@ -1663,7 +1663,7 @@ class DialogHelpers {
     );
   }
 
-  void showDescribeProblemSheet(
+  static void showDescribeProblemSheet(
     BuildContext context, {
     String? selectedReason,
     Function(String reason, String details)? onSubmit,
@@ -1770,7 +1770,7 @@ class DialogHelpers {
     );
   }
 
-  void showRejectionReasonSheet(
+  static void showRejectionReasonSheet(
     BuildContext context, {
     dynamic controller,
     String? taskId,
@@ -2226,9 +2226,10 @@ class DialogHelpers {
                                   .doc(taskId)
                                   .update({
                                     'status': 'in progress',
-                                    'acceptedOfferUid':
-                                        offeringUserUid, // 🔥 Store helper's UID
+                                    'acceptedOfferUid': offeringUserUid, // 🔥 Store helper's UID
                                     'budget': offerPrice, // 🔥 Update task budget to accepted offer price
+                                    'acceptedAt': FieldValue.serverTimestamp(), // 🔥 Store acceptance time
+                                    'time': FieldValue.serverTimestamp(), // 🔥 Update time for list sorting
                                   });
 
                               print(

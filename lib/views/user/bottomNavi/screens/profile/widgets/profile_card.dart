@@ -11,6 +11,9 @@ class ProfileCard extends StatelessWidget {
   final String? phoneNumber;
   final String? verificationLabel;
   final String? loyaltyPoints;
+  final String? rating;
+  final String? postedTasks;
+  final String? helpedTasks;
   final Color? avatarColor;
   final Color? containerColor;
   final Color? shadowColor;
@@ -34,6 +37,9 @@ class ProfileCard extends StatelessWidget {
     this.phoneNumber,
     this.verificationLabel = 'Verified',
     this.loyaltyPoints = 'Your Loyalty Points: 05',
+    this.rating = '4.9',
+    this.postedTasks = '09',
+    this.helpedTasks = '09',
     this.avatarColor,
     this.containerColor,
     this.shadowColor,
@@ -158,7 +164,7 @@ class ProfileCard extends StatelessWidget {
                 color: textColor2,
               ),
               CustomText(
-                ' - (4.9)',
+                ' - ($rating)',
                 fontSize: 16,
                 fontWeight: FontVariant.bold,
                 color: textColor2,
@@ -240,7 +246,7 @@ class ProfileCard extends StatelessWidget {
             const SizedBox(height: 5),
           // Loyalty Points
           CustomText(
-            'Posted Tasks: 09',
+            'Posted Tasks: $postedTasks',
             fontSize: 12,
             fontWeight: FontVariant.medium,
             color: grey4Color,
@@ -248,7 +254,7 @@ class ProfileCard extends StatelessWidget {
           const SizedBox(height: 5),
 
           CustomText(
-            'Helped Tasks: 09',
+            'Helped Tasks: $helpedTasks',
             fontSize: 12,
             fontWeight: FontVariant.medium,
             color: grey4Color,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -127,66 +128,42 @@ class TaskReviewScreen extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(
                                           100,
                                         ),
-                                        child: Image.network(
-                                          controller.helperPhotoUrl.value,
+                                        child: CachedNetworkImage(
+                                          imageUrl: controller.helperPhotoUrl.value,
                                           height: 45,
                                           width: 45,
                                           fit: BoxFit.cover,
-                                          loadingBuilder:
-                                              (
-                                                context,
-                                                child,
-                                                loadingProgress,
-                                              ) {
-                                                if (loadingProgress == null)
-                                                  return child;
-                                                return Container(
-                                                  height: 45,
-                                                  width: 45,
-                                                  decoration: BoxDecoration(
-                                                    color: redColor.withOpacity(
-                                                      0.1,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          100,
-                                                        ),
-                                                  ),
-                                                  child: Center(
-                                                    child: SizedBox(
-                                                      height: 20,
-                                                      width: 20,
-                                                      child: CircularProgressIndicator(
-                                                        strokeWidth: 2,
-                                                        valueColor:
-                                                            AlwaysStoppedAnimation<
-                                                              Color
-                                                            >(redColor),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                                // Show initial if image fails to load
-                                                return Center(
-                                                  child: CustomText(
-                                                    controller
-                                                            .helperInitial
-                                                            .value
-                                                            .isEmpty
-                                                        ? "?"
-                                                        : controller
-                                                              .helperInitial
-                                                              .value,
-                                                    fontSize: 22,
-                                                    fontWeight:
-                                                        FontVariant.bold,
-                                                    color: redColor,
-                                                  ),
-                                                );
-                                              },
+                                          placeholder: (context, url) => Container(
+                                            height: 45,
+                                            width: 45,
+                                            decoration: BoxDecoration(
+                                              color: redColor.withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(100),
+                                            ),
+                                            child: const Center(
+                                              child: SizedBox(
+                                                height: 20,
+                                                width: 20,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          errorWidget: (context, url, error) {
+                                            // Show initial if image fails to load
+                                            return Center(
+                                              child: CustomText(
+                                                controller.helperInitial.value.isEmpty
+                                                    ? "?"
+                                                    : controller.helperInitial.value,
+                                                fontSize: 22,
+                                                fontWeight: FontVariant.bold,
+                                                color: redColor,
+                                              ),
+                                            );
+                                          },
                                         ),
                                       )
                                     : Center(
@@ -353,42 +330,29 @@ class TaskReviewScreen extends StatelessWidget {
                                           width: double.infinity,
                                           fit: BoxFit.cover,
                                         )
-                                      : Image.network(
-                                          controller.beforeImageUrl.value,
+                                      : CachedNetworkImage(
+                                          imageUrl: controller.beforeImageUrl.value,
                                           height: 150,
                                           width: double.infinity,
                                           fit: BoxFit.cover,
-                                          loadingBuilder:
-                                              (
-                                                context,
-                                                child,
-                                                loadingProgress,
-                                              ) {
-                                                if (loadingProgress == null)
-                                                  return child;
-                                                return Container(
-                                                  height: 150,
-                                                  width: double.infinity,
-                                                  color: bordercolor1,
-                                                  child: Center(
-                                                    child: CircularProgressIndicator(
-                                                      valueColor:
-                                                          AlwaysStoppedAnimation<
-                                                            Color
-                                                          >(redColor),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                                return Image.asset(
-                                                  "assets/images/homedetail.png",
-                                                  height: 150,
-                                                  width: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                );
-                                              },
+                                          placeholder: (context, url) => Container(
+                                            height: 150,
+                                            width: double.infinity,
+                                            color: bordercolor1,
+                                            child: const Center(
+                                              child: CircularProgressIndicator(
+                                                valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                              ),
+                                            ),
+                                          ),
+                                          errorWidget: (context, url, error) {
+                                            return Image.asset(
+                                              "assets/images/homedetail.png",
+                                              height: 150,
+                                              width: double.infinity,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
                                         ),
                                 ),
                               ),
@@ -458,42 +422,29 @@ class TaskReviewScreen extends StatelessWidget {
                                           width: double.infinity,
                                           fit: BoxFit.cover,
                                         )
-                                      : Image.network(
-                                          controller.afterImageUrl.value,
+                                      : CachedNetworkImage(
+                                          imageUrl: controller.afterImageUrl.value,
                                           height: 150,
                                           width: double.infinity,
                                           fit: BoxFit.cover,
-                                          loadingBuilder:
-                                              (
-                                                context,
-                                                child,
-                                                loadingProgress,
-                                              ) {
-                                                if (loadingProgress == null)
-                                                  return child;
-                                                return Container(
-                                                  height: 150,
-                                                  width: double.infinity,
-                                                  color: bordercolor1,
-                                                  child: Center(
-                                                    child: CircularProgressIndicator(
-                                                      valueColor:
-                                                          AlwaysStoppedAnimation<
-                                                            Color
-                                                          >(redColor),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                                return Image.asset(
-                                                  "assets/images/homedetail.png",
-                                                  height: 150,
-                                                  width: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                );
-                                              },
+                                          placeholder: (context, url) => Container(
+                                            height: 150,
+                                            width: double.infinity,
+                                            color: bordercolor1,
+                                            child: const Center(
+                                              child: CircularProgressIndicator(
+                                                valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                              ),
+                                            ),
+                                          ),
+                                          errorWidget: (context, url, error) {
+                                            return Image.asset(
+                                              "assets/images/homedetail.png",
+                                              height: 150,
+                                              width: double.infinity,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
                                         ),
                                 ),
                               ),
@@ -581,7 +532,7 @@ class TaskReviewScreen extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             /// 🔥 Show existing rejection dialog
-                            DialogHelpers().showRejectStep1Dialog(
+                            DialogHelpers.showRejectStep1Dialog(
                               context,
                               controller: controller,
                               taskId: taskId,
@@ -719,23 +670,18 @@ class TaskReviewScreen extends StatelessWidget {
           child: Stack(
             children: [
               Center(
-                child: Image.network(
-                  imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
                   fit: BoxFit.contain,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      "assets/images/homedetail.png",
-                      fit: BoxFit.contain,
-                    );
-                  },
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Image.asset(
+                    "assets/images/homedetail.png",
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
               Positioned(

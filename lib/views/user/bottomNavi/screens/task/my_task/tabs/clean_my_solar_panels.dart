@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 
@@ -202,35 +203,24 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                               child:
                                   widget.taskImage != null &&
                                       widget.taskImage!.isNotEmpty
-                                  ? Image.network(
-                                      widget.taskImage!,
+                                  ? CachedNetworkImage(
+                                      imageUrl: widget.taskImage!,
                                       height: 160,
                                       fit: BoxFit.cover,
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                            if (loadingProgress == null)
-                                              return child;
-                                            return Container(
-                                              height: 160,
-                                              color: bordercolor1,
-                                              child: Center(
-                                                child: CircularProgressIndicator(
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                        Color
-                                                      >(redColor),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            return Image.asset(
-                                              "assets/images/homedetail.png",
-                                              height: 160,
-                                              fit: BoxFit.cover,
-                                            );
-                                          },
+                                      placeholder: (context, url) => Container(
+                                        height: 160,
+                                        color: bordercolor1,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                          ),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) => Image.asset(
+                                        "assets/images/homedetail.png",
+                                        height: 160,
+                                        fit: BoxFit.cover,
+                                      ),
                                     )
                                   : Image.asset(
                                       "assets/images/homedetail.png",
@@ -241,66 +231,58 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              if (widget.latitude != null &&
-                                  widget.longitude != null) {
-                                Get.to(
-                                  () => TaskLocationDisplayScreen(
-                                    latitude: widget.latitude!,
-                                    longitude: widget.longitude!,
-                                    title: widget.taskTitle ?? "Task Location",
-                                    address: widget.location ?? "",
-                                  ),
-                                );
-                              } else {
-                                Get.snackbar("Info", "Location coordinates not available");
-                              }
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: (widget.latitude != null &&
-                                      widget.longitude != null &&
-                                      widget.latitude != 0.0 &&
-                                      widget.longitude != 0.0)
-                                  ? Image.network(
-                                      "https://maps.googleapis.com/maps/api/staticmap?center=${widget.latitude},${widget.longitude}&zoom=14&size=400x400&markers=color:red%7C${widget.latitude},${widget.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
-                                      height: 160,
-                                      fit: BoxFit.cover,
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return Container(
+                        if (widget.taskType != 'Online Task')
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                if (widget.latitude != null &&
+                                    widget.longitude != null) {
+                                  Get.to(
+                                    () => TaskLocationDisplayScreen(
+                                      latitude: widget.latitude!,
+                                      longitude: widget.longitude!,
+                                      title: widget.taskTitle ?? "Task Location",
+                                      address: widget.location ?? "",
+                                      showDirections: false, // 🔥 Hide for helper
+                                    ),
+                                  );
+                                } else {
+                                  Get.snackbar("Info", "Location coordinates not available");
+                                }
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: (widget.latitude != null &&
+                                        widget.longitude != null &&
+                                        widget.latitude != 0.0 &&
+                                        widget.longitude != 0.0)
+                                    ? CachedNetworkImage(
+                                        imageUrl: "https://maps.googleapis.com/maps/api/staticmap?center=${widget.latitude},${widget.longitude}&zoom=14&size=400x400&markers=color:red%7C${widget.latitude},${widget.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
+                                        height: 160,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) => Container(
                                           height: 160,
                                           color: bordercolor1,
                                           child: Center(
                                             child: CircularProgressIndicator(
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                      redColor),
+                                              valueColor: AlwaysStoppedAnimation<Color>(redColor),
                                             ),
                                           ),
-                                        );
-                                      },
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.asset(
+                                        ),
+                                        errorWidget: (context, url, error) => Image.asset(
                                           "assets/images/map.png",
                                           height: 160,
                                           fit: BoxFit.cover,
-                                        );
-                                      },
-                                    )
-                                  : Image.asset(
-                                      "assets/images/map.png",
-                                      height: 160,
-                                      fit: BoxFit.cover,
-                                    ),
+                                        ),
+                                      )
+                                    : Image.asset(
+                                        "assets/images/map.png",
+                                        height: 160,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
 
@@ -398,23 +380,18 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
           child: Stack(
             children: [
               Center(
-                child: Image.network(
-                  imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
                   fit: BoxFit.contain,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(redColor),
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      "assets/images/homedetail.png",
-                      fit: BoxFit.contain,
-                    );
-                  },
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Image.asset(
+                    "assets/images/homedetail.png",
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
               Positioned(

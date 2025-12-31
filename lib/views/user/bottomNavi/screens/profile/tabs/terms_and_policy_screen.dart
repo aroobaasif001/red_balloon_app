@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/formatted_text.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import '../controllers/user_app_content_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../controller/terms_policy_controller.dart';
+import '../controllers/user_app_content_controller.dart';
 import '../widgets/terms_policy_widgets.dart';
 
 class TermsAndPolicyScreen extends StatelessWidget {
@@ -20,7 +21,10 @@ class TermsAndPolicyScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: whiteColor,
         appBar: CustomAppBar(
-          titleText: contentController.getTitle('terms_privacy', 'Terms & Privacy Policy'),
+          titleText: contentController.getTitle(
+            'terms_privacy',
+            'Terms & Privacy Policy',
+          ),
         ),
         body: GetBuilder<TermsPolicyController>(
           init: TermsPolicyController(),
@@ -31,7 +35,10 @@ class TermsAndPolicyScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Obx(() {
-                    final dynamicContent = contentController.getContent('terms_privacy', '');
+                    final dynamicContent = contentController.getContent(
+                      'terms_privacy',
+                      '',
+                    );
                     if (dynamicContent.isEmpty) return const SizedBox.shrink();
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,19 +154,31 @@ class TermsAndPolicyScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  RichText(
-                    text: const TextSpan(
-                      text: "Email: ",
-                      style: TextStyle(fontSize: 14, color: textColor2),
-                      children: [
-                        TextSpan(
-                          text: "support@redballoon.app",
-                          style: TextStyle(
-                            color: redColor,
-                            fontWeight: FontWeight.bold,
+                  GestureDetector(
+                    onTap: () async {
+                      final Uri params = Uri(
+                        scheme: 'mailto',
+                        path: 'support@redballoon.app',
+                        query: 'subject=Terms and Policy Inquiry',
+                      );
+                      if (!await canLaunchUrl(params)) {
+                        await launchUrl(params);
+                      }
+                    },
+                    child: RichText(
+                      text: const TextSpan(
+                        text: "Email: ",
+                        style: TextStyle(fontSize: 14, color: textColor2),
+                        children: [
+                          TextSpan(
+                            text: "support@redballoon.app",
+                            style: TextStyle(
+                              color: redColor,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),

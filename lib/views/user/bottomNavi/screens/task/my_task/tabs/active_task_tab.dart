@@ -18,7 +18,7 @@ class ActiveTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Find the existing controller (put by MyTaskScreen)
-    final TasksController controller = Get.find<TasksController>();
+    final TasksController controller = Get.put(TasksController());
 
     return RefreshIndicator(
       backgroundColor: whiteColor,
@@ -236,6 +236,7 @@ class ActiveTab extends StatelessWidget {
                                     taskImage: task.imageUrl,
                                     latitude: task.latitude,
                                     longitude: task.longitude,
+                                    taskType: task.taskType, // 🔥 Pass taskType
                                   ),
                                 )
                               : Get.to(

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
@@ -144,10 +145,13 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(14),
                       child: isNetworkImage
-                          ? Image.network(
-                              displayImage,
+                          ? CachedNetworkImage(
+                              imageUrl: displayImage,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(color: redColor),
+                              ),
+                              errorWidget: (context, url, error) {
                                 // Fallback to asset image if network image fails
                                 return Image.asset(
                                   "assets/images/sofa.png",
@@ -244,6 +248,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                                     longitude: displayTask.longitude!,
                                     title: displayTask.title,
                                     address: displayTask.location ?? "",
+                                    showDirections: false, // 🔥 Hide for requester
                                   ),
                                 );
                               }
@@ -265,10 +270,13 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                                   Positioned.fill(
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(22),
-                                      child: Image.network(
-                                        "https://maps.googleapis.com/maps/api/staticmap?center=${displayTask.latitude},${displayTask.longitude}&zoom=14&size=600x300&markers=color:red%7C${displayTask.latitude},${displayTask.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
+                                      child: CachedNetworkImage(
+                                        imageUrl: "https://maps.googleapis.com/maps/api/staticmap?center=${displayTask.latitude},${displayTask.longitude}&zoom=14&size=600x300&markers=color:red%7C${displayTask.latitude},${displayTask.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
                                         fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) =>
+                                        placeholder: (context, url) => const Center(
+                                          child: CircularProgressIndicator(color: redColor),
+                                        ),
+                                        errorWidget: (context, url, error) =>
                                             const SizedBox.shrink(),
                                       ),
                                     ),
@@ -340,23 +348,18 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
           child: Stack(
             children: [
               Center(
-                child: Image.network(
-                  imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
                   fit: BoxFit.contain,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      "assets/images/homedetail.png",
-                      fit: BoxFit.contain,
-                    );
-                  },
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Image.asset(
+                    "assets/images/homedetail.png",
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
               Positioned(

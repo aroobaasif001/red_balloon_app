@@ -256,6 +256,26 @@ class EditProfileScreen extends StatelessWidget {
                         maxLength: 50,
                         errorText: controller.cityError.value,
                         onChanged: (value) => controller.validateCity(value),
+                        suffix: controller.isDetectingLocation.value
+                            ? const Padding(
+                                padding: EdgeInsets.only(right: 4.0),
+                                child: SizedBox(
+                                  height: 18,
+                                  width: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: redColor,
+                                  ),
+                                ),
+                              )
+                            : GestureDetector(
+                                onTap: () => controller.detectCurrentLocation(),
+                                child: const Icon(
+                                  Icons.my_location,
+                                  color: redColor,
+                                  size: 20,
+                                ),
+                              ),
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -296,6 +316,26 @@ class EditProfileScreen extends StatelessWidget {
                           height: 20,
                           width: 20,
                         ),
+                        suffix: controller.isDetectingLocation.value
+                            ? const Padding(
+                                padding: EdgeInsets.only(right: 4.0),
+                                child: SizedBox(
+                                  height: 18,
+                                  width: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: redColor,
+                                  ),
+                                ),
+                              )
+                            : GestureDetector(
+                                onTap: () => controller.detectCurrentLocation(),
+                                child: const Icon(
+                                  Icons.my_location,
+                                  color: redColor,
+                                  size: 20,
+                                ),
+                              ),
                       ),
                     ),
                     const SizedBox(height: 15),

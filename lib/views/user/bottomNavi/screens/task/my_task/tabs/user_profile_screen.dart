@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -37,7 +38,17 @@ class UserProfileScreen extends StatelessWidget {
     final controller = Get.put(
       UserProfileController(userUid: userUid ?? ''),
       tag: userUid,
+      permanent: true, // 🔥 Keep in memory for instant navigation
     );
+
+    // 🔥 Silent refresh when screen is accessed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.updateInitialStats(
+        completed: tasksCompleted,
+        requested: tasksRequested,
+      );
+      controller.fetchFeedbacks();
+    });
 
     return Scaffold(
       backgroundColor: whiteColor,
@@ -62,21 +73,32 @@ class UserProfileScreen extends StatelessWidget {
                   conColor: redColor,
                   alignment: Alignment.center,
                   child: userPhoto == null || userPhoto!.isEmpty
-                      ? CustomText(
-                          userInitials,
-                          fontSize: 48,
-                          fontWeight: FontVariant.bold,
-                          color: whiteColor,
-                        )
-                      : ClipRRect(
-                          borderRadius: BorderRadius.circular(60),
-                          child: Image.network(
-                            userPhoto!,
-                            height: 120,
-                            width: 120,
-                            fit: BoxFit.cover,
+                        ? CustomText(
+                            userInitials,
+                            fontSize: 48,
+                            fontWeight: FontVariant.bold,
+                            color: whiteColor,
+                          )
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(60),
+                            child: CachedNetworkImage(
+                              imageUrl: userPhoto!,
+                              height: 120,
+                              width: 120,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(color: whiteColor),
+                              ),
+                              errorWidget: (context, url, error) => Center(
+                                child: CustomText(
+                                  userInitials,
+                                  fontSize: 48,
+                                  fontWeight: FontVariant.bold,
+                                  color: whiteColor,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
                 ),
                 Positioned(
                   bottom: 5,
