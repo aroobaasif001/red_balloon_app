@@ -29,6 +29,7 @@ class ValidationScreenController extends GetxController {
   var hasVoted = false.obs; // 🔥 Check if user already voted
   var isProofSubmitter =
       false.obs; // 🔥 Check if current user submitted the proof
+  var submittedTimeDisplay = ''.obs; // 🔥 For static display of time ago
 
   // 🔥 Timer observables
   var remainingTime = '15:00'.obs; // Display format MM:SS
@@ -140,6 +141,7 @@ class ValidationScreenController extends GetxController {
         // Set timestamps
         if (vData['completedAt'] != null) {
           completedAt.value = (vData['completedAt'] as Timestamp).toDate();
+          submittedTimeDisplay.value = getSubmittedTimeAgo(); // Set initial value
         }
         if (vData['rejectedAt'] != null) {
           rejectedAt.value = (vData['rejectedAt'] as Timestamp).toDate();
@@ -518,13 +520,25 @@ class ValidationScreenController extends GetxController {
             }
 
             // D. FINALLY Mark validation as completed so it disappears from hub/screen
-            await _firestore.collection('validations').doc(validationId.value).update({
+            final updateData = {
               'isVotingCompleted': true,
               'winner': winner,
               'helperVotes': helperVotes.value,
               'requesterVotes': requesterVotes.value,
-              'completedAt': FieldValue.serverTimestamp(),
-            });
+            };
+
+            // Only update completedAt if it doesn't exist yet
+            if (vDoc.exists && (vDoc.data() as Map<String, dynamic>?)?['completedAt'] == null) {
+              updateData['completedAt'] = FieldValue.serverTimestamp();
+            }
+
+            await _firestore.collection('validations').doc(validationId.value).update(updateData);
+            
+            // Sync local display
+            if (completedAt.value == null) {
+              completedAt.value = DateTime.now();
+            }
+            submittedTimeDisplay.value = getSubmittedTimeAgo();
 
             print('✅ Manual Finalization Successful for $winner');
           } else {
@@ -557,6 +571,12 @@ class ValidationScreenController extends GetxController {
           });
 
       print('📤 Sent to admin for review');
+
+      // 🔥 Notify Admin
+      _notificationService.notifyAdminNewTaskToValidation(
+        taskTitle.value,
+        taskId.value,
+      );
 
       Get.snackbar(
         'Admin Review',

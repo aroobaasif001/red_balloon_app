@@ -4,6 +4,7 @@ import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/utils/dialog_helpers.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/controller/user_profile_details_controller.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/danger_button.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_profile_details/widget/key_value_row.dart';
@@ -242,7 +243,16 @@ class UserProfileDetailsScreen extends StatelessWidget {
                   children: [
                     Obx(() => DangerButton(
                       label: controller.isWarning.value ? "Sending..." : "Warn User",
-                      onTap: controller.warnUser,
+                      onTap: () {
+                        DialogHelpers.showConfirmationDialog(
+                          context: context,
+                          title: "Warn User?",
+                          message: "Are you sure you want to send a formal warning to this user?",
+                          confirmText: "Warn",
+                          onConfirm: () => controller.warnUser(),
+                          iconData: Icons.warning_rounded,
+                        );
+                      },
                       isLoading: controller.isWarning.value,
                     )),
                     const SizedBox(width: 12),
@@ -250,7 +260,19 @@ class UserProfileDetailsScreen extends StatelessWidget {
                       label: controller.isSuspending.value 
                           ? "Processing..." 
                           : (controller.isSuspended.value ? "Unsuspend Account" : "Suspend Account"),
-                      onTap: controller.toggleAccountSuspension,
+                      onTap: () {
+                        final isSuspended = controller.isSuspended.value;
+                        DialogHelpers.showConfirmationDialog(
+                          context: context,
+                          title: isSuspended ? "Unsuspend Account?" : "Suspend Account?",
+                          message: isSuspended 
+                              ? "Are you sure you want to unsuspend this user's account?" 
+                              : "Are you sure you want to suspend this user's account? They will lose access to the app.",
+                          confirmText: isSuspended ? "Unsuspend" : "Suspend",
+                          onConfirm: () => controller.toggleAccountSuspension(),
+                          iconData: isSuspended ? Icons.person_add_rounded : Icons.person_remove_rounded,
+                        );
+                      },
                       isLoading: controller.isSuspending.value,
                     )),
                   ],

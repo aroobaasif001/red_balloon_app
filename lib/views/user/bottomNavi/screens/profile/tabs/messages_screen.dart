@@ -127,7 +127,6 @@ class MessagesScreen extends StatelessWidget {
                         Get.snackbar(
                           'Chat',
                           'Chat deleted successfully!',
-                          duration: const Duration(seconds: 2),
                         );
                       },
                       child: MessageTile(

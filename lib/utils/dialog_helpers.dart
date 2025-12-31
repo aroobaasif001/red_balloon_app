@@ -3467,4 +3467,126 @@ class DialogHelpers {
       },
     );
   }
+  static void showConfirmationDialog({
+    required BuildContext context,
+    required String title,
+    required String message,
+    required String confirmText,
+    required VoidCallback onConfirm,
+    Color confirmColor = redColor,
+    String? iconPath,
+    IconData? iconData,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              CustomContainer(
+                padding: const EdgeInsets.only(
+                  top: 90,
+                  left: 25,
+                  right: 25,
+                  bottom: 25,
+                ),
+                conColor: whiteColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: blackColor.withOpacity(0.12),
+                    blurRadius: 10,
+                  ),
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomText(
+                      title,
+                      fontSize: 18,
+                      fontWeight: FontVariant.bold,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    CustomText(
+                      message,
+                      fontSize: 14,
+                      color: gray6Color,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 25),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: fundCardBorderColor,
+                                width: 2,
+                              ),
+                              conColor: hColor.withOpacity(0.10),
+                              child: const CustomText(
+                                "Cancel",
+                                fontSize: 14,
+                                color: redColor,
+                                fontWeight: FontVariant.medium,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              onConfirm();
+                            },
+                            child: CustomContainer(
+                              height: 48,
+                              alignment: Alignment.center,
+                              borderRadius: BorderRadius.circular(10),
+                              conColor: confirmColor,
+                              child: CustomText(
+                                confirmText,
+                                fontSize: 14,
+                                color: whiteColor,
+                                fontWeight: FontVariant.medium,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: -70,
+                child: CustomContainer(
+                  width: 140,
+                  height: 140,
+                  conColor: confirmColor,
+                  shape: BoxShape.circle,
+                  child: Center(
+                    child: iconPath != null
+                        ? Image.asset(iconPath, width: 70, height: 70, color: whiteColor)
+                        : Icon(iconData ?? Icons.help_outline, size: 75, color: whiteColor),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

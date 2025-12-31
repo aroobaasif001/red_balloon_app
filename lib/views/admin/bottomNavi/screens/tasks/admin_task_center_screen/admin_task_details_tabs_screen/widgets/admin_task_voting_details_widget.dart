@@ -4,6 +4,7 @@ import 'package:red_balloon_app/custom_widgets/custom_button.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/utils/dialog_helpers.dart';
 
 import '../controller/admin_task_details_controller.dart';
 
@@ -273,21 +274,13 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    Get.dialog(
-                      AlertDialog(
-                        title: const Text('Hold Payment?'),
-                        content: const Text('Are you sure you want to hold payment and refund the requester?'),
-                        actions: [
-                          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-                          TextButton(
-                            onPressed: () {
-                              Get.back();
-                              controller.holdPayment();
-                            },
-                            child: const Text('Proceed', style: TextStyle(color: redColor)),
-                          ),
-                        ],
-                      ),
+                    DialogHelpers.showConfirmationDialog(
+                      context: context,
+                      title: "Hold Payment?",
+                      message: "Are you sure you want to hold payment and refund the requester?",
+                      confirmText: "Hold",
+                      onConfirm: () => controller.holdPayment(),
+                      iconData: Icons.pause_circle_filled_rounded,
                     );
                   },
                   child: CustomContainer(
@@ -313,21 +306,13 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                   fontWeight: FontVariant.semiBold,
                   bgColor: redColor,
                   onPressed: () {
-                    Get.dialog(
-                      AlertDialog(
-                        title: const Text('Approve Payment?'),
-                        content: const Text('Are you sure you want to approve payment to the helper?'),
-                        actions: [
-                          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-                          TextButton(
-                            onPressed: () {
-                              Get.back();
-                              controller.approvePayment();
-                            },
-                            child: const Text('Approve', style: TextStyle(color: redColor)),
-                          ),
-                        ],
-                      ),
+                    DialogHelpers.showConfirmationDialog(
+                      context: context,
+                      title: "Approve Payment?",
+                      message: "Are you sure you want to approve payment to the helper?",
+                      confirmText: "Approve",
+                      onConfirm: () => controller.approvePayment(),
+                      iconData: Icons.check_circle_rounded,
                     );
                   },
                 ),

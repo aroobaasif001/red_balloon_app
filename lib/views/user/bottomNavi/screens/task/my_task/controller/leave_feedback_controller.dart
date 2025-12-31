@@ -63,10 +63,6 @@ class LeaveFeedbackController extends GetxController {
       Get.snackbar('Error', 'Please select a star rating');
       return;
     }
-    if (reviewController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please write a short review');
-      return;
-    }
 
     isLoading.value = true;
 

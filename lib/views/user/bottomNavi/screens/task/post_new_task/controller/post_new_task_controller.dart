@@ -240,8 +240,6 @@ class PostNewTaskController extends GetxController {
         Get.snackbar(
           "Insufficient Balance",
           "You need SAR $budget to post this task. Your current balance is SAR $currentBal.",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
         return false;
       }

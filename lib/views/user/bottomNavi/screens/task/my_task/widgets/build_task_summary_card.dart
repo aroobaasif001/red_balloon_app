@@ -15,6 +15,7 @@ Widget buildTaskSummaryCard(
   String title,
   String location, {
   String? taskImage,
+  String? taskType,
 }) {
   return CustomContainer(
     width: double.infinity,
@@ -74,7 +75,9 @@ Widget buildTaskSummaryCard(
               ),
               const SizedBox(height: 8),
               CustomText(
-                'SAR $price \t $location',
+                taskType == 'Online Task'
+                    ? 'SAR $price'
+                    : 'SAR $price \t $location',
                 fontSize: 14,
                 fontWeight: FontVariant.semiBold,
                 color: rbtxColor,

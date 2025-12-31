@@ -45,8 +45,7 @@ class _AdminWithdrawalDetailsScreenState extends State<AdminWithdrawalDetailsScr
 
   Future<void> _processRequest(String status) async {
     if (status == 'Completed' && _receiptImage == null) {
-      Get.snackbar('Error', 'Please upload a payment receipt before approving',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar('Error', 'Please upload a payment receipt before approving');
       return;
     }
 
@@ -73,15 +72,12 @@ class _AdminWithdrawalDetailsScreenState extends State<AdminWithdrawalDetailsScr
         );
 
         Get.back();
-        Get.snackbar('Success', 'Withdrawal request $status successfully',
-            backgroundColor: Colors.green, colorText: Colors.white);
+        Get.snackbar('Success', 'Withdrawal request $status successfully');
       } else {
-        Get.snackbar('Error', result['message'] ?? 'Failed to process request',
-            backgroundColor: Colors.red, colorText: Colors.white);
+        Get.snackbar('Error', result['message'] ?? 'Failed to process request');
       }
     } catch (e) {
-      Get.snackbar('Error', 'An error occurred: $e',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar('Error', 'An error occurred: $e');
     } finally {
       setState(() => _isProcessing = false);
     }

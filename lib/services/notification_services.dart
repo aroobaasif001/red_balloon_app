@@ -1757,6 +1757,135 @@ class NotificationService {
       debugPrint('Error sending withdrawal status notification: $e');
     }
   }
+
+  // ============================================
+  // ADMIN NOTIFICATIONS
+  // ============================================
+
+  /// Notify ADMIN about a specific event
+  Future<void> notifyAdmin({
+    required String title,
+    required String body,
+    required Map<String, String> data,
+  }) async {
+    try {
+      final adminQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: 'admin@gmail.com')
+          .limit(1)
+          .get();
+
+      if (adminQuery.docs.isNotEmpty) {
+        final adminUid = adminQuery.docs.first.id;
+
+        // 1. Save to Firestore
+        await FirebaseFirestore.instance
+            .collection('notifications')
+            .doc(adminUid)
+            .collection('items')
+            .add({
+          'title': title,
+          'body': body,
+          'type': NoticeType.warning.name,
+          'category': 'admin_alert',
+          'read': false,
+          'createdAt': FieldValue.serverTimestamp(),
+          ...data,
+        });
+
+        // 2. Send FCM
+        await _sendFcmToUser(adminUid, title, body, data);
+        debugPrint('✅ Admin notified: $title');
+      } else {
+        debugPrint('⚠️ Admin user not found (admin@gmail.com)');
+      }
+    } catch (e) {
+      debugPrint('Error notifying admin: $e');
+    }
+  }
+
+  /// Notify both users and admin when a task enters dispute
+  Future<void> notifyDisputeStarted({
+    required String requesterId,
+    required String helperId,
+    required String taskTitle,
+    required String taskId,
+  }) async {
+    final title = 'Task in Dispute';
+    final body = 'The task "$taskTitle" has entered a formal dispute. Administration will review.';
+
+    // Notify users
+    await _sendFcmToUser(requesterId, title, body, {'route': 'history_tab', 'taskId': taskId, 'category': 'task_disputed'});
+    await _sendFcmToUser(helperId, title, body, {'route': 'history_tab', 'taskId': taskId, 'category': 'task_disputed'});
+
+    // Save for users
+    final userNotifData = {
+      'title': title,
+      'body': body,
+      'type': NoticeType.danger.name,
+      'category': 'task_disputed',
+      'taskId': taskId,
+      'taskTitle': taskTitle,
+      'read': false,
+      'createdAt': FieldValue.serverTimestamp(),
+    };
+    await FirebaseFirestore.instance.collection('notifications').doc(requesterId).collection('items').add(userNotifData);
+    await FirebaseFirestore.instance.collection('notifications').doc(helperId).collection('items').add(userNotifData);
+
+    // Notify Admin
+    await notifyAdminDispute(taskTitle, taskId);
+  }
+
+  /// Specialized admin notification for disputes
+  Future<void> notifyAdminDispute(String taskTitle, String taskId) async {
+    await notifyAdmin(
+      title: 'Task Disputed',
+      body: 'Task "$taskTitle" (ID: $taskId) is now in dispute and needs review.',
+      data: {
+        'category': 'admin_dispute',
+        'taskId': taskId,
+        'taskTitle': taskTitle,
+      },
+    );
+  }
+
+  Future<void> notifyAdminWithdrawRequest(String userId, double amount) async {
+    String displayName = userId;
+    try {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      if (userDoc.exists) {
+        displayName = userDoc.data()?['username'] ?? 
+                      userDoc.data()?['displayName'] ?? 
+                      userDoc.data()?['name'] ?? 
+                      userId;
+      }
+    } catch (e) {
+      print('Error fetching user name for admin notification: $e');
+    }
+
+    await notifyAdmin(
+      title: 'New Withdrawal Request',
+      body: 'User $displayName has requested a withdrawal of SAR ${amount.toStringAsFixed(2)}.',
+      data: {
+        'category': 'admin_withdrawal_request',
+        'userId': userId,
+        'amount': amount.toString(),
+      },
+    );
+  }
+
+  /// Specialized admin notification for tasks moving to validation
+  Future<void> notifyAdminNewTaskToValidation(String taskTitle, String taskId) async {
+    await notifyAdmin(
+      title: 'Manual Validation Required',
+      body: 'Task "$taskTitle" validation timer expired. It is now awaiting admin review.',
+      data: {
+        'category': 'admin_validation_manual',
+        'taskId': taskId,
+        'taskTitle': taskTitle,
+      },
+    );
+  }
 }
 
 // Top-level background handler (must be a static/global function)

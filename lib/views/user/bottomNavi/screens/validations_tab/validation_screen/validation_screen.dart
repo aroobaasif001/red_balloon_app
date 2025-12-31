@@ -60,267 +60,290 @@ class _ValidationScreenState extends State<ValidationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() {
-        // Show loading indicator
-        if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator(color: redColor));
-        }
-
-        return SingleChildScrollView(
-          // ✅ SCROLLABLE ADDED
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// HEADER
-              CustomAppBar1(
-                title: 'Validation',
-                rightImagePath: 'assets/icons/button.png',
-                rightImageHeight: 50,
-                rightImageWidth: 20,
-                showRightImage: false,
-              ),
-
-              const SizedBox(height: 20),
-
-              /// 🔴 TOP SECTION
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// PROFILE + TITLE
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-
-                            children: [
-                              CustomContainer(
-                                width: double.infinity,
-                                child: CustomText(
-                                  textAlign: TextAlign.left,
-                                  controller.taskTitle.value,
-                                  fontSize: 18,
-                                  fontWeight: FontVariant.bold,
-                                  color: blackColor,
-                                  maxLines: null,
-                                  overflow: TextOverflow.visible,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  if (controller.completedAt.value != null)
-                                    const SizedBox(width: 6),
-                                  if (controller.completedAt.value != null)
-                                    CustomText(
-                                      "•",
-                                      fontSize: 13,
-                                      fontWeight: FontVariant.medium,
-                                      color: walletGrey600Color,
-                                    ),
-                                  if (controller.completedAt.value != null)
-                                    const SizedBox(width: 6),
-                                  if (controller.completedAt.value != null)
-                                    CustomText(
-                                      "Submitted ${controller.getSubmittedTimeAgo()}",
-                                      fontSize: 13,
-                                      fontWeight: FontVariant.medium,
-                                      color: walletGrey600Color,
-                                    ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+      body: Column(
+        children: [
+          Obx(
+            () => controller.isLoading.value
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: const Center(
+                      child: CircularProgressIndicator(color: redColor),
                     ),
-
-                    const SizedBox(height: 16),
-
-                    CustomText(
-                      controller.taskDescription.value,
-                      fontSize: 14,
-                      fontWeight: FontVariant.regular,
-                      color: walletGrey600Color,
-                    ),
-
-                    const SizedBox(height: 25),
-
-                    /// ⭐ VALIDATION STATISTICS
-                    CustomContainer(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 24,
-                        horizontal: 20,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      conColor: whiteColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: blackColor.withOpacity(0.35),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+                  )
+                : const SizedBox.shrink(),
+          ),
+          Obx(
+            () => controller.isLoading.value
+                ? const SizedBox.shrink()
+                : Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/icons/statistics.png",
-                                height: 21,
-                              ),
-                              const SizedBox(width: 8),
-                              const CustomText(
-                                "Validation Statistics",
-                                fontSize: 18,
-                                fontWeight: FontVariant.semiBold,
-                                color: lastTextColor,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-
-                          /// Votes Received Row
-                          _buildStatRow(
-                            "Votes Received",
-                            controller.votesReceived.value.toString().padLeft(
-                              2,
-                              '0',
-                            ),
+                          /// HEADER
+                          CustomAppBar1(
+                            title: 'Validation',
+                            rightImagePath: 'assets/icons/button.png',
+                            rightImageHeight: 50,
+                            rightImageWidth: 20,
+                            showRightImage: false,
                           ),
 
+                          const SizedBox(height: 20),
+
+                          /// 🔴 TOP SECTION
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            child: Divider(
-                              color: greyColor.withOpacity(0.2),
-                              thickness: 1,
-                              height: 1,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                /// PROFILE + TITLE
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+
+                                        children: [
+                                          CustomContainer(
+                                            width: double.infinity,
+                                            child: Obx(
+                                              () => CustomText(
+                                                textAlign: TextAlign.left,
+                                                controller.taskTitle.value,
+                                                fontSize: 18,
+                                                fontWeight: FontVariant.bold,
+                                                color: blackColor,
+                                                maxLines: null,
+                                                overflow: TextOverflow.visible,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                           Obx(() {
+                                             if (controller.completedAt.value ==
+                                                 null)
+                                               return const SizedBox.shrink();
+                                             return Row(
+                                               mainAxisAlignment: MainAxisAlignment.end,
+                                               children: [
+                                                 CustomText(
+                                                   "Submitted ${controller.submittedTimeDisplay.value}",
+                                                   fontSize: 13,
+                                                   fontWeight:
+                                                       FontVariant.medium,
+                                                   color: walletGrey600Color,
+                                                 ),
+                                               ],
+                                             );
+                                           }),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Obx(
+                                  () => CustomText(
+                                    controller.taskDescription.value,
+                                    fontSize: 14,
+                                    fontWeight: FontVariant.regular,
+                                    color: walletGrey600Color,
+                                  ),
+                                ),
+                                const SizedBox(height: 25),
+
+                                /// ⭐ VALIDATION STATISTICS
+                                CustomContainer(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 24,
+                                    horizontal: 20,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  conColor: whiteColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: blackColor.withOpacity(0.35),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "assets/icons/statistics.png",
+                                            height: 21,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const CustomText(
+                                            "Validation Statistics",
+                                            fontSize: 18,
+                                            fontWeight: FontVariant.semiBold,
+                                            color: lastTextColor,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 24),
+
+                                      /// Votes Received Row
+                                      Obx(
+                                        () => _buildStatRow(
+                                          "Votes Received",
+                                          controller.votesReceived.value
+                                              .toString()
+                                              .padLeft(2, '0'),
+                                        ),
+                                      ),
+
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                        ),
+                                        child: Divider(
+                                          color: greyColor.withOpacity(0.2),
+                                          thickness: 1,
+                                          height: 1,
+                                        ),
+                                      ),
+
+                                      /// Votes Needed Row
+                                      Obx(
+                                        () => _buildStatRow(
+                                          "Votes Needed",
+                                          controller.votesNeeded.value
+                                              .toString()
+                                              .padLeft(2, '0'),
+                                        ),
+                                      ),
+
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                        ),
+                                        child: Divider(
+                                          color: greyColor.withOpacity(0.2),
+                                          thickness: 1,
+                                          height: 1,
+                                        ),
+                                      ),
+
+                                      /// Time Left Row
+                                      Obx(
+                                        () => _buildStatRow(
+                                          "Time Left",
+                                          controller.remainingTime.value,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                const SizedBox(height: 25),
+                              ],
                             ),
                           ),
 
-                          /// Votes Needed Row
-                          _buildStatRow(
-                            "Votes Needed",
-                            controller.votesNeeded.value.toString().padLeft(
-                              2,
-                              '0',
+                          /// 🔵 MAIN TABS
+                          Center(
+                            child: CustomContainer(
+                              height: 44,
+                              width: 173,
+                              borderRadius: BorderRadius.circular(14),
+                              conColor: appbard,
+                              padding: const EdgeInsets.all(4),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: blackColor.withOpacity(0.15),
+                                  blurRadius: 1,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () =>
+                                          setState(() => selectedTab = 0),
+                                      child: CustomContainer(
+                                        height: 36,
+                                        borderRadius: BorderRadius.circular(10),
+                                        conColor: selectedTab == 0
+                                            ? redColor
+                                            : Colors.transparent,
+                                        alignment: Alignment.center,
+                                        child: CustomText(
+                                          "BEFORE",
+                                          fontSize: 14,
+                                          fontWeight: FontVariant.semiBold,
+                                          color: selectedTab == 0
+                                              ? whiteColor
+                                              : walletGrey500Color,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () =>
+                                          setState(() => selectedTab = 1),
+                                      child: CustomContainer(
+                                        height: 36,
+                                        borderRadius: BorderRadius.circular(10),
+                                        conColor: selectedTab == 1
+                                            ? redColor
+                                            : Colors.transparent,
+                                        alignment: Alignment.center,
+                                        child: CustomText(
+                                          "AFTER",
+                                          fontSize: 14,
+                                          fontWeight: FontVariant.semiBold,
+                                          color: selectedTab == 1
+                                              ? whiteColor
+                                              : walletGrey500Color,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
 
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            child: Divider(
-                              color: greyColor.withOpacity(0.2),
-                              thickness: 1,
-                              height: 1,
-                            ),
+                          const SizedBox(height: 20),
+
+                          /// TAB CONTENT (NO EXPANDED INSIDE SCROLL)
+                          Obx(
+                            () => selectedTab == 0
+                                ? BeforeTab(
+                                    isTask:
+                                        controller.isTaskOwner.value ||
+                                        controller.isProofSubmitter.value,
+                                  )
+                                : AfterTab(
+                                    isTask:
+                                        controller.isTaskOwner.value ||
+                                        controller.isProofSubmitter.value,
+                                  ),
                           ),
 
-                          /// Time Left Row
-                          _buildStatRow(
-                            "Time Left",
-                            controller.remainingTime.value,
-                          ),
+                          const SizedBox(height: 40),
                         ],
                       ),
                     ),
-
-                    const SizedBox(height: 25),
-                  ],
-                ),
-              ),
-
-              /// 🔵 MAIN TABS
-              Center(
-                child: CustomContainer(
-                  height: 44,
-                  width: 173,
-                  borderRadius: BorderRadius.circular(14),
-                  conColor: appbard,
-                  padding: const EdgeInsets.all(4),
-                  boxShadow: [
-                    BoxShadow(
-                      color: blackColor.withOpacity(0.15),
-                      blurRadius: 1,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => selectedTab = 0),
-                          child: CustomContainer(
-                            height: 36,
-                            borderRadius: BorderRadius.circular(10),
-                            conColor: selectedTab == 0
-                                ? redColor
-                                : Colors.transparent,
-                            alignment: Alignment.center,
-                            child: CustomText(
-                              "BEFORE",
-                              fontSize: 14,
-                              fontWeight: FontVariant.semiBold,
-                              color: selectedTab == 0
-                                  ? whiteColor
-                                  : walletGrey500Color,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => selectedTab = 1),
-                          child: CustomContainer(
-                            height: 36,
-                            borderRadius: BorderRadius.circular(10),
-                            conColor: selectedTab == 1
-                                ? redColor
-                                : Colors.transparent,
-                            alignment: Alignment.center,
-                            child: CustomText(
-                              "AFTER",
-                              fontSize: 14,
-                              fontWeight: FontVariant.semiBold,
-                              color: selectedTab == 1
-                                  ? whiteColor
-                                  : walletGrey500Color,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              /// TAB CONTENT (NO EXPANDED INSIDE SCROLL)
-              selectedTab == 0
-                  ? BeforeTab(
-                      isTask:
-                          controller.isTaskOwner.value ||
-                          controller.isProofSubmitter.value,
-                    )
-                  : AfterTab(
-                      isTask:
-                          controller.isTaskOwner.value ||
-                          controller.isProofSubmitter.value,
-                    ),
-
-              const SizedBox(height: 40),
-            ],
           ),
-        );
-      }), // Close Obx
+        ],
+      ),
     );
   }
 

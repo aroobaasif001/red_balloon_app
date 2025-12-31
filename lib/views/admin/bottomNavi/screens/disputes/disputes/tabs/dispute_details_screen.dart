@@ -6,6 +6,7 @@ import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/utils/dialog_helpers.dart';
 
 import 'controller/dispute_details_controller.dart';
 
@@ -474,7 +475,14 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                             label: "Warn Helper",
                             fontSize: 15,
                             onPressed: () {
-                              controller.warnHelper();
+                              DialogHelpers.showConfirmationDialog(
+                                context: context,
+                                title: "Warn Helper?",
+                                message: "Are you sure you want to send a formal warning to the helper regarding this dispute?",
+                                confirmText: "Warn",
+                                onConfirm: () => controller.warnHelper(),
+                                iconData: Icons.warning_amber_rounded,
+                              );
                             },
                           ),
                         ),
@@ -485,7 +493,14 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                             label: "Warn Requester",
                             fontSize: 15,
                             onPressed: () {
-                              controller.warnRequester();
+                              DialogHelpers.showConfirmationDialog(
+                                context: context,
+                                title: "Warn Requester?",
+                                message: "Are you sure you want to send a formal warning to the requester regarding this dispute?",
+                                confirmText: "Warn",
+                                onConfirm: () => controller.warnRequester(),
+                                iconData: Icons.warning_amber_rounded,
+                              );
                             },
                             bgColor: whiteColor,
                             textColor: walletBlackColor,
@@ -505,7 +520,14 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                             label: "Refund Payment",
                             fontSize: 15,
                             onPressed: () {
-                              controller.refundPayment();
+                              DialogHelpers.showConfirmationDialog(
+                                context: context,
+                                title: "Refund Payment?",
+                                message: "This will refund 96% to the requester and 1% to the helper. Continue?",
+                                confirmText: "Refund",
+                                onConfirm: () => controller.refundPayment(),
+                                iconData: Icons.settings_backup_restore_rounded,
+                              );
                             },
                             bgColor: whiteColor,
                             textColor: blackColor,
@@ -519,7 +541,14 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                             label: "Dismiss Dispute",
                             fontSize: 15,
                             onPressed: () {
-                              controller.dismissDispute();
+                              DialogHelpers.showConfirmationDialog(
+                                context: context,
+                                title: "Dismiss Dispute?",
+                                message: "This will split the funds: 85% to Helper and 7.5% to Requester. Continue?",
+                                confirmText: "Dismiss",
+                                onConfirm: () => controller.dismissDispute(),
+                                iconData: Icons.gavel_rounded,
+                              );
                             },
                             bgColor: whiteColor,
                             textColor: blackColor,
