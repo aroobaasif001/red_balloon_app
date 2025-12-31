@@ -41,7 +41,7 @@ class ChatScreen extends StatelessWidget {
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomAppBar1(title: 'Messages', showRightImage: false),
+              CustomAppBar1(title: controller.taskOwnerName, showRightImage: false),
 
               // 🔥 Fixed Task Header
               Obx(

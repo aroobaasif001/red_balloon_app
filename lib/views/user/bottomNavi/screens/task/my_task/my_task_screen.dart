@@ -15,7 +15,8 @@ import 'controller/tasks_controller.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
 
 class MyTaskScreen extends StatefulWidget {
-  const MyTaskScreen({super.key});
+  final int initialTab;
+  const MyTaskScreen({super.key, this.initialTab = 0});
 
   @override
   State<MyTaskScreen> createState() => _MyTaskScreenState();
@@ -29,9 +30,18 @@ class _MyTaskScreenState extends State<MyTaskScreen> {
     super.initState();
     if (Get.isRegistered<TaskTabsController>()) {
       controller = Get.find<TaskTabsController>();
-      controller.resetTab();
+      // 🔥 Execute after build to avoid "markNeedsBuild() called during build" error
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.resetTab(toIndex: widget.initialTab);
+      });
     } else {
       controller = Get.put(TaskTabsController());
+      // Handle initial tab if controller just created
+      if (widget.initialTab != 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          controller.changeTab(widget.initialTab);
+        });
+      }
     }
 
     // 🔥 Initialize TasksController here so it's ready for all tabs

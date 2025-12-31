@@ -30,12 +30,12 @@ class TaskTabsController extends GetxController
     }
   }
 
-  void resetTab() {
+  void resetTab({int toIndex = 0}) {
     try {
-      if (!tabController.indexIsChanging && tabController.index != 0) {
-        tabController.animateTo(0);
+      if (!tabController.indexIsChanging && tabController.index != toIndex) {
+        tabController.animateTo(toIndex);
       }
-      selectedTab.value = 0;
+      selectedTab.value = toIndex;
     } catch (e) {
       // Controller might be disposed, ignore
     }

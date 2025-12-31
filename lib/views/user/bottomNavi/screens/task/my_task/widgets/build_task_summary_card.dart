@@ -74,10 +74,12 @@ Widget buildTaskSummaryCard(
               ),
               const SizedBox(height: 8),
               CustomText(
-                'SAR $price 	 $location',
+                'SAR $price \t $location',
                 fontSize: 14,
                 fontWeight: FontVariant.semiBold,
                 color: rbtxColor,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
               CustomText(

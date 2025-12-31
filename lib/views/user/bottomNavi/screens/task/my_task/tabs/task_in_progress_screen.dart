@@ -586,22 +586,27 @@ class TaskInProgressScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                CustomText(
-                                  "Amount:",
-                                  fontWeight: FontVariant.bold,
-                                  fontSize: 14,
-                                ),
-                                SizedBox(width: 4),
-                                CustomText(
-                                  offer != null
-                                      ? "SAR ${offer.offerPrice}"
-                                      : controller.formatBudget(task.budget),
-                                  fontSize: 14,
-                                  color: timeColor,
-                                ),
-                              ],
+                            Flexible(
+                              child: Row(
+                                children: [
+                                  CustomText(
+                                    "Amount:",
+                                    fontWeight: FontVariant.bold,
+                                    fontSize: 14,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Flexible(
+                                    child: CustomText(
+                                      offer != null
+                                          ? "SAR ${offer.offerPrice}"
+                                          : controller.formatBudget(task.budget),
+                                      fontSize: 14,
+                                      color: timeColor,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             Row(
                               children: [
@@ -629,22 +634,29 @@ class TaskInProgressScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.location_on_outlined,
-                                  size: 20,
-                                  color: timeColor,
-                                ),
-                                SizedBox(width: 4),
-                                CustomText(
-                                  task.location ??
-                                      'Online Task', // 🔥 Real location
-                                  fontSize: 13,
-                                  color: timeColor,
-                                ),
-                              ],
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on_outlined,
+                                    size: 20,
+                                    color: timeColor,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Expanded(
+                                    child: CustomText(
+                                      task.location ??
+                                          'Online Task', // 🔥 Real location
+                                      fontSize: 13,
+                                      color: timeColor,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: 10),
 
                             Row(
                               children: [

@@ -14,7 +14,8 @@ import 'screens/validations_tab/validation_hub_screen/controller/validation_hub_
 
 class BottomNaviScreen extends StatefulWidget {
   final int initialIndex;
-  const BottomNaviScreen({super.key, this.initialIndex = 0});
+  final int subIndex; // 🔥 For inner tabs like "My Tasks" on the Task tab
+  const BottomNaviScreen({super.key, this.initialIndex = 0, this.subIndex = 0});
 
   @override
   State<BottomNaviScreen> createState() => _BottomNaviScreenState();
@@ -23,6 +24,7 @@ class BottomNaviScreen extends StatefulWidget {
 class _BottomNaviScreenState extends State<BottomNaviScreen> {
   late int currentIndex;
   late List<ModernBottomNavItem> navItems;
+  late List<Widget> screens; // 🔥 Declare here
 
   @override
   void initState() {
@@ -34,6 +36,15 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
     
     currentIndex = widget.initialIndex;
     _initializeNavItems();
+
+    // 🔥 Initialize screens here to pass the initialTab
+    screens = [
+      HomeScreen(),
+      MyTaskScreen(initialTab: widget.subIndex),
+      InAppStoreScreen(),
+      ValidationHubScreen(),
+      WalletTab(),
+    ];
   }
 
   void _initializeNavItems() {
@@ -134,13 +145,7 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
     ];
   }
 
-  List<Widget> screens = [
-    HomeScreen(),
-    MyTaskScreen(),
-    InAppStoreScreen(),
-    ValidationHubScreen(),
-    WalletTab(),
-  ];
+
 
   @override
   Widget build(BuildContext context) {

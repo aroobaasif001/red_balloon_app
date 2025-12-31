@@ -11,10 +11,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:shared_preferences/shared_preferences.dart';
 import '../views/user/bottomNavi/bottom_navi_screen.dart';
 import '../views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
 import '../views/user/bottomNavi/screens/profile/tabs/controller/chat_controller.dart';
 import '../views/user/bottomNavi/screens/task/my_task/tabs/task_review_screen.dart';
+import '../model/task_model.dart';
+import '../views/user/bottomNavi/screens/task/my_task/tabs/task_details2_screen.dart';
+import '../views/user/bottomNavi/screens/task/my_task/tabs/in_progress_view_details.dart';
 import 'get_server_key.dart';
 
 /// Notification types used in Firestore + payloads
@@ -33,6 +37,8 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   var androidSdkInt;
+  bool _initialized = false;
+  bool _initialMessageHandled = false;
 
   // ============================================
   //TASK POSTING NOTIFICATION
@@ -1089,45 +1095,109 @@ class NotificationService {
       await _requestPermissions();
       await saveUserDeviceToken(userId);
 
-      // Setup foreground message handler
-      FirebaseMessaging.onMessage.listen((message) async {
-        if (Platform.isIOS) {
-          await _setIOSForegroundPresentation();
+      // 🔥 Guard: Prevent attaching multiple listeners
+      if (!_initialized) {
+        _initialized = true;
+
+        // Setup foreground message handler
+        FirebaseMessaging.onMessage.listen((message) async {
+          if (Platform.isIOS) {
+            await _setIOSForegroundPresentation();
+          }
+          await _showLocal(message);
+        });
+
+        // Setup notification tap handler
+        FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
+
+        // Check for initial message (app opened from notification)
+        if (!_initialMessageHandled) {
+          try {
+            final initial = await _messaging.getInitialMessage();
+            if (initial != null) {
+              final messageId = initial.messageId ?? 'initial_${initial.sentTime?.millisecondsSinceEpoch}';
+              final isHandled = await _isMessageHandled(messageId);
+              if (!isHandled) {
+                _initialMessageHandled = true;
+                await _markMessageAsHandled(messageId);
+                debugPrint('🚀 Handling initial notification message: $messageId');
+                _handleNotificationTapLogic(initial.data);
+              } else {
+                debugPrint('⏭️ Initial message already handled: $messageId');
+                _initialMessageHandled = true;
+              }
+            }
+          } catch (e) {
+            debugPrint('Error getting initial message: $e');
+          }
         }
-        await _showLocal(message);
-      });
 
-      // Setup notification tap handler
-      FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
-
-      // Check for initial message (app opened from notification)
-      try {
-        final initial = await _messaging.getInitialMessage();
-        if (initial != null) _handleNotificationTap(initial);
-      } catch (e) {
-        debugPrint('Error getting initial message: $e');
+        // Setup background message handler (only once)
+        FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+        debugPrint('Notification listeners attached successfully');
+      } else {
+        debugPrint('Notification listeners already attached, skipping setup');
       }
 
-      // Setup background message handler
-      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
-      debugPrint('Notification service initialized for user: $userId');
+      debugPrint('Notification service state for $userId: Initialized=$_initialized, MessageHandled=$_initialMessageHandled');
     } catch (e) {
       debugPrint('Error initializing notification service: $e');
     }
   }
 
   /// Handle notification tap - Navigate to appropriate screen
-  void _handleNotificationTap(RemoteMessage message) {
+  /// Handle notification tap - Navigate to appropriate screen
+  // ============================================
+  // PERSISTENCE FOR HOT RESTART (using SharedPreferences)
+  // ============================================
+
+  Future<bool> _isMessageHandled(String? messageId) async {
+    if (messageId == null) return false;
     try {
-      final data = message.data;
+      final prefs = await SharedPreferences.getInstance();
+      final handledIds = prefs.getStringList('handled_notification_ids') ?? [];
+      final isHandled = handledIds.contains(messageId);
+      debugPrint('🔍 Checked SharedPreferences for $messageId: ${isHandled ? "FOUND" : "NOT FOUND"}');
+      return isHandled;
+    } catch (e) {
+      debugPrint('Error checking SharedPreferences: $e');
+    }
+    return false;
+  }
+
+  Future<void> _markMessageAsHandled(String? messageId) async {
+    if (messageId == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final handledIds = prefs.getStringList('handled_notification_ids') ?? [];
+      if (!handledIds.contains(messageId)) {
+        handledIds.add(messageId);
+        // Keep only last 50 IDs to avoid bloat
+        if (handledIds.length > 50) handledIds.removeAt(0);
+        await prefs.setStringList('handled_notification_ids', handledIds);
+        debugPrint('✅ Saved message ID to SharedPreferences: $messageId');
+      }
+    } catch (e) {
+      debugPrint('Error saving to SharedPreferences: $e');
+    }
+  }
+
+  void _handleNotificationTap(RemoteMessage message) async {
+    final messageId = message.messageId ?? 'tap_${message.sentTime?.millisecondsSinceEpoch}';
+    debugPrint('👆 Notification Tapped. ID: $messageId');
+    await _markMessageAsHandled(messageId);
+    _handleNotificationTapLogic(message.data);
+  }
+
+  /// Unified logic for handling notification taps (FCM and Local)
+  void _handleNotificationTapLogic(Map<String, dynamic> data) {
+    try {
       final category = data['category'] as String?;
       final route = data['route'] as String?;
 
-      debugPrint('Notification tapped: $category, route: $route');
+      debugPrint('Notification Logic Triggered: $category, route: $route');
 
       if (category == 'task_posted' && route == 'all_task_tab') {
-        // ... (existing task_posted logic)
         _navigateToAllTasks();
       } else if (category == 'chat_message' && route == 'chat_screen') {
         _navigateToChat(data);
@@ -1136,14 +1206,81 @@ class NotificationService {
       } else if (category == 'validation_hub_alert' &&
           route == 'validation_hub') {
         _navigateToValidationHub();
-      } else if (category == 'offer_received' || category == 'offer_accepted') {
-        _navigateToMyTasks();
+      } else if (category == 'offer_received') {
+        _navigateToTaskDetails2(data);
+      } else if (category == 'offer_accepted') {
+        _navigateToInProgressView(data);
       } else if (category == 'funds_added' || route == 'wallet_tab') {
         _navigateToWallet();
       }
     } catch (e) {
-      debugPrint('Error handling notification tap: $e');
+      debugPrint('Error handling notification tap logic: $e');
     }
+  }
+
+  void _navigateToInProgressView(Map<String, dynamic> data) async {
+    try {
+      final taskId = data['taskId'] as String?;
+      if (taskId == null) {
+        debugPrint('Cannot navigate: taskId is null');
+        _navigateToMyTasks();
+        return;
+      }
+
+      debugPrint('Fetching task and owner data for InProgressViewDetails: $taskId');
+      
+      // 1) Fetch Task
+      final taskDoc = await FirebaseFirestore.instance.collection('tasks').doc(taskId).get();
+      if (!taskDoc.exists) {
+        debugPrint('Task not found: $taskId');
+        _navigateToMyTasks();
+        return;
+      }
+      final task = TaskModel.fromFirestore(taskDoc);
+
+      // 2) Fetch Owner (Requester) details
+      final ownerDoc = await FirebaseFirestore.instance.collection('users').doc(task.uid).get();
+      final ownerData = ownerDoc.data();
+      
+      final userName = ownerData?['displayName'] ?? ownerData?['name'] ?? 'Unknown';
+      final userPhoto = ownerData?['photoURL'] ?? ownerData?['photoUrl'];
+      final userCustomId = ownerData?['userId'];
+      final phone = ownerData?['phoneNumber'];
+
+      // Reset stack to My Tasks (index 1) and subIndex 1 (MY TASKS tab)
+      Get.offAll(() => const BottomNaviScreen(initialIndex: 1, subIndex: 1));
+
+      // Small delay to let the stack reset before pushing details
+      Future.delayed(const Duration(milliseconds: 300), () {
+        Get.to(() => InProgressViewDetails(
+              userId: userCustomId,
+              taskId: taskId,
+              timeAgo: _getTimeAgo(task.createdAt),
+              taskTitle: task.title,
+              price: task.budget.toString(),
+              userName: userName,
+              photoUrl: userPhoto,
+              location: task.location,
+              phoneNumber: phone,
+              helperUid: task.uid, // Task owner Auth UID
+              taskImage: task.imageUrl,
+              latitude: task.latitude,
+              longitude: task.longitude,
+              taskType: task.taskType,
+            ));
+      });
+    } catch (e) {
+      debugPrint('Error navigating to in progress view: $e');
+      _navigateToMyTasks();
+    }
+  }
+
+  String _getTimeAgo(DateTime dateTime) {
+    final duration = DateTime.now().difference(dateTime);
+    if (duration.inDays > 0) return '${duration.inDays} days ago';
+    if (duration.inHours > 0) return '${duration.inHours} hours ago';
+    if (duration.inMinutes > 0) return '${duration.inMinutes} mins ago';
+    return 'Just now';
   }
 
   void _navigateToWallet() {
@@ -1177,6 +1314,33 @@ class NotificationService {
         debugPrint('Navigation error: $e');
       }
     });
+  }
+
+  void _navigateToTaskDetails2(Map<String, dynamic> data) async {
+    final taskId = data['taskId'] as String?;
+    if (taskId == null) return;
+
+    debugPrint('Navigating to task details 2: $taskId');
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(taskId)
+          .get();
+      if (!doc.exists) return;
+
+      final task = TaskModel.fromFirestore(doc);
+
+      // Reset stack to My Tasks (index 1) and subIndex 1 (MY TASKS tab)
+      Get.offAll(() => const BottomNaviScreen(initialIndex: 1, subIndex: 1));
+
+      // Small delay to let the stack reset before pushing details
+      Future.delayed(const Duration(milliseconds: 300), () {
+        Get.to(() => TaskDetails2Screen(task: task));
+      });
+    } catch (e) {
+      debugPrint('Task Details Navigation error: $e');
+    }
   }
 
   void _navigateToValidationHub() {
@@ -1214,27 +1378,25 @@ class NotificationService {
     final senderName = data['senderName'] as String?;
     final senderPhoto = data['senderPhoto'] as String?;
     final taskImage = data['taskImage'] as String?;
+    final conversationId = data['conversationId'] as String?;
 
     if (taskId == null || senderId == null) return;
 
-    debugPrint('Navigating to chat screen with $senderName');
+    debugPrint('Navigating to chat screen with $senderName (Conv: $conversationId)');
 
-    Future.delayed(Duration(milliseconds: 600), () {
+    Future.delayed(const Duration(milliseconds: 600), () {
       try {
         Get.to(
           () => const ChatScreen(),
-          binding: BindingsBuilder(() {
-            Get.put(
-              ChatController(
-                taskId: taskId,
-                taskTitle: taskTitle ?? 'Chat',
-                taskOwnerId: senderId,
-                taskOwnerName: senderName ?? 'User',
-                taskOwnerPhoto: senderPhoto,
-                taskImage: taskImage,
-              ),
-            );
-          }),
+          arguments: {
+            'taskId': taskId,
+            'taskTitle': taskTitle ?? 'Chat',
+            'taskOwnerId': senderId,
+            'taskOwnerName': senderName ?? 'User',
+            'taskOwnerPhoto': senderPhoto,
+            'taskImage': taskImage,
+            'conversationId': conversationId,
+          },
         );
       } catch (e) {
         debugPrint('Chat Navigation error: $e');
@@ -1263,7 +1425,19 @@ class NotificationService {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const ios = DarwinInitializationSettings();
     final init = const InitializationSettings(android: android, iOS: ios);
-    await _fln.initialize(init, onDidReceiveNotificationResponse: (_) {});
+    await _fln.initialize(
+      init,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        if (response.payload != null) {
+          try {
+            final Map<String, dynamic> data = jsonDecode(response.payload!);
+            _handleNotificationTapLogic(data);
+          } catch (e) {
+            debugPrint('Error decoding notification payload: $e');
+          }
+        }
+      },
+    );
     await _ensureAndroidChannel();
   }
 
@@ -1349,6 +1523,7 @@ class NotificationService {
       notif.title,
       notif.body,
       NotificationDetails(android: androidDetails, iOS: iosDetails),
+      payload: jsonEncode(message.data), // 🔥 Pass data to payload for tap handling
     );
   }
 
