@@ -12,6 +12,7 @@ class TaskLocationDisplayScreen extends StatefulWidget {
   final double longitude;
   final String title;
   final String address;
+  final bool showDirections; // 🔥 Controls visibility of direction button
 
   const TaskLocationDisplayScreen({
     super.key,
@@ -19,6 +20,7 @@ class TaskLocationDisplayScreen extends StatefulWidget {
     required this.longitude,
     required this.title,
     required this.address,
+    this.showDirections = true, // Default to true
   });
 
   @override
@@ -264,28 +266,30 @@ class _TaskLocationDisplayScreenState extends State<TaskLocationDisplayScreen> {
                       ),
                     ],
                   ),
-                  const Divider(height: 15),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 35,
-                    child: ElevatedButton.icon(
-                      onPressed: _getAndDrawRoute,
-                      icon: _isFetchingRoute 
-                        ? const SizedBox(width: 15, height: 15, child: CircularProgressIndicator(color: whiteColor, strokeWidth: 2))
-                        : const Icon(Icons.directions, size: 18),
-                      label: CustomText(
-                        _isFetchingRoute ? "Loading..." : "Get Directions", 
-                        color: whiteColor, 
-                        fontSize: 12,
-                        fontWeight: FontVariant.bold
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: redColor,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        elevation: 0,
+                  if (widget.showDirections) ...[
+                    const Divider(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 35,
+                      child: ElevatedButton.icon(
+                        onPressed: _getAndDrawRoute,
+                        icon: _isFetchingRoute 
+                          ? const SizedBox(width: 15, height: 15, child: CircularProgressIndicator(color: whiteColor, strokeWidth: 2))
+                          : const Icon(Icons.directions, size: 18),
+                        label: CustomText(
+                          _isFetchingRoute ? "Loading..." : "Get Directions", 
+                          color: whiteColor, 
+                          fontSize: 12,
+                          fontWeight: FontVariant.bold
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: redColor,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          elevation: 0,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

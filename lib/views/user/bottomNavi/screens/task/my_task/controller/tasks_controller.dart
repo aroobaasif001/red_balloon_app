@@ -26,6 +26,7 @@ class TasksController extends GetxController {
   // For triggering UI updates
   RxInt updateTrigger = 0.obs;
   final Map<String, StreamSubscription> _suspensionSubscriptions = {}; // 🔥 Track real-time listeners
+  StreamSubscription<List<TaskModel>>? _tasksSubscription; // 🔥 Track main tasks listener
 
   @override
   void onInit() {
@@ -106,6 +107,10 @@ class TasksController extends GetxController {
 
   @override
   void onClose() {
+    // 🔥 Cancel main tasks listener
+    _tasksSubscription?.cancel();
+    _tasksSubscription = null;
+
     // 🔥 Cancel all suspension listeners
     for (var sub in _suspensionSubscriptions.values) {
       sub.cancel();
@@ -163,25 +168,24 @@ class TasksController extends GetxController {
         return;
       }
 
+      // If already listening, don't start another listener
+      if (_tasksSubscription != null) {
+        return;
+      }
+
       // Allow UI to show loader initially ONLY if tasks are empty
       if (myTasks.isEmpty) isLoadingMyTasks.value = true;
       if (tasksNearMe.isEmpty) isLoadingTasksNearMe.value = true;
       if (historyTasks.isEmpty) isLoadingHistoryTasks.value = true;
 
       // Listen to all tasks stream for real-time updates
-      _taskService.streamAllTasks().listen(
-        (allTasks) async {
-          // 🔥 Enforce minimum 1 second delay on first load
-          if (_isFirstLoad) {
-            await Future.delayed(const Duration(seconds: 1));
-            _isFirstLoad = false;
-          }
-
-          // 🔥 Sync suspension listeners for all task owners
+      _tasksSubscription = _taskService.streamAllTasks().listen(
+        (allTasks) {
+          // Sync suspension listeners for all task owners
           _syncSuspensionListeners(allTasks);
 
           // Filter my tasks (created by current user, not completed/cancelled)
-          myTasks.value = allTasks.where((task) {
+          final newMyTasks = allTasks.where((task) {
             final isMyTask = task.uid == currentUserId;
             final status = task.status.toLowerCase();
             final isActive =
@@ -192,9 +196,10 @@ class TasksController extends GetxController {
                 status != 'dispute dismissed';
             return isMyTask && isActive;
           }).toList();
+          myTasks.assignAll(newMyTasks);
 
           // Filter tasks near me (created by other users, not completed/cancelled)
-          tasksNearMe.value = allTasks.where((task) {
+          final newTasksNearMe = allTasks.where((task) {
             final isOtherUser = task.uid != currentUserId;
             final status = task.status.toLowerCase();
             final isActive =
@@ -205,12 +210,10 @@ class TasksController extends GetxController {
                 status != 'dispute dismissed';
             return isOtherUser && isActive;
           }).toList();
+          tasksNearMe.assignAll(newTasksNearMe);
 
           // Filter history tasks (completed, cancelled, or rejected)
-          // Include tasks where:
-          // 1. User is the task owner (requester)
-          // 2. User is the helper (acceptedOfferUid matches)
-          historyTasks.value = allTasks.where((task) {
+          final newHistoryTasks = allTasks.where((task) {
             final isMyTask = task.uid == currentUserId;
             final isHelper = task.acceptedOfferUid == currentUserId;
             final status = task.status.toLowerCase();
@@ -222,10 +225,13 @@ class TasksController extends GetxController {
                 status == 'dispute dismissed';
             return (isMyTask || isHelper) && isHistory;
           }).toList();
+          historyTasks.assignAll(newHistoryTasks);
 
+          // Reset loading states
           isLoadingMyTasks.value = false;
           isLoadingTasksNearMe.value = false;
           isLoadingHistoryTasks.value = false;
+          _isFirstLoad = false;
 
           print(
             '✅ Real-time update: My Tasks: ${myTasks.length}, Tasks Near Me: ${tasksNearMe.length}, History: ${historyTasks.length}',

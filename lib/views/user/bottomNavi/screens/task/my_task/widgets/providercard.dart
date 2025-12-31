@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/utils/colors.dart';
@@ -70,11 +71,22 @@ class ProviderCard extends StatelessWidget {
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(30),
-                          child: Image.network(
-                            userPhoto!,
+                          child: CachedNetworkImage(
+                            imageUrl: userPhoto!,
                             height: 60,
                             width: 60,
                             fit: BoxFit.cover,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(color: whiteColor),
+                            ),
+                            errorWidget: (context, url, error) => Center(
+                              child: CustomText(
+                                initials,
+                                fontSize: 24,
+                                fontWeight: FontVariant.bold,
+                                color: whiteColor,
+                              ),
+                            ),
                           ),
                         ),
                 ),

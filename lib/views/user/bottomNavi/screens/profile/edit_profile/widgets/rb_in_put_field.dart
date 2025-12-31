@@ -8,6 +8,7 @@ class RBInputField extends StatelessWidget {
   final int maxLines;
   final int? maxLength;
   final Widget? prefix;
+  final Widget? suffix;
   final TextEditingController? controller;
   final bool enabled;
   final TextInputType keyboardType;
@@ -18,6 +19,7 @@ class RBInputField extends StatelessWidget {
     super.key,
     this.hint,
     this.prefix,
+    this.suffix,
     this.controller,
     this.enabled = true,
     this.maxLines = 1,
@@ -82,6 +84,12 @@ class RBInputField extends StatelessWidget {
                   ),
                 ),
               ),
+
+              // ---------------- SUFFIX ICON ----------------
+              if (suffix != null) ...[
+                const SizedBox(width: 10),
+                suffix!,
+              ],
             ],
           ),
         ),

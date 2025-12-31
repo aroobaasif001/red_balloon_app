@@ -90,7 +90,7 @@ Widget buildBottomUploadBar(
             onTap: helperReq
                 ? null
                 : () {
-                    DialogHelpers().showSupportHelpSheet(
+                    DialogHelpers.showSupportHelpSheet(
                       context,
                       firstOptionText: "Requester is not responding",
                       lastOptionText: "Requester unresponsive",

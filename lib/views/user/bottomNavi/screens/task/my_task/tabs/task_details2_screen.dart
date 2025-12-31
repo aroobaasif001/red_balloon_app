@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customappbar.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
@@ -15,6 +16,7 @@ import 'package:red_balloon_app/services/user_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/chat_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/controller/chat_controller.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_in_progress_screen.dart';
 
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../widgets/providercard.dart';
@@ -65,9 +67,10 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
 
             // If task is no longer active (e.g., accepted and moved to in progress)
             if (status != null && status != 'active') {
-              print('🚀 Task status changed to $status. Navigating back...');
+              print('🚀 Task status changed to $status. Navigating to in-progress...');
               if (mounted) {
-                Get.back(); // Automatically go back when offer is accepted
+                // 🔥 Jump to InProgress screen and remove details screen from stack
+                Get.off(() => TaskInProgressScreen(taskId: widget.task.id));
               }
             }
           }
@@ -204,12 +207,15 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(14),
                         child: isNetworkImage
-                            ? Image.network(
-                                displayImage,
+                            ? CachedNetworkImage(
+                                imageUrl: displayImage,
                                 height: 70,
                                 width: 90,
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
+                                placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator(color: redColor),
+                                ),
+                                errorWidget: (context, url, error) {
                                   return Image.asset(
                                     "assets/images/sofa.png",
                                     height: 70,

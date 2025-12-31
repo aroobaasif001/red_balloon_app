@@ -10,6 +10,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/auth/controller/auth_controller.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class EditProfileController extends GetxController {
   final AuthService _authService = AuthService();
@@ -100,6 +102,7 @@ class EditProfileController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isCompressingImage = false.obs; // For image compression loading
   RxBool isUploadingImage = false.obs; // For direct upload from profile screen
+  RxBool isDetectingLocation = false.obs;
 
   // Track if any changes have been made
   RxBool hasChanges = false.obs;
@@ -446,6 +449,68 @@ class EditProfileController extends GetxController {
       isUploadingImage.value = false;
 
       Get.snackbar("Error", "Failed to upload image: ${e.toString()}");
+    }
+  }
+
+  // Detect current location
+  Future<void> detectCurrentLocation() async {
+    try {
+      isDetectingLocation.value = true;
+
+      // Check permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          Get.snackbar("Error", "Location permission denied");
+          isDetectingLocation.value = false;
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        Get.snackbar(
+          "Error",
+          "Location permission is permanently denied. Please enable it in settings.",
+        );
+        isDetectingLocation.value = false;
+        return;
+      }
+
+      // Get current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      // Get address from coordinates
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        
+        final detectedCity = place.locality ?? place.subAdministrativeArea ?? '';
+        final detectedCountry = place.country ?? '';
+
+        if (detectedCity.isNotEmpty) {
+          cityController.text = detectedCity;
+          validateCity(detectedCity);
+        }
+        
+        if (detectedCountry.isNotEmpty) {
+          countryController.text = detectedCountry;
+          validateCountry(detectedCountry);
+        }
+
+        Get.snackbar("Success", "Location detected successfully");
+      }
+    } catch (e) {
+      print('Error detecting location: $e');
+      Get.snackbar("Error", "Failed to detect location: ${e.toString()}");
+    } finally {
+      isDetectingLocation.value = false;
     }
   }
 

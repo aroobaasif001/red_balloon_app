@@ -19,7 +19,7 @@ class HistoryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get the TasksController
-    final TasksController controller = Get.find<TasksController>();
+    final TasksController controller = Get.put(TasksController());
 
     // Real-time updates are already active from controller's onInit
     // No need to fetch again here
@@ -184,6 +184,14 @@ class HistoryTab extends StatelessWidget {
                               );
                             }
                           } else if (task.status.toLowerCase() == 'disputed') {
+                            // 🔥 Show Loading Feedback immediately
+                            Get.dialog(
+                              const Center(
+                                child: CircularProgressIndicator(color: redColor),
+                              ),
+                              barrierDismissible: false,
+                            );
+
                             try {
                               // 1. Fetch Requester Details (using task user uid)
                               Map<String, dynamic> requesterInfo = {};
@@ -315,6 +323,14 @@ class HistoryTab extends StatelessWidget {
 
                               print(disputeInfo['disputedStartTime']);
 
+                              // Close Loading Dialog
+                              if (Get.isDialogOpen ?? false) {
+                                await Future.delayed(
+                                  const Duration(milliseconds: 100),
+                                );
+                                Get.back();
+                              }
+
                               // Navigate
                               Get.to(
                                 () => TaskDisputedScreen(
@@ -325,6 +341,10 @@ class HistoryTab extends StatelessWidget {
                                 ),
                               );
                             } catch (e) {
+                              // Close Loading Dialog if open
+                              if (Get.isDialogOpen ?? false) {
+                                Get.back();
+                              }
                               print('❌ Error fetching disputed details: $e');
                               Get.snackbar(
                                 'Error',

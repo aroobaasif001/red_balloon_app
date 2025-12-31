@@ -14,13 +14,15 @@ import '../../home/info/about_app_screen.dart';
 import '../../home/info/contact_us_screen.dart';
 import '../../home/info/faq_screen.dart';
 import '../../home/info/how_it_works_screen.dart';
-import '../controller/in_app_store_controller.dart';
 import '../edit_profile/edit_profile_screen.dart';
+import '../tabs/help_center_screen.dart';
+import '../controller/in_app_store_controller.dart';
 import '../controllers/user_app_content_controller.dart';
 import '../widgets/help_section.dart';
 import '../widgets/menu_section.dart';
 import '../widgets/profile_card.dart';
 import '../widgets/stats_grid.dart';
+import '../../task/my_task/controller/user_profile_controller.dart';
 import 'badge_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -56,85 +58,94 @@ class ProfileScreen extends StatelessWidget {
                 return Column(
                   children: [
                     // Profile Card
-                    Obx(() {
-                      // Get reactive values inside Obx
-                      final currentUser = authController.currentUser.value;
-                      final displayName = currentUser?.displayName ?? 'User';
-                      final photoURL = currentUser?.photoURL;
-                      final initials = displayName.isNotEmpty
-                          ? displayName
-                                .split(' ')
-                                .map((e) => e[0])
-                                .join()
-                                .toUpperCase()
-                          : 'RB';
+                    Builder(
+                      builder: (context) {
+                        final userUid = FirebaseAuth.instance.currentUser?.uid ?? '';
+                        final statsController = Get.put(
+                          UserProfileController(userUid: userUid),
+                          tag: 'profile_stats',
+                        );
 
-                      // Build location string from city and country
-                      String? locationText;
-                      final city = authController.userCity.value;
-                      final country = authController.userCountry.value;
+                        return Obx(() {
+                          // Get reactive values inside Obx
+                          final currentUser = authController.currentUser.value;
+                          final displayName = currentUser?.displayName ?? 'User';
+                          final photoURL = currentUser?.photoURL;
+                          final initials = displayName.isNotEmpty
+                              ? displayName
+                                    .split(' ')
+                                    .map((e) => e[0])
+                                    .join()
+                                    .toUpperCase()
+                              : 'RB';
 
-                      if (city.isNotEmpty && country.isNotEmpty) {
-                        locationText = '$city, $country';
-                      } else if (city.isNotEmpty) {
-                        locationText = city;
-                      } else if (country.isNotEmpty) {
-                        locationText = country;
-                      }
+                          // Build location string from city and country
+                          String? locationText;
+                          final city = authController.userCity.value;
+                          final country = authController.userCountry.value;
 
-                      return ProfileCard(
-                        avatarInitials: initials,
-                        photoURL: photoURL,
-                        userName: displayName,
-                        location: locationText,
-                        phoneNumber: authController.userPhone.value.isNotEmpty
-                            ? authController.userPhone.value
-                            : null,
-                        verificationLabel: 'Verified Requester',
-                        loyaltyPoints: 'Your Loyalty Points: 05',
-                        avatarColor: redColor,
-                        containerColor: white2Color,
-                        shadowColor: walletBlackColor,
-                        shadowOpacity: 0.25,
-                        shadowBlur: 4,
-                        avatarSize: 100,
-                        namefontSize: 22,
-                        locationFontSize: 14,
-                        onAvatarTap: () async {
-                          // // Import EditProfileController
-                          // final editController = Get.put(
-                          //   EditProfileController(),
-                          // );
-                          // await editController.pickAndUploadProfileImage();
-                        },
-                        onAvatarLongPressStart: (details) {
-                          if (photoURL != null && photoURL!.isNotEmpty) {
-                            Get.dialog(
-                              GestureDetector(
-                                onTap: () => Get.back(),
-                                child: Container(
-                                  color: Colors.black.withOpacity(0.9),
-                                  alignment: Alignment.center,
-                                  child: Image.network(
-                                    photoURL!,
-                                    fit: BoxFit.contain,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                  ),
-                                ),
-                              ),
-                              barrierDismissible: true,
-                              useSafeArea: false,
-                            );
+                          if (city.isNotEmpty && country.isNotEmpty) {
+                            locationText = '$city, $country';
+                          } else if (city.isNotEmpty) {
+                            locationText = city;
+                          } else if (country.isNotEmpty) {
+                            locationText = country;
                           }
-                        },
-                        onAvatarLongPressEnd: (details) {
-                          if (Get.isDialogOpen ?? false) {
-                            Get.back();
-                          }
-                        },
-                      );
-                    }),
+
+                          return statsController.isLoading.value
+                              ? const Center(child: CircularProgressIndicator(color: redColor))
+                              : ProfileCard(
+                                  avatarInitials: initials,
+                                  photoURL: photoURL,
+                                  userName: displayName,
+                                  location: locationText,
+                                  phoneNumber: authController.userPhone.value.isNotEmpty
+                                      ? authController.userPhone.value
+                                      : null,
+                                  verificationLabel: 'Verified Requester',
+                                  loyaltyPoints: 'Your Loyalty Points: 05',
+                                  rating: statsController.averageRating.value.toStringAsFixed(1),
+                                  postedTasks: statsController.tasksRequested.value.toString(),
+                                  helpedTasks: statsController.tasksCompleted.value.toString(),
+                                  avatarColor: redColor,
+                                  containerColor: white2Color,
+                                  shadowColor: walletBlackColor,
+                                  shadowOpacity: 0.25,
+                                  shadowBlur: 4,
+                                  avatarSize: 100,
+                                  namefontSize: 22,
+                                  locationFontSize: 14,
+                                  onAvatarTap: () async {},
+                                  onAvatarLongPressStart: (details) {
+                                    if (photoURL != null && photoURL!.isNotEmpty) {
+                                      Get.dialog(
+                                        GestureDetector(
+                                          onTap: () => Get.back(),
+                                          child: Container(
+                                            color: Colors.black.withOpacity(0.9),
+                                            alignment: Alignment.center,
+                                            child: Image.network(
+                                              photoURL!,
+                                              fit: BoxFit.contain,
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                            ),
+                                          ),
+                                        ),
+                                        barrierDismissible: true,
+                                        useSafeArea: false,
+                                      );
+                                    }
+                                  },
+                                  onAvatarLongPressEnd: (details) {
+                                    if (Get.isDialogOpen ?? false) {
+                                      Get.back();
+                                    }
+                                  },
+                                );
+                        });
+                      },
+                    ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -217,7 +228,6 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       );
                     }),
-                    // StatsGrid(postedCount: '50'),
                     const SizedBox(height: 20),
 
                     // Menu Section
@@ -324,7 +334,7 @@ class ProfileScreen extends StatelessWidget {
                       helpLinkFontSize: 13,
                       spacingBeforeButton: 16,
                       onHelpTap: () {
-                        // Handle help center tap
+                        Get.to(() => const HelpCenterScreen());
                       },
                       onLogoutTap: () {
                         DialogHelpers.showLogoutDialog(

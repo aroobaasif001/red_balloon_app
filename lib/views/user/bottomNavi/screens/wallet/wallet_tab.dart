@@ -8,6 +8,7 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/tabs/transa
 
 import '../../../../../custom_widgets/custom_appbar.dart';
 import '../../../../../custom_widgets/transaction_item.dart';
+import '../../../../../custom_widgets/customtext.dart';
 import '../../../../../custom_widgets/wallet_balance_card.dart';
 import 'controller/wallet_controller.dart';
 import 'widgets/locked_balance_card.dart';
@@ -90,27 +91,58 @@ class WalletTab extends StatelessWidget {
 
                 // Recent Transactions List
                 Obx(
-                  () => ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.recentTransactions.length,
-                    itemBuilder: (context, index) {
-                      final transaction = controller.recentTransactions[index];
-                      return InkWell(
-                        onTap: () {
-                          Get.to(() => TransactionDetailsScreen(transactionData: transaction));
-                        },
-                        child: TransactionItem(
-                          title: transaction['title'],
-                          description: transaction['description'],
-                          amount: transaction['amount'],
-                          amountColor: Color(transaction['amountColor']),
-                          daysAgo: transaction['daysAgo'],
-                          iconPath: transaction['icon'],
+                  () => controller.recentTransactions.isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 40),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  'assets/icons/withdraw.png', // Fallback icon, maybe there's a better one
+                                  height: 60,
+                                  width: 60,
+                                  color: grey2Color.withOpacity(0.5),
+                                ),
+                                const SizedBox(height: 15),
+                                CustomText(
+                                  "No Transactions Yet",
+                                  fontSize: 16,
+                                  color: grey2Color,
+                                  fontWeight: FontVariant.medium,
+                                ),
+                                const SizedBox(height: 8),
+                                CustomText(
+                                  "Your transaction history will appear here.",
+                                  fontSize: 13,
+                                  color: grey2Color.withOpacity(0.8),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: controller.recentTransactions.length,
+                          itemBuilder: (context, index) {
+                            final transaction =
+                                controller.recentTransactions[index];
+                            return InkWell(
+                              onTap: () {
+                                Get.to(() => TransactionDetailsScreen(
+                                    transactionData: transaction));
+                              },
+                              child: TransactionItem(
+                                title: transaction['title'],
+                                description: transaction['description'],
+                                amount: transaction['amount'],
+                                amountColor: Color(transaction['amountColor']),
+                                daysAgo: transaction['daysAgo'],
+                                iconPath: transaction['icon'],
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
                 const SizedBox(height: 20),
               ],
