@@ -22,16 +22,20 @@ class MessagesController extends GetxController {
   void onInit() {
     super.onInit();
     print('🚀 MessagesController: onInit - Starting stream');
+    
+    // 🔥 Worker to recalculate unread count whenever conversations list is modified
+    ever(conversations, (_) {
+      print('🔄 MessagesController: Conversations changed, recalculating...');
+      _calculateTotalUnread();
+    });
+    
     _streamConversations();
-    // Force a recheck after slight delay to ensure sync
-    Future.delayed(const Duration(seconds: 1), _calculateTotalUnread);
   }
 
   @override
   void onClose() {
     print('🛑 MessagesController: onClose - Disposing controller');
     _conversationsSubscription?.cancel();
-    // 🔥 Cancel all suspension listeners
     for (var sub in _suspensionSubscriptions.values) {
       sub.cancel();
     }
@@ -49,14 +53,15 @@ class MessagesController extends GetxController {
         print(
           '📬 MessagesController: Stream data received. List size: ${conversationsList.length}',
         );
-        conversations.value = conversationsList;
-        _listenToSuspensionStatuses(conversationsList); // 🔥 Switch to listener
+        // 🔥 Using assignAll to ensure RxList notifies its observers correctly
+        conversations.assignAll(conversationsList);
+        
+        _listenToSuspensionStatuses(conversationsList);
         _applySearchFilter();
-        _calculateTotalUnread();
         isLoading.value = false;
       },
       onError: (error) {
-        print('Error streaming conversations: $error');
+        print('❌ MessagesController: Error streaming conversations: $error');
         isLoading.value = false;
       },
     );
@@ -70,7 +75,6 @@ class MessagesController extends GetxController {
 
   /// Apply search filter to conversations
   void _applySearchFilter() {
-    // 🔥 Filter out empty conversations (no actual messages)
     final nonEmptyConversations = conversations.where((c) {
       final msg = (c.lastMessage ?? '').trim();
       return msg.isNotEmpty && msg != 'Start chatting...';
@@ -80,7 +84,7 @@ class MessagesController extends GetxController {
       filteredConversations.assignAll(nonEmptyConversations);
     } else {
       final results = chatService.searchConversations(
-        nonEmptyConversations.obs, // Pass the already filtered list
+        nonEmptyConversations.obs, 
         searchQuery.value,
       );
       filteredConversations.assignAll(results);
@@ -90,9 +94,7 @@ class MessagesController extends GetxController {
   void _calculateTotalUnread() {
     final uid = chatService.currentUserId;
     if (uid == null) {
-      print(
-        '⚠️ MessagesController: No UID found while calculating unread count',
-      );
+      print('⚠️ MessagesController: No UID found while calculating unread count');
       totalUnreadCount.value = 0;
       return;
     }
@@ -104,18 +106,15 @@ class MessagesController extends GetxController {
       final unread = conversation.getUnreadCountForUser(uid);
       if (unread > 0) {
         unreadConvCount++;
-        print(
-          '💬 MessagesController: Conversation ${conversation.conversationId} has $unread unread messages for user $uid',
-        );
       }
       total += unread;
     }
 
     if (total != totalUnreadCount.value) {
+      print('📊 MessagesController: Total Unread Count Updating: ${totalUnreadCount.value} -> $total');
       totalUnreadCount.value = total;
-      print(
-        '📊 MessagesController: Total Unread Count Updated -> $total (across $unreadConvCount conversations)',
-      );
+    } else {
+      print('📊 MessagesController: Total Unread Count remains: $total');
     }
   }
 

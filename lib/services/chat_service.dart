@@ -264,69 +264,23 @@ class ChatService {
 
     print('📡 ChatService: Starting conversation stream for $userId');
     
-    // Using a broadcast controller to allow multiple listeners
-    final controller = StreamController<List<ConversationModel>>.broadcast();
-    final Map<String, ConversationModel> allConversations = {};
-
-    void emit() {
-      if (controller.isClosed) return;
-      final list = allConversations.values
+    return _firestore
+        .collection('conversations')
+        .where('participants', arrayContains: userId)
+        .snapshots()
+        .map((snapshot) {
+      print('📥 ChatService: Received ${snapshot.docs.length} conversation documents for $userId');
+      final list = snapshot.docs
+          .map((doc) => ConversationModel.fromJson(doc.data()))
           .where((conv) => !conv.hiddenBy.contains(userId))
-          .toList()
-        ..sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+          .toList();
       
-      print('📥 ChatService: Emitting ${list.length} conversations for $userId');
-      controller.add(list);
-    }
-
-    // Listener for when user is participant 1 or 2
-    // We listen to both fields to ensure absolute compatibility with all documents
-    final sub1 = _firestore
-        .collection('conversations')
-        .where('participant1Uid', isEqualTo: userId)
-        .snapshots()
-        .listen(
-          (snap) {
-            print('✅ ChatService: Sub1 received ${snap.docs.length} docs');
-            for (var doc in snap.docs) {
-              allConversations[doc.id] = ConversationModel.fromJson(doc.data());
-            }
-            emit();
-          },
-          onError: (e) {
-            print('❌ ChatService Error in sub1: $e');
-            controller.addError(e);
-          },
-        );
-
-    final sub2 = _firestore
-        .collection('conversations')
-        .where('participant2Uid', isEqualTo: userId)
-        .snapshots()
-        .listen(
-          (snap) {
-            print('✅ ChatService: Sub2 received ${snap.docs.length} docs');
-            for (var doc in snap.docs) {
-              allConversations[doc.id] = ConversationModel.fromJson(doc.data());
-            }
-            emit();
-          },
-          onError: (e) {
-            print('❌ ChatService Error in sub2: $e');
-            controller.addError(e);
-          },
-        );
-
-    controller.onCancel = () {
-      print('🔌 ChatService: Stream cancelled, stopping subscriptions');
-      sub1.cancel();
-      sub2.cancel();
-      if (!controller.hasListener) {
-        controller.close();
-      }
-    };
-
-    return controller.stream;
+      // Sort by last message time descending
+      list.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+      
+      print('📥 ChatService: Emitting ${list.length} non-hidden conversations for $userId');
+      return list;
+    });
   }
 
   /// Mark messages as read

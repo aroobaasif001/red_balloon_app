@@ -22,6 +22,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final msgController = Get.find<MessagesController>();
+    final notiController = Get.find<NotificationController>();
+
     return GetBuilder<HomeController>(
       init: HomeController(),
       builder: (controller) {
@@ -81,7 +84,6 @@ class HomeScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Obx(() {
-                                    final msgController = Get.find<MessagesController>();
                                     return Stack(
                                       clipBehavior: Clip.none,
                                       children: [
@@ -125,7 +127,6 @@ class HomeScreen extends StatelessWidget {
                                     );
                                   }),
                                   Obx(() {
-                                    final notiController = Get.find<NotificationController>();
                                     return Stack(
                                       clipBehavior: Clip.none,
                                       children: [

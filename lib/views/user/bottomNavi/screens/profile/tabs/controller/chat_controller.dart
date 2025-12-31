@@ -22,13 +22,17 @@ class ChatController extends GetxController {
   final ChatService _chatService = ChatService();
   final ScrollController scrollController = ScrollController();
   final TextEditingController messageController = TextEditingController();
+  
+  // 🔥 Static variable to track the open conversation across the app
+  static final RxnString activeConversationId = RxnString();
 
   final RxList<MessageModel> messages = <MessageModel>[].obs;
   final RxBool isLoading = true.obs;
   final RxBool isUploading = false.obs; // 🔥 Added for attachment loading
   final RxString conversationId = ''.obs;
   StreamSubscription? _taskSubscription;
-  StreamSubscription? _suspensionSubscription; // 🔥 Added
+  StreamSubscription? _suspensionSubscription;
+  StreamSubscription? _messagesSubscription; // 🔥 Track message stream
 
   ChatController({
     required this.taskId,
@@ -130,9 +134,10 @@ class ChatController extends GetxController {
 
       if (convId != null) {
         conversationId.value = convId;
-        print('   ✅ ConversationID set: $convId');
+        // 🔥 Set as active conversation to suppress push notifications for this chat
+        activeConversationId.value = convId;
+        print('   ✅ ConversationID set: $convId (Active)');
         _streamMessages();
-        markMessagesAsRead();
       } else {
         print('   ❌ Failed to get conversationId');
       }
@@ -144,18 +149,20 @@ class ChatController extends GetxController {
 
   /// Stream messages in real-time
   void _streamMessages() {
-    _chatService
+    _messagesSubscription?.cancel();
+    _messagesSubscription = _chatService
         .streamMessages(conversationId.value)
         .listen(
           (messagesList) {
             messages.value = messagesList;
             isLoading.value = false;
 
-            // 🔥 If there are new unread messages from other user while chat is open, mark them as read
+            // 🔥 Only mark as read if the messagesList actually has unread messages for US
             final hasUnread = messagesList.any(
               (m) => m.receiverId == _chatService.currentUserId && !m.isRead,
             );
             if (hasUnread) {
+              print('📖 ChatController: New unread messages detected while chat is open, marking as read');
               markMessagesAsRead();
             }
           },
@@ -282,9 +289,15 @@ class ChatController extends GetxController {
 
   @override
   void onClose() {
-    markMessagesAsRead(); // 🔥 Final mark as read when leaving
+    print('📱 ChatController: onClose - Cancelling all subscriptions');
+    // 🔥 Clear active conversation ID
+    if (activeConversationId.value == conversationId.value) {
+      activeConversationId.value = null;
+    }
+    
     _taskSubscription?.cancel();
-    _suspensionSubscription?.cancel(); // 🔥 Added
+    _suspensionSubscription?.cancel();
+    _messagesSubscription?.cancel(); // 🔥 CRITICAL: Cancel message stream
     scrollController.dispose();
     messageController.dispose();
     super.onClose();

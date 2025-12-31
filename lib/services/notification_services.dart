@@ -1309,6 +1309,18 @@ class NotificationService {
     final notif = message.notification;
     if (notif == null) return;
 
+    // 🔥 SUPPRESSION LOGIC: If user is already in THIS chat, don't show popup
+    final data = message.data;
+    if (data['category'] == 'chat_message') {
+      final incomingConvId = data['conversationId'] as String?;
+      final activeConvId = ChatController.activeConversationId.value;
+
+      if (incomingConvId != null && activeConvId != null && incomingConvId == activeConvId) {
+        debugPrint('🚫 Notification Suppressed: User is already in chat $activeConvId');
+        return;
+      }
+    }
+
     // SDK<33 => forced small icon from drawable, else null (launcher)
     final bool useLegacyIcon = Platform.isAndroid && (androidSdkInt ?? 33) < 33;
 

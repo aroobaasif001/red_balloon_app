@@ -31,8 +31,10 @@ class ChatScreen extends StatelessWidget {
         canPop: true,
         onPopInvokedWithResult: (didPop, result) async {
           if (didPop) {
-            print('🔙 ChatScreen Popped! Marking messages as read...');
+            print('🔙 ChatScreen Popped! Marking messages as read and disposing...');
             await controller.markMessagesAsRead();
+            // 🔥 Explicitly delete the controller when popping to ensure all streams stop
+            Get.delete<ChatController>(tag: Get.arguments?['conversationId']);
           }
         },
         child: Scaffold(

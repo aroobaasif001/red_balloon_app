@@ -15,8 +15,8 @@ class MessagesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🔹 Use Get.put to ensure controller is available (matches NotificationScreen pattern)
-    final controller = Get.put(MessagesController());
+    // 🔹 Use Get.find because controller is already initialized as permanent in BottomNaviScreen
+    final controller = Get.find<MessagesController>();
 
     return SafeArea(
       top: false,
