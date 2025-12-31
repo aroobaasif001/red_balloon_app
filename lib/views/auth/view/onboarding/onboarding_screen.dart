@@ -41,8 +41,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       Get.snackbar(
         'Error',
         'Please enter email and password',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
       );
       return;
     }

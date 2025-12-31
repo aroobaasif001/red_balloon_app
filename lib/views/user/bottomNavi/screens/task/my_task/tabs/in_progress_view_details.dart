@@ -114,6 +114,7 @@ class InProgressViewDetails extends StatelessWidget {
                       taskTitle!, // Ensure taskTitle is not null or handled
                       location ?? '',
                       taskImage: taskImage,
+                      taskType: taskType,
                     )),
                     const SizedBox(height: 16),
 

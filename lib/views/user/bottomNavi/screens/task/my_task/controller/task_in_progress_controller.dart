@@ -145,12 +145,24 @@ class TaskInProgressController extends GetxController {
       final currentUser = FirebaseAuth.instance.currentUser;
       final senderName = currentUser?.displayName ?? 'Requester';
 
+      // 1. Notify helper that help was requested
       NotificationService.instance.notifyHelpRequested(
         receiverId: hUid,
         senderName: senderName,
         taskTitle: tTitle,
         taskId: tId,
       );
+
+      // 2. 🔥 If it became disputed (check updated status), notify both + admin
+      final taskDoc = await FirebaseFirestore.instance.collection('tasks').doc(tId).get();
+      if (taskDoc.data()?['status'] == 'Disputed') {
+        NotificationService.instance.notifyDisputeStarted(
+          requesterId: currentUser?.uid ?? '',
+          helperId: hUid,
+          taskTitle: tTitle,
+          taskId: tId,
+        );
+      }
     }
 
     // Refresh local state (listener handles it mostly, but good for immediate feedback if needed)

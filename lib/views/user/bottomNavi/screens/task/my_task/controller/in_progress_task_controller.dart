@@ -184,13 +184,26 @@ class InProgressTaskController extends GetxController {
       if (taskOwnerId != null) {
         final currentUser = FirebaseAuth.instance.currentUser;
         final senderName = currentUser?.displayName ?? 'Helper';
+        final tTitle = currentTaskTitle ?? 'Task';
 
+        // 1. Notify Requester
         NotificationService.instance.notifyHelpRequested(
           receiverId: taskOwnerId!,
           senderName: senderName,
-          taskTitle: currentTaskTitle ?? 'Task',
+          taskTitle: tTitle,
           taskId: taskId,
         );
+
+        // 2. 🔥 If it became disputed, notify both + admin
+        final updatedTask = await _firestore.collection('tasks').doc(taskId).get();
+        if (updatedTask.data()?['status'] == 'Disputed') {
+          NotificationService.instance.notifyDisputeStarted(
+            requesterId: taskOwnerId!,
+            helperId: currentUser?.uid ?? '',
+            taskTitle: tTitle,
+            taskId: taskId,
+          );
+        }
       }
     } catch (e) {
       print('Error submitting help request: $e');

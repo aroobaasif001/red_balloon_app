@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+
 import '../../../../../../../utils/colors.dart';
 
 class TaskInfoTopRow extends StatelessWidget {
@@ -9,13 +11,15 @@ class TaskInfoTopRow extends StatelessWidget {
   final String? price;
   final String? timeAgo;
   final String? taskId; // Unique identifier for each task
-  
+  final bool isOnline;
+
   const TaskInfoTopRow({
     super.key,
     this.distance,
     this.price,
     this.timeAgo,
     this.taskId,
+    this.isOnline = false,
   });
 
   @override
@@ -30,22 +34,25 @@ class TaskInfoTopRow extends StatelessWidget {
     }
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: isOnline
+          ? MainAxisAlignment.spaceBetween
+          : MainAxisAlignment.spaceBetween,
       children: [
         /// ---- Left Side ----
-        Row(
-          children: [
-            Image.asset("assets/icons/location2.png", height: 16),
-            const SizedBox(width: 6),
-            CustomText(
-              "${distance ?? '2.4'} km away",
-              fontSize: 12,
-              fontWeight: FontVariant.medium,
-            ),
-          ],
-        ),
-
-        Image.asset("assets/icons/dot.png", height: 16, width: 7),
+        if (!isOnline) ...[
+          Row(
+            children: [
+              Image.asset("assets/icons/location2.png", height: 16),
+              const SizedBox(width: 6),
+              CustomText(
+                "${distance ?? '2.4'} km away",
+                fontSize: 12,
+                fontWeight: FontVariant.medium,
+              ),
+            ],
+          ),
+          Image.asset("assets/icons/dot.png", height: 16, width: 7),
+        ],
 
         Row(
           children: [
@@ -57,9 +64,9 @@ class TaskInfoTopRow extends StatelessWidget {
             ),
           ],
         ),
-
-        Image.asset("assets/icons/dot.png", height: 6, width: 6),
-
+        if (!isOnline) ...[
+          Image.asset("assets/icons/dot.png", height: 6, width: 6),
+        ],
         Row(
           children: [
             const Icon(Icons.access_time, size: 18, color: walletGrey600Color),
@@ -75,12 +82,14 @@ class TaskInfoTopRow extends StatelessWidget {
     if (timeAgo != null && taskId != null) {
       try {
         final controller = Get.find<TimeAgoController>(tag: taskId);
-        return Obx(() => CustomText(
-          controller.timeAgoText.value,
-          fontSize: 12,
-          fontWeight: FontVariant.regular,
-          color: walletGrey600Color,
-        ));
+        return Obx(
+          () => CustomText(
+            controller.timeAgoText.value,
+            fontSize: 12,
+            fontWeight: FontVariant.regular,
+            color: walletGrey600Color,
+          ),
+        );
       } catch (e) {
         return CustomText(
           timeAgo ?? "15 mins ago",
@@ -90,7 +99,7 @@ class TaskInfoTopRow extends StatelessWidget {
         );
       }
     }
-    
+
     return CustomText(
       timeAgo ?? "15 mins ago",
       fontSize: 12,
@@ -117,15 +126,18 @@ class TimeAgoController extends GetxController {
 
   DateTime _parseTimeAgo(String timeAgoStr) {
     final now = DateTime.now();
-    
+
     // Parse different formats: "15 mins ago", "2h ago", "3d ago", "45s ago"
-    final regExp = RegExp(r'(\d+)\s*(s|sec|second|m|min|minute|h|hour|d|day)s?\s*ago', caseSensitive: false);
+    final regExp = RegExp(
+      r'(\d+)\s*(s|sec|second|m|min|minute|h|hour|d|day)s?\s*ago',
+      caseSensitive: false,
+    );
     final match = regExp.firstMatch(timeAgoStr);
-    
+
     if (match != null) {
       final value = int.parse(match.group(1)!);
       final unit = match.group(2)!.toLowerCase();
-      
+
       if (unit.startsWith('s')) {
         return now.subtract(Duration(seconds: value));
       } else if (unit.startsWith('m')) {
@@ -136,7 +148,7 @@ class TimeAgoController extends GetxController {
         return now.subtract(Duration(days: value));
       }
     }
-    
+
     // Default: assume it was created just now
     return now;
   }

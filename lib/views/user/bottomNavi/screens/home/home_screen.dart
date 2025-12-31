@@ -229,10 +229,19 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 14.99),
-                          // Bonus Slider
-                          CustomBonusSlider(),
-                          SizedBox(height: 23.99),
+                          Obx(() {
+                            if (controller.activeBanners.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+                            return Column(
+                              children: [
+                                const SizedBox(height: 14.99),
+                                // Bonus Slider
+                                const CustomBonusSlider(),
+                                const SizedBox(height: 23.99),
+                              ],
+                            );
+                          }),
                           // Wallet Card
                           Obx(
                             () => CustomWalletCard(

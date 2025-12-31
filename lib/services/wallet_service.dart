@@ -9,6 +9,7 @@ class WalletService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   String get _uid => _auth.currentUser?.uid ?? '';
+  String? get currentUserId => _auth.currentUser?.uid;
 
   CollectionReference get _walletCollection => _firestore.collection('wallet');
 

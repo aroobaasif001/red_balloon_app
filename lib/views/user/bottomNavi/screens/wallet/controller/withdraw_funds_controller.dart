@@ -1,12 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:red_balloon_app/services/wallet_service.dart';
-import 'package:red_balloon_app/utils/dialog_helpers.dart';
 import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
+import 'package:red_balloon_app/services/wallet_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/utils/dialog_helpers.dart';
 
 class WithdrawFundsController extends GetxController {
   final WalletService _walletService = WalletService();
@@ -14,21 +15,28 @@ class WithdrawFundsController extends GetxController {
   // Controllers
   final TextEditingController amountController = TextEditingController();
   final TextEditingController paymentMethodController = TextEditingController();
-  final TextEditingController bankController = TextEditingController(text: 'Select Bank');
+  final TextEditingController bankController = TextEditingController(
+    text: 'Select Bank',
+  );
   final TextEditingController bankAccountController = TextEditingController();
 
   // Observable state
   RxDouble availableBalance = 0.0.obs;
   RxDouble escrowBalance = 0.0.obs;
-  
+
   RxList<Map<String, dynamic>> pastWithdrawals = <Map<String, dynamic>>[].obs;
-  
+
   final List<String> methods = ['Bank Transfer', 'Mobile Wallet'];
   final Map<String, List<String>> banksByMethod = {
-    'Bank Transfer': ['United Bank Limited (UBL)', 'Habib Bank Limited (HBL)', 'Bank Alfalah', 'Meezan Bank'],
+    'Bank Transfer': [
+      'United Bank Limited (UBL)',
+      'Habib Bank Limited (HBL)',
+      'Bank Alfalah',
+      'Meezan Bank',
+    ],
     'Mobile Wallet': ['JazzCash', 'EasyPaisa', 'SadaPay'],
   };
-  
+
   final Map<String, double> withdrawalLimits = {
     'United Bank Limited (UBL)': 50000.0,
     'Habib Bank Limited (HBL)': 45000.0,
@@ -55,7 +63,7 @@ class WithdrawFundsController extends GetxController {
   void _bindData() {
     availableBalance.bindStream(_walletService.getWalletBalance());
     escrowBalance.bindStream(_walletService.getLockedBalance());
-    
+
     // Bind past withdrawals
     _walletService.getWithdrawalRequestsStream().listen((list) {
       pastWithdrawals.assignAll(list);
@@ -73,16 +81,24 @@ class WithdrawFundsController extends GetxController {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomText('Select Payment Method', fontSize: 18, fontWeight: FontVariant.bold),
+              const CustomText(
+                'Select Payment Method',
+                fontSize: 18,
+                fontWeight: FontVariant.bold,
+              ),
               const SizedBox(height: 20),
-              ...methods.map((method) => ListTile(
-                title: CustomText(method),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-                onTap: () {
-                  setMethod(method);
-                  Get.back();
-                },
-              )).toList(),
+              ...methods
+                  .map(
+                    (method) => ListTile(
+                      title: CustomText(method),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                      onTap: () {
+                        setMethod(method);
+                        Get.back();
+                      },
+                    ),
+                  )
+                  .toList(),
             ],
           ),
         ),
@@ -92,11 +108,7 @@ class WithdrawFundsController extends GetxController {
 
   void showBankSelection() {
     if (selectedMethod.value.isEmpty) {
-      Get.snackbar('Alert', 'Please select a payment method first',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-      );
+      Get.snackbar('Alert', 'Please select a payment method first');
       return;
     }
 
@@ -112,16 +124,24 @@ class WithdrawFundsController extends GetxController {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomText('Select ${selectedMethod.value}', fontSize: 18, fontWeight: FontVariant.bold),
+              CustomText(
+                'Select ${selectedMethod.value}',
+                fontSize: 18,
+                fontWeight: FontVariant.bold,
+              ),
               const SizedBox(height: 20),
-              ...banks.map((bank) => ListTile(
-                title: CustomText(bank),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-                onTap: () {
-                  setBank(bank);
-                  Get.back();
-                },
-              )).toList(),
+              ...banks
+                  .map(
+                    (bank) => ListTile(
+                      title: CustomText(bank),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                      onTap: () {
+                        setBank(bank);
+                        Get.back();
+                      },
+                    ),
+                  )
+                  .toList(),
             ],
           ),
         ),
@@ -194,7 +214,7 @@ class WithdrawFundsController extends GetxController {
     // 2. Confirmation
     try {
       isLoading.value = true;
-      
+
       // In a real "test" mode, we could just simulate success without Firestore
       // But since user wants internal setup first, we go with Firestore requests.
       final success = await _walletService.requestWithdrawal(
@@ -205,21 +225,26 @@ class WithdrawFundsController extends GetxController {
       );
 
       if (success) {
+        // 🔥 Notify Admin
+        NotificationService.instance.notifyAdminWithdrawRequest(
+          _walletService.currentUserId ?? 'User',
+          amount,
+        );
+
         // Clear fields
         amountController.clear();
         bankAccountController.clear();
         selectedBank.value = 'Select Bank';
         bankController.text = 'Select Bank';
-        
+
         Get.snackbar(
-          'Success', 
+          'Success',
           'Withdrawal request submitted successfully. Admin will review it shortly.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
         );
       } else {
-        DialogHelpers.showAddFundsError('Failed to submit request. Please try again.');
+        DialogHelpers.showAddFundsError(
+          'Failed to submit request. Please try again.',
+        );
       }
     } catch (e) {
       DialogHelpers.showAddFundsError('Error: ${e.toString()}');
@@ -231,11 +256,13 @@ class WithdrawFundsController extends GetxController {
   String formatCurrency(double amount) {
     return 'SAR ${amount.toStringAsFixed(2)}';
   }
-  
+
   String formatDate(dynamic timestamp) {
     if (timestamp == null) return 'Pending';
-    if (timestamp is DateTime) return DateFormat('MMM d, yyyy').format(timestamp);
-    if (timestamp is Timestamp) return DateFormat('MMM d, yyyy').format(timestamp.toDate());
+    if (timestamp is DateTime)
+      return DateFormat('MMM d, yyyy').format(timestamp);
+    if (timestamp is Timestamp)
+      return DateFormat('MMM d, yyyy').format(timestamp.toDate());
     return 'Recently';
   }
 }

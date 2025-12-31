@@ -138,8 +138,6 @@ class TaskInProgressScreen extends StatelessWidget {
                                   Get.snackbar(
                                     "Location Info",
                                     "This task does not have specific location coordinates.",
-                                    backgroundColor: Colors.blue.withOpacity(0.7),
-                                    colorText: Colors.white,
                                   );
                                 }
                               },

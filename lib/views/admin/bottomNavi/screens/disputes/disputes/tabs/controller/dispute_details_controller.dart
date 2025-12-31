@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/services/wallet_service.dart';
+import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/admin/bottomNavi/screens/disputes/controller/admin_disputes_controller.dart';
 
 class DisputeDetailsController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -204,7 +206,7 @@ class DisputeDetailsController extends GetxController {
 
     try {
       Get.dialog(
-        const Center(child: CircularProgressIndicator()),
+        const Center(child: CircularProgressIndicator(color: redColor)),
         barrierDismissible: false,
       );
 
@@ -215,10 +217,16 @@ class DisputeDetailsController extends GetxController {
         role: 'Helper',
       );
 
-      Get.back();
+      // 🔥 Refresh the disputes list
+      if (Get.isRegistered<AdminDisputesController>()) {
+        Get.find<AdminDisputesController>().fetchDisputedTasks();
+      }
+
+      Get.back(); // Close loader
+      Get.back(); // Navigate back to list screen
       Get.snackbar('Success', 'Warning sent to helper: ${helperName.value}');
     } catch (e) {
-      Get.back();
+      Get.back(); // Close loader
       Get.snackbar('Error', 'Failed to send warning: $e');
     }
   }
@@ -229,7 +237,7 @@ class DisputeDetailsController extends GetxController {
 
     try {
       Get.dialog(
-        const Center(child: CircularProgressIndicator()),
+        const Center(child: CircularProgressIndicator(color: redColor)),
         barrierDismissible: false,
       );
 
@@ -240,13 +248,19 @@ class DisputeDetailsController extends GetxController {
         role: 'Requester',
       );
 
-      Get.back();
+      // 🔥 Refresh the disputes list
+      if (Get.isRegistered<AdminDisputesController>()) {
+        Get.find<AdminDisputesController>().fetchDisputedTasks();
+      }
+
+      Get.back(); // Close loader
+      Get.back(); // Navigate back to list screen
       Get.snackbar(
         'Success',
         'Warning sent to requester: ${requesterName.value}',
       );
     } catch (e) {
-      Get.back();
+      Get.back(); // Close loader
       Get.snackbar('Error', 'Failed to send warning: $e');
     }
   }
@@ -262,7 +276,7 @@ class DisputeDetailsController extends GetxController {
 
     try {
       Get.dialog(
-        const Center(child: CircularProgressIndicator()),
+        const Center(child: CircularProgressIndicator(color: redColor)),
         barrierDismissible: false,
       );
 
@@ -292,13 +306,19 @@ class DisputeDetailsController extends GetxController {
           helperAmount: result['helperAmount'],
         );
 
-        Get.back();
+        // 🔥 Refresh the disputes list
+        if (Get.isRegistered<AdminDisputesController>()) {
+          Get.find<AdminDisputesController>().fetchDisputedTasks();
+        }
+
+        Get.back(); // Close loader
+        Get.back(); // Navigate back to list screen
         Get.snackbar(
           'Success',
           'Refund of 96% processed for requester and 1% payment for helper.',
         );
       } else {
-        Get.back();
+        Get.back(); // Close loader
         Get.snackbar('Error', result['message'] ?? 'Failed to process refund');
       }
     } catch (e) {
@@ -319,7 +339,7 @@ class DisputeDetailsController extends GetxController {
 
     try {
       Get.dialog(
-        const Center(child: CircularProgressIndicator()),
+        const Center(child: CircularProgressIndicator(color: redColor)),
         barrierDismissible: false,
       );
 
@@ -350,13 +370,19 @@ class DisputeDetailsController extends GetxController {
           requesterRefund: result['requesterRefund'],
         );
 
-        Get.back();
+        // 🔥 Refresh the disputes list
+        if (Get.isRegistered<AdminDisputesController>()) {
+          Get.find<AdminDisputesController>().fetchDisputedTasks();
+        }
+
+        Get.back(); // Close loader
+        Get.back(); // Navigate back to list screen
         Get.snackbar(
           'Success',
           'Dispute dismissed. Funds distributed: 85% to Helper, 7.5% to Requester.',
         );
       } else {
-        Get.back();
+        Get.back(); // Close loader
         Get.snackbar('Error', result['message'] ?? 'Failed to dismiss dispute');
       }
     } catch (e) {

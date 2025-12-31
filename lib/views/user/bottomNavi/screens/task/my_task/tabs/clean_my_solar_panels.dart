@@ -14,6 +14,7 @@ import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
 import '../../../profile/tabs/controller/chat_controller.dart';
 import 'task_location_display_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/in_progress_view_details.dart' as ipv;
 import '../controller/task_detail_controller.dart';
 import '../widgets/offer_card.dart';
 import '../widgets/task_info_top_row.dart';
@@ -94,11 +95,48 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
             final data = snapshot.data();
             final status = data?['status']?.toString().toLowerCase() ?? '';
 
-            // If status changed from "active" to something else (accepted, in progress, etc)
-            if (status.isNotEmpty && status != 'active') {
-              print('✅ Task status changed to: $status');
+            // If status changed to "accepted" or "in_progress", navigate to InProgressViewDetails
+            if (status == 'accepted' || status == 'in_progress') {
+              print('✅ Task status changed to: $status - Navigating to InProgressViewDetails');
 
-              // Navigate back
+              if (mounted) {
+                // Extract all necessary data from the task
+                final taskTitle = data?['title'] ?? widget.taskTitle ?? '';
+                final taskPrice = data?['budget']?.toString() ?? widget.taskPrice ?? '0';
+                final taskTimeAgo = widget.taskTimeAgo ?? '';
+                final taskLocation = data?['location'] ?? widget.location ?? '';
+                final taskImage = data?['imageUrl'] ?? widget.taskImage ?? '';
+                final taskType = data?['taskType'] ?? widget.taskType ?? '';
+                final latitude = data?['latitude']?.toDouble() ?? widget.latitude ?? 0.0;
+                final longitude = data?['longitude']?.toDouble() ?? widget.longitude ?? 0.0;
+                final acceptedOfferUid = data?['acceptedOfferUid'] ?? '';
+                final phoneNumber = data?['phoneNumber'] ?? '';
+
+                // Navigate to InProgressViewDetails with full data
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => ipv.InProgressViewDetails(
+                      taskId: taskId,
+                      taskTitle: taskTitle,
+                      price: taskPrice,
+                      timeAgo: taskTimeAgo,
+                      location: taskLocation,
+                      taskImage: taskImage,
+                      taskType: taskType,
+                      latitude: latitude,
+                      longitude: longitude,
+                      helperUid: acceptedOfferUid,
+                      phoneNumber: phoneNumber,
+                      userName: widget.userName,
+                      photoUrl: widget.userPhoto,
+                      userId: widget.userId,
+                    ),
+                  ),
+                );
+              }
+            } else if (status.isNotEmpty && status != 'active') {
+              // For other status changes (cancelled, etc), just navigate back
+              print('✅ Task status changed to: $status');
               if (mounted) {
                 Navigator.of(context).pop();
               }
@@ -145,6 +183,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                       taskId:
                           widget.userId ??
                           'task_${widget.taskTimeAgo ?? 'default'}',
+                      isOnline: widget.taskType == 'Online Task',
                     ),
                     const SizedBox(height: 15),
 
