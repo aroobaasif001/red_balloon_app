@@ -52,74 +52,97 @@ class NotificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: CustomContainer(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        conColor: isRead ? white2Color : whiteColor,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: isRead 
-          ? [] 
-          : [BoxShadow(color: blackColor.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
-        border: isRead ? null : Border.all(color: grey2Color.withOpacity(0.5)),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: _getTypeColor().withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(_getTypeIcon(), color: _getTypeColor(), size: 24),
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: isRead
+              ? []
+              : [
+                  BoxShadow(
+                    color: blackColor.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ],
+          border:
+              isRead ? null : Border.all(color: grey2Color.withOpacity(0.5)),
+        ),
+        child: Material(
+          color: isRead ? white2Color : whiteColor,
+          borderRadius: BorderRadius.circular(15),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: CustomText(
-                          title,
-                          fontSize: 16,
-                          fontWeight: isRead ? FontVariant.medium : FontVariant.bold,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: _getTypeColor().withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      _getTypeIcon(),
+                      color: _getTypeColor(),
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: CustomText(
+                                title,
+                                fontSize: 16,
+                                fontWeight: isRead
+                                    ? FontVariant.medium
+                                    : FontVariant.bold,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            CustomText(
+                              time,
+                              fontSize: 12,
+                              color: grey4Color,
+                            ),
+                          ],
                         ),
-                      ),
-                      CustomText(
-                        time,
-                        fontSize: 12,
-                        color: grey4Color,
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        ExpandableText(
+                          text: body,
+                          fontSize: 14,
+                          color: isRead ? grey5Color : blackLightColor,
+                          maxLines: 2,
+                          fontWeight: FontVariant.regular,
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 4),
-                  ExpandableText(
-                    text: body,
-                    fontSize: 14,
-                    color: isRead ? grey5Color : blackLightColor,
-                    maxLines: 2,
-                    fontWeight: FontVariant.regular,
-                  ),
+                  if (!isRead)
+                    Container(
+                      margin: const EdgeInsets.only(left: 8, top: 4),
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: redColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
                 ],
               ),
             ),
-            if (!isRead)
-              Container(
-                margin: const EdgeInsets.only(left: 8, top: 4),
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: redColor,
-                  shape: BoxShape.circle,
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );

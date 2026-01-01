@@ -70,7 +70,7 @@ class TaskInProgressController extends GetxController {
                   '✅ Task status changed to $taskStatus. Navigating back from TaskInProgressScreen.',
                 );
                 if (Get.isRegistered<TaskInProgressController>()) {
-                  Get.offAll(() => BottomNaviScreen(initialIndex: 1));
+                  Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 2));
                 }
               }
 

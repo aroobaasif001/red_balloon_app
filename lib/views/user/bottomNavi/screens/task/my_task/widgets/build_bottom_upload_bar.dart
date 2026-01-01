@@ -16,6 +16,7 @@ Widget buildBottomUploadBar(
   String? taskTitle,
   String? price,
   String? taskOwnerUid, // 🔥 Added owner UID
+  String? taskImage, // 🔥 Added task image
 }) {
   return CustomContainer(
     padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
@@ -54,6 +55,7 @@ Widget buildBottomUploadBar(
                         taskTitle: taskTitle ?? 'Task',
                         price: price ?? '0',
                         taskOwnerUid: taskOwnerUid ?? '',
+                        taskImage: taskImage,
                       ),
                     );
                   }

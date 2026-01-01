@@ -21,6 +21,7 @@ class UploadProofController extends GetxController {
   RxString taskTitle = 'Help Move Furniture'.obs;
   RxString taskCode = 'RB - 402'.obs;
   RxString taskPrice = '500'.obs;
+  RxString taskImageUrl = ''.obs; // 🔥 Added image URL
 
   // BEFORE / AFTER tab state
   final Rx<ProofTab> selectedTab = ProofTab.before.obs;
@@ -48,11 +49,15 @@ class UploadProofController extends GetxController {
     required String title,
     required String price,
     required String ownerUid,
+    String? imageUrl,
   }) {
     taskId = id;
     taskTitle.value = title;
     taskPrice.value = price;
     taskOwnerUid = ownerUid;
+    if (imageUrl != null) {
+      taskImageUrl.value = imageUrl;
+    }
   }
 
   /// Pick image from camera
@@ -111,6 +116,7 @@ class UploadProofController extends GetxController {
 
   /// Submit proof
   Future<void> submitProof() async {
+    bool isSuccess = false; // 🔥 Track success status
     try {
       if (taskId == null) {
         Get.snackbar('Error', 'Task ID is missing');
@@ -180,6 +186,8 @@ class UploadProofController extends GetxController {
         taskPrice: taskPrice.value,
       );
 
+      isSuccess = true; // 🔥 Mark critical operations as successful
+
       // 🔥 Send Notification to Task Owner
       if (taskOwnerUid != null && proofId != null) {
         NotificationService.instance.notifyProofUploaded(
@@ -193,14 +201,6 @@ class UploadProofController extends GetxController {
 
       isSubmitting.value = false;
 
-      // // Update InProgressTaskController to change button text
-      // try {
-      //   final inProgressController = Get.find<InProgressTaskController>();
-      //   inProgressController.isSubmitted.value = true;
-      // } catch (e) {
-      //   print('InProgressTaskController not found: $e');
-      // }
-
       // Success - return to previous screen
       Get.back();
 
@@ -212,10 +212,15 @@ class UploadProofController extends GetxController {
     } catch (e) {
       isSubmitting.value = false;
       print('Error submitting proof: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to submit proof. Please try again.',
-      );
+      
+      if (!isSuccess) {
+        Get.snackbar(
+          'Error',
+          'Failed to submit proof. Please try again.',
+        );
+      } else {
+        print('⚠️ Suppressed error after success in submitProof: $e');
+      }
     }
   }
 

@@ -7,7 +7,10 @@ import '../../../../../../../utils/colors.dart';
 import '../controller/in_progress_task_controller.dart';
 
 /// STATUS CARD: In Progress chip + distance / ETA text
-Widget buildStatusCard(InProgressTaskController controller, {String? taskType}) {
+Widget buildStatusCard(
+  InProgressTaskController controller, {
+  String? taskType,
+}) {
   return Obx(
     () => CustomContainer(
       width: double.infinity,
@@ -22,7 +25,8 @@ Widget buildStatusCard(InProgressTaskController controller, {String? taskType}) 
             conColor: appbard,
             borderRadius: BorderRadius.circular(20),
             child: CustomText(
-              (controller.requesterHelpRequested.value || controller.helperHelpRequested.value)
+              (controller.requesterHelpRequested.value ||
+                      controller.helperHelpRequested.value)
                   ? 'Dispute In Progress'
                   : controller.status.value,
               fontSize: 13,
@@ -30,7 +34,8 @@ Widget buildStatusCard(InProgressTaskController controller, {String? taskType}) 
               color: redColor,
             ),
           ),
-          if (controller.requesterHelpRequested.value || controller.helperHelpRequested.value) ...[
+          if (controller.requesterHelpRequested.value ||
+              controller.helperHelpRequested.value) ...[
             if (controller.requesterHelpReason.value.isNotEmpty) ...[
               const SizedBox(height: 8),
               CustomText(
@@ -57,12 +62,6 @@ Widget buildStatusCard(InProgressTaskController controller, {String? taskType}) 
               fontWeight: FontVariant.regular,
             ),
           ],
-          const SizedBox(height: 10),
-          const LinearProgressIndicator(
-            backgroundColor: appbard,
-            color: redColor,
-            value: 0.6,
-          ),
         ],
       ),
     ),

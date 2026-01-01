@@ -184,6 +184,7 @@ class InProgressViewDetails extends StatelessWidget {
               taskTitle: taskTitle,
               price: price,
               taskOwnerUid: helperUid, // 🔥 In this context, helperUid is the owner
+              taskImage: taskImage,
             ),
           ],
         ),

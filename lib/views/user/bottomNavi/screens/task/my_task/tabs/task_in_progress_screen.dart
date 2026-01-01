@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/task_review_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,8 +13,8 @@ import '../../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
 import '../../../profile/tabs/controller/chat_controller.dart';
-import '../tabs/task_location_display_screen.dart';
 import '../controller/task_in_progress_controller.dart'; // 🔥 Import controller
+import '../tabs/task_location_display_screen.dart';
 
 class TaskInProgressScreen extends StatelessWidget {
   final String? taskId; // 🔥 Optional task ID
@@ -89,12 +89,17 @@ class TaskInProgressScreen extends StatelessWidget {
                                         color: bordercolor1,
                                         child: Center(
                                           child: CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  redColor,
+                                                ),
                                           ),
                                         ),
                                       ),
                                       errorWidget: (context, url, error) {
-                                        print('❌ Error loading task image: $error');
+                                        print(
+                                          '❌ Error loading task image: $error',
+                                        );
                                         return Image.asset(
                                           "assets/images/sofa.png",
                                           height: 155,
@@ -119,10 +124,14 @@ class TaskInProgressScreen extends StatelessWidget {
                             child: InkWell(
                               borderRadius: BorderRadius.circular(15),
                               onTap: () {
-                                print("📍 Map preview tapped in TaskInProgressScreen");
-                                if (task.latitude != null && task.longitude != null) {
+                                print(
+                                  "📍 Map preview tapped in TaskInProgressScreen",
+                                );
+                                if (task.latitude != null &&
+                                    task.longitude != null) {
                                   // 🔥 Check if current user is requester
-                                  final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+                                  final currentUserId =
+                                      FirebaseAuth.instance.currentUser?.uid;
                                   final isRequester = currentUserId == task.uid;
 
                                   Get.to(
@@ -131,7 +140,8 @@ class TaskInProgressScreen extends StatelessWidget {
                                       longitude: task.longitude!,
                                       title: task.title,
                                       address: task.location ?? "Task Location",
-                                      showDirections: !isRequester, // 🔥 Hide for requester
+                                      showDirections:
+                                          !isRequester, // 🔥 Hide for requester
                                     ),
                                   );
                                 } else {
@@ -145,12 +155,14 @@ class TaskInProgressScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(15),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(15),
-                                  child: (task.latitude != null &&
+                                  child:
+                                      (task.latitude != null &&
                                           task.longitude != null &&
                                           task.latitude != 0.0 &&
                                           task.longitude != 0.0)
                                       ? CachedNetworkImage(
-                                          imageUrl: "https://maps.googleapis.com/maps/api/staticmap?center=${task.latitude},${task.longitude}&zoom=14&size=400x400&markers=color:red%7C${task.latitude},${task.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
+                                          imageUrl:
+                                              "https://maps.googleapis.com/maps/api/staticmap?center=${task.latitude},${task.longitude}&zoom=14&size=400x400&markers=color:red%7C${task.latitude},${task.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
                                           height: 155,
                                           fit: BoxFit.cover,
                                           placeholder: (context, url) => Container(
@@ -158,15 +170,19 @@ class TaskInProgressScreen extends StatelessWidget {
                                             color: bordercolor1,
                                             child: const Center(
                                               child: CircularProgressIndicator(
-                                                valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(redColor),
                                               ),
                                             ),
                                           ),
-                                          errorWidget: (context, url, error) => Image.asset(
-                                            "assets/images/map.png",
-                                            height: 155,
-                                            fit: BoxFit.cover,
-                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
+                                                "assets/images/map.png",
+                                                height: 155,
+                                                fit: BoxFit.cover,
+                                              ),
                                         )
                                       : Image.asset(
                                           "assets/images/map.png",
@@ -181,55 +197,39 @@ class TaskInProgressScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (task.taskType != 'Online Task') const SizedBox(height: 25),
+                if (task.taskType != 'Online Task')
+                  /// ------------------ STATUS TEXT ------------------
+                  Center(
+                    child: Obx(() {
+                      final bool isDispute =
+                          controller.requesterHelpRequested.value ||
+                          controller.helperHelpRequested.value;
+                      final bool isOnline = task.taskType == 'Online Task';
 
-                const SizedBox(height: 25),
-
-                /// ------------------ STATUS TEXT ------------------
-                Center(
-                  child: Obx(() {
-                    final bool isDispute = controller.requesterHelpRequested.value ||
-                        controller.helperHelpRequested.value;
-                    final bool isOnline = task.taskType == 'Online Task';
-                    
-                    return RichText(
-                      text: TextSpan(
-                        text: isDispute ? "Dispute In Progress " : "Helper is on the way ",
-                        style: const TextStyle(fontSize: 14, color: timeColor),
-                        children: [
-                          if (!isDispute && !isOnline)
-                            TextSpan(
-                              text: "(3.2 km away)",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: blackColor,
+                      return RichText(
+                        text: TextSpan(
+                          text: isDispute
+                              ? "Dispute In Progress "
+                              : "Helper is on the way ",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: timeColor,
+                          ),
+                          children: [
+                            if (!isDispute && !isOnline)
+                              TextSpan(
+                                text: "(3.2 km away)",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blackColor,
+                                ),
                               ),
-                            ),
-                        ],
-                      ),
-                    );
-                  }),
-                ),
-
-                const SizedBox(height: 6),
-
-                /// ------------------ PROGRESS BAR ------------------
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: CustomContainer(
-                    height: 4,
-                    conColor: redColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: CustomContainer(
-                        width: 120,
-                        height: 4,
-                        conColor: redColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
+                          ],
+                        ),
+                      );
+                    }),
                   ),
-                ),
 
                 const SizedBox(height: 20),
 
@@ -272,10 +272,17 @@ class TaskInProgressScreen extends StatelessWidget {
                                         fit: BoxFit.cover,
                                         height: 50,
                                         width: 50,
-                                        placeholder: (context, url) => const Center(
-                                          child: CircularProgressIndicator(color: redColor),
-                                        ),
-                                        errorWidget: (context, url, error) => const Icon(Icons.person, color: redColor),
+                                        placeholder: (context, url) =>
+                                            const Center(
+                                              child: CircularProgressIndicator(
+                                                color: redColor,
+                                              ),
+                                            ),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(
+                                              Icons.person,
+                                              color: redColor,
+                                            ),
                                       ),
                                     ),
                             ),
@@ -524,7 +531,8 @@ class TaskInProgressScreen extends StatelessWidget {
                             ),
 
                             Obx(() {
-                              final bool isDispute = controller.requesterHelpRequested.value ||
+                              final bool isDispute =
+                                  controller.requesterHelpRequested.value ||
                                   controller.helperHelpRequested.value;
                               return CustomContainer(
                                 padding: const EdgeInsets.symmetric(
@@ -541,7 +549,9 @@ class TaskInProgressScreen extends StatelessWidget {
                                   ),
                                 ],
                                 child: CustomText(
-                                  isDispute ? "Dispute In Progress" : "In Progress",
+                                  isDispute
+                                      ? "Dispute In Progress"
+                                      : "In Progress",
                                   fontWeight: FontVariant.bold,
                                   fontSize: 12,
                                   color: redColor,
@@ -552,9 +562,11 @@ class TaskInProgressScreen extends StatelessWidget {
                         ),
 
                         Obx(() {
-                          final bool isDispute = controller.requesterHelpRequested.value ||
+                          final bool isDispute =
+                              controller.requesterHelpRequested.value ||
                               controller.helperHelpRequested.value;
-                          if (isDispute && controller.helperHelpReason.value.isNotEmpty) {
+                          if (isDispute &&
+                              controller.helperHelpReason.value.isNotEmpty) {
                             return Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Column(
@@ -597,7 +609,9 @@ class TaskInProgressScreen extends StatelessWidget {
                                     child: CustomText(
                                       offer != null
                                           ? "SAR ${offer.offerPrice}"
-                                          : controller.formatBudget(task.budget),
+                                          : controller.formatBudget(
+                                              task.budget,
+                                            ),
                                       fontSize: 14,
                                       color: timeColor,
                                       overflow: TextOverflow.ellipsis,
@@ -752,37 +766,6 @@ class TaskInProgressScreen extends StatelessWidget {
                         : redColor,
                     textColor: whiteColor,
                     borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                /// ------------------ ETA FOOTER ------------------
-                Center(
-                  child: Column(
-                    children: [
-                      Container(height: 1, color: greyLiteColor),
-                      const SizedBox(height: 8),
-                      RichText(
-                        text: TextSpan(
-                          text: "Helper en route — ",
-                          style: const TextStyle(
-                            color: timeColor,
-                            fontSize: 14,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: "ETA: 10 mins", // TODO: Calculate real ETA
-                              style: TextStyle(
-                                color: blackColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
                   ),
                 ),
               ],
