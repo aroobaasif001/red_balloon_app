@@ -35,18 +35,12 @@ Widget adminProfileHeaderCard() {
               conColor: redColor,
               child: const Center(
                 child: CustomText(
-                  'SM',
+                  'AP',
                   color: whiteColor,
                   fontWeight: FontVariant.bold,
                   fontSize: 22,
                 ),
               ),
-            ),
-            SizedBox(height: 5),
-            Image.asset(
-              'assets/appLogo/White Minimalist Jumma Mubarak Instagram Post (2) 1.png',
-              height: 45,
-              width: 79,
             ),
           ],
         ),
@@ -57,33 +51,24 @@ Widget adminProfileHeaderCard() {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(
-                    'Sarah Mitchell',
+                    'Admin Profile',
                     fontSize: 18,
                     fontWeight: FontVariant.bold,
                     color: blackColor,
                   ),
-                  Center(
-                    child: Image.asset(
-                      'assets/icons/edit_3.png',
-                      height: 18,
-                      width: 18,
-                      color: pricecolor2,
-                    ),
+                  Image.asset(
+                    'assets/appLogo/White Minimalist Jumma Mubarak Instagram Post (2) 1.png',
+                    height: 40,
+                    width: 70,
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
+           //   const SizedBox(height: 2),
               Row(
                 children: [
-                  const CustomText(
-                    'ARB-0987',
-                    fontSize: 12,
-                    fontWeight: FontVariant.regular,
-                    color: walletGrey500Color,
-                  ),
-                  const SizedBox(width: 8),
                   CustomContainer(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -101,31 +86,6 @@ Widget adminProfileHeaderCard() {
                 ],
               ),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  CustomContainer(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    borderRadius: BorderRadius.circular(999),
-                    conColor: pinkColor,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(Icons.verified, size: 14, color: redColor),
-                        SizedBox(width: 4),
-                        CustomText(
-                          'Verified',
-                          fontSize: 10,
-                          fontWeight: FontVariant.semiBold,
-                          color: redColor,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
         ),

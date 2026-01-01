@@ -32,24 +32,6 @@ Widget adminUserOverviewCard() {
           fontWeight: FontVariant.bold,
           color: blackColor,
         ),
-        const SizedBox(height: 16),
-        adminInfoRow(
-          icon: Icons.email,
-          label: 'Email',
-          value: 'sarah.m@email.com',
-        ),
-        const SizedBox(height: 22),
-        adminInfoRow(
-          icon: Icons.phone,
-          label: 'Phone',
-          value: '+1 415-555-0192',
-        ),
-        const SizedBox(height: 22),
-        adminInfoRow(
-          icon: Icons.location_on,
-          label: 'City',
-          value: 'San Francisco, CA',
-        ),
         const SizedBox(height: 22),
         adminInfoRow(
           icon: 'assets/icons/wallet_3.png',
@@ -64,12 +46,6 @@ Widget adminUserOverviewCard() {
           label: 'Warnings Issued',
           value: '0',
           isImage: true,
-        ),
-        const SizedBox(height: 22),
-        adminInfoRow(
-          icon: Icons.access_time_filled,
-          label: 'Last Active',
-          value: '2 hours ago',
         ),
       ],
     ),

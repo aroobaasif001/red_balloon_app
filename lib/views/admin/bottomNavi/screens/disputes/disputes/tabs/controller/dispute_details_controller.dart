@@ -183,10 +183,33 @@ class DisputeDetailsController extends GetxController {
           helperUserId.value = userData['userId'];
         }
 
-        helperRating.value = (userData['rating'] ?? 0.0).toDouble();
-        helperTasksCompleted.value = userData['completedTasks'] ?? 0;
         helperImage.value =
             userData['photoURL'] ?? userData['profileImage'] ?? '';
+
+        // Real-time calculation for Rating & Completion
+        // Fetch tasks where this user was the helper and status is completed
+        final helperCompletedSnapshot = await _firestore
+            .collection('tasks')
+            .where('acceptedOfferUid', isEqualTo: uid)
+            .where('status', isEqualTo: 'completed')
+            .get();
+
+        helperTasksCompleted.value = helperCompletedSnapshot.docs.length;
+
+        // Calculate average rating from requester feedbacks
+        double totalRating = 0;
+        int ratingCount = 0;
+
+        for (var doc in helperCompletedSnapshot.docs) {
+          final data = doc.data();
+          if (data['requesterFeedback'] != null &&
+              data['requesterFeedback']['rating'] != null) {
+            totalRating += (data['requesterFeedback']['rating'] as num).toDouble();
+            ratingCount++;
+          }
+        }
+
+        helperRating.value = ratingCount > 0 ? totalRating / ratingCount : 0.0;
 
         print('✅ Helper: ${helperName.value} (${helperUserId.value})');
         print(

@@ -17,21 +17,17 @@ class AllTasksTab extends StatelessWidget {
     );
 
     return Obx(() {
-      print(
-        '🔄 Obx rebuilding - isLoading: ${controller.isLoading.value}, tasks: ${controller.allTasks.length}',
-      );
+      final displayedTasks = controller.allTasks
+          .where((task) => task.status.toLowerCase() != 'completed')
+          .toList();
 
       if (controller.isLoading.value) {
-        print('⏳ Showing loading indicator');
         return const Center(child: CircularProgressIndicator(color: redColor));
       }
 
-      if (controller.allTasks.isEmpty) {
-        print('📭 Showing empty state');
+      if (displayedTasks.isEmpty) {
         return const Center(child: Text('No tasks available'));
       }
-
-      print('✅ Showing ${controller.allTasks.length} tasks');
 
       return RefreshIndicator(
         color: redColor,
@@ -39,7 +35,7 @@ class AllTasksTab extends StatelessWidget {
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Column(
-            children: controller.allTasks.map((task) {
+            children: displayedTasks.map((task) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: TaskItemCard(

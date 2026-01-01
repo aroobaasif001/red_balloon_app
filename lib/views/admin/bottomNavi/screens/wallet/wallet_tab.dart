@@ -33,25 +33,26 @@ class AdminWalletTab extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 8),
+              adminBuildHeader(context),
+              const SizedBox(height: 20),
+              adminBuildSummaryRow(context),
+              const SizedBox(height: 20),
+              Obx(
+                () => adminBuildFilterRow(
+                  context,
+                  selectedFilter: controller.selectedFilter.value,
+                  onFilterSelected: controller.setFilter,
+                ),
+              ),
+              const SizedBox(height: 20),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 8),
-                      adminBuildHeader(context),
-                      const SizedBox(height: 20),
-                      adminBuildSummaryRow(context),
-                      const SizedBox(height: 20),
-                      Obx(
-                        () => adminBuildFilterRow(
-                          context,
-                          selectedFilter: controller.selectedFilter.value,
-                          onFilterSelected: controller.setFilter,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
                       const CustomText(
                         'Wallet Overview',
                         fontSize: 18,
@@ -118,7 +119,7 @@ class AdminWalletTab extends StatelessWidget {
                           ],
                         );
                       }),
-                      const SizedBox(height: 80),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
