@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
+import 'package:red_balloon_app/custom_widgets/expandable_text.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 
 class ReviewCard extends StatefulWidget {
@@ -22,8 +23,6 @@ class ReviewCard extends StatefulWidget {
 }
 
 class _ReviewCardState extends State<ReviewCard> {
-  bool expanded = false;
-
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
@@ -88,23 +87,13 @@ class _ReviewCardState extends State<ReviewCard> {
           const SizedBox(height: 12),
 
           /// COLLAPSIBLE REVIEW TEXT
-          AnimatedCrossFade(
-            firstChild: CustomText(
-              widget.review,
-              fontSize: 14,
-              color: grey50Color,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-            secondChild: CustomText(
-              widget.review,
-              fontSize: 14,
-              color: grey50Color,
-            ),
-            crossFadeState: expanded
-                ? CrossFadeState.showSecond
-                : CrossFadeState.showFirst,
-            duration: const Duration(milliseconds: 200),
+          /// COLLAPSIBLE REVIEW TEXT
+          ExpandableText(
+            text: widget.review,
+            fontSize: 14,
+            color: grey50Color,
+            maxLines: 3,
+            fontWeight: FontVariant.regular,
           ),
 
           const SizedBox(height: 12),
@@ -115,19 +104,7 @@ class _ReviewCardState extends State<ReviewCard> {
           const SizedBox(height: 8),
 
           /// VIEW FEEDBACK / SEE LESS BUTTON
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                expanded = !expanded;
-              });
-            },
-            child: CustomText(
-              expanded ? "See Less" : " See more",
-              fontSize: 14,
-              color: redColor,
-              fontWeight: FontVariant.bold,
-            ),
-          ),
+          /// VIEW FEEDBACK / SEE LESS BUTTON (Removed as handled by ExpandableText)
         ],
       ),
     );

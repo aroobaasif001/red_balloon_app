@@ -22,10 +22,6 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   /// Track dropdown open/close states
   List<bool> isOpenList = [false, false, false, false, false];
 
-  /// One main answer for all FAQs
-  String mainAnswer =
-      "To post a new task:\n1. Go to the Create Task section.\n2. Enter your task details (title, description, deadline, budget, etc.).\n3. Upload any required files (optional).\n4. Submit the task. Once submitted, your task becomes visible to validators who can review and accept it.";
-
   @override
   Widget build(BuildContext context) {
     final contentController = Get.put(UserAppContentController());
@@ -76,7 +72,12 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       index: 0,
                       question: "How to post a new task?",
                       isOpen: isOpenList[0],
-                      answer: mainAnswer,
+                      answer: 
+"To post a new task:\n\n"
+"1. Go to the Create Task section.\n"
+"2. Enter your task details (title, description, deadline, budget, etc.).\n"
+"3. Upload any required files (optional).\n"
+"4. Submit the task. Once submitted, your task becomes visible to validators who can review and accept it.",
                       onTap: () {
                         setState(() {
                           isOpenList[0] = !isOpenList[0];
@@ -90,20 +91,40 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       index: 1,
                       question: "How does escrow work?",
                       isOpen: isOpenList[1],
-                      answer: mainAnswer,
+                      answer: 
+"When you post a task, the task amount is locked securely in escrow from your wallet.\n\n"
+"This means:\n"
+"• The money is not given to the helper immediately\n"
+"• It stays safely held by the platform\n"
+"• The helper only gets paid after the task is completed and approved by community validators\n\n"
+"If the task is:\n"
+"• Approved: Payment is released to the helper\n"
+"• Rejected: The amount is refunded back to your wallet\n\n"
+"This system ensures fairness and protection for both requesters and helpers.",
                       onTap: () {
                         setState(() {
                           isOpenList[1] = !isOpenList[1];
                         });
                       },
                     ),
+
                     const SizedBox(height: 10),
 
                     FaqTile(
                       index: 2,
                       question: "When can I withdraw my balance?",
                       isOpen: isOpenList[2],
-                      answer: mainAnswer,
+                      answer: 
+"Withdrawal rules depend on your role:\n\n"
+"Helpers:\n"
+"• Can withdraw only after the task is approved\n"
+"• Funds are released after a 48-hour holding period\n"
+"• Minimum withdrawal amount: 100 SAR\n\n"
+"Validators:\n"
+"• Can withdraw once their balance reaches 100 SAR\n"
+"• If balance goes negative due to wrong validations, withdrawal is blocked until it becomes positive\n\n"
+"Requesters:\n"
+"• Can withdraw unused or refunded balance anytime",
                       onTap: () {
                         setState(() {
                           isOpenList[2] = !isOpenList[2];
@@ -116,7 +137,18 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       index: 3,
                       question: "How are validators chosen?",
                       isOpen: isOpenList[3],
-                      answer: mainAnswer,
+                      answer: 
+"Validators are selected automatically and randomly by the system.\n\n"
+"Key points:\n"
+"• 9 validators are chosen for each task\n"
+"• They can be from anywhere in Saudi Arabia\n"
+"• Selection is based on:\n"
+"   - Availability\n"
+"   - Validation accuracy\n"
+"   - No active suspension\n\n"
+"To approve a task:\n"
+"• At least 6 out of 9 validators must agree\n\n"
+"This ensures unbiased and community-driven decisions.",
                       onTap: () {
                         setState(() {
                           isOpenList[3] = !isOpenList[3];
@@ -129,7 +161,15 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       index: 4,
                       question: "What if my task is rejected?",
                       isOpen: isOpenList[4],
-                      answer: mainAnswer,
+                      answer: 
+"If a task is rejected by the validators:\n"
+"• The helper does not receive payment\n"
+"• The full task amount is refunded to your wallet\n"
+"• You can:\n"
+"   - Post the task again\n"
+"   - Modify task details\n"
+"   - Choose a different helper (if offers are still available)\n\n"
+"Your money always remains protected under the escrow system.",
                       onTap: () {
                         setState(() {
                           isOpenList[4] = !isOpenList[4];

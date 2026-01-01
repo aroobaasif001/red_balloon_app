@@ -121,6 +121,7 @@ class TaskReviewController extends GetxController {
     required String proofId,
     bool isAuto = false,
   }) async {
+    bool isSuccess = false; // 🔥 Track success status
     try {
       // 🔥 Cancel timer immediately to prevent auto-validation
       _timer?.cancel();
@@ -175,6 +176,8 @@ class TaskReviewController extends GetxController {
 
       print('✅ Proof status updated to rejected');
 
+      isSuccess = true; // 🔥 Mark critical operations as successful
+
       Get.snackbar('Success', 'Rejection submitted successfully');
 
       // 🔥 Trigger Notifications
@@ -214,7 +217,12 @@ class TaskReviewController extends GetxController {
     } catch (e) {
       print('❌ Error submitting rejection: $e');
       isSubmitting.value = false; // 🔥 Hide loading on error
-      Get.snackbar('Error', 'Failed to submit rejection');
+      
+      if (!isSuccess) {
+         Get.snackbar('Error', 'Failed to submit rejection');
+      } else {
+        print('⚠️ Suppressed error after success in rejection: $e');
+      }
     }
   }
 
@@ -223,6 +231,7 @@ class TaskReviewController extends GetxController {
     required String taskId,
     required String proofId,
   }) async {
+    bool isSuccess = false; // 🔥 Track success status
     try {
       // 🔥 Cancel timer immediately to prevent auto-validation
       _timer?.cancel();
@@ -279,6 +288,8 @@ class TaskReviewController extends GetxController {
 
       print('✅ Proof accepted and funds distributed successfully');
 
+      isSuccess = true; // 🔥 Mark critical operations as successful
+
       Get.snackbar('Success', 'Proof accepted and payment released!');
 
       // 5. 🔥 Trigger Notifications
@@ -308,7 +319,12 @@ class TaskReviewController extends GetxController {
     } catch (e) {
       print('❌ Error accepting proof: $e');
       isSubmitting.value = false; // 🔥 Hide loading on error
-      Get.snackbar('Error', 'Failed to accept proof: ${e.toString()}');
+      
+      if (!isSuccess) {
+        Get.snackbar('Error', 'Failed to accept proof: ${e.toString()}');
+      } else {
+        print('⚠️ Suppressed error after success in acceptProof: $e');
+      }
     }
   }
 

@@ -17,6 +17,7 @@ class UploadProof extends StatelessWidget {
   final String taskTitle;
   final String price;
   final String taskOwnerUid; // 🔥 Added owner UID
+  final String? taskImage; // 🔥 Added task image
 
   const UploadProof({
     super.key,
@@ -24,6 +25,7 @@ class UploadProof extends StatelessWidget {
     required this.taskTitle,
     required this.price,
     required this.taskOwnerUid,
+    this.taskImage,
   });
 
   @override
@@ -36,6 +38,7 @@ class UploadProof extends StatelessWidget {
       title: taskTitle,
       price: price,
       ownerUid: taskOwnerUid,
+      imageUrl: taskImage,
     );
     return SafeArea(
       top: false,

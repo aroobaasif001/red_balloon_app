@@ -99,70 +99,79 @@ class MessagesScreen extends StatelessWidget {
                     final otherUid = otherParticipant['uid'] ?? '';
                     final isSuspended = controller.isUserSuspended(otherUid);
 
-                    return Dismissible(
-                      key: Key(conversation.conversationId),
-                      direction: DismissDirection.horizontal,
-                      background: Container(
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(left: 20),
-                        color: redColor,
-                        child: const Icon(
-                          Icons.delete_outline,
-                          color: whiteColor,
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: Dismissible(
+                        key: Key(conversation.conversationId),
+                        direction: DismissDirection.horizontal,
+                        background: Container(
+                          alignment: Alignment.centerLeft,
+                          padding: const EdgeInsets.only(left: 20),
+                          decoration: BoxDecoration(
+                            color: redColor,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: const Icon(
+                            Icons.delete_outline,
+                            color: whiteColor,
+                          ),
                         ),
-                      ),
-                      secondaryBackground: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 20),
-                        color: redColor,
-                        child: const Icon(
-                          Icons.delete_outline,
-                          color: whiteColor,
+                        secondaryBackground: Container(
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.only(right: 20),
+                          decoration: BoxDecoration(
+                            color: redColor,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: const Icon(
+                            Icons.delete_outline,
+                            color: whiteColor,
+                          ),
                         ),
-                      ),
-                      onDismissed: (direction) {
-                        controller.hideConversation(
-                          conversation.conversationId,
-                        );
-                        Get.snackbar(
-                          'Chat',
-                          'Chat deleted successfully!',
-                        );
-                      },
-                      child: MessageTile(
-                        name: otherParticipant['name'] ?? 'Unknown',
-                        subtitle: conversation.taskTitle,
-                        message: conversation.lastMessage,
-                        time: controller.getTimeAgo(
-                          conversation.lastMessageTime.toDate(),
-                        ),
-                        image:
-                            otherParticipant['photo'] ??
-                            'assets/images/user1.png',
-                        unreadCount: unreadCount,
-                        isSuspended: isSuspended,
-                        onTap: () {
-                          if (isSuspended) {
-                            Get.snackbar(
-                              'Account Suspended',
-                              'This user\'s account has been suspended by administration.',
-                            );
-                            return;
-                          }
-                          // Navigate to chat screen with arguments
-                          Get.to(
-                            () => const ChatScreen(),
-                            arguments: {
-                              'taskId': conversation.taskId,
-                              'taskTitle': conversation.taskTitle,
-                              'taskOwnerId': otherParticipant['uid'],
-                              'taskOwnerName': otherParticipant['name'],
-                              'taskOwnerPhoto': otherParticipant['photo'],
-                              'taskImage': conversation.taskImage,
-                              'conversationId': conversation.conversationId,
-                            },
+                        onDismissed: (direction) {
+                          controller.hideConversation(
+                            conversation.conversationId,
+                          );
+                          Get.snackbar(
+                            'Chat',
+                            'Chat deleted successfully!',
                           );
                         },
+                        child: MessageTile(
+                          name: otherParticipant['name'] ?? 'Unknown',
+                          subtitle: conversation.taskTitle,
+                          message: conversation.lastMessage,
+                          time: controller.getTimeAgo(
+                            conversation.lastMessageTime.toDate(),
+                          ),
+                          image:
+                              otherParticipant['photo'] ??
+                              'assets/images/user1.png',
+                          unreadCount: unreadCount,
+                          isSuspended: isSuspended,
+                          onTap: () {
+                            if (isSuspended) {
+                              Get.snackbar(
+                                'Account Suspended',
+                                'This user\'s account has been suspended by administration.',
+                              );
+                              return;
+                            }
+                            // Navigate to chat screen with arguments
+                            Get.to(
+                              () => const ChatScreen(),
+                              arguments: {
+                                'taskId': conversation.taskId,
+                                'taskTitle': conversation.taskTitle,
+                                'taskOwnerId': otherParticipant['uid'],
+                                'taskOwnerName': otherParticipant['name'],
+                                'taskOwnerPhoto': otherParticipant['photo'],
+                                'taskImage': conversation.taskImage,
+                                'conversationId': conversation.conversationId,
+                              },
+                            );
+                          },
+                        ),
                       ),
                     );
                   },

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,18 +23,42 @@ Widget buildTaskCard(UploadProofController controller) {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: Image.asset(
-            'assets/images/sofa.png',
-            height: 60,
-            width: 80,
-            fit: BoxFit.cover,
-          ),
+          child: Obx(() {
+            return controller.taskImageUrl.value.isNotEmpty
+                ? CachedNetworkImage(
+                    imageUrl: controller.taskImageUrl.value,
+                    height: 60,
+                    width: 80,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      height: 60,
+                      width: 80,
+                      color: Colors.grey[200],
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Image.asset(
+                      'assets/images/sofa.png',
+                      height: 60,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : Image.asset(
+                    'assets/images/sofa.png',
+                    height: 60,
+                    width: 80,
+                    fit: BoxFit.cover,
+                  );
+          }),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Obx(
             () => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomText(
                   controller.taskTitle.value,
@@ -41,13 +66,14 @@ Widget buildTaskCard(UploadProofController controller) {
                   fontWeight: FontVariant.semiBold,
                   color: textcolord,
                 ),
-                const SizedBox(height: 4),
-                CustomText(
-                  controller.taskCode.value,
-                  fontSize: 12,
-                  color: walletInfoTextColor,
-                  fontWeight: FontVariant.regular,
-                ),
+                // const SizedBox(height: 4),
+                // CustomText(
+                //   controller.taskCode.value,
+                //   fontSize: 12,
+                //   color: walletInfoTextColor,
+                //   fontWeight: FontVariant.regular,
+                // ),
+                const SizedBox(height: 10),
                 const SizedBox(height: 10),
                 Align(
                   alignment: Alignment.topRight,

@@ -1,15 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 import 'package:red_balloon_app/custom_widgets/customtext.dart';
-import 'package:red_balloon_app/utils/colors.dart';
-import 'package:get/get.dart';
 import 'package:red_balloon_app/services/wallet_service.dart';
-import 'package:intl/intl.dart';
-import '../controller/user_profile_controller.dart';
+import 'package:red_balloon_app/utils/colors.dart';
+
 import '../../../profile/controller/in_app_store_controller.dart';
+import '../controller/user_profile_controller.dart';
 
 class UserProfileScreen extends StatelessWidget {
   final String userName;
@@ -73,32 +74,34 @@ class UserProfileScreen extends StatelessWidget {
                   conColor: redColor,
                   alignment: Alignment.center,
                   child: userPhoto == null || userPhoto!.isEmpty
-                        ? CustomText(
-                            userInitials,
-                            fontSize: 48,
-                            fontWeight: FontVariant.bold,
-                            color: whiteColor,
-                          )
-                        : ClipRRect(
-                            borderRadius: BorderRadius.circular(60),
-                            child: CachedNetworkImage(
-                              imageUrl: userPhoto!,
-                              height: 120,
-                              width: 120,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => const Center(
-                                child: CircularProgressIndicator(color: whiteColor),
+                      ? CustomText(
+                          userInitials,
+                          fontSize: 48,
+                          fontWeight: FontVariant.bold,
+                          color: whiteColor,
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(60),
+                          child: CachedNetworkImage(
+                            imageUrl: userPhoto!,
+                            height: 120,
+                            width: 120,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(
+                                color: whiteColor,
                               ),
-                              errorWidget: (context, url, error) => Center(
-                                child: CustomText(
-                                  userInitials,
-                                  fontSize: 48,
-                                  fontWeight: FontVariant.bold,
-                                  color: whiteColor,
-                                ),
+                            ),
+                            errorWidget: (context, url, error) => Center(
+                              child: CustomText(
+                                userInitials,
+                                fontSize: 48,
+                                fontWeight: FontVariant.bold,
+                                color: whiteColor,
                               ),
                             ),
                           ),
+                        ),
                 ),
                 Positioned(
                   bottom: 5,
@@ -131,7 +134,9 @@ class UserProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildBadge(
-                  text: (userId == null || userId!.isEmpty) ? "RB-0000" : userId!,
+                  text: (userId == null || userId!.isEmpty)
+                      ? "RB-0000"
+                      : userId!,
                   bgColor: whiteLightColor,
                   textColor: redLightColor,
                 ),
@@ -153,8 +158,8 @@ class UserProfileScreen extends StatelessWidget {
                 (userUid != null && userUid!.isNotEmpty)
                     ? userUid!
                     : (userId != null && userId!.startsWith('RB-')
-                        ? "" // Can't query by RB-ID directly without search
-                        : (userId ?? "")),
+                          ? "" // Can't query by RB-ID directly without search
+                          : (userId ?? "")),
               ),
               builder: (context, snapshot) {
                 // Debug print for developer console
@@ -172,9 +177,9 @@ class UserProfileScreen extends StatelessWidget {
                   return const SizedBox.shrink();
                 }
 
-                final bestBadge =
-                    InAppStoreController.getMostExpensiveFromList(
-                        snapshot.data!);
+                final bestBadge = InAppStoreController.getMostExpensiveFromList(
+                  snapshot.data!,
+                );
 
                 if (bestBadge == null) {
                   print('   Best badge is null after filtering master list');
@@ -197,8 +202,11 @@ class UserProfileScreen extends StatelessWidget {
                           height: 20,
                           width: 20,
                           errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.stars,
-                                  size: 20, color: orangeColor),
+                              const Icon(
+                                Icons.stars,
+                                size: 20,
+                                color: orangeColor,
+                              ),
                         ),
                         const SizedBox(width: 8),
                         CustomText(
@@ -217,27 +225,39 @@ class UserProfileScreen extends StatelessWidget {
             const SizedBox(height: 32),
 
             /// STATS CARDS
-            Obx(() => _buildStatCard(
-              label: "Tasks Completed (Helper)",
-              value: (controller.isLoading.value && tasksCompleted > 0)
-                  ? tasksCompleted.toString().padLeft(2, '0')
-                  : controller.tasksCompleted.value.toString().padLeft(2, '0'),
-            )),
-            Obx(() => _buildStatCard(
-              label: "Tasks Requested",
-              value: (controller.isLoading.value && tasksRequested > 0)
-                  ? tasksRequested.toString().padLeft(2, '0')
-                  : controller.tasksRequested.value.toString().padLeft(2, '0'),
-            )),
+            Obx(
+              () => _buildStatCard(
+                label: "Tasks Completed (Helper)",
+                value: (controller.isLoading.value && tasksCompleted > 0)
+                    ? tasksCompleted.toString().padLeft(2, '0')
+                    : controller.tasksCompleted.value.toString().padLeft(
+                        2,
+                        '0',
+                      ),
+              ),
+            ),
+            Obx(
+              () => _buildStatCard(
+                label: "Tasks Requested",
+                value: (controller.isLoading.value && tasksRequested > 0)
+                    ? tasksRequested.toString().padLeft(2, '0')
+                    : controller.tasksRequested.value.toString().padLeft(
+                        2,
+                        '0',
+                      ),
+              ),
+            ),
             Obx(() {
-              final bool noRating = !controller.isLoading.value && controller.totalReviews.value == 0;
+              final bool noRating =
+                  !controller.isLoading.value &&
+                  controller.totalReviews.value == 0;
               return _buildStatCard(
                 label: "User's Rating",
-                value: noRating 
-                    ? "No ratings exist for this user." 
-                    : (controller.isLoading.value 
-                        ? rating.toStringAsFixed(1) 
-                        : controller.averageRating.value.toStringAsFixed(1)),
+                value: noRating
+                    ? "No ratings exist for this user."
+                    : (controller.isLoading.value
+                          ? rating.toStringAsFixed(1)
+                          : controller.averageRating.value.toStringAsFixed(1)),
                 isRating: !noRating,
                 customValueFontSize: noRating ? 14 : 26,
               );
@@ -280,7 +300,8 @@ class UserProfileScreen extends StatelessWidget {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: controller.feedbacks.length,
-                      separatorBuilder: (context, index) => const SizedBox(height: 16),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 16),
                       itemBuilder: (context, index) {
                         final feedback = controller.feedbacks[index];
                         return _buildFeedbackItem(feedback);
@@ -300,10 +321,11 @@ class UserProfileScreen extends StatelessWidget {
 
   Widget _buildFeedbackItem(Map<String, dynamic> feedback) {
     final double ratingValue = (feedback['rating'] ?? 0).toDouble();
-    final DateTime date = feedback['createdAt'] is Timestamp 
+    final DateTime date = feedback['createdAt'] is Timestamp
         ? (feedback['createdAt'] as Timestamp).toDate()
-        : DateTime.tryParse(feedback['createdAt']?.toString() ?? '') ?? DateTime.now();
-    
+        : DateTime.tryParse(feedback['createdAt']?.toString() ?? '') ??
+              DateTime.now();
+
     return CustomContainer(
       conColor: whiteColor,
       borderRadius: BorderRadius.circular(12),
@@ -321,17 +343,17 @@ class UserProfileScreen extends StatelessWidget {
                   children: [
                     CustomText(
                       feedback['reviewerName'] ?? 'Anonymous',
-                      fontSize: 14,
+                      fontSize: 18,
                       fontWeight: FontVariant.bold,
                       color: textColor2,
                     ),
-                    const SizedBox(height: 4),
-                    CustomText(
-                      "on \"${feedback['taskTitle']}\"",
-                      fontSize: 12,
-                      color: grey2Color,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    // const SizedBox(height: 4),
+                    // CustomText(
+                    //   "on \"${feedback['taskTitle']}\"",
+                    //   fontSize: 12,
+                    //   color: grey2Color,
+                    //   overflow: TextOverflow.ellipsis,
+                    // ),
                   ],
                 ),
               ),
@@ -367,12 +389,12 @@ class UserProfileScreen extends StatelessWidget {
             color: lastTextColor,
             fontWeight: FontVariant.regular,
           ),
-          const SizedBox(height: 8),
-          _buildBadge(
-            text: feedback['role'] ?? 'User',
-            bgColor: whiteLightColor,
-            textColor: redLightColor,
-          ).paddingOnly(top: 4),
+          // const SizedBox(height: 8),
+          // _buildBadge(
+          //   text: feedback['role'] ?? 'User',
+          //   bgColor: whiteLightColor,
+          //   textColor: redLightColor,
+          // ).paddingOnly(top: 4),
         ],
       ),
     );

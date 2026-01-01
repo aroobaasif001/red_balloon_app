@@ -105,7 +105,7 @@ class InProgressTaskController extends GetxController {
 
               // Navigate back
               if (Get.isRegistered<InProgressTaskController>()) {
-                Get.offAll(() => BottomNaviScreen(initialIndex: 1));
+                Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 2));
               }
             }
           }

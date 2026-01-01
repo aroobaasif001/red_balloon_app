@@ -1,25 +1,26 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/custom_widgets/custom_container.dart';
 
 import '../../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../../services/offer_service2.dart';
+import '../../../../../../../services/user_service.dart';
 import '../../../../../../../utils/colors.dart';
 import '../../../../../../../utils/dialog_helpers.dart';
 import '../../../profile/tabs/chat_screen.dart';
 import '../../../profile/tabs/controller/chat_controller.dart';
-import 'task_location_display_screen.dart';
-import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/tabs/in_progress_view_details.dart' as ipv;
 import '../controller/task_detail_controller.dart';
 import '../widgets/offer_card.dart';
 import '../widgets/task_info_top_row.dart';
 import '../widgets/task_owner_tile.dart';
-import '../../../../../../../services/user_service.dart';
+import 'in_progress_view_details.dart';
+import 'task_location_display_screen.dart';
 
 class Cleanmysolarpanels extends StatefulWidget {
   final String? appBarTitle;
@@ -70,6 +71,33 @@ class Cleanmysolarpanels extends StatefulWidget {
 class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
   final controller = Get.put(TaskDetailController());
   StreamSubscription? _taskStatusListener;
+  String? _dynamicDistance;
+
+  Future<void> _calculateLiveDistance() async {
+    if (widget.taskType == 'Online Task') return;
+    if (widget.latitude != null &&
+        widget.longitude != null &&
+        widget.latitude != 0.0) {
+      try {
+        final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.medium,
+        );
+        final distMeters = Geolocator.distanceBetween(
+          widget.latitude!,
+          widget.longitude!,
+          position.latitude,
+          position.longitude,
+        );
+        if (mounted) {
+          setState(() {
+            _dynamicDistance = (distMeters / 1000).toStringAsFixed(1);
+          });
+        }
+      } catch (e) {
+        debugPrint('⚠️ Error calculating distance: $e');
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -78,7 +106,10 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
     if (widget.taskId != null && widget.taskId!.isNotEmpty) {
       _setupTaskStatusListener(widget.taskId!);
     }
-    
+
+    // 🔥 Calculate live distance
+    _calculateLiveDistance();
+
     // 🔥 Fetch real owner data
     if (widget.taskOwnerAuthId != null && widget.taskOwnerAuthId!.isNotEmpty) {
       controller.fetchOwnerData(widget.taskOwnerAuthId!);
@@ -90,47 +121,73 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
         .collection('tasks')
         .doc(taskId)
         .snapshots()
-        .listen((snapshot) {
+        .listen((snapshot) async {
           if (snapshot.exists) {
             final data = snapshot.data();
             final status = data?['status']?.toString().toLowerCase() ?? '';
 
             // If status changed to "accepted" or "in_progress", navigate to InProgressViewDetails
             if (status == 'accepted' || status == 'in_progress') {
-              print('✅ Task status changed to: $status - Navigating to InProgressViewDetails');
+              print(
+                '✅ Task status changed to: $status - Navigating to InProgressViewDetails',
+              );
 
               if (mounted) {
                 // Extract all necessary data from the task
                 final taskTitle = data?['title'] ?? widget.taskTitle ?? '';
-                final taskPrice = data?['budget']?.toString() ?? widget.taskPrice ?? '0';
+                final taskPrice =
+                    data?['budget']?.toString() ?? widget.taskPrice ?? '0';
                 final taskTimeAgo = widget.taskTimeAgo ?? '';
                 final taskLocation = data?['location'] ?? widget.location ?? '';
                 final taskImage = data?['imageUrl'] ?? widget.taskImage ?? '';
                 final taskType = data?['taskType'] ?? widget.taskType ?? '';
-                final latitude = data?['latitude']?.toDouble() ?? widget.latitude ?? 0.0;
-                final longitude = data?['longitude']?.toDouble() ?? widget.longitude ?? 0.0;
+                final latitude =
+                    data?['latitude']?.toDouble() ?? widget.latitude ?? 0.0;
+                final longitude =
+                    data?['longitude']?.toDouble() ?? widget.longitude ?? 0.0;
                 final acceptedOfferUid = data?['acceptedOfferUid'] ?? '';
                 final phoneNumber = data?['phoneNumber'] ?? '';
 
+                // 🔥 Calculate Distance
+                String? distanceString;
+                if (taskType != 'Online Task' &&
+                    latitude != 0.0 &&
+                    longitude != 0.0) {
+                  try {
+                    final position = await Geolocator.getCurrentPosition(
+                      desiredAccuracy: LocationAccuracy.medium,
+                    );
+                    final distMeters = Geolocator.distanceBetween(
+                      latitude,
+                      longitude,
+                      position.latitude,
+                      position.longitude,
+                    );
+                    distanceString =
+                        "${(distMeters / 1000).toStringAsFixed(1)} km away";
+                  } catch (e) {
+                    print('⚠️ Could not fetch location for distance calc: $e');
+                  }
+                }
+                Get.back();
                 // Navigate to InProgressViewDetails with full data
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => ipv.InProgressViewDetails(
-                      taskId: taskId,
-                      taskTitle: taskTitle,
-                      price: taskPrice,
-                      timeAgo: taskTimeAgo,
-                      location: taskLocation,
-                      taskImage: taskImage,
-                      taskType: taskType,
-                      latitude: latitude,
-                      longitude: longitude,
-                      helperUid: acceptedOfferUid,
-                      phoneNumber: phoneNumber,
-                      userName: widget.userName,
-                      photoUrl: widget.userPhoto,
-                      userId: widget.userId,
-                    ),
+                Get.to(
+                  () => InProgressViewDetails(
+                    taskId: taskId,
+                    taskTitle: taskTitle,
+                    price: taskPrice,
+                    timeAgo: taskTimeAgo,
+                    location: taskLocation,
+                    taskImage: taskImage,
+                    taskType: taskType,
+                    latitude: latitude,
+                    longitude: longitude,
+                    helperUid: acceptedOfferUid,
+                    phoneNumber: phoneNumber,
+                    userName: widget.userName,
+                    photoUrl: widget.userPhoto,
+                    userId: widget.userId,
+                    distance: distanceString,
                   ),
                 );
               }
@@ -138,7 +195,63 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
               // For other status changes (cancelled, etc), just navigate back
               print('✅ Task status changed to: $status');
               if (mounted) {
-                Navigator.of(context).pop();
+                // Extract all necessary data from the task
+                final taskTitle = data?['title'] ?? widget.taskTitle ?? '';
+                final taskPrice =
+                    data?['budget']?.toString() ?? widget.taskPrice ?? '0';
+                final taskTimeAgo = widget.taskTimeAgo ?? '';
+                final taskLocation = data?['location'] ?? widget.location ?? '';
+                final taskImage = data?['imageUrl'] ?? widget.taskImage ?? '';
+                final taskType = data?['taskType'] ?? widget.taskType ?? '';
+                final latitude =
+                    data?['latitude']?.toDouble() ?? widget.latitude ?? 0.0;
+                final longitude =
+                    data?['longitude']?.toDouble() ?? widget.longitude ?? 0.0;
+                final acceptedOfferUid = data?['acceptedOfferUid'] ?? '';
+                final phoneNumber = data?['phoneNumber'] ?? '';
+
+                // 🔥 Calculate Distance
+                String? distanceString;
+                if (taskType != 'Online Task' &&
+                    latitude != 0.0 &&
+                    longitude != 0.0) {
+                  try {
+                    final position = await Geolocator.getCurrentPosition(
+                      desiredAccuracy: LocationAccuracy.medium,
+                    );
+                    final distMeters = Geolocator.distanceBetween(
+                      latitude,
+                      longitude,
+                      position.latitude,
+                      position.longitude,
+                    );
+                    distanceString =
+                        "${(distMeters / 1000).toStringAsFixed(1)} km away";
+                  } catch (e) {
+                    print('⚠️ Could not fetch location for distance calc: $e');
+                  }
+                }
+                Get.back();
+                // Navigate to InProgressViewDetails with full data
+                Get.to(
+                  () => InProgressViewDetails(
+                    taskId: taskId,
+                    taskTitle: taskTitle,
+                    price: taskPrice,
+                    timeAgo: taskTimeAgo,
+                    location: taskLocation,
+                    taskImage: taskImage,
+                    taskType: taskType,
+                    latitude: latitude,
+                    longitude: longitude,
+                    helperUid: acceptedOfferUid,
+                    phoneNumber: phoneNumber,
+                    userName: widget.userName,
+                    photoUrl: widget.userPhoto,
+                    userId: widget.userId,
+                    distance: distanceString,
+                  ),
+                );
               }
             }
           }
@@ -184,21 +297,30 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                           widget.userId ??
                           'task_${widget.taskTimeAgo ?? 'default'}',
                       isOnline: widget.taskType == 'Online Task',
+                      distance: _dynamicDistance,
                     ),
                     const SizedBox(height: 15),
 
                     Divider(color: bordercolor1, thickness: 1.5, height: 1),
                     const SizedBox(height: 12),
 
-                    Obx(() => TaskOwnerTile(
-                      name: controller.ownerName.value.isEmpty ? widget.userName : controller.ownerName.value,
-                      photoUrl: controller.ownerPhotoUrl.value.isEmpty ? widget.userPhoto : controller.ownerPhotoUrl.value,
-                      id: controller.ownerUserId.value.isEmpty ? widget.userId : controller.ownerUserId.value,
-                      authUid: widget.taskOwnerAuthId,
-                      rating: controller.ownerRating.value,
-                      tasksCompleted: controller.ownerTasksCompleted.value,
-                      tasksRequested: controller.ownerTasksRequested.value,
-                    )),
+                    Obx(
+                      () => TaskOwnerTile(
+                        name: controller.ownerName.value.isEmpty
+                            ? widget.userName
+                            : controller.ownerName.value,
+                        photoUrl: controller.ownerPhotoUrl.value.isEmpty
+                            ? widget.userPhoto
+                            : controller.ownerPhotoUrl.value,
+                        id: controller.ownerUserId.value.isEmpty
+                            ? widget.userId
+                            : controller.ownerUserId.value,
+                        authUid: widget.taskOwnerAuthId,
+                        rating: controller.ownerRating.value,
+                        tasksCompleted: controller.ownerTasksCompleted.value,
+                        tasksRequested: controller.ownerTasksRequested.value,
+                      ),
+                    ),
 
                     const SizedBox(height: 10),
                     Divider(color: bordercolor1, thickness: 1.5, height: 1),
@@ -251,15 +373,19 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                                         color: bordercolor1,
                                         child: Center(
                                           child: CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  redColor,
+                                                ),
                                           ),
                                         ),
                                       ),
-                                      errorWidget: (context, url, error) => Image.asset(
-                                        "assets/images/homedetail.png",
-                                        height: 160,
-                                        fit: BoxFit.cover,
-                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset(
+                                            "assets/images/homedetail.png",
+                                            height: 160,
+                                            fit: BoxFit.cover,
+                                          ),
                                     )
                                   : Image.asset(
                                       "assets/images/homedetail.png",
@@ -280,23 +406,30 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                                     () => TaskLocationDisplayScreen(
                                       latitude: widget.latitude!,
                                       longitude: widget.longitude!,
-                                      title: widget.taskTitle ?? "Task Location",
+                                      title:
+                                          widget.taskTitle ?? "Task Location",
                                       address: widget.location ?? "",
-                                      showDirections: false, // 🔥 Hide for helper
+                                      showDirections:
+                                          false, // 🔥 Hide for helper
                                     ),
                                   );
                                 } else {
-                                  Get.snackbar("Info", "Location coordinates not available");
+                                  Get.snackbar(
+                                    "Info",
+                                    "Location coordinates not available",
+                                  );
                                 }
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                child: (widget.latitude != null &&
+                                child:
+                                    (widget.latitude != null &&
                                         widget.longitude != null &&
                                         widget.latitude != 0.0 &&
                                         widget.longitude != 0.0)
                                     ? CachedNetworkImage(
-                                        imageUrl: "https://maps.googleapis.com/maps/api/staticmap?center=${widget.latitude},${widget.longitude}&zoom=14&size=400x400&markers=color:red%7C${widget.latitude},${widget.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
+                                        imageUrl:
+                                            "https://maps.googleapis.com/maps/api/staticmap?center=${widget.latitude},${widget.longitude}&zoom=14&size=400x400&markers=color:red%7C${widget.latitude},${widget.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
                                         height: 160,
                                         fit: BoxFit.cover,
                                         placeholder: (context, url) => Container(
@@ -304,15 +437,19 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                                           color: bordercolor1,
                                           child: Center(
                                             child: CircularProgressIndicator(
-                                              valueColor: AlwaysStoppedAnimation<Color>(redColor),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                    redColor,
+                                                  ),
                                             ),
                                           ),
                                         ),
-                                        errorWidget: (context, url, error) => Image.asset(
-                                          "assets/images/map.png",
-                                          height: 160,
-                                          fit: BoxFit.cover,
-                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                              "assets/images/map.png",
+                                              height: 160,
+                                              fit: BoxFit.cover,
+                                            ),
                                       )
                                     : Image.asset(
                                         "assets/images/map.png",
@@ -509,7 +646,8 @@ class TaskOffersController extends GetxController {
   final String taskId;
   final RxList<Map<String, dynamic>> offers = <Map<String, dynamic>>[].obs;
   final RxBool isLoading = true.obs;
-  final RxMap<String, Map<String, dynamic>> offerUserStats = <String, Map<String, dynamic>>{}.obs; // 🔥 Store real ratings
+  final RxMap<String, Map<String, dynamic>> offerUserStats =
+      <String, Map<String, dynamic>>{}.obs; // 🔥 Store real ratings
   final UserService _userService = UserService();
 
   // For button cooldown synchronization
@@ -539,7 +677,10 @@ class TaskOffersController extends GetxController {
               final uid = offer['offeringUserUid'];
               if (uid != null && !offerUserStats.containsKey(uid)) {
                 final stats = await _userService.getUserStatistics(uid);
-                final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+                final userDoc = await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(uid)
+                    .get();
                 if (userDoc.exists) {
                   stats['customId'] = userDoc.data()?['userId'] ?? '';
                 }
@@ -700,8 +841,9 @@ class _OfferCardWithTimer extends StatelessWidget {
     final offeringUserUid = offerData['offeringUserUid'];
 
     // Find the TaskOffersController to get pre-fetched stats
-    final TaskOffersController? offersController = Get.isRegistered<TaskOffersController>(tag: offerData['taskId']) 
-        ? Get.find<TaskOffersController>(tag: offerData['taskId']) 
+    final TaskOffersController? offersController =
+        Get.isRegistered<TaskOffersController>(tag: offerData['taskId'])
+        ? Get.find<TaskOffersController>(tag: offerData['taskId'])
         : null;
 
     return Obx(() {
