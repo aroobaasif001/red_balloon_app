@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
 
 class WalletService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -12,6 +13,24 @@ class WalletService {
   String? get currentUserId => _auth.currentUser?.uid;
 
   CollectionReference get _walletCollection => _firestore.collection('wallet');
+
+  /// Helper to get Admin UID
+  Future<String?> _getAdminUid() async {
+    try {
+      final snapshot = await _firestore
+          .collection('users')
+          .where('email', isEqualTo: 'admin@gmail.com')
+          .limit(1)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.first.id;
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching admin UID: $e');
+      return null;
+    }
+  }
 
   /// Upload withdrawal receipt image
   Future<String?> uploadWithdrawalReceipt(File imageFile, String requestId) async {
@@ -326,13 +345,19 @@ class WalletService {
     required String taskTitle,
   }) async {
     try {
+      final adminUid = await _getAdminUid();
       final requesterWalletDoc = _walletCollection.doc(requesterUid);
       final helperWalletDoc = _walletCollection.doc(helperUid);
+      final adminWalletDoc = adminUid != null ? _walletCollection.doc(adminUid) : null;
 
       final result = await _firestore.runTransaction((transaction) async {
         // 1. Read all needed documents FIRST
         final requesterSnapshot = await transaction.get(requesterWalletDoc);
         final helperSnapshot = await transaction.get(helperWalletDoc);
+        DocumentSnapshot? adminSnapshot;
+        if (adminWalletDoc != null) {
+          adminSnapshot = await transaction.get(adminWalletDoc);
+        }
 
         // 2. Validate requester wallet
         if (!requesterSnapshot.exists) {
@@ -351,6 +376,12 @@ class WalletService {
         double currentHelperBalance = 0.0;
         if (helperSnapshot.exists) {
           currentHelperBalance = (helperSnapshot.data() as Map<String, dynamic>)['balance'] ?? 0.0;
+        }
+
+        // Prepare Admin data
+        double currentAdminBalance = 0.0;
+        if (adminSnapshot != null && adminSnapshot.exists) {
+          currentAdminBalance = (adminSnapshot.data() as Map<String, dynamic>)['balance'] ?? 0.0;
         }
 
         // 5. PERFORM ALL WRITES AFTER ALL READS
@@ -372,7 +403,34 @@ class WalletService {
           SetOptions(merge: true),
         );
 
-        // Add transaction records
+        // Update Admin Wallet (Add platform fee)
+        if (adminWalletDoc != null) {
+          transaction.set(
+            adminWalletDoc,
+            {
+              'balance': currentAdminBalance + platformFee,
+              'uid': adminUid,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true),
+          );
+
+          // Admin Transaction
+          final adminTransRef = adminWalletDoc.collection('transactions').doc();
+          transaction.set(adminTransRef, {
+            'id': adminTransRef.id,
+            'title': 'Platform Fee Received',
+            'description': 'Fee (7.5%) from Task "$taskTitle"',
+            'amount': platformFee,
+            'type': 'credit',
+            'status': 'completed',
+            'taskId': taskId,
+            'source': 'Task Completion',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        // Add transaction records for users
         // Requester Transaction (Escrow Released)
         final reqTransRef = requesterWalletDoc.collection('transactions').doc();
         transaction.set(reqTransRef, {
@@ -410,6 +468,15 @@ class WalletService {
           'platformFee': platformFee,
         };
       });
+
+      if (result['success'] == true && adminUid != null) {
+         NotificationService.instance.notifyAdminPlatformFeeReceived(
+           adminId: adminUid,
+           amount: totalAmount * 0.075,
+           source: 'Task Completion',
+           taskId: taskId,
+         );
+      }
 
       return result;
     } catch (e) {
@@ -589,12 +656,18 @@ class WalletService {
     required String taskTitle,
   }) async {
     try {
+      final adminUid = await _getAdminUid();
       final requesterWalletDoc = _walletCollection.doc(requesterUid);
       final helperWalletDoc = _walletCollection.doc(helperUid);
+      final adminWalletDoc = adminUid != null ? _walletCollection.doc(adminUid) : null;
 
       final result = await _firestore.runTransaction((transaction) async {
         final requesterSnapshot = await transaction.get(requesterWalletDoc);
         final helperSnapshot = await transaction.get(helperWalletDoc);
+        DocumentSnapshot? adminSnapshot;
+        if (adminWalletDoc != null) {
+          adminSnapshot = await transaction.get(adminWalletDoc);
+        }
 
         if (!requesterSnapshot.exists) {
           return {'success': false, 'message': 'Requester wallet not found'};
@@ -611,6 +684,11 @@ class WalletService {
         double currentHelperBalance = 0.0;
         if (helperSnapshot.exists) {
           currentHelperBalance = (helperSnapshot.data() as Map<String, dynamic>)['balance'] ?? 0.0;
+        }
+
+        double currentAdminBalance = 0.0;
+        if (adminSnapshot != null && adminSnapshot.exists) {
+          currentAdminBalance = (adminSnapshot.data() as Map<String, dynamic>)['balance'] ?? 0.0;
         }
 
         // Update requester wallet (Subtract from escrow, add 7.5% refund)
@@ -630,6 +708,33 @@ class WalletService {
           },
           SetOptions(merge: true),
         );
+
+        // Update Admin Wallet (Add 7.5% fee)
+        if (adminWalletDoc != null) {
+          transaction.set(
+            adminWalletDoc,
+            {
+              'balance': currentAdminBalance + feeAmount,
+              'uid': adminUid,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true),
+          );
+
+          // Admin Transaction
+          final adminTransRef = adminWalletDoc.collection('transactions').doc();
+          transaction.set(adminTransRef, {
+            'id': adminTransRef.id,
+            'title': 'Platform Fee (Dispute)',
+            'description': 'Fee (7.5%) from Dispute on "$taskTitle"',
+            'amount': feeAmount,
+            'type': 'credit',
+            'status': 'completed',
+            'taskId': taskId,
+            'source': 'Dispute',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
 
         // Transaction records
         final reqTransRef = requesterWalletDoc.collection('transactions').doc();
@@ -660,8 +765,19 @@ class WalletService {
           'success': true,
           'helperAmount': helperAmount,
           'requesterRefund': requesterRefund,
+          'feeAmount': feeAmount,
         };
       });
+
+      if (result['success'] == true && adminUid != null) {
+        final feeAmount = result['feeAmount'] as double? ?? 0.0;
+         NotificationService.instance.notifyAdminPlatformFeeReceived(
+           adminId: adminUid,
+           amount: feeAmount,
+           source: 'Dispute Dismissal',
+           taskId: taskId,
+         );
+      }
 
       return result;
     } catch (e) {
@@ -869,9 +985,11 @@ class WalletService {
         return {'success': false, 'message': 'Missing Helper or Requester UID'};
       }
 
+      final adminUid = await _getAdminUid();
       final validationRef = _firestore.collection('validations').doc(validationId);
       final requesterWalletRef = _walletCollection.doc(requesterUid);
       final helperWalletRef = _walletCollection.doc(helperUid);
+      final adminWalletRef = adminUid != null ? _walletCollection.doc(adminUid) : null;
 
       final result = await _firestore.runTransaction((transaction) async {
         // 1. Mark validation as distributed to prevent double payment
@@ -883,6 +1001,10 @@ class WalletService {
         // 2. Fetch wallets (ALL READS MUST BE FIRST)
         final reqSnap = await transaction.get(requesterWalletRef);
         final helpSnap = await transaction.get(helperWalletRef);
+        DocumentSnapshot? adminSnap;
+        if (adminWalletRef != null) {
+          adminSnap = await transaction.get(adminWalletRef);
+        }
         
         // 🔥 Pre-fetch ALL voter wallets before any writes
         final Map<String, DocumentSnapshot> voterSnaps = {};
@@ -959,6 +1081,31 @@ class WalletService {
           });
         }
 
+        // Credit Admin
+        if (adminWalletRef != null && platformShare > 0) {
+          double currentAdminBal = (adminSnap?.data() as Map<String, dynamic>?)?['balance'] ?? 0.0;
+          
+          transaction.set(adminWalletRef, {
+            'balance': currentAdminBal + platformShare,
+            'uid': adminUid,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+          // Admin Transaction
+          final adminTransRef = adminWalletRef.collection('transactions').doc();
+          transaction.set(adminTransRef, {
+            'id': adminTransRef.id,
+            'title': 'Platform Fee via Validation',
+            'description': 'Fee from "$taskTitle" (${winner == 'helper' ? '7.5%' : '2%'})',
+            'amount': platformShare,
+            'type': 'credit',
+            'status': 'completed',
+            'taskId': taskId,
+            'source': 'Validation Hub',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
         // 4. Voter Distribution Writes
         if (winnerVoterUids.isNotEmpty) {
           double sharePerVoter = voterPoolShare / winnerVoterUids.length;
@@ -1002,6 +1149,18 @@ class WalletService {
           'platformFee': platformShare,
         };
       });
+
+      if (result['success'] == true && adminUid != null) {
+        final platformFee = result['platformFee'] as double? ?? 0.0;
+        if (platformFee > 0) {
+           NotificationService.instance.notifyAdminPlatformFeeReceived(
+             adminId: adminUid,
+             amount: platformFee,
+             source: 'Validation Hub',
+             taskId: taskId,
+           );
+        }
+      }
 
       return result;
     } catch (e) {

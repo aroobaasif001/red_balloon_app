@@ -1886,6 +1886,56 @@ class NotificationService {
       },
     );
   }
+  /// Notify admin that platform fee has been credited
+  Future<void> notifyAdminPlatformFeeReceived({
+    required String adminId,
+    required double amount,
+    required String source, // e.g., "Task Completion", "Validation", "Dispute"
+    required String taskId,
+  }) async {
+    try {
+      final title = 'Platform Fee Received';
+      final body = 'Received SAR ${amount.toStringAsFixed(2)} from $source.';
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(adminId)
+          .collection('items')
+          .add({
+        'title': title,
+        'body': body,
+        'type': NoticeType.success.name,
+        'category': 'admin_fee',
+        'amount': amount,
+        'source': source,
+        'taskId': taskId,
+        'read': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(adminId)
+          .get();
+
+      final deviceToken = userDoc.data()?['deviceToken'] as String?;
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: {
+            'category': 'admin_fee',
+            'amount': amount.toString(),
+            'route': 'wallet_tab', // Admin likely has a wallet view too
+          },
+          recipientSdk: userDoc.data()?['androidSdk'] as int?,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending admin fee notification: $e');
+    }
+  }
 }
 
 // Top-level background handler (must be a static/global function)
