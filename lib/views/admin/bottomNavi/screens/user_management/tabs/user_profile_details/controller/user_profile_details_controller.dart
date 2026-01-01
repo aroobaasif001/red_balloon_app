@@ -30,8 +30,6 @@ class UserProfileDetailsController extends GetxController {
 
   // Stats
   var validationAccuracy = '0%'.obs;
-  var responseTime = '0 min'.obs;
-  var averageDistance = '0 km'.obs;
   var completionRate = '0%'.obs;
   var disputeRate = '0%'.obs;
   var violations = 0.obs;
@@ -39,15 +37,8 @@ class UserProfileDetailsController extends GetxController {
   // Task Breakdown
   var totalTasks = 0.obs;
   var completedTasks = 0.obs;
-  var cancelledByUser = 0.obs;
-  var cancelledByHelper = 0.obs;
   var disputedTasks = 0.obs;
 
-  // Wallet Overview
-  var totalEarned = 0.0.obs;
-  var currentBalance = 0.0.obs;
-  var pendingWithdrawals = 0.0.obs;
-  var penalties = 0.0.obs;
   
   // Suspension state
   var isSuspended = false.obs;
@@ -97,7 +88,7 @@ class UserProfileDetailsController extends GetxController {
         _fetchRatingAndCompletion(uid),
         _fetchStats(uid),
         _fetchTaskBreakdown(uid),
-        _fetchWalletData(uid),
+
       ]);
 
       isLoading.value = false;
@@ -215,45 +206,64 @@ class UserProfileDetailsController extends GetxController {
         validationAccuracy.value = '${accuracy.toStringAsFixed(0)}%';
       }
 
-      // Response Time (example - would need actual data)
-      responseTime.value = '< 5 min';
-
-      // Average Distance (example - would need actual data)
-      averageDistance.value = '3.2 km';
-
-      // Completion Rate
-      final allTasksSnapshot = await _firestore
+      // Completion Rate (already correctly calculated for Helper role)
+      final allTasksAsHelperSnapshot = await _firestore
           .collection('tasks')
           .where('acceptedOfferUid', isEqualTo: uid)
           .get();
 
-      final completedSnapshot = await _firestore
+      final helperCompletedSnapshot = await _firestore
           .collection('tasks')
           .where('acceptedOfferUid', isEqualTo: uid)
           .where('status', isEqualTo: 'completed')
           .get();
 
-      if (allTasksSnapshot.docs.isNotEmpty) {
+      if (allTasksAsHelperSnapshot.docs.isNotEmpty) {
         double completion =
-            (completedSnapshot.docs.length / allTasksSnapshot.docs.length) *
+            (helperCompletedSnapshot.docs.length / allTasksAsHelperSnapshot.docs.length) *
             100;
         completionRate.value = '${completion.toStringAsFixed(0)}%';
       }
 
       // Dispute Rate
-      final disputesSnapshot = await _firestore
-          .collection('disputes')
-          .where('taskData.acceptedOfferUid', isEqualTo: uid)
+      // Calculate based on all tasks where this user was a helper and status is 'Disputed'
+      final helperDisputesSnapshot = await _firestore
+          .collection('tasks')
+          .where('acceptedOfferUid', isEqualTo: uid)
+          .where('status', isEqualTo: 'Disputed')
           .get();
 
-      if (allTasksSnapshot.docs.isNotEmpty) {
-        double dispute =
-            (disputesSnapshot.docs.length / allTasksSnapshot.docs.length) * 100;
+      final helperDisputesSnapshotLower = await _firestore
+          .collection('tasks')
+          .where('acceptedOfferUid', isEqualTo: uid)
+          .where('status', isEqualTo: 'disputed')
+          .get();
+
+      int totalHelperDisputes = helperDisputesSnapshot.docs.length + 
+                                helperDisputesSnapshotLower.docs.length;
+
+      if (allTasksAsHelperSnapshot.docs.isNotEmpty) {
+        double dispute = (totalHelperDisputes / allTasksAsHelperSnapshot.docs.length) * 100;
         disputeRate.value = '${dispute.toStringAsFixed(1)}%';
       }
 
-      // Violations (example - would need actual violations collection)
-      violations.value = 0;
+      // Violations
+      // Count notifications with category 'admin_warning' or 'dispute_warning'
+      final adminWarningsSnapshot = await _firestore
+          .collection('notifications')
+          .doc(uid)
+          .collection('items')
+          .where('category', isEqualTo: 'admin_warning')
+          .get();
+
+      final disputeWarningsSnapshot = await _firestore
+          .collection('notifications')
+          .doc(uid)
+          .collection('items')
+          .where('category', isEqualTo: 'dispute_warning')
+          .get();
+
+      violations.value = adminWarningsSnapshot.docs.length + disputeWarningsSnapshot.docs.length;
     } catch (e) {
       print('❌ Error fetching stats: $e');
     }
@@ -277,9 +287,8 @@ class UserProfileDetailsController extends GetxController {
           requesterTasksSnapshot.docs.length + helperTasksSnapshot.docs.length;
 
       // Completed
+      // Completed and Disputed counts
       int completed = 0;
-      int cancelledUser = 0;
-      int cancelledHelper = 0;
       int disputed = 0;
 
       for (var doc in [
@@ -290,46 +299,19 @@ class UserProfileDetailsController extends GetxController {
 
         if (status == 'completed') {
           completed++;
-        } else if (status == 'cancelled') {
-          // Check who cancelled
-          final cancelledBy = doc.data()['cancelledBy'];
-          if (cancelledBy == uid) {
-            cancelledUser++;
-          } else {
-            cancelledHelper++;
-          }
         } else if (status == 'disputed') {
           disputed++;
         }
       }
 
       completedTasks.value = completed;
-      cancelledByUser.value = cancelledUser;
-      cancelledByHelper.value = cancelledHelper;
       disputedTasks.value = disputed;
     } catch (e) {
       print('❌ Error fetching task breakdown: $e');
     }
   }
 
-  /// Fetch wallet data
-  Future<void> _fetchWalletData(String uid) async {
-    try {
-      final walletDoc = await _firestore.collection('wallets').doc(uid).get();
 
-      if (walletDoc.exists) {
-        final walletData = walletDoc.data()!;
-
-        totalEarned.value = (walletData['totalEarned'] ?? 0).toDouble();
-        currentBalance.value = (walletData['balance'] ?? 0).toDouble();
-        pendingWithdrawals.value = (walletData['pendingWithdrawals'] ?? 0)
-            .toDouble();
-        penalties.value = (walletData['penalties'] ?? 0).toDouble();
-      }
-    } catch (e) {
-      print('❌ Error fetching wallet data: $e');
-    }
-  }
 
   /// Warn user action with push notification
   void warnUser() async {

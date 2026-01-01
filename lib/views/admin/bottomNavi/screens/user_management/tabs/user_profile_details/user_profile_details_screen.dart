@@ -106,27 +106,17 @@ class UserProfileDetailsScreen extends StatelessWidget {
                       value: controller.validationAccuracy.value,
                     ),
                     StatsSmallCard(
-                      imagePath: "assets/icons/response1.png",
-                      title: "Response Time",
-                      value: controller.responseTime.value,
-                    ),
-                    StatsSmallCard(
-                      imagePath: "assets/icons/avgd.png",
-                      title: "Average Distance",
-                      value: controller.averageDistance.value,
-                    ),
-                    StatsSmallCard(
                       imagePath: "assets/icons/comr.png",
                       title: "Completion Rate",
                       value: controller.completionRate.value,
                     ),
                     StatsSmallCard(
-                      imagePath: "assets/icons/vio.png",
+                      imagePath: "assets/icons/disr.png",
                       title: "Dispute Rate",
                       value: controller.disputeRate.value,
                     ),
                     StatsSmallCard(
-                      imagePath: "assets/icons/disr.png",
+                      imagePath: "assets/icons/vio.png",
                       title: "Violations",
                       value: controller.violations.value.toString(),
                     ),
@@ -180,57 +170,8 @@ class UserProfileDetailsScreen extends StatelessWidget {
                               value: controller.completedTasks.value.toString(),
                             ),
                             KeyValueRow(
-                              title: "Cancelled by User",
-                              value: controller.cancelledByUser.value
-                                  .toString(),
-                            ),
-                            KeyValueRow(
-                              title: "Cancelled by Helper",
-                              value: controller.cancelledByHelper.value
-                                  .toString(),
-                            ),
-                            KeyValueRow(
                               title: "Disputed",
                               value: controller.disputedTasks.value.toString(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      CustomContainer(
-                        padding: EdgeInsets.all(18),
-                        conColor: whiteColor,
-                        borderRadius: BorderRadius.circular(15),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const CustomText(
-                              "Wallet Overview",
-                              fontSize: 16,
-                              fontWeight: FontVariant.bold,
-                            ),
-                            const SizedBox(height: 10),
-                            KeyValueRow(
-                              title: "Total Earned",
-                              value:
-                                  "SAR ${controller.totalEarned.value.toStringAsFixed(0)}",
-                            ),
-                            KeyValueRow(
-                              title: "Current Balance",
-                              value:
-                                  "SAR ${controller.currentBalance.value.toStringAsFixed(0)}",
-                            ),
-                            KeyValueRow(
-                              title: "Pending Withdrawals",
-                              value:
-                                  "SAR ${controller.pendingWithdrawals.value.toStringAsFixed(0)}",
-                            ),
-                            KeyValueRow(
-                              title: "Penalties",
-                              value: controller.penalties.value.toStringAsFixed(
-                                0,
-                              ),
                             ),
                           ],
                         ),

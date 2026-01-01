@@ -109,6 +109,12 @@ class WalletController extends GetxController {
       for (var doc in snapshot.docs) {
         final data = doc.data();
         final title = data['title']?.toString() ?? 'Transaction';
+        
+        // Skip "Funds Added" transactions as requested
+        if (title.contains('Funds Added')) {
+          continue;
+        }
+
         final amountVal = (data['amount'] ?? 0.0).toDouble();
         final createdAtTs = data['createdAt'] as Timestamp?;
         final createdAt = createdAtTs?.toDate() ?? DateTime.now();

@@ -130,19 +130,19 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                               ),
 
                               /// Open Badge
-                              CustomContainer(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
-                                conColor: rdBgColor,
-                                borderRadius: BorderRadius.circular(20),
-                                child: CustomText(
-                                  "Open",
-                                  fontSize: 13,
-                                  color: redColor,
-                                ),
-                              ),
+                              // CustomContainer(
+                              //   padding: const EdgeInsets.symmetric(
+                              //     horizontal: 10,
+                              //     vertical: 5,
+                              //   ),
+                              //   conColor: rdBgColor,
+                              //   borderRadius: BorderRadius.circular(20),
+                              //   child: CustomText(
+                              //     "Open",
+                              //     fontSize: 13,
+                              //     color: redColor,
+                              //   ),
+                              // ),
                             ],
                           ),
                         ],
@@ -183,19 +183,19 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                                 fontSize: 16,
                                 fontWeight: FontVariant.semiBold,
                               ),
-                              CustomContainer(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                conColor: greenBg,
-                                borderRadius: BorderRadius.circular(20),
-                                child: CustomText(
-                                  "Verified",
-                                  fontSize: 12,
-                                  color: redColor,
-                                ),
-                              ),
+                              // CustomContainer(
+                              //   padding: const EdgeInsets.symmetric(
+                              //     horizontal: 12,
+                              //     vertical: 6,
+                              //   ),
+                              //   conColor: greenBg,
+                              //   borderRadius: BorderRadius.circular(20),
+                              //   child: CustomText(
+                              //     "Verified",
+                              //     fontSize: 12,
+                              //     color: redColor,
+                              //   ),
+                              // ),
                             ],
                           ),
                           const SizedBox(height: 14),
@@ -297,21 +297,21 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                                 fontSize: 16,
                                 fontWeight: FontVariant.semiBold,
                               ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: rdBgColor,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: CustomText(
-                                  "Verified Helper",
-                                  fontSize: 12,
-                                  color: redColor,
-                                ),
-                              ),
+                              // Container(
+                              //   padding: const EdgeInsets.symmetric(
+                              //     horizontal: 12,
+                              //     vertical: 6,
+                              //   ),
+                              //   decoration: BoxDecoration(
+                              //     color: rdBgColor,
+                              //     borderRadius: BorderRadius.circular(20),
+                              //   ),
+                              //   child: CustomText(
+                              //     "Verified Helper",
+                              //     fontSize: 12,
+                              //     color: redColor,
+                              //   ),
+                              // ),
                             ],
                           ),
 
@@ -352,40 +352,40 @@ class _DisputeDetailsScreenState extends State<DisputeDetailsScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        CustomText(
-                                          "Validation Accuracy",
-                                          fontSize: 14,
-                                          color: timeColor,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        CustomText(
-                                          "96%",
-                                          fontSize: 14,
-                                          fontWeight: FontVariant.medium,
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        CustomText(
-                                          "Response Time",
-                                          fontSize: 14,
-                                          color: timeColor,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        CustomText(
-                                          "<5 min",
-                                          fontSize: 14,
-                                          fontWeight: FontVariant.medium,
-                                        ),
-                                      ],
-                                    ),
+                                    // Column(
+                                    //   crossAxisAlignment:
+                                    //       CrossAxisAlignment.start,
+                                    //   children: [
+                                    //     CustomText(
+                                    //       "Validation Accuracy",
+                                    //       fontSize: 14,
+                                    //       color: timeColor,
+                                    //     ),
+                                    //     const SizedBox(height: 4),
+                                    //     CustomText(
+                                    //       "96%",
+                                    //       fontSize: 14,
+                                    //       fontWeight: FontVariant.medium,
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                    // Column(
+                                    //   crossAxisAlignment:
+                                    //       CrossAxisAlignment.start,
+                                    //   children: [
+                                    //     CustomText(
+                                    //       "Response Time",
+                                    //       fontSize: 14,
+                                    //       color: timeColor,
+                                    //     ),
+                                    //     const SizedBox(height: 4),
+                                    //     CustomText(
+                                    //       "<5 min",
+                                    //       fontSize: 14,
+                                    //       fontWeight: FontVariant.medium,
+                                    //     ),
+                                    //   ],
+                                    // ),
                                   ],
                                 ),
                               ],

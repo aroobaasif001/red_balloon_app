@@ -35,7 +35,7 @@ class ProfileHeaderCard extends StatelessWidget {
         ],
         height: 234,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 69),
-        conColor: redColor,
+        conColor: white2Color,
         borderRadius: BorderRadius.circular(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -53,7 +53,7 @@ class ProfileHeaderCard extends StatelessWidget {
                 fontSize: 30,
                 fontWeight: FontVariant.bold,
                 alignment: Alignment.center,
-                color: whiteColor,
+                color: Colors.black,
               ),
             const SizedBox(height: 6),
 
@@ -78,7 +78,7 @@ class ProfileHeaderCard extends StatelessWidget {
               fontSize: 20,
               fontWeight: FontVariant.bold,
               alignment: Alignment.center,
-              color: whiteColor,
+              color: Colors.black,
 
               maxLines: 1, // 🔥 Force one line
               overflow: TextOverflow.ellipsis, // 🔥 Prevent wrapping
