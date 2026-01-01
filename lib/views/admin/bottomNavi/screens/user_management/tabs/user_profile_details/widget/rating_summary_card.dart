@@ -37,17 +37,22 @@ class RatingSummaryCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.star, color: yellow, size: 28),
-              const SizedBox(width: 6),
-              CustomText(
-                rating.toString(),
-                fontSize: 30,
-                fontWeight: FontVariant.bold,
-                alignment: Alignment.center,
-              ),
-            ],
+          Flexible(
+            child: Row(
+              children: [
+                const Icon(Icons.star, color: yellow, size: 28),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: CustomText(
+                    rating.toStringAsFixed(1),
+                    fontSize: 30,
+                    fontWeight: FontVariant.bold,
+                    alignment: Alignment.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
           Column(
             children: [

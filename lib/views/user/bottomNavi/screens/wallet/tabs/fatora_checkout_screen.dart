@@ -32,7 +32,6 @@ class _FatoraCheckoutScreenState extends State<FatoraCheckoutScreen> {
     super.initState();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setUserAgent("Mozilla/5.0 (Linux; Android 13; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36")
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -46,18 +45,26 @@ class _FatoraCheckoutScreenState extends State<FatoraCheckoutScreen> {
             _checkUrl(url);
           },
           onPageFinished: (String url) {
+            debugPrint('Page finished loading: $url');
             setState(() {
               _isLoading = false;
+              _hasError = false; // Reset error state on success
             });
             _checkUrl(url);
           },
           onWebResourceError: (WebResourceError error) {
-            debugPrint('Web Resource Error: ${error.description}');
-            setState(() {
-              _isLoading = false;
-              _hasError = true;
-              _errorMessage = error.description;
-            });
+            debugPrint('Web Resource Error: ${error.description} (Code: ${error.errorCode}, MainFrame: ${error.isForMainFrame})');
+            
+            // errorCode -6 is ERR_CONNECTION_RESET. 
+            // In many cases, the WebView retries and succeeds (as seen in logs).
+            // We only show the error screen for other terminal errors on the main frame.
+            if ((error.isForMainFrame ?? true) && error.errorCode != -6) {
+              setState(() {
+                _isLoading = false;
+                _hasError = true;
+                _errorMessage = error.description;
+              });
+            }
           },
           onNavigationRequest: (NavigationRequest request) {
             return NavigationDecision.navigate;

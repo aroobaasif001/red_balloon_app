@@ -105,7 +105,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                               child: UserCard(
                                 code: user.userId ?? 'RB-0000',
                                 userType: role,
-                                verified: true, // TODO: Get from user model when available
+                                verified: false, // TODO: Get from user model when available
                                 city: user.city ?? 'Unknown',
                                 stars: rating,
                                 tasksText: tasksText,
