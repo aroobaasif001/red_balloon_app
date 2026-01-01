@@ -5,7 +5,11 @@ import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../utils/colors.dart';
 import 'admin_info_row.dart';
 
-Widget adminUserOverviewCard() {
+Widget adminUserOverviewCard({
+  required String walletBalance,
+  required String warningsCount,
+  required VoidCallback onWalletTap,
+}) {
   return CustomContainer(
     padding: const EdgeInsets.all(16),
     conColor: white2Color,
@@ -33,18 +37,21 @@ Widget adminUserOverviewCard() {
           color: blackColor,
         ),
         const SizedBox(height: 22),
-        adminInfoRow(
-          icon: 'assets/icons/wallet_3.png',
-          label: 'Wallet Balance',
-          value: '\$1,247.50',
-          isEmphasized: true,
-          isImage: true,
+        InkWell(
+          onTap: onWalletTap,
+          child: adminInfoRow(
+            icon: 'assets/icons/wallet_3.png',
+            label: 'Wallet Balance',
+            value: walletBalance,
+            isEmphasized: true,
+            isImage: true,
+          ),
         ),
         const SizedBox(height: 22),
         adminInfoRow(
           icon: 'assets/icons/shield.png',
           label: 'Warnings Issued',
-          value: '0',
+          value: warningsCount,
           isImage: true,
         ),
       ],

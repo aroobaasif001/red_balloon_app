@@ -220,7 +220,15 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     );
   }
 
-  Widget _buildDetailsCard(String tId, String description) {
+Widget _buildDetailsCard(String tId, String description) {
+    // Format Transaction ID as requested: TK- + first 4 chars of transaction ID
+    String formattedId = tId;
+    if (tId.length >= 4) {
+      formattedId = 'TK-${tId.substring(0, 4)}';
+    } else {
+      formattedId = 'TK-$tId';
+    }
+
     return CustomContainer(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -235,7 +243,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
       ],
       child: Column(
         children: [
-          _buildDetailRow('Transaction ID', tId),
+          _buildDetailRow('Task ID', formattedId), // Changed Label and Value
           const Divider(height: 24),
           _buildDetailRow('Description', description),
         ],

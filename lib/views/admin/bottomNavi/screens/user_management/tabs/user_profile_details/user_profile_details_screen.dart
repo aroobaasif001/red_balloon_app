@@ -179,6 +179,93 @@ class UserProfileDetailsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: 25),
+                // WARNING HISTORY
+                CustomContainer(
+                  margin: const EdgeInsets.only(bottom: 18),
+                  border: Border(
+                    bottom: BorderSide(color: bordercol, width: 1),
+                    right: BorderSide(color: bordercol, width: 1),
+                    left: BorderSide(color: bordercol, width: 1),
+                  ),
+                  conColor: white2Color,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: blackColor.withOpacity(0.25),
+                      blurRadius: 1,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                         children: [
+                           const SectionTitle("Warning History"),
+                           Obx(() => CustomText(
+                             "Total: ${controller.totalWarnings.value}",
+                             color: redColor,
+                             fontWeight: FontVariant.bold,
+                             fontSize: 14,
+                           )),
+                         ],
+                       ),
+                       const SizedBox(height: 10),
+                       Obx(() {
+                         if (controller.warningHistory.isEmpty) {
+                           return const Padding(
+                             padding: EdgeInsets.symmetric(vertical: 10),
+                             child: CustomText(
+                               "No warnings issued yet.",
+                               color: greyColor,
+                               fontSize: 13,
+                             ),
+                           );
+                         }
+                         return ListView.separated(
+                           physics: const NeverScrollableScrollPhysics(),
+                           shrinkWrap: true,
+                           itemCount: controller.warningHistory.length,
+                           separatorBuilder: (_, __) => const Divider(color: bordercol),
+                           itemBuilder: (context, index) {
+                             final warn = controller.warningHistory[index];
+                             return ListTile(
+                               contentPadding: EdgeInsets.zero,
+                               leading: const Icon(Icons.warning_amber_rounded, color: redColor),
+                               title: CustomText(
+                                 warn['reason'] ?? 'Violation',
+                                 fontWeight: FontVariant.semiBold,
+                                 fontSize: 14,
+                               ),
+                               subtitle: Column(
+                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                 children: [
+                                   const SizedBox(height: 4),
+                                   CustomText(
+                                     warn['message'] ?? '',
+                                     fontSize: 12,
+                                     color: blackColor.withOpacity(0.7),
+                                     maxLines: 2,
+                                   ),
+                                   const SizedBox(height: 4),
+                                    CustomText(
+                                     warn['date'] ?? '',
+                                     fontSize: 10,
+                                     color: greyColor,
+                                   ),
+                                 ],
+                               ),
+                             );
+                           },
+                         );
+                       }),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 10),
                 Row(
                   children: [

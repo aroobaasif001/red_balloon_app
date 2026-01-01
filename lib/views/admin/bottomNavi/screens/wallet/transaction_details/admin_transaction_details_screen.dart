@@ -191,6 +191,14 @@ class AdminTransactionDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildDetailsCard(String tId, String taskCode, double fee, double net) {
+    // Format Task ID using Transaction ID as requested
+    String formattedTaskId = tId;
+    if (tId.length >= 4) {
+      formattedTaskId = 'TK-${tId.substring(0, 4)}';
+    } else {
+      formattedTaskId = 'TK-$tId';
+    }
+
     return CustomContainer(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -207,7 +215,7 @@ class AdminTransactionDetailsScreen extends StatelessWidget {
         children: [
           _buildDetailRow('Transaction ID', tId),
           const Divider(height: 24),
-          _buildDetailRow('Task ID', taskCode),
+          _buildDetailRow('Task ID', formattedTaskId),
           if (fee > 0) ...[
             const Divider(height: 24),
             _buildDetailRow('Service Fee', 'SAR ${fee.toStringAsFixed(2)}'),
@@ -278,7 +286,6 @@ class AdminTransactionDetailsScreen extends StatelessWidget {
           const SizedBox(height: 24),
           Row(
             children: [
-              _buildTaskInfoItem('Escrow Amount', 'SAR ${task.budget}'),
               _buildTaskInfoItem('Task Category', task.taskType),
             ],
           ),

@@ -56,7 +56,7 @@ Widget buildStatusCard(
           if (taskType != 'Online Task') ...[
             const SizedBox(height: 10),
             CustomText(
-              '${controller.distance.value} 	 ${controller.eta.value}',
+              '${controller.distance.value}',
               fontSize: 15,
               color: walletGrey600Color,
               fontWeight: FontVariant.regular,

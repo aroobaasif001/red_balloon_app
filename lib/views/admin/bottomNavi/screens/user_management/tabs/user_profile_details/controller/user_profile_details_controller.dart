@@ -45,6 +45,10 @@ class UserProfileDetailsController extends GetxController {
 
   String? _currentUserId;
 
+  // Warning Stats
+  var totalWarnings = 0.obs;
+  var warningHistory = <Map<String, dynamic>>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -79,6 +83,9 @@ class UserProfileDetailsController extends GetxController {
       isVerified.value = userData['isVerified'] ?? false;
       city.value = userData['city'] ?? '';
       
+      // Warning Info
+      totalWarnings.value = (userData['totalWarningIssued'] ?? 0) as int;
+      
       // Suspension Status
       isSuspended.value = userData['willLogin'] == false;
 
@@ -88,7 +95,7 @@ class UserProfileDetailsController extends GetxController {
         _fetchRatingAndCompletion(uid),
         _fetchStats(uid),
         _fetchTaskBreakdown(uid),
-
+        _fetchWarningHistory(uid),
       ]);
 
       isLoading.value = false;
@@ -96,6 +103,35 @@ class UserProfileDetailsController extends GetxController {
     } catch (e) {
       print('❌ Error fetching user profile: $e');
       isLoading.value = false;
+    }
+  }
+
+  /// Fetch warning history
+  Future<void> _fetchWarningHistory(String uid) async {
+    try {
+      final snapshot = await _firestore
+          .collection('warning_issued')
+          .where('userId', isEqualTo: uid)
+          .orderBy('issuedAt', descending: true)
+          .get();
+
+      warningHistory.value = snapshot.docs.map((doc) {
+         final data = doc.data();
+         // Handle timestamp
+         Timestamp? ts = data['issuedAt'] as Timestamp?;
+         String formattedDate = 'Just now';
+         if (ts != null) {
+           formattedDate = ts.toDate().toString().split(' ')[0]; // YYYY-MM-DD
+         }
+         
+         return {
+           'message': data['message'] ?? 'Warning issued',
+           'date': formattedDate,
+           'reason': data['reason'] ?? '',
+         };
+      }).toList();
+    } catch (e) {
+      print('❌ Error fetching warning history: $e');
     }
   }
 
@@ -133,6 +169,62 @@ class UserProfileDetailsController extends GetxController {
       );
     } catch (e) {
       print('❌ Error fetching user progress: $e');
+    }
+  }
+  
+ // ... (rest of methods until warnUser)
+
+  /// Warn user action with push notification
+  void warnUser() async {
+    if (_currentUserId == null) return;
+    if (isWarning.value) return; // Prevent double-tap
+
+    try {
+      isWarning.value = true;
+      
+      final msg = 'Warning issued to user $_currentUserId at ${DateTime.now()}';
+      
+      // 1. Log warning in 'warning_issued' collection
+      await _firestore.collection('warning_issued').add({
+        'userId': _currentUserId,
+        'issuedAt': FieldValue.serverTimestamp(),
+        'message': msg,
+        'reason': 'Professional Violation', // Default reason
+      });
+
+      // 2. Increment totalWarningIssued count on user document
+      await _firestore.collection('users').doc(_currentUserId).update({
+        'totalWarningIssued': FieldValue.increment(1),
+      });
+
+      // 3. Send dynamic push notification
+      await NotificationService.instance.notifyAdminWarning(
+        userUid: _currentUserId!,
+      );
+
+      // 4. Update local stats immediately
+      totalWarnings.value++;
+      warningHistory.insert(0, {
+        'message': msg,
+        'date': DateTime.now().toString().split(' ')[0],
+        'reason': 'Professional Violation',
+      });
+      
+      // Re-fetch violations count as well
+      _fetchStats(_currentUserId!);
+
+      Get.snackbar(
+        'Action Successful',
+        'Professional warning has been issued and logged.',
+      );
+      
+      // Navigate back after 1 second
+      await Future.delayed(const Duration(seconds: 1));
+      Get.back();
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to send warning: $e');
+    } finally {
+      isWarning.value = false;
     }
   }
 
@@ -313,33 +405,7 @@ class UserProfileDetailsController extends GetxController {
 
 
 
-  /// Warn user action with push notification
-  void warnUser() async {
-    if (_currentUserId == null) return;
-    if (isWarning.value) return; // Prevent double-tap
 
-    try {
-      isWarning.value = true;
-      
-      // Send dynamic push notification
-      await NotificationService.instance.notifyAdminWarning(
-        userUid: _currentUserId!,
-      );
-
-      Get.snackbar(
-        'Action Successful',
-        'Professional warning has been issued to the user.',
-      );
-      
-      // Navigate back after 1 second
-      await Future.delayed(const Duration(seconds: 1));
-      Get.back();
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to send warning: $e');
-    } finally {
-      isWarning.value = false;
-    }
-  }
 
   /// Toggle account suspension status
   void toggleAccountSuspension() async {

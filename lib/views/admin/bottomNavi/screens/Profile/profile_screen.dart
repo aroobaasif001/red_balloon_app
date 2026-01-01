@@ -35,7 +35,11 @@ class AdminProfileScreen extends StatelessWidget {
                       const SizedBox(height: 8),
                       adminProfileHeaderCard(),
                       const SizedBox(height: 16),
-                      adminUserOverviewCard(),
+                      Obx(() => adminUserOverviewCard(
+                        walletBalance: controller.walletBalance.value,
+                        warningsCount: controller.warningsIssued.value.toString(),
+                        onWalletTap: controller.navigateToTransactions,
+                      )),
                       const SizedBox(height: 16),
                       Obx(
                         () => adminSettingsCard(
