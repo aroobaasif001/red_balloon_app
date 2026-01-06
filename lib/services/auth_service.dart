@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:red_balloon_app/model/auth_model.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -130,6 +131,12 @@ class AuthService {
   // Sign out
   Future<void> signOut() async {
     try {
+      final uid = currentUser?.uid;
+      if (uid != null) {
+        // 🔥 Clear FCM token from database before signing out
+        await NotificationService.instance.deleteUserDeviceToken(uid);
+      }
+
       await Future.wait([
         _auth.signOut(),
         _googleSignIn.signOut(),

@@ -5,6 +5,8 @@ import 'package:red_balloon_app/custom_widgets/customtext.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/Profile/profile_screen.dart';
 
 import '../../../../../utils/colors.dart';
+import '../../../../user/bottomNavi/screens/profile/tabs/controller/messages_controller.dart';
+import '../../../../user/bottomNavi/screens/profile/tabs/messages_screen.dart';
 import '../Notification/notification_screen.dart';
 import 'controllers/home_tab_controller.dart';
 import 'tabs/home_task_screen.dart';
@@ -18,6 +20,9 @@ class AdminHomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HomeTabsController controller = Get.put(HomeTabsController());
+    final msgController = Get.isRegistered<MessagesController>()
+        ? Get.find<MessagesController>()
+        : Get.put(MessagesController(), permanent: true);
 
     return SafeArea(
       child: Scaffold(
@@ -39,6 +44,49 @@ class AdminHomeTab extends StatelessWidget {
                           height: 84,
                         ),
                         Spacer(),
+                        Obx(() {
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Get.to(() => const MessagesScreen());
+                                },
+                                icon: const Image(
+                                  image: AssetImage(
+                                    'assets/icons/homemessage.png',
+                                  ),
+                                  height: 24,
+                                ),
+                              ),
+                              if (msgController.totalUnreadCount.value > 0)
+                                Positioned(
+                                  right: 4,
+                                  top: 4,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: redColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 16,
+                                      minHeight: 16,
+                                    ),
+                                    child: Text(
+                                      '${msgController.totalUnreadCount.value}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        }),
                         IconButton(
                           onPressed: () {
                             Get.to(() => AdminNotificationScreen());
@@ -75,33 +123,41 @@ class AdminHomeTab extends StatelessWidget {
                   color: blackLightColor,
                 ),
                 SizedBox(height: 22),
-                Obx(() => Row(
-                  children: [
-                    admin_home_platform_metrics_widget(
-                      value: controller.activeTasksCount.value.toString(),
-                    ),
-                    SizedBox(width: 10),
-                    admin_home_platform_metrics_widget(
-                      iconPath: 'assets/icons/dispute.png',
-                      value: controller.disputesCount.value.toString(),
-                      title: 'Disputes',
-                    ),
-                  ],
-                )),
+                Obx(
+                  () => Row(
+                    children: [
+                      admin_home_platform_metrics_widget(
+                        value: controller.activeTasksCount.value.toString(),
+                      ),
+                      SizedBox(width: 10),
+                      admin_home_platform_metrics_widget(
+                        iconPath: 'assets/icons/dispute.png',
+                        value: controller.disputesCount.value.toString(),
+                        title: 'Disputes',
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 22),
                 Row(
                   children: [
-                    Obx(() => admin_home_platform_metrics_widget(
-                      iconPath: 'assets/icons/lock_2.png',
-                      value: 'SAR ${controller.totalEscrowBalance.value >= 1000 ? (controller.totalEscrowBalance.value / 1000).toStringAsFixed(1) + 'k' : controller.totalEscrowBalance.value.toStringAsFixed(1)}',
-                      title: 'Wallet Locked',
-                    )),
+                    Obx(
+                      () => admin_home_platform_metrics_widget(
+                        iconPath: 'assets/icons/lock_2.png',
+                        value:
+                            'SAR ${controller.totalEscrowBalance.value >= 1000 ? (controller.totalEscrowBalance.value / 1000).toStringAsFixed(1) + 'k' : controller.totalEscrowBalance.value.toStringAsFixed(1)}',
+                        title: 'Wallet Locked',
+                      ),
+                    ),
                     SizedBox(width: 10),
-                    Obx(() => admin_home_platform_metrics_widget(
-                      iconPath: 'assets/icons/clock_2.png',
-                      value: controller.pendingWithdrawalsCount.value.toString(),
-                      title: 'Pending Withdrawals',
-                    )),
+                    Obx(
+                      () => admin_home_platform_metrics_widget(
+                        iconPath: 'assets/icons/clock_2.png',
+                        value: controller.pendingWithdrawalsCount.value
+                            .toString(),
+                        title: 'Pending Withdrawals',
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 22),

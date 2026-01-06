@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:red_balloon_app/utils/dialog_helpers.dart';
 
 class FatoraService {
   // Toggle this to switch between modes
-  static const bool isTestMode = true;
+  static const bool isTestMode = false;
 
   static const String _prodApiKey = 'a1ac1512-6c07-4242-8d95-e9ed5db9eed4';
   static const String _testApiKey = 'E4B73FEE-F492-4607-A38D-852B0EBC91C9';
@@ -31,7 +31,10 @@ class FatoraService {
           'currency': 'SAR',
           'order_id': DateTime.now().millisecondsSinceEpoch.toString(),
           'client': {
-            'name': customerName.substring(0, min(customerName.length, 50)), // Limited length
+            'name': customerName.substring(
+              0,
+              min(customerName.length, 50),
+            ), // Limited length
             'email': customerEmail,
           },
           'language': 'en',

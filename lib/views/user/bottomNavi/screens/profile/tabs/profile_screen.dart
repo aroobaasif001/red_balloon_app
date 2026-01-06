@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/custom_widgets/custom_appbar.dart';
 import 'package:red_balloon_app/utils/colors.dart';
 import 'package:red_balloon_app/utils/dialog_helpers.dart';
@@ -343,9 +344,8 @@ class ProfileScreen extends StatelessWidget {
                             // Clear all GetX controllers before logout
                             Get.deleteAll(force: true);
 
-                            await FirebaseAuth.instance.signOut();
-                            await GoogleSignIn().signOut();
-                            Get.offAll(() => OnboardingScreen());
+                            await AuthService().signOut();
+                            Get.offAll(() => const OnboardingScreen());
                           },
                         );
                       },

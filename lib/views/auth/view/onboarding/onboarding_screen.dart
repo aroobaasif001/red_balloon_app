@@ -28,6 +28,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ? Get.find<AuthController>()
       : Get.put(AuthController());
 
+  bool _isAgreed = false;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -38,10 +40,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _handleLogin() async {
     if (_emailController.text.trim().isEmpty ||
         _passwordController.text.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please enter email and password',
-      );
+      Get.snackbar('Error', 'Please enter email and password');
       return;
     }
 
@@ -119,7 +118,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         () => CustomButton(
                           label: 'Login',
                           isLoading: authController.isLoading.value,
-                          onPressed: _handleLogin,
+                          onPressed: _isAgreed ? _handleLogin : null,
                         ),
                       ),
                     ],
@@ -139,13 +138,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         Obx(
                           () => SocialButton.apple(
                             isLoading: authController.isLoading.value,
-                            onPressed: () async {
-                              final user = await authController
-                                  .signInWithApple();
-                              if (user != null) {
-                                Get.off(() => const BottomNaviScreen());
-                              }
-                            },
+                            onPressed: _isAgreed
+                                ? () async {
+                                    final user = await authController
+                                        .signInWithApple();
+                                    if (user != null) {
+                                      Get.off(() => const BottomNaviScreen());
+                                    }
+                                  }
+                                : null,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -153,13 +154,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Obx(
                         () => SocialButton.google(
                           isLoading: authController.isLoading.value,
-                          onPressed: () async {
-                            final user = await authController
-                                .signInWithGoogle();
-                            if (user != null) {
-                              Get.offAll(() => const BottomNaviScreen());
-                            }
-                          },
+                          onPressed: _isAgreed
+                              ? () async {
+                                  final user = await authController
+                                      .signInWithGoogle();
+                                  if (user != null) {
+                                    Get.offAll(() => const BottomNaviScreen());
+                                  }
+                                }
+                              : null,
                         ),
                       ),
                     ],
@@ -168,11 +171,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 const SizedBox(height: 42),
                 FadeIn(
                   delay: const Duration(milliseconds: 1900),
-                  child: CustomText(
-                    'By continuing, you agree to Red Balloon\'s Terms & Privacy\nPolicy',
-                    fontSize: 12,
-                    textAlign: TextAlign.center,
-                    color: grey2Color,
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.start,
+                    // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Checkbox(
+                        value: _isAgreed,
+                        activeColor: redColor,
+                        onChanged: (val) {
+                          setState(() {
+                            _isAgreed = val ?? false;
+                          });
+                        },
+                      ),
+                      Flexible(
+                        child: CustomText(
+                          'By continuing, you agree to Red Balloon\'s Terms & Privacy Policy',
+                          fontSize: 12,
+                          textAlign: TextAlign.start,
+                          color: grey2Color,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 20),

@@ -110,7 +110,7 @@ class SocialButton extends StatelessWidget {
       onPressed: enabled ? onPressed : null,
       color: surface,
       // User requested: "color na change ho". Keep surface color same if loading.
-      disabledColor: isLoading ? surface : surface.withOpacity(0.6),
+      disabledColor: isLoading ? surface : surface.withOpacity(0.03),
       elevation: 0,
       padding: EdgeInsets.zero, // inner padding handled below
       minWidth: 0, // 👈 don't force full width

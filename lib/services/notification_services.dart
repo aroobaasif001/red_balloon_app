@@ -1002,7 +1002,6 @@ class NotificationService {
     }
   }
 
-  /// Send push notification for chat messages
   Future<void> notifyChatMessage({
     required String receiverId,
     required String senderId,
@@ -1015,33 +1014,46 @@ class NotificationService {
     String? taskImage,
   }) async {
     try {
+      // Get Admin UID (cached if possible)
+      final adminQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: 'admin@gmail.com')
+          .limit(1)
+          .get();
+      String? adminUid;
+      if (adminQuery.docs.isNotEmpty) {
+        adminUid = adminQuery.docs.first.id;
+      }
+
+      final isReceiverAdmin = receiverId == adminUid;
+
       debugPrint('Sending chat notification to user: $receiverId');
 
       final title = senderName; // Name as title like most chat apps
       final body = message;
 
-      // 1) Save notification to Firestore - Optional for chat as they are in the chat list,
-      // but let's save it for consistency in notification history if desired.
-      // Many apps don't save chat messages in "Notification history", only system alerts.
-      // But user asked "db ma bhi store ho" in previous task, let's keep it consistent.
-      await FirebaseFirestore.instance
-          .collection('notifications')
-          .doc(receiverId)
-          .collection('items')
-          .add({
-            'title': title,
-            'body': body,
-            'type': NoticeType.info.name,
-            'category': 'chat_message',
-            'senderId': senderId,
-            'conversationId': conversationId,
-            'taskId': taskId,
-            'taskTitle': taskTitle,
-            'senderPhoto': senderPhoto,
-            'taskImage': taskImage,
-            'read': false,
-            'createdAt': FieldValue.serverTimestamp(),
-          });
+      // 1) Save notification to Firestore ONLY IF receiver is NOT admin
+      // Admin wants push notifications but doesn't want them in their notification screen history.
+      if (!isReceiverAdmin) {
+        await FirebaseFirestore.instance
+            .collection('notifications')
+            .doc(receiverId)
+            .collection('items')
+            .add({
+          'title': title,
+          'body': body,
+          'type': NoticeType.info.name,
+          'category': 'chat_message',
+          'senderId': senderId,
+          'conversationId': conversationId,
+          'taskId': taskId,
+          'taskTitle': taskTitle,
+          'senderPhoto': senderPhoto,
+          'taskImage': taskImage,
+          'read': false,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
 
       // 2) Get receiver's device token
       final userDoc = await FirebaseFirestore.instance
@@ -1051,33 +1063,50 @@ class NotificationService {
 
       final deviceToken = userDoc.data()?['deviceToken'] as String?;
 
-      if (deviceToken == null || deviceToken.isEmpty) {
-        debugPrint('No device token found for receiver: $receiverId');
-        return;
+      final payloadData = {
+        'category': 'chat_message',
+        'senderId': senderId,
+        'senderName': senderName,
+        'senderPhoto': senderPhoto ?? '',
+        'conversationId': conversationId,
+        'taskId': taskId,
+        'taskTitle': taskTitle,
+        'taskImage': taskImage ?? '',
+        'route': 'chat_screen',
+      };
+
+      if (deviceToken != null && deviceToken.isNotEmpty) {
+        final androidSdk = userDoc.data()?['androidSdk'] as int?;
+        // 3) Send FCM push notification to receiver
+        await _sendFcmDirect(
+          token: deviceToken,
+          title: title,
+          body: body,
+          data: payloadData,
+          recipientSdk: androidSdk,
+        );
       }
 
-      final androidSdk = userDoc.data()?['androidSdk'] as int?;
+      // 4) 🔥 Notify Admin too if the admin is not the already notified receiver
+      // This fulfills "admin ko her chat ka push notification bhi jae" (monitoring)
+      if (!isReceiverAdmin && adminUid != null && adminUid != senderId) {
+        final adminDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(adminUid)
+            .get();
+        final adminToken = adminDoc.data()?['deviceToken'] as String?;
+        if (adminToken != null && adminToken.isNotEmpty) {
+          await _sendFcmDirect(
+            token: adminToken,
+            title: '[Monitor] $senderName -> $receiverId',
+            body: body,
+            data: payloadData,
+            recipientSdk: adminDoc.data()?['androidSdk'] as int?,
+          );
+        }
+      }
 
-      // 3) Send FCM push notification
-      await _sendFcmDirect(
-        token: deviceToken,
-        title: title,
-        body: body,
-        data: {
-          'category': 'chat_message',
-          'senderId': senderId,
-          'senderName': senderName,
-          'senderPhoto': senderPhoto ?? '',
-          'conversationId': conversationId,
-          'taskId': taskId,
-          'taskTitle': taskTitle,
-          'taskImage': taskImage ?? '',
-          'route': 'chat_screen',
-        },
-        recipientSdk: androidSdk,
-      );
-
-      debugPrint('Chat notification sent successfully');
+      debugPrint('Chat notification processed. Admin suppressed from Firestore: $isReceiverAdmin');
     } catch (e) {
       debugPrint('Error sending chat notification: $e');
     }
@@ -1552,6 +1581,19 @@ class NotificationService {
       debugPrint('Device token saved for user: $userId');
     } catch (e) {
       debugPrint('Error saving user device token: $e');
+    }
+  }
+
+  /// Delete device token from Firestore (call on logout)
+  Future<void> deleteUserDeviceToken(String userId) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'deviceToken': '', // Clear token from database
+        'lastTokenUpdate': FieldValue.serverTimestamp(),
+      });
+      debugPrint('Device token cleared from database for user $userId');
+    } catch (e) {
+      debugPrint('Error clearing device token: $e');
     }
   }
 

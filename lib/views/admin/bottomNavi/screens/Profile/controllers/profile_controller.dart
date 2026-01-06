@@ -2,10 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/services/wallet_service.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/tabs/transaction_history.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/controllers/notification_permission_controller.dart';
 
 class AdminProfileController extends GetxController {
   final WalletService _walletService = WalletService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  
+  // Initialize NotificationPermissionController
+  late final NotificationPermissionController _permissionController;
 
   // Profile fields
   final name = 'Sarah Mitchell'.obs;
@@ -19,11 +23,13 @@ class AdminProfileController extends GetxController {
   final walletBalance = 'SAR 0.00'.obs;
   final warningsIssued = 0.obs;
 
-  final notificationsEnabled = true.obs;
+  // Notification enabled state - proxies to permission controller
+  RxBool get notificationsEnabled => _permissionController.isNotificationEnabled;
 
   @override
   void onInit() {
     super.onInit();
+    _permissionController = Get.put(NotificationPermissionController(), permanent: true);
     _bindWalletData();
     _fetchWarningsCount();
   }
@@ -43,8 +49,8 @@ class AdminProfileController extends GetxController {
     }
   }
 
-  void toggleNotifications(bool value) {
-    notificationsEnabled.value = value;
+  void toggleNotifications(bool value) async {
+    await _permissionController.handleToggle(value);
   }
   
   void navigateToTransactions() {

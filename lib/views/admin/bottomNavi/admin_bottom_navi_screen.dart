@@ -6,6 +6,9 @@ import 'package:red_balloon_app/views/admin/bottomNavi/screens/tasks/admin_task_
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/user_management/tabs/user_management_screen.dart';
 import 'package:red_balloon_app/views/admin/bottomNavi/screens/wallet/wallet_tab.dart';
 
+import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/controller/messages_controller.dart';
+import 'package:get/get.dart';
+
 import '../../../utils/colors.dart';
 
 class AdminBottomNaviScreen extends StatefulWidget {
@@ -23,6 +26,7 @@ class _AdminBottomNaviScreenState extends State<AdminBottomNaviScreen> {
   @override
   void initState() {
     super.initState();
+    Get.put(MessagesController(), permanent: true);
     currentIndex = widget.initialIndex;
     _initializeNavItems();
   }

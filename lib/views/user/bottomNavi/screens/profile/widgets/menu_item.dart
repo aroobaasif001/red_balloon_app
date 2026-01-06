@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../utils/colors.dart';
+import '../controllers/notification_permission_controller.dart';
 
 class MenuItem extends StatelessWidget {
   final String icon;
@@ -12,6 +14,7 @@ class MenuItem extends StatelessWidget {
   final ValueChanged<bool>? onToggleChanged;
 
   const MenuItem({
+    super.key,
     required this.icon,
     required this.label,
     this.hasArrow = false,
@@ -22,6 +25,11 @@ class MenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Initialize NotificationPermissionController only when hasToggle is true
+    final NotificationPermissionController? permissionController = hasToggle
+        ? Get.put(NotificationPermissionController(), permanent: true)
+        : null;
+
     return GestureDetector(
       onTap: onTap,
       child: Padding(
@@ -39,12 +47,19 @@ class MenuItem extends StatelessWidget {
               ),
             ),
             if (hasArrow)
-              Icon(Icons.chevron_right, size: 20, color: arrowColor)
-            else if (hasToggle)
-              Switch(
-                value: true,
-                onChanged: onToggleChanged ?? (value) {},
-                activeColor: redColor,
+              const Icon(Icons.chevron_right, size: 20, color: arrowColor)
+            else if (hasToggle && permissionController != null)
+              Obx(
+                () => Switch(
+                  value: permissionController.isNotificationEnabled.value,
+                  onChanged: (value) async {
+                    await permissionController.handleToggle(value);
+                    onToggleChanged?.call(
+                      permissionController.isNotificationEnabled.value,
+                    );
+                  },
+                  activeColor: redColor,
+                ),
               ),
           ],
         ),

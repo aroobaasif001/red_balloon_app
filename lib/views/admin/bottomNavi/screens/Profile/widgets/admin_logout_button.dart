@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/views/auth/view/onboarding/onboarding_screen.dart';
 
 import '../../../../../../custom_widgets/custom_container.dart';
@@ -9,15 +8,16 @@ import '../../../../../../custom_widgets/customtext.dart';
 import '../../../../../../utils/colors.dart';
 
 Widget adminLogoutButton() {
+  final AuthService _authService = AuthService();
+
   return Column(
     children: [
       InkWell(
         onTap: () async {
           Get.deleteAll(force: true);
 
-          await FirebaseAuth.instance.signOut();
-          await GoogleSignIn().signOut();
-          Get.offAll(() => OnboardingScreen());
+          await _authService.signOut();
+          Get.offAll(() => const OnboardingScreen());
         },
         child: CustomContainer(
           height: 48,
