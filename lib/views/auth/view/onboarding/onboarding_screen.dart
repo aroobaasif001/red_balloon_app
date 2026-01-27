@@ -38,6 +38,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _handleLogin() async {
+    if (!_isAgreed) {
+      Get.snackbar(
+        'Agreement Required',
+        'Please agree to the Terms & Privacy Policy to continue.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: redColor.withOpacity(0.8),
+        colorText: whiteColor,
+      );
+      return;
+    }
+
     if (_emailController.text.trim().isEmpty ||
         _passwordController.text.isEmpty) {
       Get.snackbar('Error', 'Please enter email and password');
@@ -117,8 +128,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Obx(
                         () => CustomButton(
                           label: 'Login',
-                          isLoading: authController.isLoading.value,
-                          onPressed: _isAgreed ? _handleLogin : null,
+                          isLoading: authController.isEmailLoading.value,
+                          onPressed: _handleLogin,
                         ),
                       ),
                     ],
@@ -137,32 +148,46 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       if (Platform.isIOS) ...[
                         Obx(
                           () => SocialButton.apple(
-                            isLoading: authController.isLoading.value,
-                            onPressed: _isAgreed
-                                ? () async {
-                                    final user = await authController
-                                        .signInWithApple();
-                                    if (user != null) {
-                                      Get.off(() => const BottomNaviScreen());
-                                    }
-                                  }
-                                : null,
+                            isLoading: authController.isAppleLoading.value,
+                            onPressed: () async {
+                              if (!_isAgreed) {
+                                Get.snackbar(
+                                  'Agreement Required',
+                                  'Please agree to the Terms & Privacy Policy to continue.',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: redColor.withOpacity(0.8),
+                                  colorText: whiteColor,
+                                );
+                                return;
+                              }
+                              final user = await authController.signInWithApple();
+                              if (user != null) {
+                                Get.off(() => const BottomNaviScreen());
+                              }
+                            },
                           ),
                         ),
                         const SizedBox(height: 12),
                       ],
                       Obx(
                         () => SocialButton.google(
-                          isLoading: authController.isLoading.value,
-                          onPressed: _isAgreed
-                              ? () async {
-                                  final user = await authController
-                                      .signInWithGoogle();
-                                  if (user != null) {
-                                    Get.offAll(() => const BottomNaviScreen());
-                                  }
-                                }
-                              : null,
+                          isLoading: authController.isGoogleLoading.value,
+                          onPressed: () async {
+                            if (!_isAgreed) {
+                              Get.snackbar(
+                                'Agreement Required',
+                                'Please agree to the Terms & Privacy Policy to continue.',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: redColor.withOpacity(0.8),
+                                colorText: whiteColor,
+                              );
+                              return;
+                            }
+                            final user = await authController.signInWithGoogle();
+                            if (user != null) {
+                              Get.offAll(() => const BottomNaviScreen());
+                            }
+                          },
                         ),
                       ),
                     ],

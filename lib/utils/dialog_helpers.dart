@@ -2157,126 +2157,130 @@ class DialogHelpers {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // CANCEL BUTTON
-                        CustomButton(
-                          label: "Cancel",
-                          onPressed: () {
-                            Get.back(); // Just close dialog
-                          },
-                          height: 52,
-                          width: 120,
-                          bgColor: whiteColor,
-                          textColor: redColor,
-                          borderRadius: BorderRadius.circular(14),
-                          fontSize: 16,
-                          fontWeight: FontVariant.semiBold,
-                          border: Border.all(color: redColor, width: 2),
+                        Expanded(
+                          child: CustomButton(
+                            label: "Cancel",
+                            onPressed: () {
+                              Get.back(); // Just close dialog
+                            },
+                            height: 52,
+                            // width: 120,
+                            bgColor: whiteColor,
+                            textColor: redColor,
+                            borderRadius: BorderRadius.circular(14),
+                            fontSize: 14,
+                            fontWeight: FontVariant.semiBold,
+                            border: Border.all(color: redColor, width: 2),
+                          ),
                         ),
 
-                        const SizedBox(width: 15),
+                        const SizedBox(width: 10),
 
                         // CONTINUE BUTTON
-                        CustomButton(
-                          label: "Continue",
-                          onPressed: () async {
-                            // 🔥 1. Adjust Wallet/Escrow First
-                            // Show loading indicator or block interaction? 
-                            // For now, let's just proceed. 
-                            // Better UX would be to show a loader.
-                            
-                            try {
-                                // 🔥 Call Wallet Service
-                                final walletResult = await WalletService().adjustEscrowAfterOfferAcceptance(
-                                  taskId: taskId,
-                                  taskBudget: taskBudget,
-                                  offerPrice: offerPrice,
-                                  taskTitle: taskTitle,
+                        Expanded(
+                          child: CustomButton(
+                            label: "Continue",
+                            onPressed: () async {
+                              // 🔥 1. Adjust Wallet/Escrow First
+                              // Show loading indicator or block interaction? 
+                              // For now, let's just proceed. 
+                              // Better UX would be to show a loader.
+                              
+                              try {
+                                  // 🔥 Call Wallet Service
+                                  final walletResult = await WalletService().adjustEscrowAfterOfferAcceptance(
+                                    taskId: taskId,
+                                    taskBudget: taskBudget,
+                                    offerPrice: offerPrice,
+                                    taskTitle: taskTitle,
+                                  );
+
+                                  if (walletResult['success'] == false) {
+                                    // Show error and abort
+                                    Get.snackbar('Error', walletResult['message'] ?? 'Wallet adjustment failed');
+                                    return;
+                                  }
+
+                                  Get.back(); // Close confirmation dialog (Wallet success)
+
+                                  // 🔥 2. Proceed with Offer Acceptance Logic
+                                // 🔥 First, fetch the offer to get offeringUserUid
+                                final offerDoc = await FirebaseFirestore.instance
+                                    .collection('offers')
+                                    .doc(offerId)
+                                    .get();
+
+                                final offeringUserUid =
+                                    offerDoc.data()?['offeringUserUid'] ?? '';
+
+                                // Update offer status
+                                await FirebaseFirestore.instance
+                                    .collection('offers')
+                                    .doc(offerId)
+                                    .update({'status': 'accepted'});
+
+                                print(
+                                  '✅ Offer $offerId status updated to accepted',
                                 );
 
-                                if (walletResult['success'] == false) {
-                                  // Show error and abort
-                                  Get.snackbar('Error', walletResult['message'] ?? 'Wallet adjustment failed');
-                                  return;
+                                // 🔥 Update task status to 'in progress' and store offeringUserUid
+                                await FirebaseFirestore.instance
+                                    .collection('tasks')
+                                    .doc(taskId)
+                                    .update({
+                                      'status': 'in progress',
+                                      'acceptedOfferUid': offeringUserUid, // 🔥 Store helper's UID
+                                      'budget': offerPrice, // 🔥 Update task budget to accepted offer price
+                                      'acceptedAt': FieldValue.serverTimestamp(), // 🔥 Store acceptance time
+                                      'time': FieldValue.serverTimestamp(), // 🔥 Update time for list sorting
+                                    });
+
+                                print(
+                                  '✅ Task $taskId status updated to in progress with acceptedOfferUid: $offeringUserUid',
+                                );
+
+                                // 🔥 Send notification to Helper
+                                if (offeringUserUid.isNotEmpty) {
+                                  NotificationService.instance
+                                      .notifyOfferAccepted(
+                                        helperId: offeringUserUid,
+                                        taskTitle: taskTitle,
+                                        taskId: taskId,
+                                      );
                                 }
 
-                                Get.back(); // Close confirmation dialog (Wallet success)
+                                // Call the callback
+                                onAccepted();
 
-                                // 🔥 2. Proceed with Offer Acceptance Logic
-                              // 🔥 First, fetch the offer to get offeringUserUid
-                              final offerDoc = await FirebaseFirestore.instance
-                                  .collection('offers')
-                                  .doc(offerId)
-                                  .get();
+                                // 🔥 Close confirmation dialog first (Already closed above)
+                                // Get.back(); 
 
-                              final offeringUserUid =
-                                  offerDoc.data()?['offeringUserUid'] ?? '';
+                                // Close task details screen and navigate
+                                Get.back(); // Close task details screen
 
-                              // Update offer status
-                              await FirebaseFirestore.instance
-                                  .collection('offers')
-                                  .doc(offerId)
-                                  .update({'status': 'accepted'});
+                                // 🔥 Navigate to TaskInProgressScreen with specific taskId
+                                Get.to(
+                                  () => TaskInProgressScreen(taskId: taskId),
+                                );
 
-                              print(
-                                '✅ Offer $offerId status updated to accepted',
-                              );
-
-                              // 🔥 Update task status to 'in progress' and store offeringUserUid
-                              await FirebaseFirestore.instance
-                                  .collection('tasks')
-                                  .doc(taskId)
-                                  .update({
-                                    'status': 'in progress',
-                                    'acceptedOfferUid': offeringUserUid, // 🔥 Store helper's UID
-                                    'budget': offerPrice, // 🔥 Update task budget to accepted offer price
-                                    'acceptedAt': FieldValue.serverTimestamp(), // 🔥 Store acceptance time
-                                    'time': FieldValue.serverTimestamp(), // 🔥 Update time for list sorting
-                                  });
-
-                              print(
-                                '✅ Task $taskId status updated to in progress with acceptedOfferUid: $offeringUserUid',
-                              );
-
-                              // 🔥 Send notification to Helper
-                              if (offeringUserUid.isNotEmpty) {
-                                NotificationService.instance
-                                    .notifyOfferAccepted(
-                                      helperId: offeringUserUid,
-                                      taskTitle: taskTitle,
-                                      taskId: taskId,
-                                    );
+                                // Show snackbar
+                                Get.snackbar(
+                                  "Success",
+                                  "Offer accepted successfully!",
+                                );
+                              } catch (e) {
+                                print('❌ Error updating offer/task status: $e');
+                                Get.snackbar('Error', 'Failed to accept offer: $e');
                               }
-
-                              // Call the callback
-                              onAccepted();
-
-                              // 🔥 Close confirmation dialog first (Already closed above)
-                              // Get.back(); 
-
-                              // Close task details screen and navigate
-                              Get.back(); // Close task details screen
-
-                              // 🔥 Navigate to TaskInProgressScreen with specific taskId
-                              Get.to(
-                                () => TaskInProgressScreen(taskId: taskId),
-                              );
-
-                              // Show snackbar
-                              Get.snackbar(
-                                "Success",
-                                "Offer accepted successfully!",
-                              );
-                            } catch (e) {
-                              print('❌ Error updating offer/task status: $e');
-                              Get.snackbar('Error', 'Failed to accept offer: $e');
-                            }
-                          },
-                          height: 52,
-                          width: 120,
-                          bgColor: redColor,
-                          textColor: whiteColor,
-                          borderRadius: BorderRadius.circular(14),
-                          fontSize: 16,
-                          fontWeight: FontVariant.semiBold,
+                            },
+                            height: 52,
+                            // width: 120,
+                            bgColor: redColor,
+                            textColor: whiteColor,
+                            borderRadius: BorderRadius.circular(14),
+                            fontSize: 14,
+                            fontWeight: FontVariant.semiBold,
+                          ),
                         ),
                       ],
                     ),

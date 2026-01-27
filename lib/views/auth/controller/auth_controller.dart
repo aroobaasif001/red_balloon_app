@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/model/auth_model.dart';
@@ -15,6 +16,9 @@ class AuthController extends GetxController {
   var consentChecked = false.obs;
   var consentError = ''.obs;
   var isLoading = false.obs;
+  var isEmailLoading = false.obs;
+  var isGoogleLoading = false.obs;
+  var isAppleLoading = false.obs;
   var errorMessage = ''.obs;
   var currentUser = Rxn<AuthModel>();
 
@@ -142,6 +146,7 @@ class AuthController extends GetxController {
   // Sign in with Email and Password
   Future<AuthModel?> signInWithEmailAndPassword(String email, String password) async {
     try {
+      isEmailLoading.value = true;
       isLoading.value = true;
       errorMessage.value = '';
 
@@ -153,10 +158,11 @@ class AuthController extends GetxController {
       }
       return null;
     } catch (e) {
-      errorMessage.value = 'Failed to sign in: ${e.toString()}';
+      errorMessage.value = _getFriendlyErrorMessage(e);
       Get.snackbar('Error', errorMessage.value);
       return null;
     } finally {
+      isEmailLoading.value = false;
       isLoading.value = false;
     }
   }
@@ -164,6 +170,7 @@ class AuthController extends GetxController {
   // Sign in with Google
   Future<AuthModel?> signInWithGoogle() async {
     try {
+      isGoogleLoading.value = true;
       isLoading.value = true;
       errorMessage.value = '';
 
@@ -185,10 +192,11 @@ class AuthController extends GetxController {
 
       return null;
     } catch (e) {
-      errorMessage.value = 'Failed to sign in with Google: ${e.toString()}';
+      errorMessage.value = _getFriendlyErrorMessage(e);
       Get.snackbar('Error', errorMessage.value);
       return null;
     } finally {
+      isGoogleLoading.value = false;
       isLoading.value = false;
     }
   }
@@ -196,6 +204,7 @@ class AuthController extends GetxController {
   // Sign in with Apple
   Future<AuthModel?> signInWithApple() async {
     try {
+      isAppleLoading.value = true;
       isLoading.value = true;
       errorMessage.value = '';
 
@@ -217,10 +226,11 @@ class AuthController extends GetxController {
 
       return null;
     } catch (e) {
-      errorMessage.value = 'Failed to sign in with Apple: ${e.toString()}';
+      errorMessage.value = _getFriendlyErrorMessage(e);
       Get.snackbar('Error', errorMessage.value);
       return null;
     } finally {
+      isAppleLoading.value = false;
       isLoading.value = false;
     }
   }
@@ -236,7 +246,7 @@ class AuthController extends GetxController {
       userCity.value = '';
       userCountry.value = '';
     } catch (e) {
-      errorMessage.value = 'Failed to sign out: ${e.toString()}';
+      errorMessage.value = _getFriendlyErrorMessage(e);
       Get.snackbar('Error', errorMessage.value);
     } finally {
       isLoading.value = false;
@@ -250,10 +260,41 @@ class AuthController extends GetxController {
       await _authService.deleteAccount();
       currentUser.value = null;
     } catch (e) {
-      errorMessage.value = 'Failed to delete account: ${e.toString()}';
+      errorMessage.value = _getFriendlyErrorMessage(e);
       Get.snackbar('Error', errorMessage.value);
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // Helper method to get user-friendly error messages
+  String _getFriendlyErrorMessage(dynamic e) {
+    if (e is FirebaseAuthException) {
+      switch (e.code) {
+        case 'invalid-credential':
+          return 'Incorrect email or password. Please try again.';
+        case 'user-not-found':
+          return 'No user found with this email.';
+        case 'wrong-password':
+          return 'Incorrect password. Please try again.';
+        case 'invalid-email':
+          return 'Please enter a valid email address.';
+        case 'user-disabled':
+          return 'This account has been disabled. Please contact support.';
+        case 'too-many-requests':
+          return 'Too many failed attempts. Please try again later.';
+        case 'network-request-failed':
+          return 'Network error. Please check your internet connection.';
+        case 'operation-not-allowed':
+          return 'This sign-in method is not enabled.';
+        case 'account-exists-with-different-credential':
+          return 'An account already exists with the same email but different sign-in credentials.';
+        default:
+          return e.message ?? 'An unexpected error occurred. Please try again.';
+      }
+    }
+    return e.toString().contains('canceled-by-user') || e.toString().contains('aborted')
+        ? 'Sign-in canceled.'
+        : 'An unexpected error occurred. Please try again.';
   }
 }

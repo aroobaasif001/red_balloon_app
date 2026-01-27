@@ -32,11 +32,7 @@ class MenuSection extends StatelessWidget {
   });
 
   List<MenuItemData> get defaultMenuItems => [
-    MenuItemData(
-      icon: 'assets/icons/notification_2.png',
-      label: 'Notifications',
-      hasToggle: true,
-    ),
+
     MenuItemData(
       icon: 'assets/icons/star.png',
       label: 'Help Center',
