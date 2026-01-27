@@ -1,0 +1,61 @@
+default_platform(:ios)
+
+platform :ios do
+  def increment_flutter_build_number
+    pubspec_path = "../../pubspec.yaml"
+    content = File.read(pubspec_path)
+    if content =~ /version: (\d+\.\d+\.\d+)\+(\d+)/
+      version_name = $1
+      build_number = $2.to_i + 1
+      new_version = "version: #{version_name}+#{build_number}"
+      content.gsub!(/version: \d+\.\d+\.\d+\+\d+/, new_version)
+      File.open(pubspec_path, "w") { |file| file.puts content }
+      UI.success("Updated pubspec.yaml to Version: #{version_name}, Build: #{build_number}")
+      return build_number
+    else
+      UI.user_error!("Could not find version in pubspec.yaml")
+    end
+  end
+
+  desc "Upload a new build to TestFlight"
+  lane :beta do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+
+    build_num = increment_flutter_build_number
+    
+    increment_build_number(
+      xcodeproj: "Runner.xcodeproj",
+      build_number: build_num.to_s
+    )
+    
+    # Sync certificates (Requires Match setup)
+    setup_ci if is_ci
+    match(type: "appstore")
+
+    sh "cd ../.. && flutter build ipa --release"
+    
+    upload_to_testflight(api_key: api_key)
+  end
+
+  desc "Release to App Store"
+  lane :release do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+    
+    # We usually promote from TestFlight, but this builds and uploads to App Store Review
+    upload_to_app_store(
+      api_key: api_key,
+      force: true, # Skips HTML report
+      submit_for_review: false # Set to true if you want auto-submit
+    )
+  end
+end

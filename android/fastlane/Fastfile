@@ -1,0 +1,45 @@
+default_platform(:android)
+
+platform :android do
+  def increment_flutter_build_number
+    pubspec_path = "../../pubspec.yaml"
+    content = File.read(pubspec_path)
+    if content =~ /version: (\d+\.\d+\.\d+)\+(\d+)/
+      version_name = $1
+      build_number = $2.to_i + 1
+      new_version = "version: #{version_name}+#{build_number}"
+      content.gsub!(/version: \d+\.\d+\.\d+\+\d+/, new_version)
+      File.open(pubspec_path, "w") { |file| file.puts content }
+      UI.success("Updated pubspec.yaml to Version: #{version_name}, Build: #{build_number}")
+      return build_number
+    else
+      UI.user_error!("Could not find version in pubspec.yaml")
+    end
+  end
+
+  desc "Build APK and App Bundle"
+  lane :build do
+    increment_flutter_build_number
+    sh "cd ../.. && flutter build apk --release"
+    sh "cd ../.. && flutter build appbundle --release"
+  end
+
+  desc "Upload to Google Play Internal Testing"
+  lane :internal do
+    increment_flutter_build_number
+    sh "cd ../.. && flutter build appbundle --release"
+    upload_to_play_store(
+      track: 'internal',
+      json_key: 'fastlane/play-store-credentials.json'
+    )
+  end
+
+  desc "Upload to Google Play Production"
+  lane :production do
+    # No increment here usually, we use the build from internal
+    upload_to_play_store(
+      track: 'production',
+      json_key: 'fastlane/play-store-credentials.json'
+    )
+  end
+end

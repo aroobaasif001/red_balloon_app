@@ -1,0 +1,2 @@
+json_key_file("") # Path to the json secret file - manual setup required later
+package_name("com.redballoon.app")

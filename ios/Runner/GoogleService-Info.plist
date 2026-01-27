@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1037639327100-2ceqifsjdls4npu6iu1ojimd2s6hj8tn.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1037639327100-2ceqifsjdls4npu6iu1ojimd2s6hj8tn</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1037639327100-31c4jgrm6ke6usmdkoqjplntdcr2l5e4.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBBadinHeHiw_filnu9u8C5RQEBxHA0drc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1037639327100</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.redballoon.app</string>
+	<key>PROJECT_ID</key>
+	<string>red-balloon-app</string>
+	<key>STORAGE_BUCKET</key>
+	<string>red-balloon-app.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1037639327100:ios:743c4397b516281244d8f9</string>
+</dict>
+</plist>

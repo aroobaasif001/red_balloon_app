@@ -1,0 +1,65 @@
+name: Flutter Build Artifacts
+
+on:
+  push:
+    branches: [ main, master, backend_branch ]
+  pull_request:
+    branches: [ main, master, backend_branch ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.3' # Adjusted to match your SDK constraints (^3.9.2)
+          channel: 'stable'
+          cache: true
+
+      - name: Install Ruby & Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Build Android APK & Bundle
+        run: bundle exec fastlane android build
+        
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload Android Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+
+      # Note: iOS build usually requires signing certificates to run on GitHub Actions.
+      # This step will build the IPA but might fail if match/certs aren't setup in Secrets.
+      - name: Build iOS IPA
+        run: |
+          # Only run if you have setup iOS build logic
+          # bundle exec fastlane ios build
+          flutter build ipa --release --no-codesign
+        
+      - name: Upload iOS IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-ipa
+          path: build/ios/ipa/*.ipa
