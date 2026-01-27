@@ -260,17 +260,21 @@ class TaskReviewScreen extends StatelessWidget {
                         color: greyColor,
                       ),
                       const SizedBox(width: 4),
-                      Obx(
-                        () => CustomText(
-                          controller.location.value.isEmpty
-                              ? "Unknown"
-                              : controller.location.value,
-                          fontSize: 12,
-                          fontWeight: FontVariant.regular,
-                          color: timeColor,
+                      Expanded(
+                        child: Obx(
+                          () => CustomText(
+                            controller.location.value.isEmpty
+                                ? "Unknown"
+                                : controller.location.value,
+                            fontSize: 12,
+                            fontWeight: FontVariant.regular,
+                            color: timeColor,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 15),
                       const Icon(Icons.access_time, size: 18, color: greyColor),
                       const SizedBox(width: 4),
                       Obx(
@@ -281,6 +285,8 @@ class TaskReviewScreen extends StatelessWidget {
                           fontSize: 12,
                           color: timeColor,
                           fontWeight: FontVariant.regular,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ),
                     ],
