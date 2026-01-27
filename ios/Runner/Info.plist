@@ -57,5 +57,22 @@
 	<string>We need photo library write access when you choose to save task photos back to your device.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>GIDClientID</key>
+	<string>1037639327100-2ceqifsjdls4npu6iu1ojimd2s6hj8tn.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.1037639327100-2ceqifsjdls4npu6iu1ojimd2s6hj8tn</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>com.googleusercontent.apps.1037639327100-2ceqifsjdls4npu6iu1ojimd2s6hj8tn</string>
+	</array>
 </dict>
 </plist>

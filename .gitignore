@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Secrets & Local Environment
+.env
+*.p8
+fastlane/play-store-credentials.json
+ios/fastlane/report.xml
+android/fastlane/report.xml
+**/fastlane/gc_keys.json
