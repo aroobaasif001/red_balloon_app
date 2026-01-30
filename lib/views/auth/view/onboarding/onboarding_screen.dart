@@ -42,9 +42,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       Get.snackbar(
         'Agreement Required',
         'Please agree to the Terms & Privacy Policy to continue.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: redColor.withOpacity(0.8),
-        colorText: whiteColor,
+
       );
       return;
     }
@@ -154,9 +152,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 Get.snackbar(
                                   'Agreement Required',
                                   'Please agree to the Terms & Privacy Policy to continue.',
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  backgroundColor: redColor.withOpacity(0.8),
-                                  colorText: whiteColor,
+
                                 );
                                 return;
                               }
@@ -177,9 +173,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               Get.snackbar(
                                 'Agreement Required',
                                 'Please agree to the Terms & Privacy Policy to continue.',
-                                snackPosition: SnackPosition.BOTTOM,
-                                backgroundColor: redColor.withOpacity(0.8),
-                                colorText: whiteColor,
+
                               );
                               return;
                             }

@@ -21,7 +21,6 @@ android {
 
     }
 
-    kotlin { jvmToolchain(17) }
 
 
     kotlinOptions {
