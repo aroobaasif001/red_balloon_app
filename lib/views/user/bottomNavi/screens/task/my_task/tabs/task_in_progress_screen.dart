@@ -23,14 +23,19 @@ class TaskInProgressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🔥 Initialize GetX controller with taskId
-    final controller = Get.put(TaskInProgressController(taskId: taskId));
+    // 🔥 Initialize GetX controller with taskId, unique tag, and permanent flag
+    final controller = Get.put(
+      TaskInProgressController(taskId: taskId),
+      tag: taskId,
+      permanent: true,  // 🔥 Prevent controller from being deleted during navigation
+    );
 
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: whiteColor,
         body: Obx(() {
+          print('🎨 [DEBUG] TaskInProgressScreen Obx rebuilding. hasProof: ${controller.hasProof.value}');
           // 🔥 Show loading indicator
           if (controller.isLoading.value) {
             return Center(child: CircularProgressIndicator(color: redColor));
@@ -721,25 +726,27 @@ class TaskInProgressScreen extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 /// ------------------ REVIEW PROOF BUTTON ------------------
-                /// ------------------ REVIEW PROOF BUTTON ------------------
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: CustomButton(
-                    label: "Review Proof",
-                    onPressed: controller.hasProof.value
-                        ? () {
-                            Get.to(
-                              () => TaskReviewScreen(
-                                taskId: controller.task.value?.id,
-                                proofId: controller.proofId.value,
-                              ),
-                            );
-                          }
-                        : null,
-                    bgColor: controller.hasProof.value ? redColor : taskstatus3,
-                    textColor: whiteColor,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  child: Obx(() {
+                    print('🎨 [BUTTON] Review Proof button rebuilding. hasProof: ${controller.hasProof.value}');
+                    return CustomButton(
+                      label: "Review Proof",
+                      onPressed: controller.hasProof.value
+                          ? () {
+                              Get.to(
+                                () => TaskReviewScreen(
+                                  taskId: controller.task.value?.id,
+                                  proofId: controller.proofId.value,
+                                ),
+                              );
+                            }
+                          : null,
+                      bgColor: controller.hasProof.value ? redColor : taskstatus3,
+                      textColor: whiteColor,
+                      borderRadius: BorderRadius.circular(30),
+                    );
+                  }),
                 ),
 
                 const SizedBox(height: 20),

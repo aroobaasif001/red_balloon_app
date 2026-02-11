@@ -16,6 +16,7 @@ class TransactionHistoryItem {
   final String name;
   final String role;
   final String time;
+  final String status; // 🔥 Added status field
   final Map<String, dynamic> fullData;
 
   TransactionHistoryItem({
@@ -29,6 +30,7 @@ class TransactionHistoryItem {
     required this.name,
     required this.role,
     required this.time,
+    required this.status, // 🔥 Added status to constructor
     required this.fullData,
   });
 }
@@ -106,6 +108,8 @@ class TransactionHistoryController extends GetxController {
         final realUserId = userMapping[userUid] ?? 
             (taskId.startsWith('RB-') ? taskId : (taskId != 'N/A' && taskId.isNotEmpty ? 'RB-${taskId.substring(0, _min(5, taskId.length))}' : ''));
 
+        final status = data['status']?.toString() ?? 'completed';
+
         fetchedItems.add(TransactionHistoryItem(
           userUid: userUid,
           id: doc.id,
@@ -117,6 +121,7 @@ class TransactionHistoryController extends GetxController {
           name: title.contains('Platform') ? 'Platform Revenue' : (description.isNotEmpty ? description : 'User'),
           role: title.contains('Platform') ? 'System' : 'User/Helper',
           time: _formatTime(createdAt),
+          status: status, // 🔥 Pass the actual status
           fullData: data,
         ));
       }

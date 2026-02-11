@@ -49,18 +49,6 @@ class AdminTransactionHistory extends StatelessWidget {
                     );
                   }
 
-                  if (controller.selectedFilter.value ==
-                      TransactionHistoryFilter.withdrawals) {
-                    return const Center(
-                      child: CustomText(
-                        'Coming Soon',
-                        fontSize: 18,
-                        fontWeight: FontVariant.bold,
-                        color: walletGrey500Color,
-                      ),
-                    );
-                  }
-
                   final items = controller.filteredTransactions;
                   if (items.isEmpty) {
                     return const Center(
@@ -86,6 +74,7 @@ class AdminTransactionHistory extends StatelessWidget {
                             name: item.name,
                             role: item.role,
                             time: item.time,
+                            status: item.status, // 🔥 Added status to reflect pending/completed
                             onTap: () {
                               Get.to(() => AdminTransactionDetailsScreen(
                                     transactionData: item.fullData,

@@ -44,20 +44,25 @@ Widget buildBottomUploadBar(
           final bool hasProof = controller.hasProof.value;
           final bool isLoading = controller.isCheckingProof.value;
 
-          final bool isDisabled = hasProof || isLoading;
+          // 🔥 FIXED: Button should be enabled if we have proof to "Mark as Complete"
+          final bool isDisabled = isLoading;
 
           return InkWell(
             onTap: !isDisabled
                 ? () {
-                    Get.to(
-                      () => UploadProof(
-                        taskId: taskId ?? '',
-                        taskTitle: taskTitle ?? 'Task',
-                        price: price ?? '0',
-                        taskOwnerUid: taskOwnerUid ?? '',
-                        taskImage: taskImage,
-                      ),
-                    );
+                    if (hasProof) {
+                      controller.markTaskAsCompleted(taskId ?? '');
+                    } else {
+                      Get.to(
+                        () => UploadProof(
+                          taskId: taskId ?? '',
+                          taskTitle: taskTitle ?? 'Task',
+                          price: price ?? '0',
+                          taskOwnerUid: taskOwnerUid ?? '',
+                          taskImage: taskImage,
+                        ),
+                      );
+                    }
                   }
                 : null,
             child: CustomContainer(

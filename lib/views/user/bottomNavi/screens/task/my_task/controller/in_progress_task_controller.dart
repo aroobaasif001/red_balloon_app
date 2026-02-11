@@ -71,18 +71,28 @@ class InProgressTaskController extends GetxController {
 
   /// Setup real-time listener for proof changes
   void setupProofListener(String taskId) {
+    print('🔥 [InProgressTaskController] Setting up proof listener for taskId: $taskId');
+    
     _proofListener = _firestore
         .collection('task_proofs')
         .where('taskId', isEqualTo: taskId)
         .snapshots()
         .listen((snapshot) {
+          print('🔍 [InProgressTaskController] Proof snapshot received!');
+          print('🔍 [InProgressTaskController] Doc count: ${snapshot.docs.length}');
+          
           hasProof.value = snapshot.docs.isNotEmpty;
+          print('✅ [InProgressTaskController] hasProof set to: ${hasProof.value}');
+          
           if (snapshot.docs.isNotEmpty) {
             proofId.value = snapshot.docs.first.id;
+            print('✅ [InProgressTaskController] proofId set to: ${proofId.value}');
           }
           print(
             '✅ Real-time proof update: ${snapshot.docs.length} proofs found',
           );
+        }, onError: (error) {
+          print('❌ [InProgressTaskController] Proof listener error: $error');
         });
   }
 
@@ -151,6 +161,23 @@ class InProgressTaskController extends GetxController {
   }
 
   /// Submit Help Request for Helper
+  Future<void> markTaskAsCompleted(String taskId) async {
+    if (taskId.isEmpty) return;
+    try {
+      isCheckingProof.value = true;
+      await _firestore.collection('tasks').doc(taskId).update({
+        'status': 'Completed',
+        'completedAt': FieldValue.serverTimestamp(),
+      });
+      Get.snackbar('Success', 'Task marked as completed!');
+    } catch (e) {
+      print('Error marking task as completed: $e');
+      Get.snackbar('Error', 'Failed to update task status');
+    } finally {
+      isCheckingProof.value = false;
+    }
+  }
+
   Future<void> submitHelpRequest(
     String taskId,
     String reason,

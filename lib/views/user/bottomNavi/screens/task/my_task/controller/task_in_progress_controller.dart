@@ -56,6 +56,7 @@ class TaskInProgressController extends GetxController {
         .listen((snapshot) {
           if (snapshot.exists) {
             final data = snapshot.data();
+            print('🔍 [DEBUG] Task document updated for ID: $taskId');
             if (data != null) {
               requesterHelpRequested.value =
                   data['requesterHelpRequested'] ?? false;
@@ -85,36 +86,46 @@ class TaskInProgressController extends GetxController {
   }
 
   void setupProofListener(String taskId) {
+    print('🔥 [PROOF LISTENER] Setting up listener for taskId: $taskId');
+    
     _proofListener = FirebaseFirestore.instance
         .collection('task_proofs')
         .where('taskId', isEqualTo: taskId)
-        .orderBy('submittedAt', descending: true)
-        .limit(5)
         .snapshots()
         .listen((snapshot) {
+          print('🔍 [PROOF LISTENER] Snapshot received!');
+          print('🔍 [PROOF LISTENER] Doc count: ${snapshot.docs.length}');
+          print('🔍 [PROOF LISTENER] TaskId queried: $taskId');
+          
           if (snapshot.docs.isNotEmpty) {
             hasProof.value = true;
+            print('✅ [PROOF LISTENER] hasProof set to TRUE');
+            print('✅ [PROOF LISTENER] Current hasProof value: ${hasProof.value}');
 
             // Try to find a proof with images
             QueryDocumentSnapshot<Map<String, dynamic>>? proofWithImages;
 
             for (var doc in snapshot.docs) {
               final data = doc.data();
-              if (data['beforePhotoUrl'] != null &&
-                  data['afterPhotoUrl'] != null) {
+              print('   📄 Proof doc ID: ${doc.id}');
+              print('   📄 Has before: ${data['beforePhotoUrl'] != null}');
+              print('   📄 Has after: ${data['afterPhotoUrl'] != null}');
+              
+              if (data['beforePhotoUrl'] != null && data['afterPhotoUrl'] != null) {
                 proofWithImages = doc;
                 break;
               }
             }
 
-            // Use proof with images if found, otherwise use the latest one
             final selectedProof = proofWithImages ?? snapshot.docs.first;
-
             proofId.value = selectedProof.id;
             print('✅ Real-time proof update: ${proofId.value}');
           } else {
             hasProof.value = false;
+            print('❌ [PROOF LISTENER] No proofs found, hasProof set to FALSE');
           }
+        }, onError: (error) {
+          print('❌ [PROOF LISTENER] Error: $error');
         });
   }
 
@@ -319,8 +330,6 @@ class TaskInProgressController extends GetxController {
       final proofSnapshot = await FirebaseFirestore.instance
           .collection('task_proofs')
           .where('taskId', isEqualTo: taskId)
-          .orderBy('submittedAt', descending: true) // 🔥 Get latest first
-          .limit(5) // 🔥 Get top 5 to find one with images
           .get();
 
       hasProof.value = proofSnapshot.docs.isNotEmpty;
@@ -337,7 +346,7 @@ class TaskInProgressController extends GetxController {
           }
         }
 
-        // Use proof with images if found, otherwise use the latest one
+        // Use proof with images if found, otherwise use the first one
         final selectedProof = proofWithImages ?? proofSnapshot.docs.first;
 
         proofId.value = selectedProof.id;

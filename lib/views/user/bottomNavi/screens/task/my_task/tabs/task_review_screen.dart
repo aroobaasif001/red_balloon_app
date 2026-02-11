@@ -11,6 +11,7 @@ import '../controller/task_review_controller.dart';
 import '../controller/task_tabs_controller.dart';
 import '../controller/tasks_controller.dart';
 import '../my_task_screen.dart';
+import '../../../../bottom_navi_screen.dart'; // 🔥 Import BottomNaviScreen
 
 class TaskReviewScreen extends StatelessWidget {
   final String? taskId;
@@ -67,8 +68,8 @@ class TaskReviewScreen extends StatelessWidget {
         print('⚠️ Could not refresh tasks controller: $e');
       }
 
-      // 🔥 Navigate to MyTaskScreen (All Task tab)
-      Get.offAll(() => MyTaskScreen());
+      // 🔥 Navigate to BottomNaviScreen to keep the bottom bar
+      Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 1));
     };
 
     return SafeArea(
