@@ -75,10 +75,7 @@ class MessagesController extends GetxController {
 
   /// Apply search filter to conversations
   void _applySearchFilter() {
-    final nonEmptyConversations = conversations.where((c) {
-      final msg = (c.lastMessage ?? '').trim();
-      return msg.isNotEmpty && msg != 'Start chatting...';
-    }).toList();
+    final nonEmptyConversations = conversations.toList();
 
     if (searchQuery.value.isEmpty) {
       filteredConversations.assignAll(nonEmptyConversations);

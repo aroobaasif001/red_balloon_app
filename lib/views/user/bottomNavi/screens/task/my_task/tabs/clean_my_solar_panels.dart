@@ -905,18 +905,14 @@ class RefreshButtonWithData extends StatelessWidget {
                   );
                   Get.to(
                     () => const ChatScreen(),
-                    binding: BindingsBuilder(() {
-                      Get.put(
-                        ChatController(
-                          taskId: taskId!,
-                          taskTitle: taskTitle ?? 'Clean my Solar Panels',
-                          taskOwnerId: taskOwnerUid!,
-                          taskOwnerName: taskOwnerName ?? 'User',
-                          taskOwnerPhoto: taskOwnerPhoto,
-                          taskImage: taskImage,
-                        ),
-                      );
-                    }),
+                    arguments: {
+                      'taskId': taskId!,
+                      'taskTitle': taskTitle ?? 'Clean my Solar Panels',
+                      'taskOwnerId': taskOwnerUid!,
+                      'taskOwnerName': taskOwnerName ?? 'User',
+                      'taskOwnerPhoto': taskOwnerPhoto,
+                      'taskImage': taskImage,
+                    },
                   );
                 } else {
                   print(
@@ -1009,18 +1005,14 @@ class RefreshButtonWithData extends StatelessWidget {
                   );
                   Get.to(
                     () => const ChatScreen(),
-                    binding: BindingsBuilder(() {
-                      Get.put(
-                        ChatController(
-                          taskId: taskId!,
-                          taskTitle: taskTitle ?? 'Clean my Solar Panels',
-                          taskOwnerId: taskOwnerUid!,
-                          taskOwnerName: taskOwnerName ?? 'User',
-                          taskOwnerPhoto: taskOwnerPhoto,
-                          taskImage: taskImage,
-                        ),
-                      );
-                    }),
+                    arguments: {
+                      'taskId': taskId!,
+                      'taskTitle': taskTitle ?? 'Clean my Solar Panels',
+                      'taskOwnerId': taskOwnerUid!,
+                      'taskOwnerName': taskOwnerName ?? 'User',
+                      'taskOwnerPhoto': taskOwnerPhoto,
+                      'taskImage': taskImage,
+                    },
                   );
                 } else {
                   print(

@@ -142,6 +142,8 @@ class ChatController extends GetxController {
         _streamMessages();
       } else {
         print('   ❌ Failed to get conversationId');
+        isLoading.value = false;
+        Get.snackbar('Error', 'Could not initialize chat');
       }
     } catch (e) {
       print('❌ Error initializing conversation: $e');
@@ -151,25 +153,29 @@ class ChatController extends GetxController {
 
   /// Stream messages in real-time
   void _streamMessages() {
+    if (conversationId.value.isEmpty) return;
+
     _messagesSubscription?.cancel();
     _messagesSubscription = _chatService
         .streamMessages(conversationId.value)
         .listen(
           (messagesList) {
-            messages.value = messagesList;
+            messages.assignAll(messagesList);
             isLoading.value = false;
 
             // 🔥 Only mark as read if the messagesList actually has unread messages for US
             final hasUnread = messagesList.any(
               (m) => m.receiverId == _chatService.currentUserId && !m.isRead,
             );
-            if (hasUnread) {
-              print('📖 ChatController: New unread messages detected while chat is open, marking as read');
+            
+            if (hasUnread && activeConversationId.value == conversationId.value) {
               markMessagesAsRead();
             }
+            
+            _scrollToBottom();
           },
           onError: (error) {
-            print('Error streaming messages: $error');
+            print('❌ Error streaming messages: $error');
             isLoading.value = false;
           },
         );
@@ -181,6 +187,13 @@ class ChatController extends GetxController {
       Get.snackbar('Action Blocked', 'You cannot message a suspended user.');
       return;
     }
+    
+    if (conversationId.value.isEmpty) {
+      print('❌ Cannot send message: Conversation not initialized');
+      Get.snackbar('Error', 'Chat is still initializing, please wait...');
+      return;
+    }
+
     final messageText = messageController.text.trim();
     if (messageText.isEmpty) return;
 
@@ -192,6 +205,7 @@ class ChatController extends GetxController {
 
     if (success) {
       messageController.clear();
+      _scrollToBottom();
     }
   }
 
@@ -323,7 +337,23 @@ class ChatController extends GetxController {
 
   /// Mark messages as read when viewing
   Future<void> markMessagesAsRead() async {
+    if (conversationId.value.isEmpty) return;
     await _chatService.markMessagesAsRead(conversationId.value);
+  }
+
+  /// scroll to bottom with a small delay to ensure list is rendered
+  void _scrollToBottom() {
+    if (scrollController.hasClients) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (scrollController.hasClients) {
+          scrollController.animateTo(
+            0, // Since reverse: true, 0 is the bottom
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
   }
 
   /// Check if message is from current user

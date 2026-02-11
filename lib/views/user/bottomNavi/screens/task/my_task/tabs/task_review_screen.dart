@@ -68,8 +68,8 @@ class TaskReviewScreen extends StatelessWidget {
         print('⚠️ Could not refresh tasks controller: $e');
       }
 
-      // 🔥 Navigate to BottomNaviScreen to keep the bottom bar
-      Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 1));
+      // 🔥 Navigate to BottomNaviScreen (History tab) to keep the bottom bar
+      Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 2));
     };
 
     return SafeArea(

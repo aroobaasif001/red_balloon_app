@@ -70,9 +70,8 @@ class TaskInProgressController extends GetxController {
                 print(
                   '✅ Task status changed to $taskStatus. Navigating back from TaskInProgressScreen.',
                 );
-                if (Get.isRegistered<TaskInProgressController>()) {
-                  Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 2));
-                }
+                // Navigate back to History tab (index 1, subIndex 2)
+                Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 2));
               }
 
               // Also update local task model if needed, but these flags are most critical

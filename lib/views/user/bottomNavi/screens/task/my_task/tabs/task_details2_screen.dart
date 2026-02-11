@@ -402,18 +402,14 @@ class _TaskDetails2ScreenState extends State<TaskDetails2Screen> {
                     onChat: () {
                       Get.to(
                         () => const ChatScreen(),
-                        binding: BindingsBuilder(() {
-                          Get.put(
-                            ChatController(
-                              taskId: widget.task.id ?? '',
-                              taskTitle: widget.task.title,
-                              taskOwnerId: offer.offeringUserUid,
-                              taskOwnerName: offer.offeringUserName,
-                              taskOwnerPhoto: user?.photoURL,
-                              taskImage: widget.task.imageUrl,
-                            ),
-                          );
-                        }),
+                        arguments: {
+                          'taskId': widget.task.id ?? '',
+                          'taskTitle': widget.task.title,
+                          'taskOwnerId': offer.offeringUserUid,
+                          'taskOwnerName': offer.offeringUserName,
+                          'taskOwnerPhoto': user?.photoURL,
+                          'taskImage': widget.task.imageUrl,
+                        },
                       );
                     },
                   );

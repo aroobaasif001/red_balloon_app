@@ -351,18 +351,14 @@ class TaskInProgressScreen extends StatelessWidget {
                                     );
                                     Get.to(
                                       () => const ChatScreen(),
-                                      binding: BindingsBuilder(() {
-                                        Get.put(
-                                          ChatController(
-                                            taskId: task.id!,
-                                            taskTitle: task.title,
-                                            taskOwnerId: helperUid,
-                                            taskOwnerName: helperName,
-                                            taskOwnerPhoto: helperPhoto,
-                                            taskImage: task.imageUrl,
-                                          ),
-                                        );
-                                      }),
+                                      arguments: {
+                                        'taskId': task.id!,
+                                        'taskTitle': task.title,
+                                        'taskOwnerId': helperUid,
+                                        'taskOwnerName': helperName,
+                                        'taskOwnerPhoto': helperPhoto,
+                                        'taskImage': task.imageUrl,
+                                      },
                                     );
                                   } else {
                                     print(

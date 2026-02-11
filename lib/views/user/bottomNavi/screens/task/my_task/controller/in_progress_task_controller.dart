@@ -109,14 +109,14 @@ class InProgressTaskController extends GetxController {
             final data = snapshot.data();
             final taskStatus = data?['status']?.toString().toLowerCase() ?? '';
 
-            // If status changed from "in_progress" to something else (completed, cancelled, etc)
-            if (taskStatus.isNotEmpty && taskStatus != 'in progress') {
+            // If status changed from "in progress" to something else (completed, cancelled, disputed, etc)
+            if (taskStatus.isNotEmpty && 
+                taskStatus != 'in progress' && 
+                taskStatus != 'active') { // 🔥 Only navigate if it's no longer active/in progress
               print('✅ Task status changed to: $taskStatus. Navigating back.');
 
-              // Navigate back
-              if (Get.isRegistered<InProgressTaskController>()) {
-                Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 2));
-              }
+              // Navigate back to History tab (index 1, subIndex 2)
+              Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 2));
             }
           }
         });

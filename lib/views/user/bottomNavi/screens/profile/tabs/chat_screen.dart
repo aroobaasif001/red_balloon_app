@@ -16,14 +16,23 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ChatController(
-      taskId: Get.arguments?['taskId'] ?? '',
-      taskTitle: Get.arguments?['taskTitle'] ?? '',
-      taskOwnerId: Get.arguments?['taskOwnerId'] ?? '',
-      taskOwnerName: Get.arguments?['taskOwnerName'] ?? '',
-      taskOwnerPhoto: Get.arguments?['taskOwnerPhoto'],
-      taskImage: Get.arguments?['taskImage'],
-    ), tag: Get.arguments?['conversationId']); // Use tag to allow multiple chats if needed
+    // 🔥 Build a deterministic tag to allow multiple chat screens in the stack safely
+    final String? argConvId = Get.arguments?['conversationId'];
+    final String argTaskId = Get.arguments?['taskId'] ?? '';
+    final String argOwnerId = Get.arguments?['taskOwnerId'] ?? '';
+    final String chatTag = argConvId ?? "chat_${argTaskId}_$argOwnerId";
+
+    final controller = Get.put(
+      ChatController(
+        taskId: argTaskId,
+        taskTitle: Get.arguments?['taskTitle'] ?? '',
+        taskOwnerId: argOwnerId,
+        taskOwnerName: Get.arguments?['taskOwnerName'] ?? '',
+        taskOwnerPhoto: Get.arguments?['taskOwnerPhoto'],
+        taskImage: Get.arguments?['taskImage'],
+      ),
+      tag: chatTag,
+    );
 
     return SafeArea(
       top: false,
@@ -31,10 +40,9 @@ class ChatScreen extends StatelessWidget {
         canPop: true,
         onPopInvokedWithResult: (didPop, result) async {
           if (didPop) {
-            print('🔙 ChatScreen Popped! Marking messages as read and disposing...');
+            print('🔙 ChatScreen Popped! Tag: $chatTag');
             await controller.markMessagesAsRead();
-            // 🔥 Explicitly delete the controller when popping to ensure all streams stop
-            Get.delete<ChatController>(tag: Get.arguments?['conversationId']);
+            Get.delete<ChatController>(tag: chatTag);
           }
         },
         child: Scaffold(
