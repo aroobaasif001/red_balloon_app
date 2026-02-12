@@ -39,6 +39,7 @@ class NotificationService {
   var androidSdkInt;
   bool _initialized = false;
   bool _initialMessageHandled = false;
+  bool _isPermissionRequesting = false; // 🔥 Added guard flag
 
   // ============================================
   //TASK POSTING NOTIFICATION
@@ -1472,35 +1473,45 @@ class NotificationService {
 
   // 3) Android 13+ permission — null-safe (won’t crash on iOS)
   Future<void> _requestPermissions() async {
-    final settings = await _messaging.requestPermission(
-      alert: true,
-      announcement: true,
-      badge: true,
-      sound: true,
-      carPlay: true,
-      criticalAlert: true,
-      provisional: false,
-    );
+    if (_isPermissionRequesting) {
+      debugPrint('⚠️ Permission request already in progress, skipping...');
+      return;
+    }
 
-    final androidPlugin = _fln
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
-    await androidPlugin?.requestNotificationsPermission(); // <- null-safe
+    try {
+      _isPermissionRequesting = true;
+      final settings = await _messaging.requestPermission(
+        alert: true,
+        announcement: true,
+        badge: true,
+        sound: true,
+        carPlay: true,
+        criticalAlert: true,
+        provisional: false,
+      );
 
-    if (settings.authorizationStatus == AuthorizationStatus.denied) {
-      debugPrint('Notifications permission denied.');
-    } else {
-      try {
-        if (defaultTargetPlatform == TargetPlatform.iOS) {
-          final apns = await _messaging.getAPNSToken();
-          debugPrint('APNs Token: $apns');
+      final androidPlugin = _fln
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+      await androidPlugin?.requestNotificationsPermission(); // <- null-safe
+
+      if (settings.authorizationStatus == AuthorizationStatus.denied) {
+        debugPrint('Notifications permission denied.');
+      } else {
+        try {
+          if (defaultTargetPlatform == TargetPlatform.iOS) {
+            final apns = await _messaging.getAPNSToken();
+            debugPrint('APNs Token: $apns');
+          }
+          final fcm = await _messaging.getToken();
+          debugPrint('FCM Token: $fcm');
+        } catch (e) {
+          debugPrint('Error retrieving FCM/APNs token: $e');
         }
-        final fcm = await _messaging.getToken();
-        debugPrint('FCM Token: $fcm');
-      } catch (e) {
-        debugPrint('Error retrieving FCM/APNs token: $e');
       }
+    } finally {
+      _isPermissionRequesting = false;
     }
   }
 

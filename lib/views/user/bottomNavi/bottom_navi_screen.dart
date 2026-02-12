@@ -11,6 +11,8 @@ import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/wallet_tab.
 import 'screens/notification/controller/notification_controller.dart';
 import 'screens/profile/tabs/controller/messages_controller.dart';
 import 'screens/validations_tab/validation_hub_screen/controller/validation_hub_controller.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class BottomNaviScreen extends StatefulWidget {
   final int initialIndex;
@@ -37,6 +39,12 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
     currentIndex = widget.initialIndex;
     _initializeNavItems();
 
+    // 🔥 Update/Save device token when app starts or navigates to main screen
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    if (currentUserId != null) {
+      NotificationService.instance.saveUserDeviceToken(currentUserId);
+    }
+    
     // 🔥 Initialize screens here to pass the initialTab
     screens = [
       HomeScreen(),

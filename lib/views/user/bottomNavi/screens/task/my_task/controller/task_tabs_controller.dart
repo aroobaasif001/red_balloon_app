@@ -11,22 +11,25 @@ class TaskTabsController extends GetxController
   @override
   void onInit() {
     super.onInit();
-
-    // 3 tabs
     tabController = TabController(length: 3, vsync: this);
+    tabController.addListener(_handleTabSelection);
+  }
 
-    // Sync Flutter TabController → GetX variable (immediate update on swipe)
-    tabController.addListener(() {
-      // Update on every animation frame for instant feedback
-      selectedTab.value = tabController.index;
-    });
+  void _handleTabSelection() {
+    // Only update if not disposed
+    selectedTab.value = tabController.index;
   }
 
   // Sync Custom Tabs → Flutter TabController
   void changeTab(int index) {
     selectedTab.value = index;
-    if (!tabController.indexIsChanging) {
-      tabController.animateTo(index);
+    // Safe check: If controller is disposed, animateTo will fail
+    try {
+      if (!tabController.indexIsChanging) {
+        tabController.animateTo(index);
+      }
+    } catch (e) {
+      print('⚠️ TabController already disposed: $e');
     }
   }
 
@@ -43,6 +46,9 @@ class TaskTabsController extends GetxController
 
   @override
   void onClose() {
+    // 🔥 Remove listener first to avoid async calls after dispose
+    tabController.removeListener(_handleTabSelection);
+    tabController.dispose();
     super.onClose();
   }
 }

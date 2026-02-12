@@ -5,13 +5,15 @@ import 'package:get/get.dart';
 import 'package:red_balloon_app/model/auth_model.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/utils/colors.dart';
-import 'package:audioplayers/audioplayers.dart'; // 🔥 Added
+import 'package:audioplayers/audioplayers.dart';
+import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/views/auth/view/onboarding/onboarding_screen.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();
+  final NotificationService _notificationService = NotificationService.instance;
   StreamSubscription? _suspensionSubscription;
-  final AudioPlayer _audioPlayer = AudioPlayer(); // 🔥 Added
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   var consentChecked = false.obs;
   var consentError = ''.obs;
@@ -36,7 +38,7 @@ class AuthController extends GetxController {
   @override
   void onClose() {
     _suspensionSubscription?.cancel();
-    _audioPlayer.dispose(); // 🔥 Added
+    _audioPlayer.dispose();
     super.onClose();
   }
 
@@ -47,6 +49,7 @@ class AuthController extends GetxController {
       currentUser.value = user;
       _startSuspensionListener(user.uid);
       fetchUserProfileData(); // Fetch additional profile data
+      _notificationService.saveUserDeviceToken(user.uid); // 🔥 Save device token on app start
     }
   }
 
@@ -66,21 +69,17 @@ class AuthController extends GetxController {
   void _handleSuspension() async {
     _suspensionSubscription?.cancel();
     
-    // 🔥 Play Emergency Sound (Loud & Looping)
     try {
       await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-      // Using a siren sound for emergency effect
       await _audioPlayer.play(UrlSource('https://www.soundjay.com/misc/sounds/siren-1.mp3')); 
-      await _audioPlayer.setVolume(1.0); // Maximum volume
+      await _audioPlayer.setVolume(1.0);
       print('📢 Emergency sound started!');
     } catch (e) {
       print('❌ Error playing suspension sound: $e');
     }
 
-    // Explicitly sign out
     signOut();
     
-    // Show suspension popup
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -92,7 +91,7 @@ class AuthController extends GetxController {
         actions: [
           TextButton(
             onPressed: () {
-              _audioPlayer.stop(); // 🔥 Stop sound when user acknowledges
+              _audioPlayer.stop();
               Get.back();
               Get.offAll(() => const OnboardingScreen());
             },
@@ -110,8 +109,8 @@ class AuthController extends GetxController {
       final user = _authService.getCurrentUserModel();
       if (user != null) {
         currentUser.value = user;
-        await fetchUserProfileData(); // Fetch additional profile data
-        update(); // Notify GetBuilder listeners
+        await fetchUserProfileData();
+        update();
       }
     } catch (e) {
       print('Error refreshing user: $e');
@@ -125,15 +124,7 @@ class AuthController extends GetxController {
       if (user != null) {
         final userData = await _authService.getUserData(user.uid);
         if (userData != null) {
-          // Parse phone number
-          final phoneNumber = userData['phoneNumber'] ?? '';
-          if (phoneNumber.isNotEmpty) {
-            userPhone.value = phoneNumber;
-          } else {
-            userPhone.value = '';
-          }
-
-          // Get city and country
+          userPhone.value = userData['phoneNumber'] ?? '';
           userCity.value = userData['city'] ?? '';
           userCountry.value = userData['country'] ?? '';
         }
@@ -154,6 +145,7 @@ class AuthController extends GetxController {
 
       if (user != null) {
         currentUser.value = user;
+        _notificationService.saveUserDeviceToken(user.uid); // 🔥 Save device token
         return user;
       }
       return null;
@@ -177,7 +169,6 @@ class AuthController extends GetxController {
       final user = await _authService.signInWithGoogle();
 
       if (user != null) {
-        // Check for suspension immediately after sign-in
         final userData = await _authService.getUserData(user.uid);
         if (userData != null && userData['willLogin'] == false) {
           await _authService.signOut();
@@ -187,6 +178,7 @@ class AuthController extends GetxController {
 
         currentUser.value = user;
         _startSuspensionListener(user.uid);
+        _notificationService.saveUserDeviceToken(user.uid); // 🔥 Save device token
         return user;
       }
 
@@ -211,7 +203,6 @@ class AuthController extends GetxController {
       final user = await _authService.signInWithApple();
 
       if (user != null) {
-        // Check for suspension immediately after sign-in
         final userData = await _authService.getUserData(user.uid);
         if (userData != null && userData['willLogin'] == false) {
           await _authService.signOut();
@@ -221,6 +212,7 @@ class AuthController extends GetxController {
 
         currentUser.value = user;
         _startSuspensionListener(user.uid);
+        _notificationService.saveUserDeviceToken(user.uid); // 🔥 Save device token
         return user;
       }
 
@@ -240,6 +232,11 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       _suspensionSubscription?.cancel();
+      
+      if (currentUser.value != null) {
+        await _notificationService.deleteUserDeviceToken(currentUser.value!.uid);
+      }
+      
       await _authService.signOut();
       currentUser.value = null;
       userPhone.value = '';
@@ -267,34 +264,19 @@ class AuthController extends GetxController {
     }
   }
 
-  // Helper method to get user-friendly error messages
   String _getFriendlyErrorMessage(dynamic e) {
     if (e is FirebaseAuthException) {
       switch (e.code) {
-        case 'invalid-credential':
-          return 'Incorrect email or password. Please try again.';
-        case 'user-not-found':
-          return 'No user found with this email.';
-        case 'wrong-password':
-          return 'Incorrect password. Please try again.';
-        case 'invalid-email':
-          return 'Please enter a valid email address.';
-        case 'user-disabled':
-          return 'This account has been disabled. Please contact support.';
-        case 'too-many-requests':
-          return 'Too many failed attempts. Please try again later.';
-        case 'network-request-failed':
-          return 'Network error. Please check your internet connection.';
-        case 'operation-not-allowed':
-          return 'This sign-in method is not enabled.';
-        case 'account-exists-with-different-credential':
-          return 'An account already exists with the same email but different sign-in credentials.';
-        default:
-          return e.message ?? 'An unexpected error occurred. Please try again.';
+        case 'invalid-credential': return 'Incorrect email or password.';
+        case 'user-not-found': return 'No user found with this email.';
+        case 'wrong-password': return 'Incorrect password.';
+        case 'invalid-email': return 'Enter a valid email address.';
+        case 'user-disabled': return 'Account disabled. Contact support.';
+        case 'too-many-requests': return 'Too many attempts. Try later.';
+        case 'network-request-failed': return 'Network error.';
+        default: return e.message ?? 'An unexpected error occurred.';
       }
     }
-    return e.toString().contains('canceled-by-user') || e.toString().contains('aborted')
-        ? 'Sign-in canceled.'
-        : 'An unexpected error occurred. Please try again.';
+    return e.toString().contains('canceled-by-user') ? 'Sign-in canceled.' : 'An unexpected error occurred.';
   }
 }

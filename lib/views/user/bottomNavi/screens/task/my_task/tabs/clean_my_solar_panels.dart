@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -147,7 +148,22 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                 final longitude =
                     data?['longitude']?.toDouble() ?? widget.longitude ?? 0.0;
                 final acceptedOfferUid = data?['acceptedOfferUid'] ?? '';
+                final taskOwnerUid = data?['uid'] ?? '';
                 final phoneNumber = data?['phoneNumber'] ?? '';
+
+                // 🔥 FIX: Determine who is the OTHER party
+                final currentUser = FirebaseAuth.instance.currentUser;
+                String otherUserUid;
+                
+                if (currentUser != null && acceptedOfferUid == currentUser.uid) {
+                  // Current user is the HELPER, so pass REQUESTER (task owner)
+                  otherUserUid = taskOwnerUid;
+                  print('🔍 Current user is HELPER, passing REQUESTER UID: $otherUserUid');
+                } else {
+                  // Current user is the REQUESTER, so pass HELPER
+                  otherUserUid = acceptedOfferUid;
+                  print('🔍 Current user is REQUESTER, passing HELPER UID: $otherUserUid');
+                }
 
                 // 🔥 Calculate Distance (Non-blocking)
                 String? distanceString = _dynamicDistance != null ? "$_dynamicDistance km away" : null;
@@ -163,7 +179,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                     taskType: taskType,
                     latitude: latitude,
                     longitude: longitude,
-                    helperUid: acceptedOfferUid,
+                    helperUid: otherUserUid, // 🔥 Now passing OTHER party's UID
                     phoneNumber: phoneNumber,
                     userName: widget.userName,
                     photoUrl: widget.userPhoto,
