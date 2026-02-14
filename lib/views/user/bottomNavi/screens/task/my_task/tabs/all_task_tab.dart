@@ -126,6 +126,10 @@ class AllTaskTab extends StatelessWidget {
                   final isInProgress =
                       task.status.toLowerCase() == 'in progress';
 
+                  // 🔥 NEW: Check if task is expired (active and > 2 hours)
+                  final isExpired = task.status.toLowerCase() == 'active' &&
+                      DateTime.now().difference(task.createdAt).inMinutes >= 120;
+
                   return FadeInUp(
                     duration: const Duration(milliseconds: 700),
                     delay: Duration(milliseconds: index * 700),
@@ -146,13 +150,16 @@ class AllTaskTab extends StatelessWidget {
                         taskType: task.taskType, // 🔥 Pass taskType
                         btnText: isInProgress
                             ? 'In Progress'
-                            : 'View Details', // 🔥 Dynamic button text
+                            : isExpired
+                                ? 'Expired'
+                                : 'View Details', // 🔥 Dynamic button text
                         onLongPress: () {
                           if (task.status.toLowerCase() == 'active') {
                             _showEditDeleteBottomSheet(
                               context,
                               task,
                               controller,
+                              isExpired: isExpired,
                             );
                           }
                         },
@@ -160,6 +167,17 @@ class AllTaskTab extends StatelessWidget {
                           Get.to(() => PostNewTaskScreen());
                         },
                         onViewDetails: () {
+                          // 🔥 NEW: If expired, show edit/delete popup
+                          if (isExpired) {
+                            _showEditDeleteBottomSheet(
+                              context,
+                              task,
+                              controller,
+                              isExpired: true,
+                            );
+                            return;
+                          }
+
                           // 🔥 Check if other user involved is suspended
                           // Current user is owner, so check helper
                           if (task.acceptedOfferUid != null &&
@@ -198,8 +216,9 @@ class AllTaskTab extends StatelessWidget {
   void _showEditDeleteBottomSheet(
     BuildContext context,
     TaskModel task,
-    TasksController tasksController,
-  ) {
+    TasksController tasksController, {
+    bool isExpired = false,
+  }) {
     // We need PostNewTaskController for editing/deleting
     final postController = Get.put(PostNewTaskController());
 
@@ -220,7 +239,7 @@ class AllTaskTab extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.edit, color: rbnewcolor),
                 title: CustomText(
-                  'Edit Task',
+                  isExpired ? 'Re Upload' : 'Edit Task',
                   fontWeight: FontVariant.semiBold,
                 ),
                 onTap: () {

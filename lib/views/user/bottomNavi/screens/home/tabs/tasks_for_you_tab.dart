@@ -111,6 +111,16 @@ class TasksForYouTab extends StatelessWidget {
                 return false;
               }
 
+              // 🔥 NEW: Filter out 'active' tasks if older than 2 hours
+              if (status == 'active') {
+                final now = DateTime.now();
+                final differenceInMinutes =
+                    now.difference(task.createdAt).inMinutes;
+                if (differenceInMinutes >= 120) {
+                  return false;
+                }
+              }
+
               // 🔥 NEW: Filter out 'active' tasks if owner is suspended
               if (status == 'active' && controller.isUserSuspended(task.uid)) {
                 return false;

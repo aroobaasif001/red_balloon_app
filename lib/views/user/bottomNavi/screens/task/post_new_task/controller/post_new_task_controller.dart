@@ -443,6 +443,7 @@ class PostNewTaskController extends GetxController {
         'latitude': selectedTaskType.value == "Offline Task" ? latitude.value : null,
         'longitude': selectedTaskType.value == "Offline Task" ? longitude.value : null,
         'imageUrl': uploadedImageUrl.value,
+        'createdAt': DateTime.now().toIso8601String(), // 🔥 Update time to latest on edit/re-upload
         'escrow.amount': newBudget, // Update embedded escrow amount too
       };
 
