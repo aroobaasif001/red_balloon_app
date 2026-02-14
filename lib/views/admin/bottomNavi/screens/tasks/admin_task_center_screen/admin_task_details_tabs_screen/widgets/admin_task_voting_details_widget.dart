@@ -188,79 +188,74 @@ class AdminTaskVotingDetailsWidget extends StatelessWidget {
                 const SizedBox(height: 5),
                 const Divider(thickness: 0.5),
                 const SizedBox(height: 10),
-                // Grid Row 1
+                // Row 1: Escrow Amount & Task Category
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          "Escrow Amount",
-                          fontSize: 13,
-                          color: timeColor,
-                        ),
-                        SizedBox(height: 3),
-                        CustomText(
-                          "SAR 650",
-                          fontSize: 15,
-                          fontWeight: FontVariant.semiBold,
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        CustomText(
-                          "Time Taken",
-                          fontSize: 13,
-                          color: timeColor,
-                        ),
-                        SizedBox(height: 3),
-                        CustomText(
-                          "3h 20m",
-                          fontSize: 15,
-                          fontWeight: FontVariant.semiBold,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                // Grid Row 2
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          "Task Category",
-                          fontSize: 13,
-                          color: timeColor,
-                        ),
-                        SizedBox(height: 3),
-                        CustomText(
-                          "Offline Task",
-                          fontSize: 15,
-                          fontWeight: FontVariant.semiBold,
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        CustomText("Posted At", fontSize: 13, color: timeColor),
-                        SizedBox(height: 3),
-                        CustomText(
-                          "Today, 8:30 AM",
-                          fontSize: 15,
-                          fontWeight: FontVariant.semiBold,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: [
+                     Expanded(
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           const CustomText(
+                             "Escrow Amount",
+                             fontSize: 13,
+                             color: timeColor,
+                           ),
+                           const SizedBox(height: 3),
+                           Obx(
+                             () => CustomText(
+                               controller.escrowAmount.value,
+                               fontSize: 15,
+                               fontWeight: FontVariant.semiBold,
+                             ),
+                           ),
+                         ],
+                       ),
+                     ),
+                     const SizedBox(width: 10),
+                     Expanded(
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.end,
+                         children: [
+                           const CustomText(
+                             "Task Category",
+                             fontSize: 13,
+                             color: timeColor,
+                           ),
+                           const SizedBox(height: 3),
+                           Obx(
+                             () => CustomText(
+                               controller.taskCategory.value,
+                               fontSize: 15,
+                               fontWeight: FontVariant.semiBold,
+                             ),
+                           ),
+                         ],
+                       ),
+                     ),
+                   ],
+                 ),
+                 const SizedBox(height: 18),
+                 // Row 2: Posted At
+                 Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                   children: [
+                     Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         const CustomText("Posted At", fontSize: 13, color: timeColor),
+                         const SizedBox(height: 3),
+                         Obx(
+                           () => CustomText(
+                             controller.postedAt.value,
+                             fontSize: 15,
+                             fontWeight: FontVariant.semiBold,
+                           ),
+                         ),
+                       ],
+                     ),
+                   ],
+                 ),
               ],
             ),
           ),

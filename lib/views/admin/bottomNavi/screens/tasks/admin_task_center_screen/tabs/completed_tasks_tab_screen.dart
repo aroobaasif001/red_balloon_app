@@ -36,7 +36,7 @@ class CompletedTasksTab extends StatelessWidget {
                 String time = DateFormat(
                   'dd MMM \'at\' hh:mm a',
                   'en_US',
-                ).format(task.createdAt);
+                ).format(task.completedAt ?? task.createdAt);
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16),

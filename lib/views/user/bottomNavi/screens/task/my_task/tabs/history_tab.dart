@@ -169,7 +169,9 @@ class HistoryTab extends StatelessWidget {
                                     afterPhotoUrl:
                                         validationData['afterPhotoUrl'] ?? '',
                                   ),
-                                );
+                                )?.then((_) {
+                                  controller.fetchHistoryTasks();
+                                });
                               } else {
                                 Get.snackbar(
                                   'Error',
@@ -339,7 +341,13 @@ class HistoryTab extends StatelessWidget {
                                   disputeData: disputeInfo,
                                   taskData: taskInfo,
                                 ),
-                              );
+                              )?.then((_) {
+                                // 🔥 When returning from TaskDisputedScreen, close any open dialog and refresh
+                                if (Get.isDialogOpen ?? false) {
+                                  Get.back();
+                                }
+                                controller.fetchHistoryTasks();
+                              });
                             } catch (e) {
                               // Close Loading Dialog if open
                               if (Get.isDialogOpen ?? false) {
@@ -518,6 +526,7 @@ class HistoryTab extends StatelessWidget {
                                 Get.back();
                               }
 
+
                               // 8. Navigate
                               if (!hasFeedback) {
                                 Get.to(
@@ -526,7 +535,13 @@ class HistoryTab extends StatelessWidget {
                                     otherUserData: otherUserData,
                                     isRequester: isRequester,
                                   ),
-                                );
+                                )?.then((_) {
+                                  // 🔥 When returning from LeaveFeedbackScreen, close any open dialog and refresh
+                                  if (Get.isDialogOpen ?? false) {
+                                    Get.back();
+                                  }
+                                  controller.fetchHistoryTasks();
+                                });
                               } else {
                                 Get.to(
                                   () => TaskCompletedScreen(
@@ -536,7 +551,13 @@ class HistoryTab extends StatelessWidget {
                                     otherUserData: otherUserData,
                                     validationInfo: validationInfo,
                                   ),
-                                );
+                                )?.then((_) {
+                                  // 🔥 When returning from TaskCompletedScreen, close any open dialog and refresh
+                                  if (Get.isDialogOpen ?? false) {
+                                    Get.back();
+                                  }
+                                  controller.fetchHistoryTasks();
+                                });
                               }
                             } catch (e) {
                               if (Get.isDialogOpen ?? false) {

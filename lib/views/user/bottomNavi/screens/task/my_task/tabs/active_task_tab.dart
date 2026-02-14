@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -210,8 +211,23 @@ class ActiveTab extends StatelessWidget {
                           final userId = userData?['userId'];
                           final phone = userData?['phoneNumber'];
 
-                          // Use task.uid as the other user's UID (stored in task document)
-                          final otherUserUid = task.uid;
+                          // 🔥 FIX: Determine who is the OTHER party
+                          final currentUser = FirebaseAuth.instance.currentUser;
+                          String otherUserUid;
+                          
+                          // Check if there's an accepted offer UID in the task
+                          final acceptedOfferUid = task.acceptedOfferUid ?? '';
+                          
+                          if (currentUser != null && acceptedOfferUid.isNotEmpty && acceptedOfferUid == currentUser.uid) {
+                            // Current user is the HELPER, so pass REQUESTER (task owner)
+                            otherUserUid = task.uid;
+                            print('🔍 [ActiveTaskTab] Current user is HELPER, passing REQUESTER UID: $otherUserUid');
+                          } else {
+                            // Current user is the REQUESTER, so pass HELPER (or task owner if no helper yet)
+                            otherUserUid = acceptedOfferUid.isNotEmpty ? acceptedOfferUid : task.uid;
+                            print('🔍 [ActiveTaskTab] Current user is REQUESTER, passing HELPER UID: $otherUserUid');
+                          }
+                          
                           print('🔍 Other user UID from task: $otherUserUid');
 
                           print(

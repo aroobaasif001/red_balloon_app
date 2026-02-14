@@ -101,18 +101,14 @@ Widget buildHelperInfoCard(
                     print('✅ Opening chat with helperUid: $chatUserId');
                     Get.to(
                       () => const ChatScreen(),
-                      binding: BindingsBuilder(() {
-                        Get.put(
-                          ChatController(
-                            taskId: taskId,
-                            taskTitle: taskTitle ?? 'Task',
-                            taskOwnerId: chatUserId, // 🔥 Use Firebase Auth UID
-                            taskOwnerName: userName,
-                            taskOwnerPhoto: photoUrl,
-                            taskImage: taskImage,
-                          ),
-                        );
-                      }),
+                      arguments: {
+                        'taskId': taskId,
+                        'taskTitle': taskTitle ?? 'Task',
+                        'taskOwnerId': chatUserId, // 🔥 Use Firebase Auth UID
+                        'taskOwnerName': userName,
+                        'taskOwnerPhoto': photoUrl,
+                        'taskImage': taskImage,
+                      },
                     );
                   } else {
                     print('❌ Chat failed: taskId=$taskId, helperUid=$helperUid');

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -107,7 +108,6 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
       _setupTaskStatusListener(widget.taskId!);
     }
 
-    // 🔥 Calculate live distance
     _calculateLiveDistance();
 
     // 🔥 Fetch real owner data
@@ -126,10 +126,12 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
             final data = snapshot.data();
             final status = data?['status']?.toString().toLowerCase() ?? '';
 
-            // If status changed to "accepted" or "in_progress", navigate to InProgressViewDetails
-            if (status == 'accepted' || status == 'in_progress') {
+            print('🔍 [DEBUG] Task status updated: "$status"');
+
+            // If status changed to "accepted" or "in progress", navigate to InProgressViewDetails
+            if (status == 'accepted' || status == 'in progress' || status == 'in_progress') {
               print(
-                '✅ Task status changed to: $status - Navigating to InProgressViewDetails',
+                '✅ Match found! Navigating to InProgressViewDetails...',
               );
 
               if (mounted) {
@@ -146,32 +148,27 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                 final longitude =
                     data?['longitude']?.toDouble() ?? widget.longitude ?? 0.0;
                 final acceptedOfferUid = data?['acceptedOfferUid'] ?? '';
+                final taskOwnerUid = data?['uid'] ?? '';
                 final phoneNumber = data?['phoneNumber'] ?? '';
 
-                // 🔥 Calculate Distance
-                String? distanceString;
-                if (taskType != 'Online Task' &&
-                    latitude != 0.0 &&
-                    longitude != 0.0) {
-                  try {
-                    final position = await Geolocator.getCurrentPosition(
-                      desiredAccuracy: LocationAccuracy.medium,
-                    );
-                    final distMeters = Geolocator.distanceBetween(
-                      latitude,
-                      longitude,
-                      position.latitude,
-                      position.longitude,
-                    );
-                    distanceString =
-                        "${(distMeters / 1000).toStringAsFixed(1)} km away";
-                  } catch (e) {
-                    print('⚠️ Could not fetch location for distance calc: $e');
-                  }
+                // 🔥 FIX: Determine who is the OTHER party
+                final currentUser = FirebaseAuth.instance.currentUser;
+                String otherUserUid;
+                
+                if (currentUser != null && acceptedOfferUid == currentUser.uid) {
+                  // Current user is the HELPER, so pass REQUESTER (task owner)
+                  otherUserUid = taskOwnerUid;
+                  print('🔍 Current user is HELPER, passing REQUESTER UID: $otherUserUid');
+                } else {
+                  // Current user is the REQUESTER, so pass HELPER
+                  otherUserUid = acceptedOfferUid;
+                  print('🔍 Current user is REQUESTER, passing HELPER UID: $otherUserUid');
                 }
-                Get.back();
-                // Navigate to InProgressViewDetails with full data
-                Get.to(
+
+                // 🔥 Calculate Distance (Non-blocking)
+                String? distanceString = _dynamicDistance != null ? "$_dynamicDistance km away" : null;
+
+                Get.off(
                   () => InProgressViewDetails(
                     taskId: taskId,
                     taskTitle: taskTitle,
@@ -182,7 +179,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                     taskType: taskType,
                     latitude: latitude,
                     longitude: longitude,
-                    helperUid: acceptedOfferUid,
+                    helperUid: otherUserUid, // 🔥 Now passing OTHER party's UID
                     phoneNumber: phoneNumber,
                     userName: widget.userName,
                     photoUrl: widget.userPhoto,
@@ -192,66 +189,10 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                 );
               }
             } else if (status.isNotEmpty && status != 'active') {
-              // For other status changes (cancelled, etc), just navigate back
-              print('✅ Task status changed to: $status');
+              // For other status changes (cancelled, etc), just navigate 
+              print('✅ Task status changed to non-active: $status');
               if (mounted) {
-                // Extract all necessary data from the task
-                final taskTitle = data?['title'] ?? widget.taskTitle ?? '';
-                final taskPrice =
-                    data?['budget']?.toString() ?? widget.taskPrice ?? '0';
-                final taskTimeAgo = widget.taskTimeAgo ?? '';
-                final taskLocation = data?['location'] ?? widget.location ?? '';
-                final taskImage = data?['imageUrl'] ?? widget.taskImage ?? '';
-                final taskType = data?['taskType'] ?? widget.taskType ?? '';
-                final latitude =
-                    data?['latitude']?.toDouble() ?? widget.latitude ?? 0.0;
-                final longitude =
-                    data?['longitude']?.toDouble() ?? widget.longitude ?? 0.0;
-                final acceptedOfferUid = data?['acceptedOfferUid'] ?? '';
-                final phoneNumber = data?['phoneNumber'] ?? '';
-
-                // 🔥 Calculate Distance
-                String? distanceString;
-                if (taskType != 'Online Task' &&
-                    latitude != 0.0 &&
-                    longitude != 0.0) {
-                  try {
-                    final position = await Geolocator.getCurrentPosition(
-                      desiredAccuracy: LocationAccuracy.medium,
-                    );
-                    final distMeters = Geolocator.distanceBetween(
-                      latitude,
-                      longitude,
-                      position.latitude,
-                      position.longitude,
-                    );
-                    distanceString =
-                        "${(distMeters / 1000).toStringAsFixed(1)} km away";
-                  } catch (e) {
-                    print('⚠️ Could not fetch location for distance calc: $e');
-                  }
-                }
-                Get.back();
-                // Navigate to InProgressViewDetails with full data
-                Get.to(
-                  () => InProgressViewDetails(
-                    taskId: taskId,
-                    taskTitle: taskTitle,
-                    price: taskPrice,
-                    timeAgo: taskTimeAgo,
-                    location: taskLocation,
-                    taskImage: taskImage,
-                    taskType: taskType,
-                    latitude: latitude,
-                    longitude: longitude,
-                    helperUid: acceptedOfferUid,
-                    phoneNumber: phoneNumber,
-                    userName: widget.userName,
-                    photoUrl: widget.userPhoto,
-                    userId: widget.userId,
-                    distance: distanceString,
-                  ),
-                );
+                // Similar logic for other states if needed, but 'in progress' is handled above
               }
             }
           }
@@ -980,18 +921,14 @@ class RefreshButtonWithData extends StatelessWidget {
                   );
                   Get.to(
                     () => const ChatScreen(),
-                    binding: BindingsBuilder(() {
-                      Get.put(
-                        ChatController(
-                          taskId: taskId!,
-                          taskTitle: taskTitle ?? 'Clean my Solar Panels',
-                          taskOwnerId: taskOwnerUid!,
-                          taskOwnerName: taskOwnerName ?? 'User',
-                          taskOwnerPhoto: taskOwnerPhoto,
-                          taskImage: taskImage,
-                        ),
-                      );
-                    }),
+                    arguments: {
+                      'taskId': taskId!,
+                      'taskTitle': taskTitle ?? 'Clean my Solar Panels',
+                      'taskOwnerId': taskOwnerUid!,
+                      'taskOwnerName': taskOwnerName ?? 'User',
+                      'taskOwnerPhoto': taskOwnerPhoto,
+                      'taskImage': taskImage,
+                    },
                   );
                 } else {
                   print(
@@ -1084,18 +1021,14 @@ class RefreshButtonWithData extends StatelessWidget {
                   );
                   Get.to(
                     () => const ChatScreen(),
-                    binding: BindingsBuilder(() {
-                      Get.put(
-                        ChatController(
-                          taskId: taskId!,
-                          taskTitle: taskTitle ?? 'Clean my Solar Panels',
-                          taskOwnerId: taskOwnerUid!,
-                          taskOwnerName: taskOwnerName ?? 'User',
-                          taskOwnerPhoto: taskOwnerPhoto,
-                          taskImage: taskImage,
-                        ),
-                      );
-                    }),
+                    arguments: {
+                      'taskId': taskId!,
+                      'taskTitle': taskTitle ?? 'Clean my Solar Panels',
+                      'taskOwnerId': taskOwnerUid!,
+                      'taskOwnerName': taskOwnerName ?? 'User',
+                      'taskOwnerPhoto': taskOwnerPhoto,
+                      'taskImage': taskImage,
+                    },
                   );
                 } else {
                   print(

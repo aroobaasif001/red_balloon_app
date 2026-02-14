@@ -77,94 +77,166 @@ class _AdminTaskDetailsTabsScreenState
                     offset: const Offset(0, 4),
                   ),
                 ],
-                child: Stack(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_rounded,
-                            size: 15,
-                            color: walletTextGreyColor,
-                          ),
-                          const SizedBox(width: 1),
-                          CustomText(
-                            "Al Malaz, Riyadh",
-                            fontSize: 12,
-                            color: timeColor,
-                            fontWeight: FontVariant.medium,
-                          ),
-                        ],
+                    CustomContainer(
+                      height: 40,
+                      width: 33,
+                      margin: const EdgeInsets.only(top: 8),
+                      color: rdBgColor,
+                      borderRadius: BorderRadius.circular(14),
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        "assets/icons/div (3).png",
+                        height: 28,
                       ),
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomContainer(
-                          height: 40,
-                          width: 33,
-                          color: rdBgColor,
-                          borderRadius: BorderRadius.circular(14),
-                          alignment: Alignment.center,
-                          child: Image.asset(
-                            "assets/icons/div (3).png",
-                            height: 28,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 10),
-
-                              /// TITLE
-                              Obx(
-                                () => CustomText(
-                                  controller.taskTitle.value.isEmpty
-                                      ? "Loading..."
-                                      : controller.taskTitle.value,
-                                  fontSize: 15,
-                                  fontWeight: FontVariant.semiBold,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 8),
+                                    Obx(
+                                      () => CustomText(
+                                        controller.taskTitle.value.isEmpty
+                                            ? "Loading..."
+                                            : controller.taskTitle.value,
+                                        fontSize: 15,
+                                        fontWeight: FontVariant.semiBold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 6),
+                              const SizedBox(width: 8),
                               Obx(
-                                () => CustomText(
-                                  controller.rejectionReason.value.isEmpty
-                                      ? "Loading..."
-                                      : controller.rejectionReason.value,
-                                  fontSize: 14,
-                                  color: timeColor,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Obx(
-                                () => CustomText(
-                                  controller.completedTime.value.isEmpty
-                                      ? "Loading..."
-                                      : controller.completedTime.value,
-                                  fontSize: 12,
-                                  color: walletGrey600Color,
-                                ),
-                              ),
-                              Obx(
-                                () => CustomText(
-                                  controller.taskCreatorUserId.value.isEmpty
-                                      ? "Task ID: Loading..."
-                                      : "Task ID: ${controller.taskCreatorUserId.value}",
-                                  fontSize: 12,
-                                  color: timeColor,
-                                ),
+                                () => controller.taskCategory.value == "Offline Task"
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(top: 8),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Get.dialog(
+                                              Dialog(
+                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                child: CustomContainer(
+                                                  padding: const EdgeInsets.all(24),
+                                                  borderRadius: BorderRadius.circular(20),
+                                                  conColor: whiteColor,
+                                                  child: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Container(
+                                                        padding: const EdgeInsets.all(12),
+                                                        decoration: BoxDecoration(
+                                                          color: rdBgColor.withOpacity(0.1),
+                                                          shape: BoxShape.circle,
+                                                        ),
+                                                        child: const Icon(Icons.location_on_rounded, color: redColor, size: 30),
+                                                      ),
+                                                      const SizedBox(height: 16),
+                                                      const CustomText("Full Location", fontSize: 18, fontWeight: FontVariant.bold),
+                                                      const SizedBox(height: 12),
+                                                      CustomText(
+                                                        controller.taskLocation.value,
+                                                        fontSize: 15,
+                                                        color: blackColor,
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                      const SizedBox(height: 24),
+                                                      GestureDetector(
+                                                        onTap: () => Get.back(),
+                                                        child: CustomContainer(
+                                                          width: double.infinity,
+                                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                                          borderRadius: BorderRadius.circular(12),
+                                                          conColor: redColor,
+                                                          alignment: Alignment.center,
+                                                          child: const CustomText("Close", color: whiteColor, fontWeight: FontVariant.semiBold),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.location_on_rounded,
+                                                size: 14,
+                                                color: walletTextGreyColor,
+                                              ),
+                                              const SizedBox(width: 2),
+                                              ConstrainedBox(
+                                                constraints: const BoxConstraints(maxWidth: 100),
+                                                child: CustomText(
+                                                  controller.taskLocation.value,
+                                                  fontSize: 11,
+                                                  color: timeColor,
+                                                  fontWeight: FontVariant.medium,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              const CustomText(
+                                                " (See more)",
+                                                fontSize: 10,
+                                                color: Colors.blue,
+                                                fontWeight: FontVariant.medium,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 6),
+                          Obx(
+                            () => CustomText(
+                              controller.rejectionReason.value.isEmpty
+                                  ? "Loading..."
+                                  : controller.rejectionReason.value,
+                              fontSize: 14,
+                              color: timeColor,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Obx(
+                            () => CustomText(
+                              controller.completedTime.value.isEmpty
+                                  ? "Loading..."
+                                  : controller.completedTime.value,
+                              fontSize: 12,
+                              color: walletGrey600Color,
+                            ),
+                          ),
+                          Obx(
+                            () => CustomText(
+                              controller.taskCreatorUserId.value.isEmpty
+                                  ? "Task ID: Loading..."
+                                  : "Task ID: ${controller.taskCreatorUserId.value}",
+                              fontSize: 12,
+                              color: timeColor,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -398,15 +470,19 @@ class _AdminTaskDetailsTabsScreenState
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: const [
+                      children: [
                         Column(
                           children: [
-                            CustomText(
-                              "Riyadh",
-                              fontSize: 16,
-                              fontWeight: FontVariant.semiBold,
+                            Obx(
+                              () => CustomText(
+                                controller.requesterLocation.value,
+                                fontSize: 13,
+                                fontWeight: FontVariant.semiBold,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            CustomText(
+                            const CustomText(
                               "Location",
                               fontSize: 12,
                               color: timeColor,
@@ -415,12 +491,14 @@ class _AdminTaskDetailsTabsScreenState
                         ),
                         Column(
                           children: [
-                            CustomText(
-                              "8",
-                              fontSize: 16,
-                              fontWeight: FontVariant.semiBold,
+                            Obx(
+                              () => CustomText(
+                                "${controller.requesterPostedTasks.value}",
+                                fontSize: 16,
+                                fontWeight: FontVariant.semiBold,
+                              ),
                             ),
-                            CustomText(
+                            const CustomText(
                               "Posted",
                               fontSize: 12,
                               color: timeColor,
@@ -429,12 +507,14 @@ class _AdminTaskDetailsTabsScreenState
                         ),
                         Column(
                           children: [
-                            CustomText(
-                              "2 yrs",
-                              fontSize: 16,
-                              fontWeight: FontVariant.semiBold,
+                            Obx(
+                              () => CustomText(
+                                controller.requesterMemberSince.value,
+                                fontSize: 16,
+                                fontWeight: FontVariant.semiBold,
+                              ),
                             ),
-                            CustomText(
+                            const CustomText(
                               "Member",
                               fontSize: 12,
                               color: timeColor,

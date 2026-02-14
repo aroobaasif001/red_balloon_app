@@ -28,23 +28,19 @@ class _MyTaskScreenState extends State<MyTaskScreen> {
   @override
   void initState() {
     super.initState();
-    if (Get.isRegistered<TaskTabsController>()) {
-      controller = Get.find<TaskTabsController>();
-      // 🔥 Execute after build to avoid "markNeedsBuild() called during build" error
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        controller.resetTab(toIndex: widget.initialTab);
-      });
-    } else {
-      controller = Get.put(TaskTabsController());
-      // Handle initial tab if controller just created
-      if (widget.initialTab != 0) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          controller.changeTab(widget.initialTab);
-        });
-      }
-    }
+    // Use Get.find or Get.put to get the controller
+    controller = Get.isRegistered<TaskTabsController>()
+        ? Get.find<TaskTabsController>()
+        : Get.put(TaskTabsController());
 
-    // 🔥 Initialize TasksController here so it's ready for all tabs
+    // 🔥 Force sync the tab index
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.initialTab != controller.tabController.index) {
+        controller.changeTab(widget.initialTab);
+      }
+    });
+
+    // 🔥 Initialize TasksController
     if (!Get.isRegistered<TasksController>()) {
       Get.put(TasksController());
     }
@@ -52,8 +48,6 @@ class _MyTaskScreenState extends State<MyTaskScreen> {
 
   @override
   void dispose() {
-    // Optional: Only delete if you want it to refresh every time user enters MyTaskScreen
-    // Get.delete<TasksController>(); 
     super.dispose();
   }
 
@@ -117,15 +111,16 @@ class _MyTaskScreenState extends State<MyTaskScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 35),
+            const SizedBox(height: 35),
             Expanded(
-              child: GetBuilder<TaskTabsController>(
-                builder: (ctrl) {
-                  return TabBarView(
-                    controller: ctrl.tabController,
-                    children: [ActiveTab(), AllTaskTab(), HistoryTab()],
-                  );
-                },
+              child: TabBarView(
+                controller: controller.tabController,
+                physics: const BouncingScrollPhysics(), // Allow natural scrolling
+                children: const [
+                  ActiveTab(key: PageStorageKey('active')),
+                  AllTaskTab(key: PageStorageKey('all_tasks')),
+                  HistoryTab(key: PageStorageKey('history')),
+                ],
               ),
             ),
           ],

@@ -50,12 +50,32 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
   final AuthService _authService = AuthService();
   bool _isSubmitting = false;
 
+  double? _lat;
+  double? _lng;
+
   @override
   void initState() {
     super.initState();
     _priceController = TextEditingController(
       text: widget.taskBudget?.toInt().toString(),
     );
+    _fetchLocationInBackground();
+  }
+
+  Future<void> _fetchLocationInBackground() async {
+    try {
+      final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.medium);
+      if (mounted) {
+        setState(() {
+          _lat = position.latitude;
+          _lng = position.longitude;
+        });
+        debugPrint('✅ Pre-fetched location for offer: $_lat, $_lng');
+      }
+    } catch (e) {
+      debugPrint('⚠️ Could not pre-fetch location: $e');
+    }
   }
 
   @override
@@ -240,17 +260,6 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
         'location': widget.location ?? '',
       };
 
-      double? lat;
-      double? lng;
-      try {
-        final position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.medium);
-        lat = position.latitude;
-        lng = position.longitude;
-      } catch (e) {
-        debugPrint('⚠️ Could not fetch location for offer: $e');
-      }
-
       // Submit offer to Firebase
       final success = await _offerService.submitOffer(
         taskId: widget.taskId!,
@@ -262,8 +271,8 @@ class _SendOfferBottomSheetState extends State<SendOfferBottomSheet> {
         taskOwnerPhoto: widget.taskOwnerPhoto,
         offeringUserName: userName,
         offeringUserPhoto: userPhoto,
-        latitude: lat,
-        longitude: lng,
+        latitude: _lat,
+        longitude: _lng,
       );
 
       setState(() => _isSubmitting = false);

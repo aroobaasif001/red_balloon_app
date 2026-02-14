@@ -4,16 +4,21 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:red_balloon_app/model/task_model.dart';
 import 'package:red_balloon_app/services/auth_service.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/services/task_service.dart';
 import 'package:red_balloon_app/services/wallet_service.dart';
 
+import '../../../../../../../custom_widgets/customtext.dart';
+import '../../../../../../../utils/colors.dart';
+
 class PostNewTaskController extends GetxController {
   final TaskService _taskService = TaskService();
   final AuthService _authService = AuthService();
   final WalletService _walletService = WalletService();
+  final ImagePicker _imagePicker = ImagePicker(); // 🔥 Added ImagePicker
 
   // Dropdown
   var selectedTaskType = "".obs;
@@ -79,7 +84,92 @@ class PostNewTaskController extends GetxController {
 
   // File
 
+  // File picker selection logic
   Future<void> pickMedia() async {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomText(
+              "Select Media Source",
+              fontSize: 18,
+              fontWeight: FontVariant.bold,
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: Icon(Icons.photo_library, color: redColor),
+              title: CustomText("Photo Gallery", fontSize: 16),
+              onTap: () {
+                Get.back();
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.camera_alt, color: redColor),
+              title: CustomText("Camera", fontSize: 16),
+              onTap: () {
+                Get.back();
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.insert_drive_file, color: redColor),
+              title: CustomText("Files / Documents (PDF)", fontSize: 16),
+              onTap: () {
+                Get.back();
+                _pickFromFileManager();
+              },
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 🔥 Helper: Pick via ImagePicker (Best for iOS Gallery)
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: source,
+        imageQuality: 70,
+      );
+
+      if (image != null) {
+        final file = File(image.path);
+        final size = await file.length();
+
+        // Max 5MB
+        if (size > 5 * 1024 * 1024) {
+          Get.snackbar("Error", "File too large! Max size is 5MB");
+          return;
+        }
+
+        // Convert XFile to PlatformFile-like structure for existing logic
+        pickedFile.value = PlatformFile(
+          name: image.name,
+          size: size,
+          path: image.path,
+        );
+        imageError.value = "";
+
+        // Auto-upload
+        await uploadImageToFirebase(pickedFile.value!);
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+      Get.snackbar("Error", "Failed to pick image");
+    }
+  }
+
+  // 🔥 Helper: Pick via FilePicker (For PDFs)
+  Future<void> _pickFromFileManager() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
@@ -96,7 +186,7 @@ class PostNewTaskController extends GetxController {
       pickedFile.value = file;
       imageError.value = "";
 
-      // Auto-upload to Firebase Storage
+      // Auto-upload
       await uploadImageToFirebase(file);
     }
   }

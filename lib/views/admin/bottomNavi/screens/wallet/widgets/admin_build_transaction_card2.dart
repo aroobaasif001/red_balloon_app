@@ -12,6 +12,7 @@ Widget adminBuildTransactionCard2(
   required String name,
   required String role,
   required String time,
+  String status = 'completed', // 🔥 Added status parameter with default value
   VoidCallback? onTap,
 }) {
   return GestureDetector(
@@ -49,12 +50,16 @@ Widget adminBuildTransactionCard2(
             CustomContainer(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               borderRadius: BorderRadius.circular(9999),
-              conColor: greenbgColor,
-              child: const CustomText(
-                'Completed',
+              conColor: status.toLowerCase() == 'pending' 
+                  ? const Color(0xFFFFF8E1) // Light yellow background
+                  : greenbgColor,
+              child: CustomText(
+                status.toLowerCase() == 'pending' ? 'Pending' : 'Completed',
                 fontSize: 12,
                 fontWeight: FontVariant.medium,
-                color: greenColor,
+                color: status.toLowerCase() == 'pending'
+                    ? const Color(0xFFF57C00) // Orange color
+                    : greenColor,
               ),
             ),
           ],

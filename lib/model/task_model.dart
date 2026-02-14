@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TaskModel {
   final String? id;
   final String uid;
@@ -20,6 +22,7 @@ class TaskModel {
   final String? disputedStartTime;
   final double? latitude;
   final double? longitude;
+  final DateTime? completedAt;
 
   TaskModel({
     this.id,
@@ -43,6 +46,7 @@ class TaskModel {
     this.disputedStartTime,
     this.latitude,
     this.longitude,
+    this.completedAt,
   });
 
   Map<String, dynamic> toJson() {
@@ -67,10 +71,25 @@ class TaskModel {
       'disputedStartTime': disputedStartTime,
       'latitude': latitude,
       'longitude': longitude,
+      'completedAt': completedAt?.toIso8601String(),
     };
   }
 
   factory TaskModel.fromJson(Map<String, dynamic> json, String docId) {
+    DateTime parseDate(dynamic date) {
+      if (date == null) return DateTime.now();
+      if (date is Timestamp) return date.toDate();
+      if (date is String) return DateTime.tryParse(date) ?? DateTime.now();
+      return DateTime.now();
+    }
+
+    DateTime? parseOptionalDate(dynamic date) {
+      if (date == null) return null;
+      if (date is Timestamp) return date.toDate();
+      if (date is String) return DateTime.tryParse(date);
+      return null;
+    }
+
     return TaskModel(
       id: docId,
       uid: json['uid'] ?? '',
@@ -81,9 +100,7 @@ class TaskModel {
       budget: (json['budget'] ?? 0).toDouble(),
       location: json['location'],
       imageUrl: json['imageUrl'],
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
+      createdAt: parseDate(json['createdAt']),
       status: json['status'] ?? 'active',
       acceptedOfferUid: json['acceptedOfferUid'],
       requesterHelpReason: json['requesterHelpReason'],
@@ -95,32 +112,25 @@ class TaskModel {
       disputedStartTime: json['disputedStartTime'],
       latitude: json['latitude']?.toDouble(),
       longitude: json['longitude']?.toDouble(),
+      completedAt: parseOptionalDate(json['completedAt']),
     );
   }
 
   factory TaskModel.fromFirestore(dynamic doc) {
     final data = doc.data() as Map<String, dynamic>;
 
-    // Handle createdAt - can be either String or Timestamp
-    DateTime createdAtValue = DateTime.now();
-    if (data['createdAt'] != null) {
-      if (data['createdAt'] is String) {
-        // Parse ISO 8601 string
-        try {
-          createdAtValue = DateTime.parse(data['createdAt']);
-        } catch (e) {
-          print('Error parsing createdAt string: $e');
-          createdAtValue = DateTime.now();
-        }
-      } else {
-        // Firestore Timestamp
-        try {
-          createdAtValue = (data['createdAt'] as dynamic).toDate();
-        } catch (e) {
-          print('Error converting createdAt timestamp: $e');
-          createdAtValue = DateTime.now();
-        }
-      }
+    DateTime parseDate(dynamic date) {
+      if (date == null) return DateTime.now();
+      if (date is Timestamp) return date.toDate();
+      if (date is String) return DateTime.tryParse(date) ?? DateTime.now();
+      return DateTime.now();
+    }
+
+    DateTime? parseOptionalDate(dynamic date) {
+      if (date == null) return null;
+      if (date is Timestamp) return date.toDate();
+      if (date is String) return DateTime.tryParse(date);
+      return null;
     }
 
     return TaskModel(
@@ -133,7 +143,7 @@ class TaskModel {
       budget: (data['budget'] ?? 0).toDouble(),
       location: data['location'],
       imageUrl: data['imageUrl'],
-      createdAt: createdAtValue,
+      createdAt: parseDate(data['createdAt']),
       status: data['status'] ?? 'active',
       acceptedOfferUid: data['acceptedOfferUid'],
       requesterHelpReason: data['requesterHelpReason'],
@@ -145,6 +155,7 @@ class TaskModel {
       disputedStartTime: data['disputedStartTime'],
       latitude: data['latitude']?.toDouble(),
       longitude: data['longitude']?.toDouble(),
+      completedAt: parseOptionalDate(data['completedAt']),
     );
   }
 }

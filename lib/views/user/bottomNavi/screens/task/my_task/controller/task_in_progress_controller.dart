@@ -45,6 +45,7 @@ class TaskInProgressController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('🔥 TaskInProgressController onInit() called for taskId: $taskId');
     fetchInProgressTask();
   }
 
@@ -56,6 +57,7 @@ class TaskInProgressController extends GetxController {
         .listen((snapshot) {
           if (snapshot.exists) {
             final data = snapshot.data();
+            print('🔍 [DEBUG] Task document updated for ID: $taskId');
             if (data != null) {
               requesterHelpRequested.value =
                   data['requesterHelpRequested'] ?? false;
@@ -69,9 +71,8 @@ class TaskInProgressController extends GetxController {
                 print(
                   '✅ Task status changed to $taskStatus. Navigating back from TaskInProgressScreen.',
                 );
-                if (Get.isRegistered<TaskInProgressController>()) {
-                  Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 2));
-                }
+                // Navigate back to History tab (index 1, subIndex 2)
+                Get.offAll(() => BottomNaviScreen(initialIndex: 1, subIndex: 2));
               }
 
               // Also update local task model if needed, but these flags are most critical
@@ -85,36 +86,46 @@ class TaskInProgressController extends GetxController {
   }
 
   void setupProofListener(String taskId) {
+    print('🔥 [PROOF LISTENER] Setting up listener for taskId: $taskId');
+    
     _proofListener = FirebaseFirestore.instance
         .collection('task_proofs')
         .where('taskId', isEqualTo: taskId)
-        .orderBy('submittedAt', descending: true)
-        .limit(5)
         .snapshots()
         .listen((snapshot) {
+          print('🔍 [PROOF LISTENER] Snapshot received!');
+          print('🔍 [PROOF LISTENER] Doc count: ${snapshot.docs.length}');
+          print('🔍 [PROOF LISTENER] TaskId queried: $taskId');
+          
           if (snapshot.docs.isNotEmpty) {
             hasProof.value = true;
+            print('✅ [PROOF LISTENER] hasProof set to TRUE');
+            print('✅ [PROOF LISTENER] Current hasProof value: ${hasProof.value}');
 
             // Try to find a proof with images
             QueryDocumentSnapshot<Map<String, dynamic>>? proofWithImages;
 
             for (var doc in snapshot.docs) {
               final data = doc.data();
-              if (data['beforePhotoUrl'] != null &&
-                  data['afterPhotoUrl'] != null) {
+              print('   📄 Proof doc ID: ${doc.id}');
+              print('   📄 Has before: ${data['beforePhotoUrl'] != null}');
+              print('   📄 Has after: ${data['afterPhotoUrl'] != null}');
+              
+              if (data['beforePhotoUrl'] != null && data['afterPhotoUrl'] != null) {
                 proofWithImages = doc;
                 break;
               }
             }
 
-            // Use proof with images if found, otherwise use the latest one
             final selectedProof = proofWithImages ?? snapshot.docs.first;
-
             proofId.value = selectedProof.id;
             print('✅ Real-time proof update: ${proofId.value}');
           } else {
             hasProof.value = false;
+            print('❌ [PROOF LISTENER] No proofs found, hasProof set to FALSE');
           }
+        }, onError: (error) {
+          print('❌ [PROOF LISTENER] Error: $error');
         });
   }
 
@@ -236,6 +247,9 @@ class TaskInProgressController extends GetxController {
   /// Fetch the accepted offer for the task
   Future<void> fetchAcceptedOffer(String taskId) async {
     try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) return;
+
       final offersSnapshot = await FirebaseFirestore.instance
           .collection('offers')
           .where('taskId', isEqualTo: taskId)
@@ -258,24 +272,55 @@ class TaskInProgressController extends GetxController {
         '✅ Found accepted offer from: ${acceptedOffer.value?.offeringUserName}',
       );
 
-      // Fetch helper user details
-      if (acceptedOffer.value?.offeringUserUid != null) {
-        await fetchHelperDetails(acceptedOffer.value!.offeringUserUid);
+      // 🔥 FIX: Determine who is the "other party"
+      // If current user is the helper (offeringUserUid), fetch task owner (requester)
+      // If current user is the task owner (requester), fetch helper
+      String otherUserUid;
+      
+      if (acceptedOffer.value?.offeringUserUid == currentUser.uid) {
+        // Current user is the HELPER, so fetch REQUESTER (task owner)
+        // 🔥 If task.value.uid is empty, fetch it from Firestore directly
+        otherUserUid = task.value?.uid ?? '';
+        
+        if (otherUserUid.isEmpty) {
+          print('⚠️ task.value.uid is empty, fetching from Firestore...');
+          final taskDoc = await FirebaseFirestore.instance
+              .collection('tasks')
+              .doc(taskId)
+              .get();
+          
+          if (taskDoc.exists) {
+            otherUserUid = taskDoc.data()?['uid'] ?? '';
+            print('✅ Fetched task owner UID from Firestore: $otherUserUid');
+          }
+        }
+        
+        print('🔍 Current user is HELPER, fetching REQUESTER: $otherUserUid');
+      } else {
+        // Current user is the REQUESTER, so fetch HELPER
+        otherUserUid = acceptedOffer.value?.offeringUserUid ?? '';
+        print('🔍 Current user is REQUESTER, fetching HELPER: $otherUserUid');
+      }
+
+      if (otherUserUid.isNotEmpty) {
+        await fetchHelperDetails(otherUserUid);
+      } else {
+        print('❌ Could not determine other user UID');
       }
     } catch (e) {
       print('❌ Error fetching accepted offer: $e');
     }
   }
 
-  /// Fetch helper user details and stats
+  /// Fetch helper user details and stats (this now fetches the OTHER party, not necessarily helper)
   Future<void> fetchHelperDetails(String helperUid) async {
     try {
       helperUser.value = await _userService.getUserByUid(helperUid);
       helperStats.value = await _userService.getUserStatistics(helperUid);
 
-      print('✅ Fetched helper details: ${helperUser.value?.displayName}');
+      print('✅ Fetched other party details: ${helperUser.value?.displayName}');
     } catch (e) {
-      print('❌ Error fetching helper details: $e');
+      print('❌ Error fetching other party details: $e');
     }
   }
 
@@ -319,8 +364,6 @@ class TaskInProgressController extends GetxController {
       final proofSnapshot = await FirebaseFirestore.instance
           .collection('task_proofs')
           .where('taskId', isEqualTo: taskId)
-          .orderBy('submittedAt', descending: true) // 🔥 Get latest first
-          .limit(5) // 🔥 Get top 5 to find one with images
           .get();
 
       hasProof.value = proofSnapshot.docs.isNotEmpty;
@@ -337,7 +380,7 @@ class TaskInProgressController extends GetxController {
           }
         }
 
-        // Use proof with images if found, otherwise use the latest one
+        // Use proof with images if found, otherwise use the first one
         final selectedProof = proofWithImages ?? proofSnapshot.docs.first;
 
         proofId.value = selectedProof.id;

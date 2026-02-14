@@ -23,14 +23,25 @@ class TaskInProgressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🔥 Initialize GetX controller with taskId
-    final controller = Get.put(TaskInProgressController(taskId: taskId));
+    // 🔥 FIX: Delete existing controller with same tag to force fresh data fetch
+    if (Get.isRegistered<TaskInProgressController>(tag: taskId)) {
+      Get.delete<TaskInProgressController>(tag: taskId);
+      print('🗑️ Deleted existing controller for taskId: $taskId');
+    }
+    
+    // 🔥 Initialize GetX controller with taskId, unique tag, and permanent flag
+    final controller = Get.put(
+      TaskInProgressController(taskId: taskId),
+      tag: taskId,
+      permanent: true,  // 🔥 Prevent controller from being deleted during navigation
+    );
 
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: whiteColor,
         body: Obx(() {
+          print('🎨 [DEBUG] TaskInProgressScreen Obx rebuilding. hasProof: ${controller.hasProof.value}');
           // 🔥 Show loading indicator
           if (controller.isLoading.value) {
             return Center(child: CircularProgressIndicator(color: redColor));
@@ -325,43 +336,34 @@ class TaskInProgressScreen extends StatelessWidget {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  // Navigate to chat with helper
-                                  final helperUid = offer?.offeringUserUid;
-                                  final helperName =
-                                      helper?.displayName ??
-                                      offer?.offeringUserName ??
-                                      'Helper';
-                                  final helperPhoto =
-                                      helper?.photoURL ??
-                                      offer?.offeringUserPhoto;
+                                  // 🔥 FIX: Use helperUser which is now the OTHER party (requester OR helper)
+                                  final otherUserUid = helper?.uid;
+                                  final otherUserName = helper?.displayName ?? 'User';
+                                  final otherUserPhoto = helper?.photoURL;
 
                                   print(
-                                    '🔍 Chat Debug: helperUid=$helperUid, offeringUserUid=${offer?.offeringUserUid}',
+                                    '🔍 Chat Debug: otherUserUid=$otherUserUid',
                                   );
 
-                                  if (helperUid != null &&
-                                      helperUid.isNotEmpty) {
+                                  if (otherUserUid != null &&
+                                      otherUserUid.isNotEmpty) {
                                     print(
-                                      '✅ Opening chat with helperUid: $helperUid',
+                                      '✅ Opening chat with user: $otherUserUid',
                                     );
                                     Get.to(
                                       () => const ChatScreen(),
-                                      binding: BindingsBuilder(() {
-                                        Get.put(
-                                          ChatController(
-                                            taskId: task.id!,
-                                            taskTitle: task.title,
-                                            taskOwnerId: helperUid,
-                                            taskOwnerName: helperName,
-                                            taskOwnerPhoto: helperPhoto,
-                                            taskImage: task.imageUrl,
-                                          ),
-                                        );
-                                      }),
+                                      arguments: {
+                                        'taskId': task.id!,
+                                        'taskTitle': task.title,
+                                        'taskOwnerId': otherUserUid,
+                                        'taskOwnerName': otherUserName,
+                                        'taskOwnerPhoto': otherUserPhoto,
+                                        'taskImage': task.imageUrl,
+                                      },
                                     );
                                   } else {
                                     print(
-                                      '❌ Chat failed: helperUid is null or empty',
+                                      '❌ Chat failed: otherUserUid is null or empty',
                                     );
                                     Get.snackbar(
                                       'Error',
@@ -721,25 +723,27 @@ class TaskInProgressScreen extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 /// ------------------ REVIEW PROOF BUTTON ------------------
-                /// ------------------ REVIEW PROOF BUTTON ------------------
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: CustomButton(
-                    label: "Review Proof",
-                    onPressed: controller.hasProof.value
-                        ? () {
-                            Get.to(
-                              () => TaskReviewScreen(
-                                taskId: controller.task.value?.id,
-                                proofId: controller.proofId.value,
-                              ),
-                            );
-                          }
-                        : null,
-                    bgColor: controller.hasProof.value ? redColor : taskstatus3,
-                    textColor: whiteColor,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  child: Obx(() {
+                    print('🎨 [BUTTON] Review Proof button rebuilding. hasProof: ${controller.hasProof.value}');
+                    return CustomButton(
+                      label: "Review Proof",
+                      onPressed: controller.hasProof.value
+                          ? () {
+                              Get.to(
+                                () => TaskReviewScreen(
+                                  taskId: controller.task.value?.id,
+                                  proofId: controller.proofId.value,
+                                ),
+                              );
+                            }
+                          : null,
+                      bgColor: controller.hasProof.value ? redColor : taskstatus3,
+                      textColor: whiteColor,
+                      borderRadius: BorderRadius.circular(30),
+                    );
+                  }),
                 ),
 
                 const SizedBox(height: 20),

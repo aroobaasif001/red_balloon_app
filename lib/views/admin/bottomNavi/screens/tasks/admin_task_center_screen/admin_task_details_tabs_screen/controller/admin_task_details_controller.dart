@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/services/notification_services.dart';
 import 'package:red_balloon_app/services/wallet_service.dart';
+import 'package:intl/intl.dart';
 
 import '../../controller/admin_validation_tasks_controller.dart';
 
@@ -20,6 +22,9 @@ class AdminTaskDetailsController extends GetxController {
   var taskCreatorUserId = ''.obs;
   var taskCreatorName = ''.obs;
   var taskCreatorImage = ''.obs;
+  var requesterLocation = 'N/A'.obs;
+  var requesterPostedTasks = 0.obs;
+  var requesterMemberSince = 'N/A'.obs;
 
   var helperUserId = ''.obs;
   var helperName = ''.obs;
@@ -35,136 +40,158 @@ class AdminTaskDetailsController extends GetxController {
   var supportHelperVotes = 0.obs;
   var totalVotes = 0.obs;
 
-  // IDs for payment processing
+  // 🔥 Task Details specific observables
+  var escrowAmount = 'SAR 0.00'.obs;
+  var timeTaken = 'Loading...'.obs;
+  var taskCategory = 'Loading...'.obs;
+  var postedAt = 'Loading...'.obs;
+  var taskLocation = 'Loading...'.obs;
+
+  double? _currentTotalAmount;
   String? _currentValidationId;
   String? _currentTaskId;
   String? _currentHelperUid;
   String? _currentRequesterUid;
-  double? _currentTotalAmount;
+
+  // Stream Subscriptions
+  StreamSubscription? _validationSubscription;
+  StreamSubscription? _taskSubscription;
+  StreamSubscription? _proofSubscription;
+
+  @override
+  void onClose() {
+    _validationSubscription?.cancel();
+    _taskSubscription?.cancel();
+    _proofSubscription?.cancel();
+    super.onClose();
+  }
 
   /// Fetch all task details
   Future<void> fetchTaskDetails(String validationId) async {
     try {
       isLoading.value = true;
-      print('🔍 Fetching task details for validation: $validationId');
+      print('🔍 Initializing real-time listeners for validation: $validationId');
 
-      // 1. Fetch validation document
-      final validationDoc = await _firestore
+      _currentValidationId = validationId;
+
+      // 🔥 1. Setup Validation Listener (Votes, Photos, Rejection Reason)
+      _validationSubscription?.cancel();
+      _validationSubscription = _firestore
           .collection('validations')
           .doc(validationId)
-          .get();
+          .snapshots()
+          .listen((validationDoc) async {
+        if (!validationDoc.exists) return;
 
-      if (!validationDoc.exists) {
-        print('❌ Validation not found');
-        isLoading.value = false;
-        return;
-      }
+        final validationData = validationDoc.data()!;
+        
+        // Update basic fields
+        rejectionReason.value = validationData['rejectionReason'] ?? 'No reason provided';
+        beforePhotoUrl.value = validationData['beforePhotoUrl'] ?? '';
+        afterPhotoUrl.value = validationData['afterPhotoUrl'] ?? '';
 
-      final validationData = validationDoc.data()!;
-      _currentValidationId = validationId;
-      final taskId = validationData['taskId'];
-      _currentTaskId = taskId;
-      final proofId = validationData['proofId'];
+        // Update Votes
+        supportHelperVotes.value = validationData['helperVotes'] ?? 0;
+        supportRequesterVotes.value = validationData['requesterVotes'] ?? 0;
+        totalVotes.value = supportHelperVotes.value + supportRequesterVotes.value;
 
-      print('📄 Validation Document ID: $validationId');
-      print('📄 Validation Data: $validationData');
-
-      rejectionReason.value =
-          validationData['rejectionReason'] ?? 'No reason provided';
-      beforePhotoUrl.value = validationData['beforePhotoUrl'] ?? '';
-      afterPhotoUrl.value = validationData['afterPhotoUrl'] ?? '';
-
-      // 🔥 Fetch votes directly from validation document
-      final helperVotesFromDB = validationData['helperVotes'];
-      final requesterVotesFromDB = validationData['requesterVotes'];
-
-      print(
-        '🔍 RAW helperVotes from DB: $helperVotesFromDB (type: ${helperVotesFromDB.runtimeType})',
-      );
-      print(
-        '🔍 RAW requesterVotes from DB: $requesterVotesFromDB (type: ${requesterVotesFromDB.runtimeType})',
-      );
-
-      supportHelperVotes.value = helperVotesFromDB ?? 0;
-      supportRequesterVotes.value = requesterVotesFromDB ?? 0;
-      totalVotes.value = supportHelperVotes.value + supportRequesterVotes.value;
-
-      print(
-        '✅ FINAL Votes - Helper: ${supportHelperVotes.value}, Requester: ${supportRequesterVotes.value}, Total: ${totalVotes.value}',
-      );
-
-      // Calculate completed time
-      if (validationData['rejectedAt'] != null) {
-        DateTime rejectedAt;
-        if (validationData['rejectedAt'] is String) {
-          rejectedAt = DateTime.parse(validationData['rejectedAt']);
-        } else {
-          rejectedAt = (validationData['rejectedAt'] as Timestamp).toDate();
-        }
-        completedTime.value = _getTimeAgo(rejectedAt);
-      }
-
-      // 2. Fetch task details and REQUESTER UID
-      String? requesterUid = null;
-      if (taskId != null) {
-        print('📋 Fetching task details for taskId: $taskId');
-        final taskDoc = await _firestore.collection('tasks').doc(taskId).get();
-        if (taskDoc.exists) {
-          final taskData = taskDoc.data()!;
-          taskTitle.value = taskData['title'] ?? 'No Title';
-          taskDescription.value =
-              taskData['description'] ?? 'No description available';
-          requesterUid = taskData['uid']; // 🔥 Get requester UID from task.uid
-          _currentRequesterUid = requesterUid;
-          _currentTotalAmount = (taskData['budget'] ?? 0.0).toDouble();
-          print('✅ Task title: ${taskTitle.value}');
-          print('✅ Task description: ${taskDescription.value}');
-          print('✅ Requester UID from task.uid: $requesterUid');
-        } else {
-          print('❌ Task document not found');
-        }
-      }
-
-      // 3. Fetch REQUESTER details using UID from task.uid
-      if (requesterUid != null) {
-        print('👤 Fetching REQUESTER details for UID: $requesterUid');
-        await _fetchUserDetails(requesterUid, isHelper: false);
-      } else {
-        print('⚠️ Requester UID not found in task');
-      }
-
-      // 4. Fetch HELPER details from task_proofs
-      if (proofId != null) {
-        print('👷 Fetching proof details for proofId: $proofId');
-        final proofDoc = await _firestore
-            .collection('task_proofs')
-            .doc(proofId)
-            .get();
-        if (proofDoc.exists) {
-          final proofData = proofDoc.data()!;
-          final helperUid =
-              proofData['userId']; // 🔥 Get helper UID from proof.userId
-          _currentHelperUid = helperUid;
-          print('👷 Helper UID from task_proofs.userId: $helperUid');
-          if (helperUid != null) {
-            print('👤 Fetching HELPER details for UID: $helperUid');
-            await _fetchUserDetails(helperUid, isHelper: true);
+        // Handle Rejected At (Completed Time)
+        if (validationData['rejectedAt'] != null) {
+          DateTime rejectedAt;
+          if (validationData['rejectedAt'] is String) {
+            rejectedAt = DateTime.parse(validationData['rejectedAt']);
           } else {
-            print('⚠️ Helper userId is null in proof');
+            rejectedAt = (validationData['rejectedAt'] as Timestamp).toDate();
           }
-        } else {
-          print('❌ Proof document not found');
+          completedTime.value = _getTimeAgo(rejectedAt);
         }
-      } else {
-        print('⚠️ proofId is null');
-      }
+
+        final taskId = validationData['taskId'];
+        final proofId = validationData['proofId'];
+
+        // 🔥 2. Setup Task Listener (Title, Desc, Budget, Category)
+        if (taskId != null && taskId != _currentTaskId) {
+          _currentTaskId = taskId;
+          _setupTaskStream(taskId);
+        }
+
+        // 🔥 3. Setup Proof Listener (Helper UID, Time Taken)
+        if (proofId != null && proofId != _currentProofId) {
+          _currentProofId = proofId;
+          _setupProofStream(proofId, taskId);
+        }
+      });
 
       isLoading.value = false;
-      print('✅ Task details loaded successfully');
     } catch (e) {
-      print('❌ Error fetching task details: $e');
+      print('❌ Error setting up task listeners: $e');
       isLoading.value = false;
     }
+  }
+
+  String? _currentProofId;
+
+  void _setupTaskStream(String taskId) {
+    _taskSubscription?.cancel();
+    _taskSubscription = _firestore
+        .collection('tasks')
+        .doc(taskId)
+        .snapshots()
+        .listen((taskDoc) async {
+      if (!taskDoc.exists) return;
+
+      final taskData = taskDoc.data()!;
+      taskTitle.value = taskData['title'] ?? 'No Title';
+      taskDescription.value = taskData['description'] ?? 'No description available';
+      
+      final requesterUid = taskData['uid'];
+      if (requesterUid != _currentRequesterUid) {
+        _currentRequesterUid = requesterUid;
+        if (requesterUid != null) {
+          _fetchUserDetails(requesterUid, isHelper: false);
+        }
+      }
+
+      _currentTotalAmount = (taskData['budget'] ?? 0.0).toDouble();
+      escrowAmount.value = 'SAR ${_currentTotalAmount?.toStringAsFixed(0)}';
+      taskCategory.value = taskData['taskType'] ?? 'Offline Task';
+
+      final createdAtRaw = taskData['createdAt'];
+      if (createdAtRaw != null) {
+        postedAt.value = _formatPostedAt(createdAtRaw);
+      }
+
+      taskLocation.value = taskData['location'] ?? 'Location not specified';
+    });
+  }
+
+  void _setupProofStream(String proofId, String? taskId) {
+    _proofSubscription?.cancel();
+    _proofSubscription = _firestore
+        .collection('task_proofs')
+        .doc(proofId)
+        .snapshots()
+        .listen((proofDoc) async {
+      if (!proofDoc.exists) return;
+
+      final proofData = proofDoc.data()!;
+      final helperUid = proofData['userId'];
+      
+      if (helperUid != _currentHelperUid) {
+        _currentHelperUid = helperUid;
+        if (helperUid != null) {
+          _fetchUserDetails(helperUid, isHelper: true);
+        }
+      }
+
+      // Calculate Time Taken (Needs acceptedAt from task)
+      if (taskId != null) {
+        final taskSnap = await _firestore.collection('tasks').doc(taskId).get();
+        final acceptedAt = taskSnap.data()?['acceptedAt'];
+        final submittedAt = proofData['submittedAt'];
+        timeTaken.value = _calculateTimeTaken(acceptedAt, submittedAt);
+      }
+    });
   }
 
   /// Fetch user details from users collection
@@ -239,7 +266,32 @@ class AdminTaskDetailsController extends GetxController {
           taskCreatorName.value = name;
           taskCreatorImage.value = image;
 
-          print('📊 Task creator: $name ($userId)');
+          // 🔥 Real Location from City/Country
+          final city = userData['city'] ?? '';
+          final country = userData['country'] ?? '';
+          if (city.isNotEmpty && country.isNotEmpty) {
+            requesterLocation.value = '$city, $country';
+          } else if (city.isNotEmpty) {
+            requesterLocation.value = city;
+          } else if (country.isNotEmpty) {
+            requesterLocation.value = country;
+          } else {
+            requesterLocation.value = 'N/A';
+          }
+
+          // 🔥 Fetch Real Posted Tasks Count from tasks collection
+          final postedSnap = await _firestore
+              .collection('tasks')
+              .where('uid', isEqualTo: uid)
+              .get();
+          requesterPostedTasks.value = postedSnap.docs.length;
+          
+          final joinedAt = userData['createdAt'];
+          if (joinedAt != null) {
+            requesterMemberSince.value = _calculateMemberSince(joinedAt);
+          }
+
+          print('📊 Task creator: $name ($userId) - Location: ${requesterLocation.value} - Posted: ${requesterPostedTasks.value}');
         }
       } else {
         print('❌ User document not found for UID: $uid');
@@ -412,5 +464,86 @@ class AdminTaskDetailsController extends GetxController {
     }
 
     return '5 min';
+  }
+
+  String _formatPostedAt(dynamic createdAt) {
+    DateTime dt;
+    if (createdAt is String) {
+      dt = DateTime.parse(createdAt);
+    } else if (createdAt is Timestamp) {
+      dt = createdAt.toDate();
+    } else {
+      return 'Unknown';
+    }
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final date = DateTime(dt.year, dt.month, dt.day);
+
+    if (date == today) {
+      return "Today, ${DateFormat('h:mm a').format(dt)}";
+    } else {
+      return DateFormat('MMM d, h:mm a').format(dt);
+    }
+  }
+
+  String _calculateTimeTaken(dynamic acceptedAt, dynamic submittedAt) {
+    if (acceptedAt == null || submittedAt == null) return 'N/A';
+
+    DateTime start;
+    if (acceptedAt is String) {
+      start = DateTime.parse(acceptedAt);
+    } else if (acceptedAt is Timestamp) {
+      start = acceptedAt.toDate();
+    } else {
+      return 'N/A';
+    }
+
+    DateTime end;
+    if (submittedAt is String) {
+      try {
+        end = DateTime.parse(submittedAt);
+      } catch (e) {
+        return 'N/A';
+      }
+    } else if (submittedAt is Timestamp) {
+      end = submittedAt.toDate();
+    } else {
+      return 'N/A';
+    }
+
+    final duration = end.difference(start);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+
+    if (hours > 0) {
+      return '${hours}h ${minutes}m';
+    } else {
+      return '${minutes}m';
+    }
+  }
+
+  String _calculateMemberSince(dynamic joinedAt) {
+    DateTime dt;
+    if (joinedAt is String) {
+      dt = DateTime.parse(joinedAt);
+    } else if (joinedAt is Timestamp) {
+      dt = joinedAt.toDate();
+    } else {
+      return 'N/A';
+    }
+
+    final now = DateTime.now();
+    final difference = now.difference(dt);
+
+    if (difference.inDays >= 365) {
+      final years = (difference.inDays / 365).floor();
+      return '$years yr${years > 1 ? 's' : ''}';
+    } else if (difference.inDays >= 30) {
+      final months = (difference.inDays / 30).floor();
+      return '$months month${months > 1 ? 's' : ''}';
+    } else {
+      return '${difference.inDays} days';
+    }
   }
 }

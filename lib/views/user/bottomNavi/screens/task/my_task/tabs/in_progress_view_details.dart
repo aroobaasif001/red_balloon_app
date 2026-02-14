@@ -52,6 +52,7 @@ class InProgressViewDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final InProgressTaskController controller = Get.put(
       InProgressTaskController(),
+      tag: taskId,
     );
 
     // 🔥 Set initial distance if provided
