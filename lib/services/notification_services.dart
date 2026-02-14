@@ -1129,12 +1129,26 @@ class NotificationService {
       if (!_initialized) {
         _initialized = true;
 
+        // 🔥 For iOS: Enable native foreground alerts.
+        // On iOS, we let the OS handle the alert display to avoid complexity.
+        // On Android, the OS does NOT show alerts in foreground, so we handle it manually.
+        if (Platform.isIOS) {
+          await _messaging.setForegroundNotificationPresentationOptions(
+            alert: true, 
+            badge: true,
+            sound: true,
+          );
+        }
+
         // Setup foreground message handler
         FirebaseMessaging.onMessage.listen((message) async {
-          if (Platform.isIOS) {
-            await _setIOSForegroundPresentation();
+          debugPrint('Foreground message received: ${message.messageId}');
+          
+          // 🔥 Only show manual local notification on Android.
+          // iOS is already showing the native alert because of 'alert: true' above.
+          if (Platform.isAndroid) {
+            await _showLocal(message);
           }
-          await _showLocal(message);
         });
 
         // Setup notification tap handler
