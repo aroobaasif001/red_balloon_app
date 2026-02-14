@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:red_balloon_app/custom_widgets/modern_bottom_nav.dart';
 import 'package:red_balloon_app/utils/colors.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/home/controller/home_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/home/home_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/profile/tabs/in_app_store_screen.dart';
+import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/controller/task_tabs_controller.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/task/my_task/my_task_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/validations_tab/validation_hub_screen/validation_hub_screen.dart';
 import 'package:red_balloon_app/views/user/bottomNavi/screens/wallet/wallet_tab.dart';
@@ -35,6 +37,8 @@ class _BottomNaviScreenState extends State<BottomNaviScreen> {
     Get.put(NotificationController(), permanent: true);
     Get.put(MessagesController(), permanent: true);
     Get.put(ValidationHubController(), permanent: true); // 🔥 Add validation counter
+    Get.put(TaskTabsController(), permanent: true); // 🔥 Fix TabController disposed issue
+    Get.put(HomeController(), permanent: true); // 🔥 Fix Home TabController disposed issue
     
     currentIndex = widget.initialIndex;
     _initializeNavItems();

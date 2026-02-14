@@ -28,24 +28,42 @@ Widget buildBottomUploadBar(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Obx(
-          () => CustomText(
-            controller.hasProof.value
-                ? 'Proof uploaded. Mark task as complete to proceed.'
-                : 'Complete the task and upload proof.',
+        Obx(() {
+          final bool hasProof = controller.hasProof.value;
+          final bool isHelper = controller.role.value == 'Requester';
+
+          String message;
+          if (hasProof) {
+            message = isHelper
+                ? 'Proof uploaded. Waiting for requester to mark as complete.'
+                : 'Proof uploaded. Mark task as complete to proceed.';
+          } else {
+            message = isHelper
+                ? 'Complete the task and upload proof.'
+                : 'Waiting for helper to complete the task and upload proof.';
+          }
+
+          return CustomText(
+            message,
             fontSize: 13,
             color: walletGrey600Color,
             fontWeight: FontVariant.regular,
             textAlign: TextAlign.center,
-          ),
-        ),
-        SizedBox(height: 5),
+          );
+        }),
+        const SizedBox(height: 5),
         Obx(() {
           final bool hasProof = controller.hasProof.value;
           final bool isLoading = controller.isCheckingProof.value;
+          final bool isHelper = controller.role.value == 'Requester';
 
-          // 🔥 FIXED: Button should be enabled if we have proof to "Mark as Complete"
-          final bool isDisabled = isLoading;
+          // 🔥 UPDATED: Button is disabled if:
+          // 1. We are loading
+          // 2. We have proof and the user is the helper (they already did their part)
+          // 3. We don't have proof and the user is the requester (helper needs to upload first)
+          final bool isDisabled = isLoading ||
+              (hasProof && isHelper) ||
+              (!hasProof && !isHelper);
 
           return InkWell(
             onTap: !isDisabled
