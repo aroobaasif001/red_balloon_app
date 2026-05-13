@@ -370,7 +370,7 @@ class _CleanmysolarpanelsState extends State<Cleanmysolarpanels> {
                                         widget.longitude != 0.0)
                                     ? CachedNetworkImage(
                                         imageUrl:
-                                            "https://maps.googleapis.com/maps/api/staticmap?center=${widget.latitude},${widget.longitude}&zoom=14&size=400x400&markers=color:red%7C${widget.latitude},${widget.longitude}&key=AIzaSyCOMKFm2vVK0w3FRoUWJvv6wv1NvD_s60k",
+                                            "https://maps.googleapis.com/maps/api/staticmap?center=${widget.latitude},${widget.longitude}&zoom=14&size=400x400&markers=color:red%7C${widget.latitude},${widget.longitude}&key=google_key",
                                         height: 160,
                                         fit: BoxFit.cover,
                                         placeholder: (context, url) => Container(
